@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\AffiliateController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -24,4 +25,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('user-password.update');
 
     Route::inertia('settings/appearance', 'settings/appearance')->name('appearance.edit');
+
+    Route::get('settings/affiliate', [AffiliateController::class, 'edit'])
+        ->middleware(RequirePassword::class)
+        ->name('affiliate.edit');
+    Route::post('settings/affiliate', [AffiliateController::class, 'store'])->name('affiliate.store');
+    Route::post('settings/affiliate/payout', [AffiliateController::class, 'requestPayout'])->name('affiliate.payout.request');
 });

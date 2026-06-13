@@ -3,6 +3,21 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        {{-- Default SEO fallback --}}
+        <meta name="description" content="{{ config('app.name', 'PrintPandora') }} - Your printing solution.">
+        <meta property="og:site_name" content="{{ config('app.name', 'PrintPandora') }}">
+        <meta property="og:locale" content="en_US">
+        <meta name="twitter:card" content="summary_large_image">
+        <script type="application/ld+json">
+            {
+                "@@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "{{ config('app.name', 'PrintPandora') }}",
+                "url": "{{ config('app.url', 'http://localhost') }}"
+            }
+        </script>
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>

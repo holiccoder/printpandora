@@ -1,12 +1,12 @@
-import { Head } from '@inertiajs/react';
 import AppearanceTabs from '@/components/appearance-tabs';
 import Heading from '@/components/heading';
+import SEO from '@/components/seo';
 import { edit as editAppearance } from '@/routes/appearance';
 
 export default function Appearance() {
     return (
         <>
-            <Head title="Appearance settings" />
+            <SEO title="Appearance settings" description="Customize the look and feel of your PrintPandora dashboard." />
 
             <h1 className="sr-only">Appearance settings</h1>
 

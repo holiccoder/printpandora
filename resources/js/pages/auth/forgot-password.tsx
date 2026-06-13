@@ -1,7 +1,8 @@
 // Components
-import { Form, Head } from '@inertiajs/react';
+import { Form } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import InputError from '@/components/input-error';
+import SEO from '@/components/seo';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +13,7 @@ import { email } from '@/routes/password';
 export default function ForgotPassword({ status }: { status?: string }) {
     return (
         <>
-            <Head title="Forgot password" />
+            <SEO title="Forgot password" description="Reset your PrintPandora account password. We'll send you a reset link via email." />
 
             {status && (
                 <div className="mb-4 text-center text-sm font-medium text-green-600">
