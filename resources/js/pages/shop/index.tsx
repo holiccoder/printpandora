@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
 import SEO from '@/components/seo';
-import { home } from '@/routes';
+import StorefrontLayout from '@/layouts/storefront-layout';
 
 interface Product {
     id: number;
@@ -38,23 +38,10 @@ export default function ShopIndex({ products, categories }: Props) {
         : products.data;
 
     return (
-        <>
+        <StorefrontLayout activeCategory="Business Cards">
             <SEO title="Shop" description="Browse our printing products." />
 
-            <div className="flex min-h-screen flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <header className="w-full border-b border-[#e3e3e0] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]">
-                    <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-                        <Link href={home()} className="text-lg font-semibold tracking-tight">
-                            PrintPandora
-                        </Link>
-                        <nav className="flex items-center gap-4 text-sm">
-                            <Link href="/shop" className="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]">Shop</Link>
-                            <Link href="/blog" className="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]">Blog</Link>
-                            <Link href="/cart" className="rounded-sm bg-amber-600 px-3 py-1.5 text-white hover:bg-amber-700">Cart</Link>
-                        </nav>
-                    </div>
-                </header>
-
+            <div className="flex flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
                 <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-12">
                     <h1 className="mb-8 text-3xl font-semibold tracking-tight">Shop</h1>
 
@@ -125,11 +112,7 @@ export default function ShopIndex({ products, categories }: Props) {
                         </div>
                     )}
                 </main>
-
-                <footer className="border-t border-[#e3e3e0] bg-white py-6 text-center text-sm text-[#706f6c] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#A1A09A]">
-                    &copy; {new Date().getFullYear()} PrintPandora. All rights reserved.
-                </footer>
             </div>
-        </>
+        </StorefrontLayout>
     );
 }
