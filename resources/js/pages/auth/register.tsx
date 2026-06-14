@@ -2,6 +2,7 @@ import { Form } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import SEO from '@/components/seo';
+import SocialAuthButtons from '@/components/social-auth-buttons';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,9 @@ export default function Register({ passwordRules }: Props) {
     return (
         <>
             <SEO title="Register" description="Create your PrintPandora account and start designing custom prints today." />
+
+            <SocialAuthButtons intent="register" />
+
             <Form
                 {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}

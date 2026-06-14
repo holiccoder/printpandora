@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\Shop\CartController;
 use App\Http\Controllers\Shop\CheckoutController;
@@ -9,10 +12,26 @@ use App\Http\Controllers\Shop\ProductController;
 use App\Http\Controllers\Shop\TicketController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Static information pages
+Route::inertia('/about', 'about')->name('about');
+Route::inertia('/terms', 'terms')->name('terms');
+Route::inertia('/privacy', 'privacy')->name('privacy');
+
+// Social authentication (stubbed — wire up Laravel Socialite to enable)
+Route::get('auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])
+    ->whereIn('provider', ['google', 'facebook'])
+    ->name('social.redirect');
+Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback'])
+    ->whereIn('provider', ['google', 'facebook'])
+    ->name('social.callback');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard/orders', [DashboardController::class, 'orders'])->name('dashboard.orders');
+    Route::get('dashboard/profile', [DashboardController::class, 'profile'])->name('dashboard.profile');
+    Route::patch('dashboard/profile', [DashboardController::class, 'updateProfile'])->name('dashboard.profile.update');
 });
 
 // Sitemap

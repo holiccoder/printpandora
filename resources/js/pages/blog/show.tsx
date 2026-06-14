@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import SEO from '@/components/seo';
-import { home } from '@/routes';
+import StorefrontLayout from '@/layouts/storefront-layout';
 
 interface Post {
     id: number;
@@ -20,7 +20,7 @@ interface Props {
 
 export default function BlogShow({ post, related }: Props) {
     return (
-        <>
+        <StorefrontLayout activeCategory="Blog">
             <SEO
                 title={post.title}
                 description={post.body.replace(/<[^>]+>/g, '').slice(0, 160)}
@@ -30,24 +30,7 @@ export default function BlogShow({ post, related }: Props) {
                 author={post.author.name}
             />
 
-            <div className="flex min-h-screen flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <header className="w-full border-b border-[#e3e3e0] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]">
-                    <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
-                        <Link
-                            href={home()}
-                            className="text-lg font-semibold tracking-tight"
-                        >
-                            PrintPandora
-                        </Link>
-                        <Link
-                            href="/blog"
-                            className="rounded-sm px-4 py-1.5 text-sm text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]"
-                        >
-                            Blog
-                        </Link>
-                    </div>
-                </header>
-
+            <div className="flex flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
                 <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
                     <Link
                         href="/blog"
@@ -142,6 +125,6 @@ export default function BlogShow({ post, related }: Props) {
                     &copy; {new Date().getFullYear()} PrintPandora. All rights reserved.
                 </footer>
             </div>
-        </>
+        </StorefrontLayout>
     );
 }

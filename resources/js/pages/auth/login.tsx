@@ -2,6 +2,7 @@ import { Form } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import SEO from '@/components/seo';
+import SocialAuthButtons from '@/components/social-auth-buttons';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -21,6 +22,8 @@ export default function Login({ status, canResetPassword }: Props) {
     return (
         <>
             <SEO title="Log in" description="Log in to your PrintPandora account to manage your orders and designs." />
+
+            <SocialAuthButtons intent="login" />
 
             <Form
                 {...store.form()}

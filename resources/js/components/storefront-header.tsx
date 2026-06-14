@@ -1,5 +1,5 @@
-import { Link, usePage } from '@inertiajs/react';
-import { ChevronRight, Menu, Search, User } from 'lucide-react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { ChevronDown, ChevronRight, LogOut, Menu, Package, Search, User, UserCog } from 'lucide-react';
 import { useState } from 'react';
 import {
     NavigationMenu,
@@ -15,10 +15,18 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { CartDrawer } from '@/components/cart-drawer';
 import { cn } from '@/lib/utils';
-import { dashboard, home, login, register } from '@/routes';
+import { dashboard, home, login, logout, register } from '@/routes';
 
 /**
  * One link in the mega dropdown. `children` (when set) renders a small
@@ -148,7 +156,7 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
     const user = auth?.user;
 
     return (
-        <header className="w-full border-b border-neutral-200 bg-white">
+        <header className="relative z-40 w-full border-b border-neutral-200 bg-white">
             {/* top row — mobile menu / logo / search / cart */}
             <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4">
                 {/* mobile menu */}
@@ -200,16 +208,60 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
 
                     {/* auth buttons — desktop */}
                     {user ? (
-                        <Button
-                            asChild
-                            variant="ghost"
-                            className="hidden h-9 gap-2 px-3 text-sm font-medium text-neutral-700 hover:text-[#0f4c3a] lg:inline-flex"
-                        >
-                            <Link href={dashboard()}>
-                                <User className="size-4" />
-                                <span>Dashboard</span>
-                            </Link>
-                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    className="hidden h-9 gap-2 px-3 text-sm font-medium text-neutral-700 hover:text-[#0f4c3a] lg:inline-flex"
+                                >
+                                    <User className="size-4" />
+                                    <span>Dashboard</span>
+                                    <ChevronDown className="size-3.5 opacity-70" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" sideOffset={8} className="w-56">
+                                {user.name && (
+                                    <DropdownMenuLabel className="font-normal">
+                                        <p className="text-xs text-neutral-500">Signed in as</p>
+                                        <p className="truncate text-sm font-semibold text-neutral-900">
+                                            {user.name}
+                                        </p>
+                                    </DropdownMenuLabel>
+                                )}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <Link href={dashboard()} className="cursor-pointer">
+                                        <User className="mr-2 size-4" />
+                                        Dashboard
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <Link href="/dashboard/profile" className="cursor-pointer">
+                                        <UserCog className="mr-2 size-4" />
+                                        Profile edit
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <Link href="/dashboard/orders" className="cursor-pointer">
+                                        <Package className="mr-2 size-4" />
+                                        Orders
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <Link
+                                        href={logout()}
+                                        as="button"
+                                        onClick={() => router.flushAll()}
+                                        className="w-full cursor-pointer"
+                                        data-test="logout-button"
+                                    >
+                                        <LogOut className="mr-2 size-4" />
+                                        Log out
+                                    </Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     ) : (
                         <div className="hidden items-center gap-2 lg:flex">
                             <Button
@@ -289,8 +341,10 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                                             // Pinned to the viewport. Offset = announcement bar (h-9 = 36px)
                                             // + top row (h-20 = 80px) + nav row (h-12 = 48px) so the panel
                                             // sits flush under the nav. The trust bar below the nav is
-                                            // intentionally covered while the dropdown is open.
-                                            className="!fixed !inset-x-0 !top-[164px] !left-0 !mt-0 !w-screen !max-w-none border-t border-neutral-200 bg-white p-0 shadow-lg"
+                                            // intentionally covered while the dropdown is open. z-50 keeps
+                                            // it above sibling sections (hero carousel, banners) that open
+                                            // their own stacking context with `position: relative`.
+                                            className="!fixed !inset-x-0 !top-[164px] !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 bg-white p-0 shadow-lg"
                                         >
                                             <MegaPanel mega={cat.mega} />
                                         </NavigationMenuContent>
@@ -299,17 +353,6 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                             })}
                         </NavigationMenuList>
                     </NavigationMenu>
-                </div>
-            </div>
-
-            {/* trust bar — the faint gray strip below the white menu */}
-            <div className="hidden border-t border-neutral-100 bg-neutral-50 lg:block">
-                <div className="mx-auto flex h-9 max-w-7xl items-center justify-center gap-8 px-4 text-xs text-neutral-500">
-                    <span>Available on selected products</span>
-                    <span className="h-3 w-px bg-neutral-200" />
-                    <span>We move heaven and earth to deliver on time</span>
-                    <span className="h-3 w-px bg-neutral-200" />
-                    <span>FSC® certified papers</span>
                 </div>
             </div>
         </header>

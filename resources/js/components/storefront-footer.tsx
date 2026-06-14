@@ -47,18 +47,18 @@ const paperStocks: FooterLink[] = [
 ];
 
 const aboutUs: FooterLink[] = [
-    { label: 'About MOO', href: '/about' },
+    { label: 'About PrintPandora', href: '/about' },
     { label: 'Media resources', href: '/about/media' },
     { label: 'People, products and the planet', href: '/about/sustainability' },
-    { label: 'Who we are', href: '/about/who-we-are' },
+    { label: 'Who we are', href: '/about' },
     { label: 'Careers', href: '/careers' },
     { label: 'The Drop', href: '/the-drop' },
     { label: 'Business Services', href: '/shop?cat=business-services' },
     { label: 'Reseller', href: '/reseller' },
     { label: 'Printfinity', href: '/printfinity' },
-    { label: 'The MOO Promise', href: '/promise' },
+    { label: 'The PrintPandora Promise', href: '/promise' },
     { label: 'Packaging', href: '/packaging' },
-    { label: 'Partner with MOO', href: '/partner' },
+    { label: 'Partner with PrintPandora', href: '/partner' },
 ];
 
 const helpLinks: FooterLink[] = [
@@ -141,8 +141,8 @@ export function StorefrontFooter() {
                     <div className="flex items-center gap-2 text-neutral-600">
                         <TeardropIcon />
                         <span>
-                            © MOO Print Limited, LABS Triangle, Stables Market, Chalk Farm Road,
-                            London NW1 8AB
+                            © {new Date().getFullYear()} PrintPandora — print-on-demand for the
+                            small businesses, designers, and creators we love.
                         </span>
                     </div>
                     <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">

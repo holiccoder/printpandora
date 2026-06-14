@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import SEO from '@/components/seo';
-import { home } from '@/routes';
+import StorefrontLayout from '@/layouts/storefront-layout';
 
 interface Post {
     id: number;
@@ -31,31 +31,14 @@ function excerpt(body: string, length = 160): string {
 
 export default function BlogIndex({ posts }: Props) {
     return (
-        <>
+        <StorefrontLayout activeCategory="Blog">
             <SEO
                 title="Blog"
                 description="Read our latest articles and updates."
                 type="website"
             />
 
-            <div className="flex min-h-screen flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <header className="w-full border-b border-[#e3e3e0] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]">
-                    <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-                        <Link
-                            href={home()}
-                            className="text-lg font-semibold tracking-tight"
-                        >
-                            PrintPandora
-                        </Link>
-                        <Link
-                            href={home()}
-                            className="rounded-sm px-4 py-1.5 text-sm text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]"
-                        >
-                            Home
-                        </Link>
-                    </div>
-                </header>
-
+            <div className="flex flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
                 <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-12">
                     <h1 className="mb-8 text-3xl font-semibold tracking-tight">Blog</h1>
 
@@ -150,6 +133,6 @@ export default function BlogIndex({ posts }: Props) {
                     &copy; {new Date().getFullYear()} PrintPandora. All rights reserved.
                 </footer>
             </div>
-        </>
+        </StorefrontLayout>
     );
 }
