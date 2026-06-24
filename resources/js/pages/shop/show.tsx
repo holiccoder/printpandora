@@ -1,11 +1,15 @@
+// Content (labels, copy, images, FAQs) sourced from `content/hardcoded-content.json`
+// via useContent('product_detail_page'). Configurator state and price math stay
+// local to the page; JSON drives the labels and option metadata.
 import { Link, router } from '@inertiajs/react';
 import { ChevronRight, Star } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import SEO from '@/components/seo';
 import { Button } from '@/components/ui/button';
+import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
-
-const ACCENT = '#0f4c3a';
+import { findMatchingGallery } from '@/lib/product-options';
+import type { ProductGallery } from '@/lib/product-options';
 
 interface Product {
     id: number;
@@ -17,172 +21,227 @@ interface Product {
     category: { id: number; name: string; slug: string };
 }
 
+interface ProductOptions {
+    sizes: Array<{
+        name: string;
+        width: string;
+        height: string;
+        swatch_image: string;
+    }>;
+    paper_finish: Array<{
+        name: string;
+        description: string;
+        added_price: string;
+        swatch_image: string;
+    }>;
+    corners: Array<{
+        name: string;
+        description: string;
+        swatch_image: string;
+        added_price: string;
+    }>;
+    special_finish: Array<{
+        name: string;
+        description: string;
+        swatch_image: string;
+    }>;
+    print_code: Array<{
+        name: string;
+        description: string;
+    }>;
+    drill: Array<{
+        name: string;
+        swatch_image: string;
+        price_add: string;
+    }>;
+    quantity_price_table: Array<{
+        quantity: string;
+        price_per_card: string;
+        pack_price: string;
+        pack_original_price: string;
+        is_recommended: boolean;
+    }>;
+    galleries?: ProductGallery[];
+}
+
 interface Props {
     product: Product;
     related: Product[];
+    productOptions?: ProductOptions;
 }
 
 /* -------------------------------------------------------------------------- */
-/* Configurator option data                                                   */
+/* Layout-only metadata (shapes, hrefs) — kept here, not in JSON              */
 /* -------------------------------------------------------------------------- */
 
-const galleryThumbs = [
-    'https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=400&q=70',
-    'https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=400&q=70',
-    'https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=400&q=70',
-    'https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=400&q=70',
-];
+const sizeShapes: Record<string, 'rect' | 'square'> = {
+    standard: 'rect',
+    square: 'square',
+};
 
-const sizes = [
-    { id: 'standard', label: 'Standard', dims: '85 x 55 mm', shape: 'rect' as const },
-    { id: 'square', label: 'Square', dims: '65 x 65 mm', shape: 'square' as const },
-];
-
-const finishes = [
-    {
-        id: 'matte',
-        label: 'Matte',
-        thumb: 'https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=200&q=70',
-    },
-    {
-        id: 'gloss',
-        label: 'Gloss',
-        thumb: 'https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=200&q=70',
-    },
-];
-
-const corners = [
-    { id: 'standard', label: 'Standard' },
-    { id: 'rounded', label: 'Rounded' },
-];
-
-/** Quantity tiers — base price × multiplier with a “discount” story.
- *  The 200 row is highlighted as the recommended option. */
-const quantityTiers = [
-    { qty: 50, multiplier: 1, save: 0 },
-    { qty: 100, multiplier: 1.6, save: 0.1 },
-    { qty: 200, multiplier: 2.4, save: 0.2 },
-    { qty: 400, multiplier: 4, save: 0.3 },
-];
-
-const RECOMMENDED_QTY = 200;
-
-const paperStocks = [
-    {
-        id: 'matte',
-        name: 'Matte',
-        blurb: 'Smooth, modern, and versatile. Our most popular choice for everyday print.',
-        image: 'https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=600&q=70',
-    },
-    {
-        id: 'soft-touch',
-        name: 'Soft Touch',
-        blurb: 'A velvety, tactile finish that feels as good as it looks.',
-        image: 'https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=600&q=70',
-    },
-    {
-        id: 'cotton',
-        name: 'Cotton',
-        blurb: '100% cotton — eco-friendly, surprisingly soft, and tree-free.',
-        image: 'https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=600&q=70',
-    },
-    {
-        id: 'luxe',
-        name: 'Luxe',
-        blurb: 'Triple layered with a coloured seam — the ultimate first impression.',
-        image: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=600&q=70',
-    },
-];
-
-const businessBlocks = [
-    {
-        title: 'Order for the whole team',
-        body: 'Need cards for multiple employees? Manage everyone’s details and order in one go.',
-        image: 'https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=600&q=70',
-        cta: 'Learn more',
-        href: '/shop?cat=business-services',
-    },
-    {
-        title: 'Manage brand templates',
-        body: 'Lock down your brand fonts, colours and logos so every order stays on-brand.',
-        image: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=600&q=70',
-        cta: 'Discover Brand Manager',
-        href: '/shop?cat=business-services',
-    },
-    {
-        title: 'Dedicated account manager',
-        body: 'Larger orders get a dedicated rep to handle quoting, proofing and shipping.',
-        image: 'https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=600&q=70',
-        cta: 'Talk to an expert',
-        href: '/contact',
-    },
-];
-
-const faqs = [
-    {
-        q: 'What are the exact dimensions?',
-        a: 'Standard: 85 × 55 mm. Square: 65 × 65 mm. MiniCard: 70 × 28 mm.',
-    },
-    {
-        q: 'How thick is the paper?',
-        a: 'Original Business Cards are printed on 350 gsm uncoated stock — substantial without being bulky.',
-    },
-    {
-        q: 'Can I print on both sides?',
-        a: 'Yes. All Original Business Cards are printed full-colour on both sides at no extra cost.',
-    },
-    {
-        q: 'Will my colours print accurately?',
-        a: 'We print in CMYK. Designs created in RGB will be auto-converted, which can shift bright tones slightly.',
-    },
-    {
-        q: 'What file format should I upload?',
-        a: 'PDF (preferred), PNG, or JPG at 300 dpi or higher. Include a 2 mm bleed on every edge.',
-    },
-    {
-        q: 'How long does delivery take?',
-        a: 'Standard: 3–5 working days. Next Day Delivery is available on selected products before 12pm.',
-    },
-    {
-        q: 'Can I order a sample first?',
-        a: 'Yes — order a free Business Card Sample Pack to feel every paper stock before you buy.',
-    },
-    {
-        q: 'Do you offer Printfinity?',
-        a: 'Yes. Print a different design on the back of every card in your pack at no extra cost.',
-    },
-    {
-        q: 'Is there a money-back guarantee?',
-        a: 'The MOO Promise — if you’re not 100% happy with your order, we’ll reprint it or refund you.',
-    },
+const businessBlockHrefs = [
+    '/shop?cat=business-services',
+    '/shop?cat=business-services',
+    '/contact',
 ];
 
 /* -------------------------------------------------------------------------- */
 /* Page                                                                       */
 /* -------------------------------------------------------------------------- */
 
-export default function ShopShow({ product, related }: Props) {
-    const basePrice = parseFloat(product.price);
+export default function ShopShow({ product, related, productOptions }: Props) {
+    const c = useContent('product_detail_page') as any;
+    const ACCENT = c.accent_color;
 
-    const [selectedSize, setSelectedSize] = useState(sizes[0].id);
-    const [selectedFinish, setSelectedFinish] = useState(finishes[0].id);
-    const [selectedCorners, setSelectedCorners] = useState(corners[0].id);
-    const [selectedQty, setSelectedQty] = useState<number>(RECOMMENDED_QTY);
-    const [activeImage, setActiveImage] = useState(
-        product.featured_image ?? galleryThumbs[0],
+    const galleryThumbs: string[] = c.gallery_thumb_image_urls;
+    const finishThumbs: string[] = c.finish_thumb_image_urls;
+
+    const hasProductOptions = productOptions != null;
+
+    const sizes = hasProductOptions
+        ? productOptions.sizes.map((s) => ({
+              id: s.name.toLowerCase(),
+              label: s.name.charAt(0).toUpperCase() + s.name.slice(1),
+              dims: `${s.width}" x ${s.height}"`,
+              swatch: s.swatch_image,
+          }))
+        : c.configurator_options.sizes;
+
+    const finishes = hasProductOptions
+        ? productOptions.paper_finish.map((f) => ({
+              id: f.name.toLowerCase(),
+              label: f.name,
+              description: f.description,
+              thumb: f.swatch_image,
+          }))
+        : c.configurator_options.finishes.map((f: any, i: number) => ({
+              ...f,
+              thumb: finishThumbs[i] ?? '',
+          }));
+
+    const cornersList = hasProductOptions
+        ? productOptions.corners.map((cn) => ({
+              id: cn.name.toLowerCase(),
+              label: cn.name,
+              swatch: cn.swatch_image,
+          }))
+        : c.configurator_options.corners;
+
+    const specialFinishes = hasProductOptions
+        ? productOptions.special_finish
+              .filter((f) => f.name.toLowerCase() !== 'none')
+              .map((f) => ({
+                  id: f.name.toLowerCase().replace(/\s+/g, '-'),
+                  label: f.name.charAt(0).toUpperCase() + f.name.slice(1),
+                  description: f.description,
+                  thumb: f.swatch_image,
+              }))
+        : [];
+
+    const quantityTiers = hasProductOptions
+        ? productOptions.quantity_price_table.map((q) => ({
+              qty: parseInt(q.quantity, 10),
+              pricePerCard: parseFloat(q.price_per_card),
+              currentPrice: parseFloat(q.pack_price),
+              originalPrice: q.pack_original_price ? parseFloat(q.pack_original_price) : null,
+              recommended: q.is_recommended,
+          }))
+        : c.configurator_options.quantity_tiers.map((t: any) => {
+              const total = parseFloat(product.price) * t.multiplier * (1 - t.save);
+              return {
+                  qty: t.qty,
+                  pricePerCard: total / t.qty,
+                  currentPrice: total,
+                  originalPrice: t.save > 0 ? parseFloat(product.price) * t.multiplier : null,
+                  recommended: !!t.recommended,
+                  badge: t.badge,
+              };
+          });
+
+    const recommendedTier = quantityTiers.find((t: any) => t.recommended) ?? quantityTiers[0];
+    const RECOMMENDED_QTY = recommendedTier.qty;
+
+    const configuredGalleries = useMemo(
+        () => (productOptions?.galleries ?? []),
+        [productOptions],
     );
+
+    const fallbackGallery = useMemo<ProductGallery>(
+        () => ({
+            id: 'fallback',
+            is_default: true,
+            match: {},
+            images: galleryThumbs,
+        }),
+        [galleryThumbs],
+    );
+
+    const [selectedSize, setSelectedSize] = useState<string>(sizes[0].id);
+    const [selectedFinish, setSelectedFinish] = useState<string>(finishes[0].id);
+    const [selectedCorners, setSelectedCorners] = useState<string>(cornersList[0].id);
+    const [selectedSpecialFinish, setSelectedSpecialFinish] = useState<string>(
+        specialFinishes[0]?.id ?? 'none',
+    );
+    const [selectedQty, setSelectedQty] = useState<number>(RECOMMENDED_QTY);
+    const [selectedThumbnail, setSelectedThumbnail] = useState<string | null>(null);
     const [added, setAdded] = useState(false);
 
-    const tier = useMemo(
-        () => quantityTiers.find((t) => t.qty === selectedQty) ?? quantityTiers[0],
-        [selectedQty],
+    const selectedOptions = useMemo<Record<string, string>>(
+        () => ({
+            sizes: selectedSize,
+            paper_finish: selectedFinish,
+            corners: selectedCorners,
+            special_finish: selectedSpecialFinish,
+            quantity: String(selectedQty),
+        }),
+        [selectedSize, selectedFinish, selectedCorners, selectedSpecialFinish, selectedQty],
     );
 
-    const fullPrice = basePrice * tier.multiplier;
-    const finalPrice = fullPrice * (1 - tier.save);
+    const defaultOptions = useMemo<Record<string, string>>(
+        () => ({
+            sizes: sizes[0].id,
+            paper_finish: finishes[0].id,
+            corners: cornersList[0].id,
+            special_finish: specialFinishes[0]?.id ?? 'none',
+            quantity: String(RECOMMENDED_QTY),
+        }),
+        [sizes, finishes, cornersList, specialFinishes, RECOMMENDED_QTY],
+    );
 
-    const sizeLabel = sizes.find((s) => s.id === selectedSize)?.label ?? '';
-    const finishLabel = finishes.find((f) => f.id === selectedFinish)?.label ?? '';
+    const activeGallery = useMemo(() => {
+        if (configuredGalleries.length > 0) {
+            const matched = findMatchingGallery(configuredGalleries, selectedOptions, defaultOptions);
+
+            if (matched) {
+                return matched;
+            }
+        }
+
+        return fallbackGallery;
+    }, [configuredGalleries, selectedOptions, defaultOptions, fallbackGallery]);
+
+    const activeImage = useMemo(() => {
+        if (selectedThumbnail && activeGallery.images.includes(selectedThumbnail)) {
+            return selectedThumbnail;
+        }
+
+        return activeGallery.images[0] ?? product.featured_image ?? galleryThumbs[0];
+    }, [selectedThumbnail, activeGallery, product.featured_image, galleryThumbs]);
+
+    const tier = useMemo(
+        () => quantityTiers.find((t: any) => t.qty === selectedQty) ?? quantityTiers[0],
+        [selectedQty, quantityTiers],
+    );
+
+    const fullPrice = tier.originalPrice ?? tier.currentPrice;
+    const finalPrice = tier.currentPrice;
+
+    const sizeLabel = sizes.find((s: any) => s.id === selectedSize)?.label ?? '';
+    const finishLabel = finishes.find((f: any) => f.id === selectedFinish)?.label ?? '';
+    const cornersLabel = cornersList.find((cn: any) => cn.id === selectedCorners)?.label ?? '';
+    const specialFinishLabel =
+        specialFinishes.find((f: any) => f.id === selectedSpecialFinish)?.label ?? '';
+    const showSpecialFinishInSummary = specialFinishes.length > 0;
 
     const addToCart = () => {
         setAdded(true);
@@ -190,7 +249,7 @@ export default function ShopShow({ product, related }: Props) {
             '/cart/add',
             {
                 product_id: product.id,
-                quantity: selectedQty,
+                options: selectedOptions,
             },
             {
                 preserveScroll: true,
@@ -198,6 +257,10 @@ export default function ShopShow({ product, related }: Props) {
             },
         );
     };
+
+    const breadcrumbs: string[] = c.breadcrumbs;
+    const featureChips: string[] = c.feature_chips;
+    const summaryLabels: string[] = c.order_summary.labels;
 
     return (
         <StorefrontLayout>
@@ -215,13 +278,7 @@ export default function ShopShow({ product, related }: Props) {
                 <ol className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-xs text-neutral-500">
                     <li>
                         <Link href="/" className="hover:text-neutral-900">
-                            Home
-                        </Link>
-                    </li>
-                    <ChevronRight className="size-3.5" />
-                    <li>
-                        <Link href="/shop" className="hover:text-neutral-900">
-                            Shop
+                            {breadcrumbs[0]}
                         </Link>
                     </li>
                     <ChevronRight className="size-3.5" />
@@ -242,7 +299,7 @@ export default function ShopShow({ product, related }: Props) {
             <section className="bg-white">
                 <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-10 lg:grid-cols-2 lg:py-14">
                     {/* gallery */}
-                    <div>
+                    <div className="lg:sticky lg:top-[172px] lg:self-start">
                         <div className="overflow-hidden rounded-lg bg-neutral-100">
                             <img
                                 src={activeImage}
@@ -251,11 +308,11 @@ export default function ShopShow({ product, related }: Props) {
                             />
                         </div>
                         <div className="mt-3 grid grid-cols-4 gap-2">
-                            {galleryThumbs.map((src) => (
+                            {activeGallery.images.map((src) => (
                                 <button
                                     key={src}
                                     type="button"
-                                    onClick={() => setActiveImage(src)}
+                                    onClick={() => setSelectedThumbnail(src)}
                                     className={`overflow-hidden rounded-md border-2 transition-colors ${
                                         activeImage === src
                                             ? 'border-[#0f4c3a]'
@@ -268,6 +325,7 @@ export default function ShopShow({ product, related }: Props) {
                         </div>
                         <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-neutral-700">
                             <FeatureChip
+                                accent={ACCENT}
                                 icon={
                                     <svg
                                         viewBox="0 0 24 24"
@@ -282,9 +340,10 @@ export default function ShopShow({ product, related }: Props) {
                                         <rect x="8" y="11" width="13" height="9" rx="1" />
                                     </svg>
                                 }
-                                label="Double-sided"
+                                label={featureChips[0]}
                             />
                             <FeatureChip
+                                accent={ACCENT}
                                 icon={
                                     <svg
                                         viewBox="0 0 24 24"
@@ -299,7 +358,7 @@ export default function ShopShow({ product, related }: Props) {
                                         <path d="M12 3v18M3 12h18" />
                                     </svg>
                                 }
-                                label="Full colour"
+                                label={featureChips[1]}
                             />
                         </div>
                     </div>
@@ -313,41 +372,53 @@ export default function ShopShow({ product, related }: Props) {
                             {product.name}
                         </h1>
                         <div className="mt-3 flex items-center gap-3">
-                            <Stars value={4.6} />
-                            <span className="text-sm text-neutral-500">4.6 · 12,431 reviews</span>
+                            <Stars value={4.6} accent={ACCENT} ariaLabel={String(c.stars_aria_label_template).replace('{value}', '4.6')} />
+                            <span className="text-sm text-neutral-500">{c.stars_rating_text}</span>
                         </div>
                         <p className="mt-4 text-sm leading-relaxed text-neutral-700">
-                            Thicker than your average card. Printed on 350 gsm uncoated paper —
-                            substantial in the hand without bulking up your wallet.
+                            {c.product_subtitle}
                         </p>
 
-                        <OptionGroup label="Size">
+                        <OptionGroup label={c.configurator_labels.size}>
                             <div className="grid grid-cols-2 gap-3">
-                                {sizes.map((s) => (
-                                    <ChoiceTile
-                                        key={s.id}
-                                        active={selectedSize === s.id}
-                                        onClick={() => setSelectedSize(s.id)}
-                                    >
-                                        <div className="flex h-16 items-center justify-center">
-                                            <span
-                                                className={`block rounded-sm border-2 ${
-                                                    selectedSize === s.id
-                                                        ? 'border-[#0f4c3a] bg-[#0f4c3a]/5'
-                                                        : 'border-neutral-300 bg-neutral-50'
-                                                } ${s.shape === 'rect' ? 'h-8 w-14' : 'size-10'}`}
-                                            />
-                                        </div>
-                                        <p className="mt-2 text-sm font-semibold">{s.label}</p>
-                                        <p className="text-xs text-neutral-500">{s.dims}</p>
-                                    </ChoiceTile>
-                                ))}
+                                {sizes.map((s: any) => {
+                                    const shape = sizeShapes[s.id] ?? 'rect';
+                                    const hasSwatch = !!s.swatch;
+
+                                    return (
+                                        <ChoiceTile
+                                            key={s.id}
+                                            active={selectedSize === s.id}
+                                            onClick={() => setSelectedSize(s.id)}
+                                        >
+                                            <div className="flex h-16 items-center justify-center">
+                                                {hasSwatch ? (
+                                                    <img
+                                                        src={s.swatch}
+                                                        alt=""
+                                                        className="h-full max-h-16 rounded-sm object-contain"
+                                                    />
+                                                ) : (
+                                                    <span
+                                                        className={`block rounded-sm border-2 ${
+                                                            selectedSize === s.id
+                                                                ? 'border-[#0f4c3a] bg-[#0f4c3a]/5'
+                                                                : 'border-neutral-300 bg-neutral-50'
+                                                        } ${shape === 'rect' ? 'h-8 w-14' : 'size-10'}`}
+                                                    />
+                                                )}
+                                            </div>
+                                            <p className="mt-2 text-sm font-semibold">{s.label}</p>
+                                            <p className="text-xs text-neutral-500">{s.dims}</p>
+                                        </ChoiceTile>
+                                    );
+                                })}
                             </div>
                         </OptionGroup>
 
-                        <OptionGroup label="Paper finish">
+                        <OptionGroup label={c.configurator_labels.paper_finish}>
                             <div className="grid grid-cols-2 gap-3">
-                                {finishes.map((f) => (
+                                {finishes.map((f: any) => (
                                     <ChoiceTile
                                         key={f.id}
                                         active={selectedFinish === f.id}
@@ -359,53 +430,92 @@ export default function ShopShow({ product, related }: Props) {
                                             className="aspect-[3/2] w-full rounded-sm object-cover"
                                         />
                                         <p className="mt-2 text-sm font-semibold">{f.label}</p>
+                                        {f.description && (
+                                            <p className="text-xs text-neutral-500">{f.description}</p>
+                                        )}
                                     </ChoiceTile>
                                 ))}
                             </div>
                         </OptionGroup>
 
-                        <OptionGroup label="Corners">
+                        <OptionGroup label={c.configurator_labels.corners}>
                             <div className="grid grid-cols-2 gap-3">
-                                {corners.map((c) => (
-                                    <ChoiceTile
-                                        key={c.id}
-                                        active={selectedCorners === c.id}
-                                        onClick={() => setSelectedCorners(c.id)}
-                                    >
-                                        <div className="flex h-16 items-center justify-center">
-                                            <span
-                                                className={`block h-8 w-14 border-2 ${
-                                                    c.id === 'rounded' ? 'rounded-lg' : 'rounded-sm'
-                                                } ${
-                                                    selectedCorners === c.id
-                                                        ? 'border-[#0f4c3a] bg-[#0f4c3a]/5'
-                                                        : 'border-neutral-300 bg-neutral-50'
-                                                }`}
-                                            />
-                                        </div>
-                                        <p className="mt-2 text-sm font-semibold">{c.label}</p>
-                                    </ChoiceTile>
-                                ))}
+                                {cornersList.map((cn: any) => {
+                                    const hasSwatch = !!cn.swatch;
+
+                                    return (
+                                        <ChoiceTile
+                                            key={cn.id}
+                                            active={selectedCorners === cn.id}
+                                            onClick={() => setSelectedCorners(cn.id)}
+                                        >
+                                            <div className="flex h-16 items-center justify-center">
+                                                {hasSwatch ? (
+                                                    <div
+                                                        className="h-12 w-12 text-neutral-700"
+                                                        dangerouslySetInnerHTML={{ __html: cn.swatch }}
+                                                    />
+                                                ) : (
+                                                    <span
+                                                        className={`block h-8 w-14 border-2 ${
+                                                            cn.id === 'rounded' ? 'rounded-lg' : 'rounded-sm'
+                                                        } ${
+                                                            selectedCorners === cn.id
+                                                                ? 'border-[#0f4c3a] bg-[#0f4c3a]/5'
+                                                                : 'border-neutral-300 bg-neutral-50'
+                                                        }`}
+                                                    />
+                                                )}
+                                            </div>
+                                            <p className="mt-2 text-sm font-semibold">{cn.label}</p>
+                                        </ChoiceTile>
+                                    );
+                                })}
                             </div>
                         </OptionGroup>
 
-                        <OptionGroup label="Quantity">
+                        {specialFinishes.length > 0 && (
+                            <OptionGroup label="Special finish">
+                                <div className="grid grid-cols-2 gap-3">
+                                    {specialFinishes.map((f: any) => (
+                                        <ChoiceTile
+                                            key={f.id}
+                                            active={selectedSpecialFinish === f.id}
+                                            onClick={() => setSelectedSpecialFinish(f.id)}
+                                        >
+                                            <img
+                                                src={f.thumb}
+                                                alt=""
+                                                className="aspect-[3/2] w-full rounded-sm object-cover"
+                                            />
+                                            <p className="mt-2 text-sm font-semibold">{f.label}</p>
+                                            {f.description && (
+                                                <p className="text-xs text-neutral-500">{f.description}</p>
+                                            )}
+                                        </ChoiceTile>
+                                    ))}
+                                </div>
+                            </OptionGroup>
+                        )}
+
+                        <OptionGroup label={c.configurator_labels.quantity}>
                             <div className="overflow-hidden rounded-md border border-neutral-200">
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
-                                            <th className="px-4 py-2 font-medium">Quantity</th>
-                                            <th className="px-4 py-2 font-medium">Was</th>
-                                            <th className="px-4 py-2 font-medium">Now</th>
-                                            <th className="px-4 py-2"></th>
+                                            <th className="px-4 py-2 font-medium">{c.quantity_table_headers[0]}</th>
+                                            <th className="px-4 py-2 font-medium">{c.quantity_table_headers[1]}</th>
+                                            <th className="px-4 py-2 font-medium">{c.quantity_table_headers[2]}</th>
+                                            <th className="px-4 py-2 font-medium">{c.quantity_table_headers[3]}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100">
-                                        {quantityTiers.map((t) => {
-                                            const recommended = t.qty === RECOMMENDED_QTY;
+                                        {quantityTiers.map((t: any) => {
+                                            const recommended = !!t.recommended;
                                             const active = selectedQty === t.qty;
-                                            const was = basePrice * t.multiplier;
-                                            const now = was * (1 - t.save);
+                                            const was = t.originalPrice;
+                                            const now = t.currentPrice;
+
                                             return (
                                                 <tr
                                                     key={t.qty}
@@ -432,13 +542,16 @@ export default function ShopShow({ product, related }: Props) {
                                                             </span>
                                                             {recommended && (
                                                                 <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-800">
-                                                                    Best value
+                                                                    {t.badge ?? 'Recommended'}
                                                                 </span>
                                                             )}
                                                         </label>
                                                     </td>
+                                                    <td className="px-4 py-3 text-neutral-500">
+                                                        ${t.pricePerCard.toFixed(2)}
+                                                    </td>
                                                     <td className="px-4 py-3 text-neutral-400">
-                                                        {t.save > 0 ? (
+                                                        {was != null && was > now ? (
                                                             <span className="line-through">${was.toFixed(2)}</span>
                                                         ) : (
                                                             <span>—</span>
@@ -446,9 +559,6 @@ export default function ShopShow({ product, related }: Props) {
                                                     </td>
                                                     <td className="px-4 py-3 font-semibold text-neutral-900">
                                                         ${now.toFixed(2)}
-                                                    </td>
-                                                    <td className="px-4 py-3 text-right text-xs text-neutral-500">
-                                                        {t.save > 0 && `Save ${Math.round(t.save * 100)}%`}
                                                     </td>
                                                 </tr>
                                             );
@@ -479,9 +589,9 @@ export default function ShopShow({ product, related }: Props) {
                                 </svg>
                             </span>
                             <div>
-                                <p className="font-semibold text-neutral-900">Get it by Tue, 16 Jun</p>
+                                <p className="font-semibold text-neutral-900">{c.delivery_callout.title}</p>
                                 <p className="text-neutral-600">
-                                    Order before 12pm Mon–Fri for next-day delivery on selected products.
+                                    {c.delivery_callout.subtitle}
                                 </p>
                             </div>
                         </div>
@@ -489,22 +599,28 @@ export default function ShopShow({ product, related }: Props) {
                         {/* order summary */}
                         <div className="mt-6 rounded-md border border-neutral-200 bg-white px-4 py-4">
                             <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500">
-                                Your selection
+                                {c.order_summary.heading}
                             </p>
                             <dl className="grid grid-cols-2 gap-y-1 text-sm">
-                                <dt className="text-neutral-500">Paper</dt>
+                                <dt className="text-neutral-500">{summaryLabels[0]}</dt>
                                 <dd className="text-right font-medium">{finishLabel}</dd>
-                                <dt className="text-neutral-500">Size</dt>
+                                <dt className="text-neutral-500">{summaryLabels[1]}</dt>
                                 <dd className="text-right font-medium">{sizeLabel}</dd>
-                                <dt className="text-neutral-500">Quantity</dt>
+                                <dt className="text-neutral-500">{summaryLabels[2]}</dt>
                                 <dd className="text-right font-medium">{selectedQty}</dd>
-                                <dt className="text-neutral-500">Corners</dt>
-                                <dd className="text-right font-medium capitalize">{selectedCorners}</dd>
+                                <dt className="text-neutral-500">{summaryLabels[3]}</dt>
+                                <dd className="text-right font-medium capitalize">{cornersLabel}</dd>
+                                {showSpecialFinishInSummary && (
+                                    <>
+                                        <dt className="text-neutral-500">Special finish</dt>
+                                        <dd className="text-right font-medium">{specialFinishLabel}</dd>
+                                    </>
+                                )}
                             </dl>
                             <div className="mt-4 flex items-baseline justify-between border-t border-neutral-100 pt-4">
-                                <span className="text-sm text-neutral-500">Total</span>
+                                <span className="text-sm text-neutral-500">{c.order_summary.total_label}</span>
                                 <div className="text-right">
-                                    {tier.save > 0 && (
+                                    {tier.originalPrice != null && tier.originalPrice > tier.currentPrice && (
                                         <span className="mr-2 text-sm text-neutral-400 line-through">
                                             ${fullPrice.toFixed(2)}
                                         </span>
@@ -519,12 +635,13 @@ export default function ShopShow({ product, related }: Props) {
                         {/* design CTA */}
                         <div className="mt-8">
                             <h2 className="mb-3 text-base font-bold text-neutral-900">
-                                How would you like to design?
+                                {c.design_cta.heading}
                             </h2>
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                                 <DesignChoice
-                                    title="Use a template"
-                                    body="Browse hundreds of designs and personalise yours in minutes."
+                                    title={c.design_cta.options[0].title}
+                                    body={c.design_cta.options[0].body}
+                                    accent={ACCENT}
                                     icon={
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="size-7">
                                             <rect x="3" y="3" width="7" height="9" rx="1" />
@@ -535,8 +652,9 @@ export default function ShopShow({ product, related }: Props) {
                                     }
                                 />
                                 <DesignChoice
-                                    title="Design online"
-                                    body="Start from scratch in our easy drag-and-drop designer."
+                                    title={c.design_cta.options[1].title}
+                                    body={c.design_cta.options[1].body}
+                                    accent={ACCENT}
                                     icon={
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="size-7">
                                             <path d="M3 17l6-6 4 4 8-8" />
@@ -545,8 +663,9 @@ export default function ShopShow({ product, related }: Props) {
                                     }
                                 />
                                 <DesignChoice
-                                    title="Upload a full design"
-                                    body="Already have artwork? Upload your own PDF or PNG."
+                                    title={c.design_cta.options[2].title}
+                                    body={c.design_cta.options[2].body}
+                                    accent={ACCENT}
                                     icon={
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="size-7">
                                             <path d="M12 3v12" />
@@ -561,10 +680,11 @@ export default function ShopShow({ product, related }: Props) {
                         <Button
                             onClick={addToCart}
                             disabled={added}
-                            className="mt-6 h-12 w-full text-base font-semibold text-white"
-                            style={{ backgroundColor: added ? '#0c3d2f' : ACCENT }}
+                            className={`mt-6 h-12 w-full text-base font-semibold text-primary-foreground ${added ? 'bg-primary/90' : 'bg-primary hover:bg-primary/90'}`}
                         >
-                            {added ? 'Added to cart' : `Add to cart · $${finalPrice.toFixed(2)}`}
+                            {added
+                                ? c.added_to_cart_button
+                                : String(c.add_to_cart_button_template).replace('{price}', finalPrice.toFixed(2))}
                         </Button>
                     </div>
                 </div>
@@ -575,26 +695,17 @@ export default function ShopShow({ product, related }: Props) {
                 <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-12 lg:grid-cols-2 lg:py-16">
                     <div>
                         <h2 className="text-2xl font-bold text-neutral-900">
-                            Designing your card?
+                            {c.design_guidelines.heading}
                         </h2>
                         <p className="mt-3 text-sm leading-relaxed text-neutral-700">
-                            Set up your file with a 2 mm bleed, keep important text and logos
-                            inside the safe area, and export at 300 dpi in CMYK. The pink stripe
-                            shows where we trim — anything inside the dashed line will print.
+                            {c.design_guidelines.description}
                         </p>
                         <ul className="mt-6 space-y-2 text-sm text-neutral-700">
-                            <li className="flex gap-2">
-                                <Bullet /> 2 mm bleed on every edge
-                            </li>
-                            <li className="flex gap-2">
-                                <Bullet /> 300 dpi minimum image resolution
-                            </li>
-                            <li className="flex gap-2">
-                                <Bullet /> CMYK colour space (RGB will auto-convert)
-                            </li>
-                            <li className="flex gap-2">
-                                <Bullet /> Embedded fonts or outlined text
-                            </li>
+                            {c.design_guidelines.bullets.map((bullet: string) => (
+                                <li key={bullet} className="flex gap-2">
+                                    <Bullet accent={ACCENT} /> {bullet}
+                                </li>
+                            ))}
                         </ul>
                     </div>
                     <div className="relative flex items-center justify-center">
@@ -603,12 +714,12 @@ export default function ShopShow({ product, related }: Props) {
                             <div className="h-full w-full rounded-sm border-2 border-dashed border-neutral-300 p-3">
                                 <div className="flex h-full w-full items-center justify-center rounded-sm bg-neutral-50">
                                     <span className="text-xs uppercase tracking-wider text-neutral-400">
-                                        Safe area
+                                        {c.design_guidelines.safe_area_label}
                                     </span>
                                 </div>
                             </div>
                             <span className="absolute -top-3 left-3 bg-neutral-100 px-2 text-[10px] font-semibold uppercase tracking-wider text-pink-500">
-                                Bleed area
+                                {c.design_guidelines.bleed_area_label}
                             </span>
                         </div>
                     </div>
@@ -620,20 +731,19 @@ export default function ShopShow({ product, related }: Props) {
                 className="relative h-[320px] bg-cover bg-center text-white sm:h-[420px]"
                 style={{
                     backgroundImage:
-                        'linear-gradient(to right, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.1) 60%), url(https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1600&q=70)',
+                        `linear-gradient(to right, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.1) 60%), url(${c.lifestyle_banner.image_url})`,
                 }}
             >
                 <div className="mx-auto flex h-full max-w-7xl items-center px-4">
                     <div className="max-w-md">
                         <p className="text-xs font-semibold uppercase tracking-[0.25em]">
-                            Make a first impression
+                            {c.lifestyle_banner.eyebrow}
                         </p>
                         <h2 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl">
-                            Premium cards for the moments that matter.
+                            {c.lifestyle_banner.heading}
                         </h2>
                         <p className="mt-3 text-sm leading-relaxed opacity-90">
-                            From boardroom intros to coffee-shop hand-offs, our Original Business
-                            Cards land right every time.
+                            {c.lifestyle_banner.body}
                         </p>
                     </div>
                 </div>
@@ -644,15 +754,14 @@ export default function ShopShow({ product, related }: Props) {
                 <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
                     <header className="mb-8 max-w-2xl">
                         <h2 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
-                            Discover our other paper stocks
+                            {c.paper_stocks_section.heading}
                         </h2>
                         <p className="mt-2 text-sm text-neutral-600">
-                            Every paper has its own personality. Order a free sample pack to feel
-                            them all.
+                            {c.paper_stocks_section.subtitle}
                         </p>
                     </header>
                     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                        {paperStocks.map((stock) => (
+                        {c.paper_stocks_section.stocks.map((stock: any) => (
                             <li key={stock.id}>
                                 <Link
                                     href={`/paper-stocks/${stock.id}`}
@@ -660,7 +769,7 @@ export default function ShopShow({ product, related }: Props) {
                                 >
                                     <div className="overflow-hidden rounded-md bg-neutral-100">
                                         <img
-                                            src={stock.image}
+                                            src={stock.image_url}
                                             alt={stock.name}
                                             loading="lazy"
                                             className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -674,7 +783,7 @@ export default function ShopShow({ product, related }: Props) {
                                         className="mt-2 inline-flex items-center gap-1 text-sm font-semibold group-hover:underline"
                                         style={{ color: ACCENT }}
                                     >
-                                        Learn more <ChevronRight className="size-3.5" />
+                                        {c.paper_stocks_section.cta} <ChevronRight className="size-3.5" />
                                     </span>
                                 </Link>
                             </li>
@@ -688,7 +797,7 @@ export default function ShopShow({ product, related }: Props) {
                 className="relative bg-cover bg-center"
                 style={{
                     backgroundImage:
-                        'linear-gradient(rgba(15,76,58,0.55), rgba(15,76,58,0.55)), url(https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1600&q=70)',
+                        `linear-gradient(rgba(15,76,58,0.55), rgba(15,76,58,0.55)), url(${c.printfinity_banner.image_url})`,
                 }}
             >
                 <div className="mx-auto max-w-7xl px-4 py-16 lg:py-24">
@@ -697,22 +806,20 @@ export default function ShopShow({ product, related }: Props) {
                             className="text-xs font-semibold uppercase tracking-[0.25em]"
                             style={{ color: ACCENT }}
                         >
-                            Printfinity
+                            {c.printfinity_banner.eyebrow}
                         </p>
                         <h2 className="mt-3 text-2xl font-bold text-neutral-900 sm:text-3xl">
-                            A different design on every card. For free.
+                            {c.printfinity_banner.heading}
                         </h2>
                         <p className="mt-3 text-sm leading-relaxed text-neutral-700">
-                            Showcase your full portfolio, your team, or every product you make —
-                            print a unique design on the back of every card in the pack at no
-                            extra cost.
+                            {c.printfinity_banner.body}
                         </p>
                         <Link
                             href="/printfinity"
                             className="mt-4 inline-flex items-center gap-1 text-sm font-semibold hover:underline"
                             style={{ color: ACCENT }}
                         >
-                            Discover Printfinity <ChevronRight className="size-3.5" />
+                            {c.printfinity_banner.cta} <ChevronRight className="size-3.5" />
                         </Link>
                     </div>
                 </div>
@@ -723,21 +830,20 @@ export default function ShopShow({ product, related }: Props) {
                 <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
                     <header className="mb-8 max-w-2xl">
                         <h2 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
-                            Built for teams and businesses
+                            {c.business_solutions_section.heading}
                         </h2>
                         <p className="mt-2 text-sm text-neutral-600">
-                            Whether you’re kitting out two staff or two thousand, we’ve got the
-                            tools to make it painless.
+                            {c.business_solutions_section.subtitle}
                         </p>
                     </header>
                     <ul className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                        {businessBlocks.map((block) => (
+                        {c.business_solutions_section.blocks.map((block: any, i: number) => (
                             <li
                                 key={block.title}
                                 className="overflow-hidden rounded-lg bg-white shadow-sm"
                             >
                                 <img
-                                    src={block.image}
+                                    src={block.image_url}
                                     alt=""
                                     loading="lazy"
                                     className="aspect-[5/3] w-full object-cover"
@@ -750,7 +856,7 @@ export default function ShopShow({ product, related }: Props) {
                                         {block.body}
                                     </p>
                                     <Link
-                                        href={block.href}
+                                        href={businessBlockHrefs[i] ?? '/shop?cat=business-services'}
                                         className="mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline"
                                         style={{ color: ACCENT }}
                                     >
@@ -768,10 +874,10 @@ export default function ShopShow({ product, related }: Props) {
                 <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
                     <header className="mb-8 max-w-2xl">
                         <h2 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
-                            Even more good stuff
+                            {c.cross_sell_section.heading}
                         </h2>
                         <p className="mt-2 text-sm text-neutral-600">
-                            Round out your kit with these customer favourites.
+                            {c.cross_sell_section.subtitle}
                         </p>
                     </header>
                     {related.length > 0 ? (
@@ -779,7 +885,7 @@ export default function ShopShow({ product, related }: Props) {
                             {related.slice(0, 3).map((item) => (
                                 <li key={item.id}>
                                     <Link
-                                        href={`/shop/${item.slug}`}
+                                        href={`/${item.slug}`}
                                         className="group block overflow-hidden rounded-md"
                                     >
                                         <div className="overflow-hidden bg-neutral-100">
@@ -805,7 +911,7 @@ export default function ShopShow({ product, related }: Props) {
                                                 className="mt-1 inline-flex items-center gap-1 text-sm font-semibold group-hover:underline"
                                                 style={{ color: ACCENT }}
                                             >
-                                                Shop {item.name} <ChevronRight className="size-3.5" />
+                                                {String(c.cross_sell_section.shop_label_template).replace('{name}', item.name)} <ChevronRight className="size-3.5" />
                                             </span>
                                         </div>
                                     </Link>
@@ -814,7 +920,7 @@ export default function ShopShow({ product, related }: Props) {
                         </ul>
                     ) : (
                         <p className="text-sm text-neutral-500">
-                            More products coming soon.
+                            {c.cross_sell_section.empty_state}
                         </p>
                     )}
                 </div>
@@ -827,11 +933,11 @@ export default function ShopShow({ product, related }: Props) {
                         FAQs — {product.name}
                     </h2>
                     <ul className="grid grid-cols-1 gap-x-10 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
-                        {faqs.map((faq) => (
-                            <li key={faq.q}>
-                                <h3 className="text-sm font-bold text-neutral-900">{faq.q}</h3>
+                        {c.faq.map((faq: any) => (
+                            <li key={faq.question}>
+                                <h3 className="text-sm font-bold text-neutral-900">{faq.question}</h3>
                                 <p className="mt-2 text-sm leading-relaxed text-neutral-600">
-                                    {faq.a}
+                                    {faq.answer}
                                 </p>
                             </li>
                         ))}
@@ -846,25 +952,26 @@ export default function ShopShow({ product, related }: Props) {
 /* Sub-components                                                             */
 /* -------------------------------------------------------------------------- */
 
-function FeatureChip({ icon, label }: { icon: React.ReactNode; label: string }) {
+function FeatureChip({ icon, label, accent }: { icon: React.ReactNode; label: string; accent: string }) {
     return (
         <span className="inline-flex items-center gap-1.5">
-            <span style={{ color: ACCENT }}>{icon}</span>
+            <span style={{ color: accent }}>{icon}</span>
             <span className="text-xs font-semibold uppercase tracking-wide">{label}</span>
         </span>
     );
 }
 
-function Stars({ value }: { value: number }) {
+function Stars({ value, accent, ariaLabel }: { value: number; accent: string; ariaLabel: string }) {
     const full = Math.floor(value);
+
     return (
-        <div className="flex items-center gap-0.5" aria-label={`${value} out of 5`}>
+        <div className="flex items-center gap-0.5" aria-label={ariaLabel}>
             {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                     key={i}
                     className="size-4"
-                    fill={i < full ? ACCENT : 'transparent'}
-                    stroke={i < full ? ACCENT : '#cbd5d3'}
+                    fill={i < full ? accent : 'transparent'}
+                    stroke={i < full ? accent : '#cbd5d3'}
                     strokeWidth={1.5}
                 />
             ))}
@@ -915,29 +1022,31 @@ function DesignChoice({
     title,
     body,
     icon,
+    accent,
 }: {
     title: string;
     body: string;
     icon: React.ReactNode;
+    accent: string;
 }) {
     return (
         <button
             type="button"
             className="flex h-full flex-col items-start gap-2 rounded-md border-2 border-neutral-200 bg-white p-4 text-left transition-colors hover:border-[#0f4c3a] hover:bg-[#0f4c3a]/5"
         >
-            <span style={{ color: ACCENT }}>{icon}</span>
+            <span style={{ color: accent }}>{icon}</span>
             <p className="text-sm font-bold text-neutral-900">{title}</p>
             <p className="text-xs leading-relaxed text-neutral-600">{body}</p>
         </button>
     );
 }
 
-function Bullet() {
+function Bullet({ accent }: { accent: string }) {
     return (
         <span
             aria-hidden
             className="mt-1.5 inline-block size-1.5 shrink-0 rounded-full"
-            style={{ backgroundColor: ACCENT }}
+            style={{ backgroundColor: accent }}
         />
     );
 }

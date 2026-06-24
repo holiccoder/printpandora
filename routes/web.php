@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReferralController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Shop\OrderController;
 use App\Http\Controllers\Shop\ProductController;
 use App\Http\Controllers\Shop\TicketController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -18,6 +20,12 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::inertia('/about', 'about')->name('about');
 Route::inertia('/terms', 'terms')->name('terms');
 Route::inertia('/privacy', 'privacy')->name('privacy');
+Route::inertia('/shipping', 'shipping')->name('shipping');
+Route::inertia('/sample-packs', 'sample-packs')->name('shop.sample-packs');
+
+// Contact
+Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Social authentication (stubbed — wire up Laravel Socialite to enable)
 Route::get('auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])
@@ -64,7 +72,7 @@ Route::get('blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // Shop
 Route::get('shop', [ProductController::class, 'index'])->name('shop.index');
-Route::get('shop/{slug}', [ProductController::class, 'show'])->name('shop.show');
+Route::inertia('/business-cards', 'shop/business-cards')->name('shop.business-cards');
 
 // Referral
 Route::get('ref/{code}', [ReferralController::class, 'show'])->name('referral.show');
@@ -72,7 +80,6 @@ Route::get('ref/{code}', [ReferralController::class, 'show'])->name('referral.sh
 // Cart
 Route::get('cart', [CartController::class, 'index'])->name('shop.cart');
 Route::post('cart/add', [CartController::class, 'add'])->name('shop.cart.add');
-Route::patch('cart/update', [CartController::class, 'update'])->name('shop.cart.update');
 Route::delete('cart/remove', [CartController::class, 'remove'])->name('shop.cart.remove');
 
 // Checkout (requires auth)
@@ -95,3 +102,16 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/settings.php';
+
+// Product detail by slug — placed after all named routes so only truly
+// unmatched single-segment paths (i.e. product slugs) reach it.
+// The controller returns a 404 if no product matches the slug.
+Route::get('{slug}', [ProductController::class, 'show'])->name('shop.show');
+
+// Catch-all 404 — must be the last route registered. Runs inside the web
+// middleware stack so Inertia + shared props are available.
+Route::fallback(function () {
+    return Inertia::render('errors/not-found')
+        ->toResponse(request())
+        ->setStatusCode(404);
+});
