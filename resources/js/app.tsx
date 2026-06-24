@@ -17,12 +17,17 @@ createInertiaApp({
             case name === 'about':
             case name === 'terms':
             case name === 'privacy':
+            case name === 'shipping':
+            case name === 'contact':
+            case name === 'sample-packs':
                 return null;
             case name === 'dashboard':
                 return null;
             case name.startsWith('dashboard/'):
                 return null;
             case name.startsWith('blog/'):
+                return null;
+            case name.startsWith('errors/'):
                 return null;
             case name.startsWith('shop/'):
                 return null;

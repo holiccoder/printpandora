@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\HardcodedContent;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -41,7 +42,15 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            // Storefront content tree loaded from content/hardcoded-content.json.
+            // Closure so the JSON parse only runs when Inertia actually merges
+            // shared props — and the service memoises within the request.
+            'content' => fn () => app(HardcodedContent::class)->all(),
         ];
     }
 }

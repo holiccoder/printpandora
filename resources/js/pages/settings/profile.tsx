@@ -1,3 +1,4 @@
+// Content (labels/placeholders/links) sourced from `content/hardcoded-content.json` via useContent('settings_profile_page').
 import { Form, Link, usePage } from '@inertiajs/react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/delete-user';
@@ -7,6 +8,7 @@ import SEO from '@/components/seo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useContent } from '@/hooks/use-content';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
 import type { Auth } from '@/types';
@@ -22,19 +24,20 @@ export default function Profile({
     mustVerifyEmail: boolean;
     status?: string;
 }) {
+    const c = useContent('settings_profile_page') as any;
     const { auth } = usePage<PageProps>().props;
 
     return (
         <>
-            <SEO title="Profile settings" description="Update your PrintPandora profile name and email address." />
+            <SEO title={c.seo.title} description={c.seo.description} />
 
-            <h1 className="sr-only">Profile settings</h1>
+            <h1 className="sr-only">{c.sr_heading}</h1>
 
             <div className="space-y-6">
                 <Heading
                     variant="small"
-                    title="Profile"
-                    description="Update your name and email address"
+                    title={c.section_heading}
+                    description={c.section_description}
                 />
 
                 <Form
@@ -47,7 +50,7 @@ export default function Profile({
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">{c.labels.name}</Label>
 
                                 <Input
                                     id="name"
@@ -56,7 +59,7 @@ export default function Profile({
                                     name="name"
                                     required
                                     autoComplete="name"
-                                    placeholder="Full name"
+                                    placeholder={c.placeholders.name}
                                 />
 
                                 <InputError
@@ -66,7 +69,7 @@ export default function Profile({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">{c.labels.email}</Label>
 
                                 <Input
                                     id="email"
@@ -76,7 +79,7 @@ export default function Profile({
                                     name="email"
                                     required
                                     autoComplete="username"
-                                    placeholder="Email address"
+                                    placeholder={c.placeholders.email}
                                 />
 
                                 <InputError
@@ -89,22 +92,20 @@ export default function Profile({
                                 auth.user.email_verified_at === null && (
                                     <div>
                                         <p className="-mt-4 text-sm text-muted-foreground">
-                                            Your email address is unverified.{' '}
+                                            {c.unverified_email_prefix}
                                             <Link
                                                 href={send()}
                                                 as="button"
                                                 className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                                             >
-                                                Click here to re-send the
-                                                verification email.
+                                                {c.unverified_email_link}
                                             </Link>
                                         </p>
 
                                         {status ===
                                             'verification-link-sent' && (
                                             <div className="mt-2 text-sm font-medium text-green-600">
-                                                A new verification link has been
-                                                sent to your email address.
+                                                {c.verification_sent_message}
                                             </div>
                                         )}
                                     </div>
@@ -115,7 +116,7 @@ export default function Profile({
                                     disabled={processing}
                                     data-test="update-profile-button"
                                 >
-                                    Save
+                                    {c.buttons.save}
                                 </Button>
                             </div>
                         </>

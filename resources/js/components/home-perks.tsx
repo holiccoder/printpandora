@@ -1,90 +1,72 @@
 import { Link } from '@inertiajs/react';
+import { useContent } from '@/hooks/use-content';
 
 /**
  * Four-up value-prop strip shown on the home page beneath the hero
  * carousel. Each tile is a teal line-art icon, a bold headline, and a
- * short blurb. Mirrors the MOO marketing strip: Next Day Delivery,
- * The MOO Promise, Business Perks, Printfinity.
+ * short blurb. The icons stay hardcoded (they're code, not content);
+ * the title/description/href for each perk come from JSON.
  */
 
 const ACCENT = '#0f4c3a';
 
-type Perk = {
-    title: string;
-    description: string;
-    href: string;
-    icon: () => React.ReactElement;
-};
-
-const perks: Perk[] = [
-    {
-        title: 'Next day delivery!',
-        description: 'Available on selected products. Order before 12pm Mon-Fri.*',
-        href: '/next-day-delivery',
-        icon: ShippingBoxIcon,
-    },
-    {
-        title: 'The MOO Promise',
-        description: 'We move heaven and earth so you’re happy with your order!',
-        href: '/promise',
-        icon: PromiseSealIcon,
-    },
-    {
-        title: 'More perks for your business',
-        description: 'Get more for your print with MOO Business Services',
-        href: '/shop?cat=business-services',
-        icon: BusinessShapesIcon,
-    },
-    {
-        title: 'Printfinity',
-        description:
-            'Enjoy a different design on the back of every card – or every Sticker – for free!',
-        href: '/printfinity',
-        icon: PrintfinityCardsIcon,
-    },
+// Icons in the order the perks appear in content JSON. If the JSON
+// adds/removes perks, the icon set will fall back to the generic shapes
+// icon for any extra positions.
+const ICONS: Array<() => React.ReactElement> = [
+    ShippingBoxIcon,
+    PromiseSealIcon,
+    BusinessShapesIcon,
+    PrintfinityCardsIcon,
 ];
 
 export function HomePerks() {
+    const home = useContent('home_page');
+    const perks = home.perks;
+
     return (
         <section
-            aria-label="Why shop with PrintPandora"
+            aria-label={perks.section_aria_label}
             className="border-y border-neutral-100 bg-white"
         >
             <div className="mx-auto max-w-7xl px-4 py-10 lg:py-14">
                 <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                    {perks.map((perk) => (
-                        <li key={perk.title}>
-                            <Link
-                                href={perk.href}
-                                className="group flex flex-col items-center text-center"
-                            >
-                                <span className="mb-4 inline-flex size-16 items-center justify-center text-[#0f4c3a]">
-                                    <perk.icon />
-                                </span>
-                                <h3 className="mb-2 text-base font-bold text-neutral-900 group-hover:text-[#0f4c3a]">
-                                    {perk.title}
-                                </h3>
-                                <p className="max-w-xs text-sm leading-snug text-neutral-600">
-                                    {perk.description}
-                                </p>
-                            </Link>
-                        </li>
-                    ))}
+                    {perks.items.map((perk, i) => {
+                        const Icon = ICONS[i] ?? BusinessShapesIcon;
+
+                        return (
+                            <li key={perk.title}>
+                                <Link
+                                    href={perk.href}
+                                    className="group flex flex-col items-center text-center"
+                                >
+                                    <span className="mb-4 inline-flex size-16 items-center justify-center text-[#0f4c3a]">
+                                        <Icon />
+                                    </span>
+                                    <h3 className="mb-2 text-base font-bold text-neutral-900 group-hover:text-[#0f4c3a]">
+                                        {perk.title}
+                                    </h3>
+                                    <p className="max-w-xs text-sm leading-snug text-neutral-600">
+                                        {perk.description}
+                                    </p>
+                                </Link>
+                            </li>
+                        );
+                    })}
                 </ul>
 
                 {/* Trustpilot strip — peeks out beneath the perks the same way the
-                    reference shows it cut off at the very bottom. Linked to the
-                    public Trustpilot profile placeholder; swap when we know the real one. */}
+                    reference shows it cut off at the very bottom. */}
                 <div className="mt-10 flex items-center justify-center">
                     <a
-                        href="https://www.trustpilot.com"
+                        href={perks.trustpilot.href}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 text-sm font-semibold"
                         style={{ color: ACCENT }}
                     >
                         <TrustpilotStar />
-                        <span>Trustpilot</span>
+                        <span>{perks.trustpilot.label}</span>
                     </a>
                 </div>
             </div>
@@ -94,7 +76,7 @@ export function HomePerks() {
 
 /* --------------------------------- icons --------------------------------- */
 /* Teal line-art, drawn at 64×64 with currentColor stroke so a parent text
-   colour drives them. Stroke width is 1.5 to match the airy MOO style. */
+   colour drives them. Stroke width is 1.5 to match the airy PrintPandora style. */
 
 const STROKE: React.SVGProps<SVGSVGElement> = {
     xmlns: 'http://www.w3.org/2000/svg',

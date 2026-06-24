@@ -1,5 +1,7 @@
+// Content sourced from `content/hardcoded-content.json` via useContent('shop_tickets_show_page').
 import { Link, useForm } from '@inertiajs/react';
 import SEO from '@/components/seo';
+import { useContent } from '@/hooks/use-content';
 
 interface Reply {
     id: number;
@@ -30,6 +32,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function TicketShow({ ticket }: Props) {
+    const c = useContent('shop_tickets_show_page') as any;
     const { data, setData, post, processing, reset } = useForm({
         message: '',
     });
@@ -42,13 +45,13 @@ export default function TicketShow({ ticket }: Props) {
 
     return (
         <>
-            <SEO title={`Ticket #${ticket.id}`} />
+            <SEO title={`${c.seo_title_prefix}${ticket.id}`} />
 
             <div className="flex min-h-screen flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
                 <header className="w-full border-b border-[#e3e3e0] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]">
                     <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-                        <Link href="/" className="text-lg font-semibold tracking-tight">PrintPandora</Link>
-                        <Link href="/tickets" className="text-sm text-[#706f6c] hover:text-[#1b1b18]">My Tickets</Link>
+                        <Link href="/" className="text-lg font-semibold tracking-tight">{c.brand}</Link>
+                        <Link href="/tickets" className="text-sm text-[#706f6c] hover:text-[#1b1b18]">{c.nav_my_tickets}</Link>
                     </div>
                 </header>
 
@@ -57,7 +60,7 @@ export default function TicketShow({ ticket }: Props) {
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
-                        All tickets
+                        {c.back_link}
                     </Link>
 
                     <div className="mb-6 flex items-center justify-between">
@@ -70,10 +73,10 @@ export default function TicketShow({ ticket }: Props) {
                     </div>
 
                     <p className="mb-8 text-sm text-[#706f6c]">
-                        Opened {new Date(ticket.created_at).toLocaleDateString('en-US', {
+                        {c.opened_label} {new Date(ticket.created_at).toLocaleDateString('en-US', {
                             year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
                         })}
-                        {ticket.order_id && <> &middot; Order #{ticket.order_id}</>}
+                        {ticket.order_id && <> &middot; {c.order_label_prefix}{ticket.order_id}</>}
                     </p>
 
                     <div className="mb-8 space-y-4">
@@ -90,7 +93,7 @@ export default function TicketShow({ ticket }: Props) {
                                     <span className="text-sm font-semibold">{reply.user_name}</span>
                                     {reply.is_admin && (
                                         <span className="rounded-full bg-amber-200 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-800 dark:text-amber-200">
-                                            Staff
+                                            {c.staff_badge}
                                         </span>
                                     )}
                                     <span className="text-xs text-[#706f6c]">
@@ -106,23 +109,23 @@ export default function TicketShow({ ticket }: Props) {
 
                     {ticket.status !== 'closed' && (
                         <div className="rounded-lg border border-[#e3e3e0] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615]">
-                            <h2 className="mb-3 text-lg font-semibold">Add Reply</h2>
+                            <h2 className="mb-3 text-lg font-semibold">{c.reply_section_heading}</h2>
                             <form onSubmit={(e) => {
- e.preventDefault(); submitReply(); 
+ e.preventDefault(); submitReply();
 }} className="space-y-4">
                                 <textarea
                                     value={data.message}
                                     onChange={(e) => setData('message', e.target.value)}
                                     rows={4}
                                     className="w-full rounded-lg border border-[#e3e3e0] bg-white px-4 py-2.5 text-sm dark:border-[#3E3E3A] dark:bg-[#161615]"
-                                    placeholder="Type your reply..."
+                                    placeholder={c.reply_placeholder}
                                 />
                                 <button
                                     type="submit"
                                     disabled={processing || !data.message}
-                                    className="rounded-lg bg-amber-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-50"
+                                    className="rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                                 >
-                                    {processing ? 'Sending...' : 'Send Reply'}
+                                    {processing ? c.buttons.sending : c.buttons.send_reply}
                                 </button>
                             </form>
                         </div>

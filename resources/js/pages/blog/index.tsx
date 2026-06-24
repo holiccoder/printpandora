@@ -1,5 +1,7 @@
 import { Link } from '@inertiajs/react';
+import BlogHero from '@/components/blog-hero';
 import SEO from '@/components/seo';
+import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
 interface Post {
@@ -30,20 +32,28 @@ function excerpt(body: string, length = 160): string {
 }
 
 export default function BlogIndex({ posts }: Props) {
+    const c = useContent('blog_index_page');
+
     return (
-        <StorefrontLayout activeCategory="Blog">
+        <StorefrontLayout activeCategory={c.active_category}>
             <SEO
-                title="Blog"
-                description="Read our latest articles and updates."
-                type="website"
+                title={c.seo.title ?? 'Blog'}
+                description={c.seo.description}
+                type={c.seo.type as 'website' | undefined}
             />
 
             <div className="flex flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
+                <BlogHero />
+
                 <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-12">
-                    <h1 className="mb-8 text-3xl font-semibold tracking-tight">Blog</h1>
+                    <h1 className="mb-8 text-3xl font-semibold tracking-tight">
+                        {c.page_heading}
+                    </h1>
 
                     {posts.data.length === 0 ? (
-                        <p className="text-[#706f6c] dark:text-[#A1A09A]">No posts yet.</p>
+                        <p className="text-[#706f6c] dark:text-[#A1A09A]">
+                            {c.empty_state}
+                        </p>
                     ) : (
                         <>
                             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -99,28 +109,30 @@ export default function BlogIndex({ posts }: Props) {
                                     {posts.prev_page_url ? (
                                         <Link
                                             href={posts.prev_page_url}
-                                            className="rounded-sm border border-[#e3e3e0] px-4 py-2 text-sm hover:bg-neutral-50 dark:border-[#3E3E3A] dark:hover:bg-neutral-900"
+                                            className="rounded-sm border border-primary px-4 py-2 text-sm text-primary hover:bg-primary hover:text-primary-foreground dark:hover:bg-primary dark:hover:text-primary-foreground"
                                         >
-                                            Previous
+                                            {c.pagination.prev_label}
                                         </Link>
                                     ) : (
                                         <span className="rounded-sm border border-transparent px-4 py-2 text-sm text-neutral-300 dark:text-neutral-700">
-                                            Previous
+                                            {c.pagination.prev_label}
                                         </span>
                                     )}
                                     <span className="text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                                        Page {posts.current_page} of {posts.last_page}
+                                        {c.pagination.page_indicator_template
+                                            .replace('{current_page}', String(posts.current_page))
+                                            .replace('{last_page}', String(posts.last_page))}
                                     </span>
                                     {posts.next_page_url ? (
                                         <Link
                                             href={posts.next_page_url}
-                                            className="rounded-sm border border-[#e3e3e0] px-4 py-2 text-sm hover:bg-neutral-50 dark:border-[#3E3E3A] dark:hover:bg-neutral-900"
+                                            className="rounded-sm border border-primary px-4 py-2 text-sm text-primary hover:bg-primary hover:text-primary-foreground dark:hover:bg-primary dark:hover:text-primary-foreground"
                                         >
-                                            Next
+                                            {c.pagination.next_label}
                                         </Link>
                                     ) : (
                                         <span className="rounded-sm border border-transparent px-4 py-2 text-sm text-neutral-300 dark:text-neutral-700">
-                                            Next
+                                            {c.pagination.next_label}
                                         </span>
                                     )}
                                 </div>

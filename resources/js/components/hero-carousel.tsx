@@ -1,7 +1,10 @@
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useContent } from '@/hooks/use-content';
 import { cn } from '@/lib/utils';
+
+import type { HeroSlide as ContentSlide } from '@/types/content';
 
 export type HeroSlide = {
     eyebrow?: string;
@@ -18,71 +21,59 @@ export type HeroSlide = {
     bgClassName?: string;
 };
 
-const DEFAULT_SLIDES: HeroSlide[] = [
-    {
-        headline: 'Marketing Materials, make your brand stand out',
-        subheadline:
-            'We’re here to help your business stand out for your next big campaign.',
-        ctaLabel: 'Shop now',
-        ctaHref: '/shop?cat=marketing-materials',
-        image: 'https://images.unsplash.com/photo-1607748862156-7c548e7e98f4?auto=format&fit=crop&w=1400&q=70',
-        imageAlt:
-            'A spread of colourful printed promotional flyers, business cards and stickers on a light wood table beside a red wire chair',
-        bgClassName: 'bg-[#dfe5dc]',
-    },
-    {
-        headline: 'Original Business Cards, designed to be remembered',
-        subheadline:
-            'Thicker than your average card, with finishes that turn first impressions into lasting ones.',
-        ctaLabel: 'Shop business cards',
-        ctaHref: '/shop?cat=business-cards',
-        image: 'https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=1400&q=70',
-        imageAlt: 'Two minimalist business cards laid on textured brown packing paper',
-        bgClassName: 'bg-[#e8e1d6]',
-    },
-    {
-        headline: 'FSC® certified products that are kinder to the planet',
-        subheadline:
-            'Bring your brand to life on certified papers — Business Cards, Postcards, Flyers and Brochures.',
-        ctaLabel: 'Discover the range',
-        ctaHref: '/shop/fsc-certified',
-        image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=70',
-        imageAlt: 'Aerial view of a dense, vibrant green pine forest',
-        bgClassName: 'bg-[#dde6df]',
-    },
-];
-
 type Props = {
+    /** Override slides from content JSON. Rarely used. */
     slides?: HeroSlide[];
     /** Auto-advance interval; pass 0 to disable. */
     autoPlayMs?: number;
     className?: string;
 };
 
+const SLIDE_BG = ['bg-[#dfe5dc]', 'bg-[#e8e1d6]', 'bg-[#dde6df]'];
+
+function mapSlide(s: ContentSlide, i: number): HeroSlide {
+    return {
+        headline: s.headline,
+        subheadline: s.subheadline,
+        ctaLabel: s.cta_text,
+        ctaHref: s.cta_href,
+        image: s.image_url,
+        imageAlt: s.alt,
+        bgClassName: SLIDE_BG[i % SLIDE_BG.length],
+    };
+}
+
 /**
  * Storefront hero carousel: a left text panel (headline + CTA + slide
  * indicators) paired with a full-bleed product photograph on the right.
- * Auto-advances on a timer; the timer pauses while the user hovers and
- * resets whenever they navigate manually.
+ *
+ * Slides and labels come from `content/hardcoded-content.json` →
+ * `home_page.hero_carousel` by default.
  */
-export function HeroCarousel({
-    slides = DEFAULT_SLIDES,
-    autoPlayMs = 6000,
-    className,
-}: Props) {
+export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
+    const home = useContent('home_page');
+    const defaultSlides = home.hero_carousel.slides.map((s, i) => mapSlide(s, i));
+    const items = slides ?? defaultSlides;
+
     const [index, setIndex] = useState(0);
     const [paused, setPaused] = useState(false);
-    const total = slides.length;
+    const total = items.length;
 
     useEffect(() => {
-        if (autoPlayMs <= 0 || paused || total <= 1) return;
+        if (autoPlayMs <= 0 || paused || total <= 1) {
+return;
+}
+
         const id = window.setInterval(() => {
             setIndex((i) => (i + 1) % total);
         }, autoPlayMs);
+
         return () => window.clearInterval(id);
     }, [autoPlayMs, paused, total, index]);
 
-    if (total === 0) return null;
+    if (total === 0) {
+return null;
+}
 
     const goTo = (i: number) => setIndex(((i % total) + total) % total);
     const prev = () => goTo(index - 1);
@@ -92,7 +83,7 @@ export function HeroCarousel({
         <section
             className={cn('relative w-full overflow-hidden', className)}
             aria-roledescription="carousel"
-            aria-label="Featured products"
+            aria-label={home.hero_carousel.aria_label}
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
         >
@@ -101,7 +92,7 @@ export function HeroCarousel({
                 className="flex w-full transition-transform duration-700 ease-out"
                 style={{ transform: `translateX(-${index * 100}%)` }}
             >
-                {slides.map((slide, i) => (
+                {items.map((slide, i) => (
                     <Slide key={i} slide={slide} hidden={i !== index} />
                 ))}
             </div>
@@ -112,7 +103,7 @@ export function HeroCarousel({
                     <button
                         type="button"
                         onClick={prev}
-                        aria-label="Previous slide"
+                        aria-label={home.hero_carousel.prev_button_label}
                         className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-neutral-200 bg-white/90 p-2 text-neutral-700 shadow-sm backdrop-blur transition hover:bg-white hover:text-[#0f4c3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f4c3a] md:left-5"
                     >
                         <ChevronLeft className="size-5" />
@@ -120,7 +111,7 @@ export function HeroCarousel({
                     <button
                         type="button"
                         onClick={next}
-                        aria-label="Next slide"
+                        aria-label={home.hero_carousel.next_button_label}
                         className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-neutral-200 bg-white/90 p-2 text-neutral-700 shadow-sm backdrop-blur transition hover:bg-white hover:text-[#0f4c3a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f4c3a] md:right-5"
                     >
                         <ChevronRight className="size-5" />
@@ -132,7 +123,7 @@ export function HeroCarousel({
             {total > 1 && (
                 <div className="pointer-events-none absolute bottom-6 left-0 z-10 flex w-full md:w-1/2">
                     <div className="pointer-events-auto mx-auto flex items-center gap-3 px-6 md:mx-0 md:pl-12 lg:pl-20">
-                        {slides.map((_, i) => (
+                        {items.map((_, i) => (
                             <button
                                 key={i}
                                 type="button"
@@ -157,9 +148,6 @@ export function HeroCarousel({
 function Slide({ slide, hidden }: { slide: HeroSlide; hidden: boolean }) {
     return (
         <div
-            // Cap the desktop slide at 550px tall so a long headline/subheadline
-            // can't push the carousel into a wall-of-pixels. On narrow screens
-            // the two panels stack and we let them size to their content.
             className="grid w-full shrink-0 grid-cols-1 md:h-[550px] md:max-h-[550px] md:grid-cols-2"
             aria-hidden={hidden}
         >

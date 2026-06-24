@@ -1,84 +1,16 @@
 import { Link } from '@inertiajs/react';
+import { useContent } from '@/hooks/use-content';
+import type { NavLink } from '@/types/content';
 
 /**
  * Storefront footer — clean white background, dark column headers, and
- * teal/green link text. Mirrors the MOO footer reference: Products (split
+ * teal/green link text. Mirrors the PrintPandora footer reference: Products (split
  * into two link lists), Paper Stocks, About us, Help/Useful links, and a
  * legal/utility bar at the bottom.
+ *
+ * All link lists, column headings, and the copyright/legal links come
+ * from `content/hardcoded-content.json` → `global_chrome.footer`.
  */
-
-type FooterLink = {
-    label: string;
-    href: string;
-};
-
-const productsLeft: FooterLink[] = [
-    { label: 'All Products', href: '/shop' },
-    { label: 'Business Cards', href: '/shop?cat=business-cards' },
-    { label: 'Square Business Cards', href: '/shop/square-business-cards' },
-    { label: 'MiniCards', href: '/shop/minicards' },
-    { label: 'Letterpress Business Cards', href: '/shop/letterpress-business-cards' },
-    { label: 'Postcards', href: '/shop?cat=postcards' },
-    { label: 'Stickers and Labels', href: '/shop?cat=stickers-labels' },
-    { label: 'Flyers', href: '/shop?cat=flyers' },
-];
-
-const productsRight: FooterLink[] = [
-    { label: 'Letterhead', href: '/shop/letterhead' },
-    { label: 'Greeting Cards', href: '/shop/greeting-cards' },
-    { label: 'Luxe Notecards', href: '/shop/luxe-notecards' },
-    { label: 'Envelopes', href: '/shop/envelopes' },
-    { label: 'Display Boxes', href: '/shop/display-boxes' },
-    { label: 'Business Card Holders', href: '/shop/business-card-holders' },
-    { label: 'Notebooks & Journals', href: '/shop/notebooks-journals' },
-    { label: 'Planners', href: '/shop/planners' },
-];
-
-const paperStocks: FooterLink[] = [
-    { label: 'Paper Stocks', href: '/paper-stocks' },
-    { label: 'MOO Luxe', href: '/paper-stocks/luxe' },
-    { label: 'MOO Super', href: '/paper-stocks/super' },
-    { label: 'MOO Cotton', href: '/paper-stocks/cotton' },
-    { label: 'MOO Original', href: '/paper-stocks/original' },
-    { label: 'MOO Letterpress', href: '/paper-stocks/letterpress' },
-    { label: 'Sample Packs', href: '/paper-stocks/sample-packs' },
-    { label: 'FSC® Certified Paper', href: '/paper-stocks/fsc-certified' },
-    { label: 'Luxe Collection', href: '/paper-stocks/luxe-collection' },
-];
-
-const aboutUs: FooterLink[] = [
-    { label: 'About PrintPandora', href: '/about' },
-    { label: 'Media resources', href: '/about/media' },
-    { label: 'People, products and the planet', href: '/about/sustainability' },
-    { label: 'Who we are', href: '/about' },
-    { label: 'Careers', href: '/careers' },
-    { label: 'The Drop', href: '/the-drop' },
-    { label: 'Business Services', href: '/shop?cat=business-services' },
-    { label: 'Reseller', href: '/reseller' },
-    { label: 'Printfinity', href: '/printfinity' },
-    { label: 'The PrintPandora Promise', href: '/promise' },
-    { label: 'Packaging', href: '/packaging' },
-    { label: 'Partner with PrintPandora', href: '/partner' },
-];
-
-const helpLinks: FooterLink[] = [
-    { label: 'Contact us', href: '/contact' },
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'Next Day Delivery', href: '/next-day-delivery' },
-    { label: 'FAQs', href: '/help' },
-    { label: 'Artwork guidelines', href: '/help/artwork-guidelines' },
-    { label: 'Affiliates', href: '/affiliates' },
-    { label: 'Refer and Earn', href: '/refer' },
-    { label: 'Vulnerability Disclosure', href: '/vulnerability-disclosure' },
-];
-
-const legalLinks: FooterLink[] = [
-    { label: 'Terms & Conditions', href: '/terms' },
-    { label: 'Privacy Policy', href: '/privacy' },
-    { label: 'Fonts', href: '/fonts' },
-    { label: 'Sitemap', href: '/sitemap' },
-    { label: 'Company information', href: '/company-information' },
-];
 
 const TEAL = 'text-[#0f4c3a] hover:underline';
 
@@ -88,7 +20,7 @@ function ColumnHeading({ children }: { children: React.ReactNode }) {
     );
 }
 
-function LinkList({ links }: { links: FooterLink[] }) {
+function LinkList({ links }: { links: NavLink[] }) {
     return (
         <ul className="space-y-2">
             {links.map((link) => (
@@ -103,6 +35,9 @@ function LinkList({ links }: { links: FooterLink[] }) {
 }
 
 export function StorefrontFooter() {
+    const chrome = useContent('global_chrome');
+    const f = chrome.footer;
+
     return (
         <footer className="border-t border-neutral-100 bg-white">
             <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6 lg:py-16">
@@ -110,26 +45,26 @@ export function StorefrontFooter() {
                 <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
                     {/* Products — spans two of the five columns and renders two side-by-side lists */}
                     <div className="lg:col-span-2">
-                        <ColumnHeading>Products</ColumnHeading>
+                        <ColumnHeading>{f.column_headings.products}</ColumnHeading>
                         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-                            <LinkList links={productsLeft} />
-                            <LinkList links={productsRight} />
+                            <LinkList links={f.products_left_column} />
+                            <LinkList links={f.products_right_column} />
                         </div>
                     </div>
 
                     <div>
-                        <ColumnHeading>Paper Stocks</ColumnHeading>
-                        <LinkList links={paperStocks} />
+                        <ColumnHeading>{f.column_headings.paper_stocks}</ColumnHeading>
+                        <LinkList links={f.paper_stocks} />
                     </div>
 
                     <div>
-                        <ColumnHeading>About us</ColumnHeading>
-                        <LinkList links={aboutUs} />
+                        <ColumnHeading>{f.column_headings.about_us}</ColumnHeading>
+                        <LinkList links={f.about_us} />
                     </div>
 
                     <div>
-                        <ColumnHeading>Help/Useful links</ColumnHeading>
-                        <LinkList links={helpLinks} />
+                        <ColumnHeading>{f.column_headings.help}</ColumnHeading>
+                        <LinkList links={f.help_links} />
                     </div>
                 </div>
 
@@ -140,13 +75,11 @@ export function StorefrontFooter() {
                 <div className="flex flex-col gap-4 pt-6 text-xs md:flex-row md:items-center md:justify-between">
                     <div className="flex items-center gap-2 text-neutral-600">
                         <TeardropIcon />
-                        <span>
-                            © {new Date().getFullYear()} PrintPandora — print-on-demand for the
-                            small businesses, designers, and creators we love.
-                        </span>
+                        {/* {YEAR} token is substituted by useContent() at read time. */}
+                        <span>{f.legal_bar.copyright_text}</span>
                     </div>
                     <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                        {legalLinks.map((link) => (
+                        {f.legal_bar.legal_links.map((link) => (
                             <li key={link.label}>
                                 <Link href={link.href} className={TEAL}>
                                     {link.label}

@@ -1,3 +1,4 @@
+// Content (labels/placeholders/links) sourced from `content/hardcoded-content.json` via useContent('settings_security_page').
 import { Form } from '@inertiajs/react';
 import { useRef } from 'react';
 import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
@@ -9,6 +10,7 @@ import PasswordInput from '@/components/password-input';
 import SEO from '@/components/seo';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { useContent } from '@/hooks/use-content';
 import { edit } from '@/routes/security';
 
 type Props = {
@@ -16,20 +18,21 @@ type Props = {
 } & ManageTwoFactorProps;
 
 export default function Security(props: Props) {
+    const c = useContent('settings_security_page') as any;
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
     return (
         <>
-            <SEO title="Security settings" description="Manage your PrintPandora account password and two-factor authentication." />
+            <SEO title={c.seo.title} description={c.seo.description} />
 
-            <h1 className="sr-only">Security settings</h1>
+            <h1 className="sr-only">{c.sr_heading}</h1>
 
             <div className="space-y-6">
                 <Heading
                     variant="small"
-                    title="Update password"
-                    description="Ensure your account is using a long, random password to stay secure"
+                    title={c.section_heading}
+                    description={c.section_description}
                 />
 
                 <Form
@@ -58,7 +61,7 @@ export default function Security(props: Props) {
                         <>
                             <div className="grid gap-2">
                                 <Label htmlFor="current_password">
-                                    Current password
+                                    {c.labels.current_password}
                                 </Label>
 
                                 <PasswordInput
@@ -67,14 +70,14 @@ export default function Security(props: Props) {
                                     name="current_password"
                                     className="mt-1 block w-full"
                                     autoComplete="current-password"
-                                    placeholder="Current password"
+                                    placeholder={c.placeholders.current_password}
                                 />
 
                                 <InputError message={errors.current_password} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">New password</Label>
+                                <Label htmlFor="password">{c.labels.new_password}</Label>
 
                                 <PasswordInput
                                     id="password"
@@ -82,7 +85,7 @@ export default function Security(props: Props) {
                                     name="password"
                                     className="mt-1 block w-full"
                                     autoComplete="new-password"
-                                    placeholder="New password"
+                                    placeholder={c.placeholders.new_password}
                                     passwordrules={props.passwordRules}
                                 />
 
@@ -91,7 +94,7 @@ export default function Security(props: Props) {
 
                             <div className="grid gap-2">
                                 <Label htmlFor="password_confirmation">
-                                    Confirm password
+                                    {c.labels.password_confirmation}
                                 </Label>
 
                                 <PasswordInput
@@ -99,7 +102,7 @@ export default function Security(props: Props) {
                                     name="password_confirmation"
                                     className="mt-1 block w-full"
                                     autoComplete="new-password"
-                                    placeholder="Confirm password"
+                                    placeholder={c.placeholders.password_confirmation}
                                     passwordrules={props.passwordRules}
                                 />
 
@@ -113,7 +116,7 @@ export default function Security(props: Props) {
                                     disabled={processing}
                                     data-test="update-password-button"
                                 >
-                                    Save
+                                    {c.buttons.save}
                                 </Button>
                             </div>
                         </>

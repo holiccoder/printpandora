@@ -1,6 +1,8 @@
+// Content (labels/headings/links) sourced from `content/hardcoded-content.json` via useContent('dashboard_index_page').
 import { Link } from '@inertiajs/react';
 import { ChevronRight, MapPin, Package, ShieldCheck, User as UserIcon } from 'lucide-react';
 import SEO from '@/components/seo';
+import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
 const ACCENT = '#0f4c3a';
@@ -48,29 +50,31 @@ type Props = {
 };
 
 export default function Dashboard({ user, recentOrders, address, affiliate }: Props) {
+    const c = useContent('dashboard_index_page') as any;
+
     return (
         <StorefrontLayout>
             <SEO
-                title="Dashboard"
-                description="Your PrintPandora dashboard - manage orders, designs, and account settings."
+                title={c.seo.title}
+                description={c.seo.description}
             />
 
             <section className="bg-neutral-50">
                 <div className="mx-auto max-w-7xl px-4 py-10 lg:py-14">
                     <header className="mb-8">
                         <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
-                            Welcome back, {user.name}
+                            {String(c.welcome_heading_template).replace('{user.name}', user.name)}
                         </h1>
                         <p className="mt-2 text-sm text-neutral-600 sm:text-base">
-                            Manage your orders, profile, address and affiliate program from one place.
+                            {c.welcome_description}
                         </p>
                     </header>
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                        <ProfileCard user={user} />
-                        <RecentOrdersCard orders={recentOrders} />
-                        <AddressCard address={address} />
-                        <AffiliateCard affiliate={affiliate} />
+                        <ProfileCard user={user} c={c.cards.profile} />
+                        <RecentOrdersCard orders={recentOrders} c={c.cards.recent_orders} />
+                        <AddressCard address={address} c={c.cards.address} />
+                        <AffiliateCard affiliate={affiliate} c={c.cards.affiliate} />
                     </div>
                 </div>
             </section>
@@ -105,12 +109,12 @@ function Card({
     );
 }
 
-function ProfileCard({ user }: { user: Props['user'] }) {
+function ProfileCard({ user, c }: { user: Props['user']; c: any }) {
     const verified = user.email_verified_at !== null;
 
     return (
         <Card
-            title="Profile"
+            title={c.title}
             icon={<UserIcon className="size-4" />}
             action={
                 <Link
@@ -118,15 +122,15 @@ function ProfileCard({ user }: { user: Props['user'] }) {
                     className="text-sm font-semibold hover:underline"
                     style={{ color: ACCENT }}
                 >
-                    Edit
+                    {c.edit_link}
                 </Link>
             }
         >
             <dl className="space-y-3 text-sm">
-                <Row label="Name" value={user.name} />
-                <Row label="Email" value={user.email} />
+                <Row label={c.rows.name} value={user.name} />
+                <Row label={c.rows.email} value={user.email} />
                 <Row
-                    label="Status"
+                    label={c.rows.status}
                     value={
                         <span
                             className={
@@ -136,13 +140,13 @@ function ProfileCard({ user }: { user: Props['user'] }) {
                             }
                         >
                             <ShieldCheck className="size-3.5" />
-                            {verified ? 'Email verified' : 'Email not verified'}
+                            {verified ? c.status_verified : c.status_unverified}
                         </span>
                     }
                 />
                 {user.created_at && (
                     <Row
-                        label="Member since"
+                        label={c.rows.member_since}
                         value={new Date(user.created_at).toLocaleDateString()}
                     />
                 )}
@@ -151,10 +155,10 @@ function ProfileCard({ user }: { user: Props['user'] }) {
     );
 }
 
-function RecentOrdersCard({ orders }: { orders: RecentOrder[] }) {
+function RecentOrdersCard({ orders, c }: { orders: RecentOrder[]; c: any }) {
     return (
         <Card
-            title="Recent orders"
+            title={c.title}
             icon={<Package className="size-4" />}
             action={
                 <Link
@@ -162,21 +166,21 @@ function RecentOrdersCard({ orders }: { orders: RecentOrder[] }) {
                     className="inline-flex items-center gap-1 text-sm font-semibold hover:underline"
                     style={{ color: ACCENT }}
                 >
-                    View all <ChevronRight className="size-3.5" />
+                    {c.view_all_link} <ChevronRight className="size-3.5" />
                 </Link>
             }
         >
             {orders.length === 0 ? (
                 <EmptyHint>
-                    You haven’t placed any orders yet.{' '}
+                    {c.empty_state_prefix}
                     <Link
                         href="/shop"
                         className="font-semibold hover:underline"
                         style={{ color: ACCENT }}
                     >
-                        Start shopping
+                        {c.empty_state_link}
                     </Link>
-                    .
+                    {c.empty_state_suffix}
                 </EmptyHint>
             ) : (
                 <ul className="divide-y divide-neutral-100">
@@ -184,12 +188,12 @@ function RecentOrdersCard({ orders }: { orders: RecentOrder[] }) {
                         <li key={order.id} className="flex items-center justify-between py-3">
                             <div>
                                 <p className="text-sm font-semibold text-neutral-900">
-                                    Order #{order.id}
+                                    {c.order_label_prefix}{order.id}
                                 </p>
                                 <p className="text-xs text-neutral-500">
                                     {order.created_at &&
                                         new Date(order.created_at).toLocaleDateString()}{' '}
-                                    · {order.item_count} item{order.item_count === 1 ? '' : 's'}
+                                    · {order.item_count} {order.item_count === 1 ? c.item_singular : c.item_plural}
                                 </p>
                             </div>
                             <div className="flex items-center gap-3">
@@ -206,12 +210,12 @@ function RecentOrdersCard({ orders }: { orders: RecentOrder[] }) {
     );
 }
 
-function AddressCard({ address }: { address: Address | null }) {
+function AddressCard({ address, c }: { address: Address | null; c: any }) {
     return (
-        <Card title="Delivery address" icon={<MapPin className="size-4" />}>
+        <Card title={c.title} icon={<MapPin className="size-4" />}>
             {!address ? (
                 <EmptyHint>
-                    No address on file yet — we’ll save your shipping details after your first order.
+                    {c.empty_state}
                 </EmptyHint>
             ) : (
                 <div className="space-y-1 text-sm leading-relaxed text-neutral-700">
@@ -222,7 +226,7 @@ function AddressCard({ address }: { address: Address | null }) {
                     </p>
                     {address.country && <p>{address.country}</p>}
                     {address.phone && (
-                        <p className="pt-1 text-xs text-neutral-500">Phone: {address.phone}</p>
+                        <p className="pt-1 text-xs text-neutral-500">{c.phone_label} {address.phone}</p>
                     )}
                 </div>
             )}
@@ -230,10 +234,10 @@ function AddressCard({ address }: { address: Address | null }) {
     );
 }
 
-function AffiliateCard({ affiliate }: { affiliate: AffiliateInfo | null }) {
+function AffiliateCard({ affiliate, c }: { affiliate: AffiliateInfo | null; c: any }) {
     return (
         <Card
-            title="Affiliate program"
+            title={c.title}
             icon={
                 <svg
                     viewBox="0 0 24 24"
@@ -257,26 +261,26 @@ function AffiliateCard({ affiliate }: { affiliate: AffiliateInfo | null }) {
                     className="text-sm font-semibold hover:underline"
                     style={{ color: ACCENT }}
                 >
-                    Manage
+                    {c.manage_link}
                 </Link>
             }
         >
             {!affiliate ? (
                 <EmptyHint>
-                    You aren’t in the affiliate program yet.{' '}
+                    {c.empty_state_prefix}
                     <Link
                         href="/settings/affiliate"
                         className="font-semibold hover:underline"
                         style={{ color: ACCENT }}
                     >
-                        Join now
-                    </Link>{' '}
-                    to start earning commissions.
+                        {c.empty_state_link}
+                    </Link>
+                    {c.empty_state_suffix}
                 </EmptyHint>
             ) : (
                 <div className="space-y-4 text-sm">
                     <Row
-                        label="Referral code"
+                        label={c.rows.referral_code}
                         value={
                             <code className="rounded bg-neutral-100 px-2 py-0.5 text-xs font-semibold text-neutral-900">
                                 {affiliate.referral_code}
@@ -284,14 +288,14 @@ function AffiliateCard({ affiliate }: { affiliate: AffiliateInfo | null }) {
                         }
                     />
                     <Row
-                        label="Commission rate"
+                        label={c.rows.commission_rate}
                         value={`${affiliate.commission_rate.toFixed(2)}%`}
                     />
                     <div className="grid grid-cols-3 gap-3 pt-2">
-                        <Stat label="Total earned" value={`$${affiliate.total_earnings.toFixed(2)}`} />
-                        <Stat label="Paid out" value={`$${affiliate.paid_earnings.toFixed(2)}`} />
+                        <Stat label={c.stats.total_earned} value={`$${affiliate.total_earnings.toFixed(2)}`} />
+                        <Stat label={c.stats.paid_out} value={`$${affiliate.paid_earnings.toFixed(2)}`} />
                         <Stat
-                            label="Pending"
+                            label={c.stats.pending}
                             value={`$${affiliate.pending_earnings.toFixed(2)}`}
                             highlight
                         />
@@ -350,6 +354,7 @@ function StatusPill({ status }: { status: string }) {
         cancelled: 'bg-neutral-100 text-neutral-600',
     };
     const cls = map[status.toLowerCase()] ?? 'bg-neutral-100 text-neutral-700';
+
     return (
         <span
             className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${cls}`}

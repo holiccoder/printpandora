@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { useContent } from '@/hooks/use-content';
 import { cn } from '@/lib/utils';
 
 export type Announcement = {
@@ -8,17 +9,12 @@ export type Announcement = {
 };
 
 type Props = {
+    /** Override the messages from content JSON. Rarely needed. */
     messages?: Announcement[];
+    /** Override the tick interval. Defaults to the JSON value. */
     intervalMs?: number;
     className?: string;
 };
-
-const DEFAULT_MESSAGES: Announcement[] = [
-    { text: 'Free standard shipping on orders over $50', href: '/shipping' },
-    { text: 'New: FSC® certified Business Cards now available', href: '/shop?cat=business-cards' },
-    { text: '20% off your first order — use code WELCOME20', href: '/shop' },
-    { text: 'Need help? Chat with our print experts 24/7', href: '/contact' },
-];
 
 /**
  * Slim global announcement bar that vertically slides through a list of
@@ -26,26 +22,36 @@ const DEFAULT_MESSAGES: Announcement[] = [
  * out the top while the next slides IN from the bottom edge. Each slide
  * is a clickable link.
  *
+ * Defaults (messages, interval, aria-label) come from
+ * `content/hardcoded-content.json` → `global_chrome.announcement_bar`.
+ *
  * Only the active slide and the slide it's replacing animate; every
  * other slide is parked off-screen with no transition so it can't drift
  * back through the visible window between ticks.
  */
-export function AnnouncementBar({
-    messages = DEFAULT_MESSAGES,
-    intervalMs = 4000,
-    className,
-}: Props) {
+export function AnnouncementBar({ messages, intervalMs, className }: Props) {
+    const chrome = useContent('global_chrome');
+    const bar = chrome.announcement_bar;
+    const items = messages ?? bar.default_messages;
+    const tick = intervalMs ?? bar.default_interval_ms;
+
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
-        if (messages.length <= 1) return;
-        const id = window.setInterval(() => {
-            setIndex((i) => (i + 1) % messages.length);
-        }, intervalMs);
-        return () => window.clearInterval(id);
-    }, [messages.length, intervalMs]);
+        if (items.length <= 1) {
+return;
+}
 
-    if (messages.length === 0) return null;
+        const id = window.setInterval(() => {
+            setIndex((i) => (i + 1) % items.length);
+        }, tick);
+
+        return () => window.clearInterval(id);
+    }, [items.length, tick]);
+
+    if (items.length === 0) {
+return null;
+}
 
     return (
         <div
@@ -54,15 +60,16 @@ export function AnnouncementBar({
                 className,
             )}
             role="region"
-            aria-label="Announcements"
+            aria-label={bar.region_aria_label}
         >
             <div className="mx-auto flex h-9 max-w-7xl items-center justify-center px-4">
                 <div className="relative h-5 w-full overflow-hidden text-center text-xs font-medium tracking-wide sm:text-sm">
-                    {messages.map((msg, i) => {
+                    {items.map((msg, i) => {
                         const isActive = i === index;
                         const wasActive =
-                            messages.length > 1 &&
-                            i === (index - 1 + messages.length) % messages.length;
+                            items.length > 1 &&
+                            i === (index - 1 + items.length) % items.length;
+
                         return (
                             <Link
                                 key={i}

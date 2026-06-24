@@ -7,6 +7,7 @@ use App\Models\SupportTicket;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -25,7 +26,7 @@ class TicketResource extends Resource
     {
         return $schema
             ->schema([
-                Forms\Components\Section::make('Ticket Details')
+                Section::make('Ticket Details')
                     ->schema([
                         Forms\Components\Select::make('status')
                             ->required()
@@ -42,7 +43,7 @@ class TicketResource extends Resource
                                 'high' => 'High',
                             ]),
                     ]),
-                Forms\Components\Section::make('Information')
+                Section::make('Information')
                     ->schema([
                         Forms\Components\TextInput::make('subject')
                             ->disabled()

@@ -1,3 +1,4 @@
+// Content sourced from `content/hardcoded-content.json` via useContent('auth_reset_password_page').
 import { Form } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import { useContent } from '@/hooks/use-content';
 import { update } from '@/routes/password';
 
 type Props = {
@@ -15,9 +17,11 @@ type Props = {
 };
 
 export default function ResetPassword({ token, email, passwordRules }: Props) {
+    const c = useContent('auth_reset_password_page') as any;
+
     return (
         <>
-            <SEO title="Reset password" description="Set a new password for your PrintPandora account." />
+            <SEO title={c.seo.title} description={c.seo.description} />
 
             <Form
                 {...update.form()}
@@ -27,7 +31,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                 {({ processing, errors }) => (
                     <div className="grid gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">{c.labels.email}</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -44,14 +48,14 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">{c.labels.password}</Label>
                             <PasswordInput
                                 id="password"
                                 name="password"
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"
                                 autoFocus
-                                placeholder="Password"
+                                placeholder={c.placeholders.password}
                                 passwordrules={passwordRules}
                             />
                             <InputError message={errors.password} />
@@ -59,14 +63,14 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
 
                         <div className="grid gap-2">
                             <Label htmlFor="password_confirmation">
-                                Confirm password
+                                {c.labels.password_confirmation}
                             </Label>
                             <PasswordInput
                                 id="password_confirmation"
                                 name="password_confirmation"
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"
-                                placeholder="Confirm password"
+                                placeholder={c.placeholders.password_confirmation}
                                 passwordrules={passwordRules}
                             />
                             <InputError
@@ -82,7 +86,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                             data-test="reset-password-button"
                         >
                             {processing && <Spinner />}
-                            Reset password
+                            {c.buttons.submit}
                         </Button>
                     </div>
                 )}

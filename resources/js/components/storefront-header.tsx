@@ -1,6 +1,16 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { ChevronDown, ChevronRight, LogOut, Menu, Package, Search, User, UserCog } from 'lucide-react';
 import { useState } from 'react';
+import { CartDrawer } from '@/components/cart-drawer';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -15,29 +25,18 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { CartDrawer } from '@/components/cart-drawer';
+import { useContent } from '@/hooks/use-content';
 import { cn } from '@/lib/utils';
 import { dashboard, home, login, logout, register } from '@/routes';
+
+import type { NavLink, NestedLink, PromoCard } from '@/types/content';
 
 /**
  * One link in the mega dropdown. `children` (when set) renders a small
  * `>` chevron next to the label and pops a third-level vertical flyout
  * to the right when the user hovers the item.
  */
-type MegaLink = {
-    label: string;
-    href: string;
-    children?: MegaLink[];
-};
+type MegaLink = NestedLink;
 
 /**
  * A logical block of links separated from neighbours by a dotted rule.
@@ -46,14 +45,7 @@ type MegaGroup = {
     links: MegaLink[];
 };
 
-type PromoBlock = {
-    image: string;
-    imageAlt: string;
-    title: string;
-    description: string;
-    ctaLabel: string;
-    ctaHref: string;
-};
+type PromoBlock = PromoCard;
 
 type MegaMenu = {
     groups: MegaGroup[];
@@ -67,93 +59,37 @@ type NavCategory = {
     mega?: MegaMenu;
 };
 
-const businessCardsMega: MegaMenu = {
-    groups: [
-        { links: [{ label: 'All Business Cards', href: '/shop?cat=business-cards' }] },
-        {
-            links: [
-                { label: 'Original Business Cards', href: '/shop/original-business-cards' },
-                { label: 'Super Business Cards', href: '/shop/super-business-cards' },
-                { label: 'Luxe Business Cards', href: '/shop/luxe-business-cards' },
-                { label: 'Cotton Business Cards', href: '/shop/cotton-business-cards' },
-            ],
-        },
-        {
-            links: [
-                {
-                    label: 'Special Finishes',
-                    href: '/shop/special-finishes',
-                    children: [
-                        { label: 'Spot Gloss', href: '/shop/special-finishes/spot-gloss' },
-                        { label: 'Gold Foil', href: '/shop/special-finishes/gold-foil' },
-                        { label: 'Silver Foil', href: '/shop/special-finishes/silver-foil' },
-                        { label: 'Rose Gold Foil', href: '/shop/special-finishes/rose-gold-foil' },
-                        { label: 'Letterpress', href: '/shop/special-finishes/letterpress' },
-                        { label: 'Raised Spot Gloss', href: '/shop/special-finishes/raised-spot-gloss' },
-                    ],
-                },
-                { label: 'MOO Size Business Cards', href: '/shop/moo-size-business-cards' },
-                { label: 'Square Business Cards', href: '/shop/square-business-cards' },
-                { label: 'MiniCards', href: '/shop/minicards' },
-            ],
-        },
-        {
-            links: [
-                { label: 'QR Code Business Cards', href: '/shop/qr-code-business-cards' },
-                {
-                    label: 'Luxe by MOO',
-                    href: '/shop/luxe-by-moo',
-                    children: [
-                        { label: 'Luxe Business Cards', href: '/shop/luxe-by-moo/business-cards' },
-                        { label: 'Luxe Postcards', href: '/shop/luxe-by-moo/postcards' },
-                        { label: 'Luxe Notebooks', href: '/shop/luxe-by-moo/notebooks' },
-                        { label: 'Luxe Greeting Cards', href: '/shop/luxe-by-moo/greeting-cards' },
-                    ],
-                },
-            ],
-        },
-        { links: [{ label: 'Business Card Holders', href: '/shop/business-card-holders' }] },
-        { links: [{ label: 'Business Card Sample Pack', href: '/shop/business-card-sample-pack' }] },
-        { links: [{ label: 'Design a Business Card', href: '/shop/design-a-business-card' }] },
-    ],
-    promos: [
-        {
-            image: 'https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=800&q=70',
-            imageAlt: 'Two business cards on brown crinkled packing paper',
-            title: 'Original Business Cards',
-            description:
-                "Thicker than your average card, Original Business Cards set a new standard for 'standard' business cards.",
-            ctaLabel: 'Shop Original Business Cards',
-            ctaHref: '/shop/original-business-cards',
-        },
-        {
-            image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=70',
-            imageAlt: 'Aerial view of a dense green pine forest',
-            title: 'Choose from a range of FSC® certified products',
-            description:
-                'Bring your brand to life with FSC® certified Business Cards, Postcards, Flyers and Brochures.',
-            ctaLabel: 'Discover the range',
-            ctaHref: '/shop/fsc-certified',
-        },
-    ],
-};
-
-const navCategories: NavCategory[] = [
-    { label: 'Business Cards', href: '/shop?cat=business-cards', mega: businessCardsMega },
-    { label: 'Postcards', href: '/shop?cat=postcards' },
-    { label: 'Stickers & Labels', href: '/shop?cat=stickers-labels' },
-    { label: 'Flyers', href: '/shop?cat=flyers' },
-    { label: 'Business Services', href: '/shop?cat=business-services' },
-    { label: 'Blog', href: '/blog' },
-    { label: 'Help & FAQs', href: '/help' },
-];
-
 const ACTIVE_GREEN = 'text-[#0f4c3a]';
 const INACTIVE_GREY = 'text-neutral-500 hover:text-neutral-900';
 
 export function StorefrontHeader({ activeCategory }: { activeCategory?: string } = {}) {
+    const chrome = useContent('global_chrome');
+    const h = chrome.header;
     const { auth } = usePage().props as unknown as { auth?: { user?: { name?: string } | null } };
     const user = auth?.user;
+
+    // Build nav categories from JSON content
+    const navCategories: NavCategory[] = h.top_navigation.map((nav: NavLink) => {
+        if (nav.label === 'Business Cards') {
+            const bc = h.business_cards_mega_menu;
+
+            return {
+                label: nav.label,
+                href: nav.href,
+                mega: {
+                    groups: bc.link_groups.map((g) => ({
+                        links: g.links.map((l) => ({
+                            ...l,
+                            children: l.children as MegaLink[] | undefined,
+                        })),
+                    })),
+                    promos: bc.promo_cards as [PromoBlock, PromoBlock],
+                },
+            };
+        }
+
+        return { label: nav.label, href: nav.href };
+    });
 
     return (
         <header className="relative z-40 w-full border-b border-neutral-200 bg-white">
@@ -161,14 +97,14 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
             <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4">
                 {/* mobile menu */}
                 <div className="lg:hidden">
-                    <MobileNav activeCategory={activeCategory} />
+                    <MobileNav activeCategory={activeCategory} navCategories={navCategories} />
                 </div>
 
                 {/* logo */}
-                <Link href={home()} className="flex items-center gap-2" aria-label="PrintPandora — Home">
+                <Link href={home()} className="flex items-center gap-2" aria-label={h.logo.home_link_aria_label}>
                     <img
-                        src="/images/logo.png"
-                        alt="PrintPandora"
+                        src={h.logo.image_url}
+                        alt={h.logo.alt}
                         className="h-12 w-auto"
                     />
                 </Link>
@@ -176,20 +112,20 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                 {/* center search */}
                 <form
                     role="search"
-                    action="/search"
+                    action={h.search.form_action}
                     method="get"
                     className="mx-auto hidden w-full max-w-xl flex-1 lg:block"
                 >
                     <label htmlFor="storefront-search" className="sr-only">
-                        Search PrintPandora
+                        {h.search.label_sr_only}
                     </label>
                     <div className="relative">
                         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
                         <input
                             id="storefront-search"
-                            name="q"
+                            name={h.search.input_name}
                             type="search"
-                            placeholder="Search for products, paper stocks, ideas…"
+                            placeholder={h.search.placeholder}
                             className="h-10 w-full rounded-full border border-neutral-200 bg-neutral-50 pl-10 pr-4 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-[#0f4c3a] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0f4c3a]/20"
                         />
                     </div>
@@ -199,9 +135,9 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                 <div className="ml-auto flex items-center gap-1">
                     {/* mobile-only icon search — opens the same /search page */}
                     <Link
-                        href="/search"
+                        href={h.search.mobile_icon_href}
                         className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-100 lg:hidden"
-                        aria-label="Search"
+                        aria-label={h.search.mobile_icon_aria_label}
                     >
                         <Search className="size-5 opacity-80" />
                     </Link>
@@ -215,14 +151,14 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                                     className="hidden h-9 gap-2 px-3 text-sm font-medium text-neutral-700 hover:text-[#0f4c3a] lg:inline-flex"
                                 >
                                     <User className="size-4" />
-                                    <span>Dashboard</span>
+                                    <span>{h.auth.dashboard_button_label}</span>
                                     <ChevronDown className="size-3.5 opacity-70" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" sideOffset={8} className="w-56">
                                 {user.name && (
                                     <DropdownMenuLabel className="font-normal">
-                                        <p className="text-xs text-neutral-500">Signed in as</p>
+                                        <p className="text-xs text-neutral-500">{h.auth.signed_in_as_label}</p>
                                         <p className="truncate text-sm font-semibold text-neutral-900">
                                             {user.name}
                                         </p>
@@ -232,19 +168,19 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                                 <DropdownMenuItem asChild>
                                     <Link href={dashboard()} className="cursor-pointer">
                                         <User className="mr-2 size-4" />
-                                        Dashboard
+                                        {h.auth.dropdown_dashboard_label}
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href="/dashboard/profile" className="cursor-pointer">
+                                    <Link href={h.auth.dropdown_profile_href} className="cursor-pointer">
                                         <UserCog className="mr-2 size-4" />
-                                        Profile edit
+                                        {h.auth.dropdown_profile_label}
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href="/dashboard/orders" className="cursor-pointer">
+                                    <Link href={h.auth.dropdown_orders_href} className="cursor-pointer">
                                         <Package className="mr-2 size-4" />
-                                        Orders
+                                        {h.auth.dropdown_orders_label}
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
@@ -257,7 +193,7 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                                         data-test="logout-button"
                                     >
                                         <LogOut className="mr-2 size-4" />
-                                        Log out
+                                        {h.auth.dropdown_logout_label}
                                     </Link>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -269,14 +205,13 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                                 variant="ghost"
                                 className="h-9 px-3 text-sm font-medium text-neutral-700 hover:text-[#0f4c3a]"
                             >
-                                <Link href={login()}>Log in</Link>
+                                <Link href={login()}>{h.auth.logged_out_login_label}</Link>
                             </Button>
                             <Button
                                 asChild
-                                className="h-9 px-4 text-sm font-medium text-white"
-                                style={{ backgroundColor: '#0f4c3a' }}
+                                className="h-9 bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                             >
-                                <Link href={register()}>Register</Link>
+                                <Link href={register()}>{h.auth.logged_out_register_label}</Link>
                             </Button>
                         </div>
                     )}
@@ -284,7 +219,11 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                     {/* compact account icon on mobile */}
                     <Link
                         href={user ? dashboard() : login()}
-                        aria-label={user ? 'Dashboard' : 'Log in'}
+                        aria-label={
+                            user
+                                ? h.auth.mobile_account_aria_label_logged_in
+                                : h.auth.mobile_account_aria_label_logged_out
+                        }
                         className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-100 lg:hidden"
                     >
                         <User className="size-5 opacity-80" />
@@ -388,6 +327,7 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                             {group.links.map((link) => {
                                 const hasChildren = !!link.children?.length;
                                 const isActive = activeSub?.label === link.label;
+
                                 return (
                                     <li
                                         key={link.label}
@@ -463,10 +403,10 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
 function PromoCard({ promo }: { promo: PromoBlock }) {
     return (
         <div className="flex flex-col">
-            <Link href={promo.ctaHref} className="block overflow-hidden rounded-md bg-neutral-100">
+            <Link href={promo.cta_href} className="block overflow-hidden rounded-md bg-neutral-100">
                 <img
-                    src={promo.image}
-                    alt={promo.imageAlt}
+                    src={promo.image_url}
+                    alt={promo.image_alt}
                     className="aspect-[4/3] h-full w-full object-cover"
                     loading="lazy"
                 />
@@ -478,10 +418,10 @@ function PromoCard({ promo }: { promo: PromoBlock }) {
                 {promo.description}
             </p>
             <Link
-                href={promo.ctaHref}
+                href={promo.cta_href}
                 className="mt-2 inline-flex items-center gap-0.5 text-xs font-semibold text-[#0f4c3a] hover:underline"
             >
-                {promo.ctaLabel} <ChevronRight className="size-3.5" />
+                {promo.cta_label} <ChevronRight className="size-3.5" />
             </Link>
         </div>
     );
@@ -492,13 +432,15 @@ function PromoCard({ promo }: { promo: PromoBlock }) {
  * link to the category page; sub-categories still show as a nested list
  * so the user can drill in from a phone.
  */
-function MobileNav({ activeCategory }: { activeCategory?: string }) {
+function MobileNav({ activeCategory, navCategories }: { activeCategory?: string; navCategories: NavCategory[] }) {
     const [openMega, setOpenMega] = useState<string | null>(null);
+    const chrome = useContent('global_chrome');
+    const h = chrome.header;
 
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Open menu">
+                <Button variant="ghost" size="icon" className="h-9 w-9" aria-label={h.mobile_nav.open_menu_aria_label}>
                     <Menu className="size-5" />
                 </Button>
             </SheetTrigger>
@@ -506,8 +448,8 @@ function MobileNav({ activeCategory }: { activeCategory?: string }) {
                 <SheetHeader className="border-b px-4 py-3">
                     <SheetTitle className="text-left">
                         <img
-                            src="/images/logo.png"
-                            alt="PrintPandora"
+                            src={h.mobile_nav.drawer_logo_image_url}
+                            alt={h.mobile_nav.drawer_logo_alt}
                             className="h-7 w-auto"
                         />
                     </SheetTitle>
@@ -517,6 +459,7 @@ function MobileNav({ activeCategory }: { activeCategory?: string }) {
                         const isActive =
                             activeCategory != null && cat.label === activeCategory;
                         const isOpen = openMega === cat.label;
+
                         return (
                             <div key={cat.label} className="border-b border-neutral-100 last:border-b-0">
                                 {cat.mega ? (

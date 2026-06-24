@@ -1,9 +1,11 @@
 import HeroCarousel from '@/components/hero-carousel';
 import HomePerks from '@/components/home-perks';
 import PopularProducts from '@/components/popular-products';
-import RecentPosts, { type RecentPost } from '@/components/recent-posts';
+import RecentPosts from '@/components/recent-posts';
+import type {RecentPost} from '@/components/recent-posts';
 import SamplePackBanner from '@/components/sample-pack-banner';
 import SEO from '@/components/seo';
+import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
 type Props = {
@@ -11,11 +13,13 @@ type Props = {
 };
 
 export default function Home({ recentPosts }: Props) {
+    const c = useContent('home_page');
+
     return (
         <StorefrontLayout>
             <SEO
-                title="Welcome"
-                description="PrintPandora - your go-to solution for printing, customization, and on-demand production."
+                title={c.seo.page_title ?? 'Welcome'}
+                description={c.seo.page_description}
             />
             <HeroCarousel />
             <PopularProducts />

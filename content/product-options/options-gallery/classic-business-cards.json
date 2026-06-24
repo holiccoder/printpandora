@@ -1,0 +1,121 @@
+{
+    "_comment": "Sample gallery configuration for Classic Business Cards. Each gallery entry maps an option combination to an image set. Keys under 'match' use the same names as the option groups in the product options JSON. Missing keys act as wildcards (match any value). Put more specific combinations before broader ones; the first match wins. Always include one gallery with 'is_default': true as the fallback.",
+    "galleries": [
+        {
+            "id": "default",
+            "is_default": true,
+            "match": {},
+            "images": [
+                "https://picsum.photos/seed/classic-default-1/800/600",
+                "https://picsum.photos/seed/classic-default-2/800/600",
+                "https://picsum.photos/seed/classic-default-3/800/600",
+                "https://picsum.photos/seed/classic-default-4/800/600"
+            ]
+        },
+        {
+            "id": "matte",
+            "match": {
+                "paper_finish": "Matte"
+            },
+            "images": [
+                "https://picsum.photos/seed/classic-matte-1/800/600",
+                "https://picsum.photos/seed/classic-matte-2/800/600",
+                "https://picsum.photos/seed/classic-matte-3/800/600"
+            ]
+        },
+        {
+            "id": "gloss",
+            "match": {
+                "paper_finish": "Gloss"
+            },
+            "images": [
+                "https://picsum.photos/seed/classic-gloss-1/800/600",
+                "https://picsum.photos/seed/classic-gloss-2/800/600",
+                "https://picsum.photos/seed/classic-gloss-3/800/600"
+            ]
+        },
+        {
+            "id": "square",
+            "match": {
+                "sizes": "square"
+            },
+            "images": [
+                "https://picsum.photos/seed/classic-square-1/800/600",
+                "https://picsum.photos/seed/classic-square-2/800/600"
+            ]
+        },
+        {
+            "id": "rounded-corners",
+            "match": {
+                "corners": "Rounded"
+            },
+            "images": [
+                "https://picsum.photos/seed/classic-rounded-1/800/600",
+                "https://picsum.photos/seed/classic-rounded-2/800/600"
+            ]
+        },
+        {
+            "id": "spot-glass",
+            "match": {
+                "special_finish": "spot glass"
+            },
+            "images": [
+                "https://picsum.photos/seed/classic-spot-glass-1/800/600",
+                "https://picsum.photos/seed/classic-spot-glass-2/800/600"
+            ]
+        },
+        {
+            "id": "raised-spot-glass",
+            "match": {
+                "special_finish": "raised spot glass"
+            },
+            "images": [
+                "https://picsum.photos/seed/classic-raised-gloss-1/800/600",
+                "https://picsum.photos/seed/classic-raised-gloss-2/800/600"
+            ]
+        },
+        {
+            "id": "gold-foil",
+            "match": {
+                "special_finish": "gold foil"
+            },
+            "images": [
+                "https://picsum.photos/seed/classic-gold-foil-1/800/600",
+                "https://picsum.photos/seed/classic-gold-foil-2/800/600",
+                "https://picsum.photos/seed/classic-gold-foil-3/800/600"
+            ]
+        },
+        {
+            "id": "silver-foil",
+            "match": {
+                "special_finish": "silver foil"
+            },
+            "images": [
+                "https://picsum.photos/seed/classic-silver-foil-1/800/600",
+                "https://picsum.photos/seed/classic-silver-foil-2/800/600"
+            ]
+        },
+        {
+            "id": "gloss-square",
+            "match": {
+                "paper_finish": "Gloss",
+                "sizes": "square"
+            },
+            "images": [
+                "https://picsum.photos/seed/classic-gloss-square-1/800/600",
+                "https://picsum.photos/seed/classic-gloss-square-2/800/600"
+            ]
+        },
+        {
+            "id": "matte-rounded",
+            "match": {
+                "paper_finish": "Matte",
+                "corners": "Rounded"
+            },
+            "images": [
+                "https://picsum.photos/seed/classic-matte-rounded-1/800/600",
+                "https://picsum.photos/seed/classic-matte-rounded-2/800/600"
+            ]
+        }
+    ]
+}

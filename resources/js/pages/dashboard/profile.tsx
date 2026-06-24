@@ -1,3 +1,4 @@
+// Content (labels/placeholders/headings) sourced from `content/hardcoded-content.json` via useContent('dashboard_profile_page').
 import { Form, Link } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
 import InputError from '@/components/input-error';
@@ -5,6 +6,7 @@ import SEO from '@/components/seo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
 const ACCENT = '#0f4c3a';
@@ -19,11 +21,13 @@ type Props = {
 };
 
 export default function DashboardProfile({ user, status }: Props) {
+    const c = useContent('dashboard_profile_page') as any;
+
     return (
         <StorefrontLayout>
             <SEO
-                title="Edit profile"
-                description="Update your PrintPandora profile name and email address."
+                title={c.seo.title}
+                description={c.seo.description}
             />
 
             <section className="bg-neutral-50">
@@ -34,13 +38,13 @@ export default function DashboardProfile({ user, status }: Props) {
                             className="mb-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline"
                             style={{ color: ACCENT }}
                         >
-                            <ChevronLeft className="size-4" /> Back to dashboard
+                            <ChevronLeft className="size-4" /> {c.back_link}
                         </Link>
                         <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
-                            Edit profile
+                            {c.page_heading}
                         </h1>
                         <p className="mt-1 text-sm text-neutral-600">
-                            Update your name and email address.
+                            {c.page_subheading}
                         </p>
                     </header>
 
@@ -61,20 +65,20 @@ export default function DashboardProfile({ user, status }: Props) {
                             {({ processing, errors, recentlySuccessful }) => (
                                 <>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name">Name</Label>
+                                        <Label htmlFor="name">{c.labels.name}</Label>
                                         <Input
                                             id="name"
                                             name="name"
                                             defaultValue={user.name}
                                             required
                                             autoComplete="name"
-                                            placeholder="Full name"
+                                            placeholder={c.placeholders.name}
                                         />
                                         <InputError message={errors.name} />
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="email">Email</Label>
+                                        <Label htmlFor="email">{c.labels.email}</Label>
                                         <Input
                                             id="email"
                                             type="email"
@@ -82,12 +86,12 @@ export default function DashboardProfile({ user, status }: Props) {
                                             defaultValue={user.email}
                                             required
                                             autoComplete="username"
-                                            placeholder="you@example.com"
+                                            placeholder={c.placeholders.email}
                                         />
                                         <InputError message={errors.email} />
                                         {user.email_verified_at === null && (
                                             <p className="text-xs text-amber-600">
-                                                Your email address is unverified.
+                                                {c.unverified_email_notice}
                                             </p>
                                         )}
                                     </div>
@@ -96,30 +100,30 @@ export default function DashboardProfile({ user, status }: Props) {
                                         existing password unchanged. */}
                                     <div className="border-t border-neutral-100 pt-6">
                                         <p className="mb-4 text-xs text-neutral-500">
-                                            Leave the password fields blank to keep your current password.
+                                            {c.password_help}
                                         </p>
                                         <div className="grid gap-4 sm:grid-cols-2">
                                             <div className="grid gap-2">
-                                                <Label htmlFor="password">New password</Label>
+                                                <Label htmlFor="password">{c.labels.new_password}</Label>
                                                 <Input
                                                     id="password"
                                                     type="password"
                                                     name="password"
                                                     autoComplete="new-password"
-                                                    placeholder="At least 8 characters"
+                                                    placeholder={c.placeholders.password}
                                                 />
                                                 <InputError message={errors.password} />
                                             </div>
                                             <div className="grid gap-2">
                                                 <Label htmlFor="password_confirmation">
-                                                    Confirm new password
+                                                    {c.labels.confirm_new_password}
                                                 </Label>
                                                 <Input
                                                     id="password_confirmation"
                                                     type="password"
                                                     name="password_confirmation"
                                                     autoComplete="new-password"
-                                                    placeholder="Repeat new password"
+                                                    placeholder={c.placeholders.password_confirmation}
                                                 />
                                                 <InputError message={errors.password_confirmation} />
                                             </div>
@@ -130,13 +134,12 @@ export default function DashboardProfile({ user, status }: Props) {
                                         <Button
                                             type="submit"
                                             disabled={processing}
-                                            className="text-white"
-                                            style={{ backgroundColor: ACCENT }}
+                                            className="bg-primary text-primary-foreground hover:bg-primary/90"
                                         >
-                                            {processing ? 'Saving…' : 'Save changes'}
+                                            {processing ? c.buttons.saving : c.buttons.save}
                                         </Button>
                                         {recentlySuccessful && (
-                                            <span className="text-sm text-emerald-700">Saved.</span>
+                                            <span className="text-sm text-emerald-700">{c.success_inline}</span>
                                         )}
                                     </div>
                                 </>

@@ -1,97 +1,264 @@
 {
     "sizes": [
         {
-            "name": "standard",
-            "width": "",
-            "height": "",
-            "swatch_image": "https://www.moo.com/static-assets/product-images/b199bfe46c94ed9b044c2e52d18b9042f176b7f8/sizes/business_card-standard-526x325.jpg"
+            "name": "Standard",
+            "code": "standard",
+            "width": "2.0",
+            "height": "3.5",
+            "swatch_image": "/images/product-options/business-cards/sizes/business_card-standard-526x325.jpg"
         },
         {
-            "name": "square",
-            "width": "",
-            "height": "",
-            "swatch_image": "https://www.moo.com/static-assets/product-images/b199bfe46c94ed9b044c2e52d18b9042f176b7f8/sizes/business_card-square-526x325.jpg"
+            "name": "Square",
+            "code": "square",
+            "width": "2.16",
+            "height": "3.3",
+            "swatch_image": "/images/product-options/business-cards/sizes/business_card-square-526x325.jpg"
         }
     ],
     "paper_finish": [
         {
             "name": "Matte",
+            "code": "matte",
             "description": "With a smooth feel. Shine-free so no glare.",
             "added_price": "30",
-            "swatch_image": "https://www.moo.com/static-assets/product-images/b199bfe46c94ed9b044c2e52d18b9042f176b7f8/laminates/matte-526x251.jpg"
+            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg"
         },
         {
             "name": "Gloss",
+            "code": "gloss",
             "description": "Eye-catchingly shiny. Makes color photos pop.",
             "added_price": "50",
-            "swatch_image": "https://www.moo.com/static-assets/product-images/b199bfe46c94ed9b044c2e52d18b9042f176b7f8/laminates/gloss-526x251.jpg"
+            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg"
         }
     ],
     "corners": [
         {
             "name": "Square",
-            "description": "",
+            "code": "square",
+            "description": "Sharp and Stylish",
             "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M6.5 6.5V15h3V9.5h29v29H33v3h8.5v-35h-35zm3 27.5h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8z\"></path></svg>",
-            "added_price": ""
+            "added_price": "0"
         },
         {
             "name": "Rounded",
+            "code": "rounded",
             "description": "",
             "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M9.5 34h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8zM8 6.5H6.5V15h3V9.537A30.542 30.542 0 0 1 38.463 38.5H33v3h8.5V40A33.538 33.538 0 0 0 8 6.5z\"></path></svg>",
-            "added_price": ""
+            "added_price": "20"
         }
     ],
-    "foil_stamp": [
+    "special_finish": [
         {
-            "name": "none",
-            "added_price": "",
-            "description": "",
-            "swatch_image": ""
+            "name": "no special finish",
+            "code": "no_special_finish",
+            "description": "no special finish, thanks",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/no-special-finish-526x251.jpg"
         },
         {
-            "name": "gold",
-            "added_price": "",
-            "description": "",
-            "swatch_image": ""
+            "name": "spot glass",
+            "code": "spot_glass",
+            "description": "A little shiny, light-reflecting glossiness goes a long way.",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/spot_gloss-526x251.jpg"
+        },
+        {
+            "name": "raised spot glass",
+            "code": "raised_spot_glass",
+            "description": "Shininess so thick, you can feel it. This tactile finish brings even the unprinted parts of your design to life. ",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/raised_spot_gloss-526x251.jpg"
+        },
+        {
+            "name": "gold foil",
+            "code": "gold_foil",
+            "description": "Even the simplest designs dazzle with this extra-special gilded finish.",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/gold_foil-526x251.jpg"
+        },
+        {
+            "name": "silver foil",
+            "code": "silver_foil",
+            "description": "Add dazzling, shimmering silver foil accents to any part of your design.",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/silver_foil-526x251.jpg"
         }
     ],
     "print_code": [
         {
-
+            "name": "no print code",
+            "code": "no_print_code",
+            "description": "no need to print codes"
+        },
+        {
+            "name": "need print code",
+            "code": "need_print_code",
+            "description": "no need to print codes"
         }
     ],
     "drill": [
         {
-            "name": "yes",
+            "name": "no drilling",
+            "code": "no_drilling",
             "swatch_image": "",
-            "price_add": ""
+            "added_price": 0
         },
         {
-            "name": "yes",
+            "name": "needs drilling",
+            "code": "needs_drilling",
             "swatch_image": "",
-            "price_add": ""
+            "added_price": "10"
         }
     ],
     "quantity_price_table": [
         {
             "quantity": "50",
             "price_per_card": "0.54",
-            "pack_price": ""
+            "pack_price": "23",
+            "pack_original_price": "",
+            "is_recommended": false
         },
         {
-            "quantity": "50",
-            "price_per_card": "0.54",
-            "pack_price": ""
+            "quantity": "100",
+            "price_per_card": "0.45",
+            "pack_price": "45",
+            "pack_original_price": "46",
+            "is_recommended": false
         },
         {
-            "quantity": "50",
-            "price_per_card": "0.54",
-            "pack_price": ""
+            "quantity": "200",
+            "price_per_card": "0.39",
+            "pack_price": "78",
+            "pack_original_price": "92",
+            "is_recommended": true
+        }
+    ],
+    "galleries": [
+        {
+            "id": "default",
+            "is_default": true,
+            "match": {},
+            "images": [
+                "/images/product-options/business-cards/galleries/classic-default-1.jpg",
+                "/images/product-options/business-cards/galleries/classic-default-2.jpg",
+                "/images/product-options/business-cards/galleries/classic-default-3.jpg",
+                "/images/product-options/business-cards/galleries/classic-default-4.jpg"
+            ]
         },
         {
-            "quantity": "50",
-            "price_per_card": "0.54",
-            "pack_price": ""
+            "id": "spot-glass",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Matte",
+                "corners": "Square",
+                "special_finish": "spot glass"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/classic-spot-glass-1.jpg",
+                "/images/product-options/business-cards/galleries/classic-spot-glass-2.jpg"
+            ]
+        },
+        {
+            "id": "raised-spot-glass",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Matte",
+                "corners": "Square",
+                "special_finish": "raised spot glass"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/classic-raised-gloss-1.jpg",
+                "/images/product-options/business-cards/galleries/classic-raised-gloss-2.jpg"
+            ]
+        },
+        {
+            "id": "gold-foil",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Matte",
+                "corners": "Square",
+                "special_finish": "gold foil"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/classic-gold-foil-1.jpg",
+                "/images/product-options/business-cards/galleries/classic-gold-foil-2.jpg",
+                "/images/product-options/business-cards/galleries/classic-gold-foil-3.jpg"
+            ]
+        },
+        {
+            "id": "silver-foil",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Matte",
+                "corners": "Square",
+                "special_finish": "silver foil"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/classic-silver-foil-1.jpg",
+                "/images/product-options/business-cards/galleries/classic-silver-foil-2.jpg"
+            ]
+        },
+        {
+            "id": "gloss-square",
+            "match": {
+                "sizes": "Square",
+                "paper_finish": "Gloss",
+                "corners": "Square",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/classic-gloss-square-1.jpg",
+                "/images/product-options/business-cards/galleries/classic-gloss-square-2.jpg"
+            ]
+        },
+        {
+            "id": "gloss",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Gloss",
+                "corners": "Square",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/classic-gloss-1.jpg",
+                "/images/product-options/business-cards/galleries/classic-gloss-2.jpg",
+                "/images/product-options/business-cards/galleries/classic-gloss-3.jpg"
+            ]
+        },
+        {
+            "id": "matte-rounded",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Matte",
+                "corners": "Rounded",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/classic-matte-rounded-1.jpg",
+                "/images/product-options/business-cards/galleries/classic-matte-rounded-2.jpg"
+            ]
+        },
+        {
+            "id": "matte",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Matte",
+                "corners": "Square",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/classic-matte-1.jpg",
+                "/images/product-options/business-cards/galleries/classic-matte-2.jpg",
+                "/images/product-options/business-cards/galleries/classic-matte-3.jpg"
+            ]
+        },
+        {
+            "id": "square",
+            "match": {
+                "sizes": "Square",
+                "paper_finish": "Matte",
+                "corners": "Square",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/classic-square-1.jpg",
+                "/images/product-options/business-cards/galleries/classic-square-2.jpg"
+            ]
         }
     ]
 }

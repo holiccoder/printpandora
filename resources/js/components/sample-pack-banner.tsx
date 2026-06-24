@@ -1,12 +1,13 @@
 import { Link } from '@inertiajs/react';
+import { useContent } from '@/hooks/use-content';
 import { cn } from '@/lib/utils';
 
 type Props = {
+    /** Overrides for callers that want bespoke copy. Defaults come from JSON. */
     headline?: string;
     description?: string;
     ctaLabel?: string;
     ctaHref?: string;
-    /** Replace the default lifestyle photograph (right column). */
     image?: string;
     imageAlt?: string;
     className?: string;
@@ -16,27 +17,36 @@ type Props = {
  * Two-column promo banner: a dark, moody text panel on the left with a
  * white ghost-button CTA, paired with a brightly-lit lifestyle photo on
  * the right. Designed to sit full-bleed underneath other hero content.
+ *
+ * Defaults come from `content/hardcoded-content.json` →
+ * `home_page.sample_pack_banner`.
  */
 export default function SamplePackBanner({
-    headline = 'Free sample',
-    description = 'New to PrintPandora? See our full print range in all the possible variations of shape, paper stock & finishes for free.',
-    ctaLabel = 'Get your sample pack',
-    ctaHref = '/shop/sample-pack',
-    image = 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?auto=format&fit=crop&w=1400&q=70',
-    imageAlt = 'Person in a denim jacket pulling a yellow card from a white sample pack folder on a light wood tabletop',
+    headline,
+    description,
+    ctaLabel,
+    ctaHref,
+    image,
+    imageAlt,
     className,
 }: Props) {
+    const b = useContent('home_page').sample_pack_banner;
+    const h = headline ?? b.title;
+    const desc = description ?? b.description;
+    const ctaText = ctaLabel ?? b.cta_text;
+    const ctaUrl = ctaHref ?? b.cta_href;
+    const img = image ?? b.image_url;
+    const alt = imageAlt ?? b.alt;
+
     return (
         <section
             className={cn(
                 'relative grid w-full grid-cols-1 overflow-hidden bg-[#1d130f] md:grid-cols-2 md:h-[420px]',
                 className,
             )}
-            aria-label={headline}
+            aria-label={h}
         >
-            {/* Left: dark text panel. The radial gradient mimics the soft
-                spotlight on a moody studio backdrop, so flat black doesn't
-                feel cheap on large displays. */}
+            {/* Left: dark text panel. */}
             <div
                 className="relative flex flex-col justify-center px-6 py-12 text-white md:px-12 md:py-16 lg:px-20"
                 style={{
@@ -46,16 +56,16 @@ export default function SamplePackBanner({
             >
                 <div className="relative z-10 max-w-md">
                     <h2 className="text-3xl font-bold leading-tight md:text-4xl lg:text-[2.5rem]">
-                        {headline}
+                        {h}
                     </h2>
                     <p className="mt-3 text-sm leading-relaxed text-white/80 md:text-base">
-                        {description}
+                        {desc}
                     </p>
                     <Link
-                        href={ctaHref}
+                        href={ctaUrl}
                         className="mt-6 inline-flex items-center justify-center rounded-sm border border-white px-6 py-3 text-sm font-semibold text-white transition hover:bg-white hover:text-[#1d130f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1d130f]"
                     >
-                        {ctaLabel}
+                        {ctaText}
                     </Link>
                 </div>
             </div>
@@ -63,8 +73,8 @@ export default function SamplePackBanner({
             {/* Right: lifestyle photo */}
             <div className="relative h-64 overflow-hidden bg-neutral-100 md:h-full">
                 <img
-                    src={image}
-                    alt={imageAlt}
+                    src={img}
+                    alt={alt}
                     className="h-full w-full object-cover"
                     loading="lazy"
                 />

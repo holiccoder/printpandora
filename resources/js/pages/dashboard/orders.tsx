@@ -1,6 +1,8 @@
+// Content (headings/labels/pagination) sourced from `content/hardcoded-content.json` via useContent('dashboard_orders_page').
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import SEO from '@/components/seo';
+import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
 const ACCENT = '#0f4c3a';
@@ -31,11 +33,13 @@ type Props = {
 };
 
 export default function DashboardOrders({ orders }: Props) {
+    const c = useContent('dashboard_orders_page') as any;
+
     return (
         <StorefrontLayout>
             <SEO
-                title="My orders"
-                description="View and track all your PrintPandora orders."
+                title={c.seo.title}
+                description={c.seo.description}
             />
 
             <section className="bg-neutral-50">
@@ -43,10 +47,10 @@ export default function DashboardOrders({ orders }: Props) {
                     <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
-                                My orders
+                                {c.page_heading}
                             </h1>
                             <p className="mt-1 text-sm text-neutral-600">
-                                {orders.total} order{orders.total === 1 ? '' : 's'}, newest first.
+                                {orders.total} {orders.total === 1 ? c.page_subheading_singular : c.page_subheading_plural}
                             </p>
                         </div>
                         <Link
@@ -54,35 +58,35 @@ export default function DashboardOrders({ orders }: Props) {
                             className="inline-flex items-center gap-1 text-sm font-semibold hover:underline"
                             style={{ color: ACCENT }}
                         >
-                            <ChevronLeft className="size-4" /> Back to dashboard
+                            <ChevronLeft className="size-4" /> {c.back_link}
                         </Link>
                     </header>
 
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm">
                         {orders.data.length === 0 ? (
                             <div className="px-6 py-12 text-center text-sm text-neutral-600">
-                                You haven’t placed any orders yet.{' '}
+                                {c.empty_state_prefix}
                                 <Link
                                     href="/shop"
                                     className="font-semibold hover:underline"
                                     style={{ color: ACCENT }}
                                 >
-                                    Start shopping
+                                    {c.empty_state_link}
                                 </Link>
-                                .
+                                {c.empty_state_suffix}
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm">
                                     <thead className="bg-neutral-50 text-xs uppercase tracking-wide text-neutral-500">
                                         <tr>
-                                            <Th>Order</Th>
-                                            <Th>Date</Th>
-                                            <Th>Items</Th>
-                                            <Th>Status</Th>
-                                            <Th>Payment</Th>
-                                            <Th className="text-right">Total</Th>
-                                            <Th className="sr-only">Actions</Th>
+                                            <Th>{c.table_headers.order}</Th>
+                                            <Th>{c.table_headers.date}</Th>
+                                            <Th>{c.table_headers.items}</Th>
+                                            <Th>{c.table_headers.status}</Th>
+                                            <Th>{c.table_headers.payment}</Th>
+                                            <Th className="text-right">{c.table_headers.total}</Th>
+                                            <Th className="sr-only">{c.table_headers.actions}</Th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100">
@@ -113,7 +117,7 @@ export default function DashboardOrders({ orders }: Props) {
                                                         className="inline-flex items-center gap-1 text-sm font-semibold hover:underline"
                                                         style={{ color: ACCENT }}
                                                     >
-                                                        View <ChevronRight className="size-3.5" />
+                                                        {c.view_link} <ChevronRight className="size-3.5" />
                                                     </Link>
                                                 </Td>
                                             </tr>
@@ -124,7 +128,7 @@ export default function DashboardOrders({ orders }: Props) {
                         )}
 
                         {orders.last_page > 1 && (
-                            <Pagination orders={orders} />
+                            <Pagination orders={orders} c={c.pagination} />
                         )}
                     </div>
                 </div>
@@ -162,6 +166,7 @@ function StatusPill({ status }: { status: string }) {
         cancelled: 'bg-neutral-100 text-neutral-600',
     };
     const cls = map[status.toLowerCase()] ?? 'bg-neutral-100 text-neutral-700';
+
     return (
         <span
             className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${cls}`}
@@ -171,12 +176,12 @@ function StatusPill({ status }: { status: string }) {
     );
 }
 
-function Pagination({ orders }: { orders: PaginatedOrders }) {
+function Pagination({ orders, c }: { orders: PaginatedOrders; c: any }) {
     return (
         <nav className="flex items-center justify-between border-t border-neutral-100 bg-white px-4 py-3 text-sm">
             <p className="text-neutral-600">
-                Showing <span className="font-semibold">{orders.from ?? 0}</span>–
-                <span className="font-semibold">{orders.to ?? 0}</span> of{' '}
+                {c.showing} <span className="font-semibold">{orders.from ?? 0}</span>–
+                <span className="font-semibold">{orders.to ?? 0}</span> {c.of}{' '}
                 <span className="font-semibold">{orders.total}</span>
             </p>
             <div className="flex gap-2">
@@ -186,11 +191,11 @@ function Pagination({ orders }: { orders: PaginatedOrders }) {
                         className="inline-flex items-center gap-1 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
                         preserveScroll
                     >
-                        <ChevronLeft className="size-4" /> Prev
+                        <ChevronLeft className="size-4" /> {c.prev}
                     </Link>
                 ) : (
                     <span className="inline-flex items-center gap-1 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-300">
-                        <ChevronLeft className="size-4" /> Prev
+                        <ChevronLeft className="size-4" /> {c.prev}
                     </span>
                 )}
                 {orders.next_page_url ? (
@@ -199,11 +204,11 @@ function Pagination({ orders }: { orders: PaginatedOrders }) {
                         className="inline-flex items-center gap-1 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
                         preserveScroll
                     >
-                        Next <ChevronRight className="size-4" />
+                        {c.next} <ChevronRight className="size-4" />
                     </Link>
                 ) : (
                     <span className="inline-flex items-center gap-1 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-300">
-                        Next <ChevronRight className="size-4" />
+                        {c.next} <ChevronRight className="size-4" />
                     </span>
                 )}
             </div>

@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
+import { useContent } from '@/hooks/use-content';
 
 export type RecentPost = {
     id: number;
@@ -14,14 +15,19 @@ export type RecentPost = {
 
 type Props = {
     posts: RecentPost[];
-    /** Section heading; defaults to the marketing copy. */
+    /** Override the section heading; defaults to JSON content. */
     heading?: string;
+    /** Override the eyebrow label; defaults to JSON content. */
     eyebrow?: string;
 };
 
 function excerpt(body: string, length = 110): string {
     const text = body.replace(/<[^>]+>/g, '').trim();
-    if (text.length <= length) return text;
+
+    if (text.length <= length) {
+return text;
+}
+
     return text.slice(0, length).replace(/\s+\S*$/, '') + '…';
 }
 
@@ -36,33 +42,38 @@ function formatDate(iso: string): string {
 /**
  * Homepage section showcasing the latest blog posts as a 4-up card grid.
  * Renders nothing when no posts have been published yet.
+ *
+ * Section labels fall back to `content/hardcoded-content.json` →
+ * `home_page.recent_posts` when no prop override is given.
  */
-export default function RecentPosts({
-    posts,
-    heading = 'Get More from PrintPandora',
-    eyebrow = 'Inspiration & ideas',
-}: Props) {
-    if (posts.length === 0) return null;
+export default function RecentPosts({ posts, heading, eyebrow }: Props) {
+    const rp = useContent('home_page').recent_posts;
+    const h = heading ?? rp.section_title;
+    const e = eyebrow ?? rp.eyebrow;
+
+    if (posts.length === 0) {
+return null;
+}
 
     return (
         <section className="bg-white py-14 md:py-20">
             <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
                 <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                     <div>
-                        {eyebrow && (
+                        {e && (
                             <p className="text-xs font-semibold uppercase tracking-wider text-[#0f4c3a]">
-                                {eyebrow}
+                                {e}
                             </p>
                         )}
                         <h2 className="mt-2 text-2xl font-bold tracking-tight text-neutral-900 md:text-3xl lg:text-4xl">
-                            {heading}
+                            {h}
                         </h2>
                     </div>
                     <Link
-                        href="/blog"
+                        href={rp.view_all_href}
                         className="inline-flex items-center gap-1 text-sm font-semibold text-[#0f4c3a] hover:underline"
                     >
-                        See all articles <ArrowRight className="size-4" />
+                        {rp.view_all_cta} <ArrowRight className="size-4" />
                     </Link>
                 </div>
 

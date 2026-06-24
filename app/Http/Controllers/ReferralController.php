@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Affiliate;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
 
 class ReferralController extends Controller
 {

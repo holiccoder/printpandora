@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { ShoppingCart } from 'lucide-react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { Button } from '@/components/ui/button';
 import {
     Sheet,
     SheetContent,
@@ -9,11 +10,14 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
+import { useContent } from '@/hooks/use-content';
 
 /**
  * Right-side cart drawer. Wraps a trigger element (the cart icon in the
  * storefront header) and opens a Radix Sheet on click.
+ *
+ * All labels and the empty state come from
+ * `content/hardcoded-content.json` → `global_chrome.cart_drawer`.
  *
  * The actual cart state isn't wired yet — for now this renders an empty
  * state with a CTA back into the shop. When we plumb cart items in, swap
@@ -41,6 +45,7 @@ type Props = {
 const ACCENT = '#0f4c3a';
 
 export function CartDrawer({ trigger, items = [], subtotal }: Props) {
+    const c = useContent('global_chrome').cart_drawer;
     const isEmpty = items.length === 0;
     const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
@@ -50,7 +55,7 @@ export function CartDrawer({ trigger, items = [], subtotal }: Props) {
                 {trigger ?? (
                     <button
                         type="button"
-                        aria-label="Open cart"
+                        aria-label={c.trigger_aria_label}
                         className="relative inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-100"
                     >
                         <ShoppingCart className="size-5 opacity-80" />
@@ -71,39 +76,38 @@ export function CartDrawer({ trigger, items = [], subtotal }: Props) {
             >
                 <SheetHeader className="border-b border-neutral-200 px-6 py-4">
                     <SheetTitle className="text-lg font-bold text-neutral-900">
-                        Your cart
+                        {c.header_title}
                         {itemCount > 0 && (
                             <span className="ml-2 text-sm font-normal text-neutral-500">
-                                ({itemCount} {itemCount === 1 ? 'item' : 'items'})
+                                ({itemCount} {itemCount === 1 ? c.item_count_singular : c.item_count_plural})
                             </span>
                         )}
                     </SheetTitle>
                 </SheetHeader>
 
                 <div className="flex-1 overflow-y-auto px-6 py-4">
-                    {isEmpty ? <EmptyState /> : <CartLines items={items} />}
+                    {isEmpty ? <EmptyState /> : <CartLines items={items} qtyLabelPrefix={c.quantity_label_prefix} />}
                 </div>
 
                 {!isEmpty && (
                     <SheetFooter className="border-t border-neutral-200 bg-white p-6">
                         <div className="mb-3 flex items-center justify-between text-sm">
-                            <span className="text-neutral-600">Subtotal</span>
+                            <span className="text-neutral-600">{c.footer.subtotal_label}</span>
                             <span className="font-bold text-neutral-900">
-                                {subtotal ?? '—'}
+                                {subtotal ?? c.footer.subtotal_fallback}
                             </span>
                         </div>
                         <p className="mb-4 text-xs text-neutral-500">
-                            Shipping and taxes calculated at checkout.
+                            {c.footer.shipping_note}
                         </p>
                         <Button
                             asChild
-                            className="w-full"
-                            style={{ backgroundColor: ACCENT }}
+                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                         >
-                            <Link href="/checkout">Checkout</Link>
+                            <Link href={c.footer.checkout_button_href}>{c.footer.checkout_button_label}</Link>
                         </Button>
                         <Button asChild variant="outline" className="w-full">
-                            <Link href="/cart">View cart</Link>
+                            <Link href={c.footer.view_cart_button_href}>{c.footer.view_cart_button_label}</Link>
                         </Button>
                     </SheetFooter>
                 )}
@@ -113,26 +117,27 @@ export function CartDrawer({ trigger, items = [], subtotal }: Props) {
 }
 
 function EmptyState() {
+    const c = useContent('global_chrome').cart_drawer.empty_state;
+
     return (
         <div className="flex h-full flex-col items-center justify-center text-center">
             <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-neutral-100">
                 <ShoppingCart className="size-6 text-neutral-400" />
             </div>
             <h3 className="mb-1 text-base font-semibold text-neutral-900">
-                Your cart is empty
+                {c.heading}
             </h3>
             <p className="mb-6 max-w-xs text-sm text-neutral-500">
-                Looks like you haven't added anything yet. Start with our most
-                popular print products.
+                {c.description}
             </p>
-            <Button asChild style={{ backgroundColor: ACCENT }}>
-                <Link href="/shop">Continue shopping</Link>
+            <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
+                <Link href={c.cta_href}>{c.cta_label}</Link>
             </Button>
         </div>
     );
 }
 
-function CartLines({ items }: { items: CartItem[] }) {
+function CartLines({ items, qtyLabelPrefix }: { items: CartItem[]; qtyLabelPrefix: string }) {
     return (
         <ul className="divide-y divide-neutral-200">
             {items.map((item) => (
@@ -158,7 +163,7 @@ function CartLines({ items }: { items: CartItem[] }) {
                             {item.name}
                         </Link>
                         <span className="mt-1 text-xs text-neutral-500">
-                            Qty {item.quantity}
+                            {qtyLabelPrefix} {item.quantity}
                         </span>
                     </div>
                     <span className="text-sm font-semibold text-neutral-900">

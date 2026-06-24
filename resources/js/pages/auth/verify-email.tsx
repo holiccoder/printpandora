@@ -1,21 +1,23 @@
-// Components
+// Content sourced from `content/hardcoded-content.json` via useContent('auth_verify_email_page').
 import { Form } from '@inertiajs/react';
 import SEO from '@/components/seo';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { useContent } from '@/hooks/use-content';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
 
 export default function VerifyEmail({ status }: { status?: string }) {
+    const c = useContent('auth_verify_email_page') as any;
+
     return (
         <>
-            <SEO title="Email verification" description="Please verify your email address to activate your PrintPandora account." />
+            <SEO title={c.seo.title} description={c.seo.description} />
 
             {status === 'verification-link-sent' && (
                 <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    A new verification link has been sent to the email address
-                    you provided during registration.
+                    {c.success_message}
                 </div>
             )}
 
@@ -24,14 +26,14 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     <>
                         <Button disabled={processing} variant="secondary">
                             {processing && <Spinner />}
-                            Resend verification email
+                            {c.buttons.resend}
                         </Button>
 
                         <TextLink
                             href={logout()}
                             className="mx-auto block text-sm"
                         >
-                            Log out
+                            {c.links.log_out}
                         </TextLink>
                     </>
                 )}
