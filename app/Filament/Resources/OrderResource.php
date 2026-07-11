@@ -7,6 +7,7 @@ use App\Models\Order;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -23,7 +24,7 @@ class OrderResource extends Resource
     {
         return $schema
             ->schema([
-                Forms\Components\Section::make('Order Status')
+                Section::make('Order Status')
                     ->schema([
                         Forms\Components\Select::make('status')
                             ->required()
@@ -38,7 +39,7 @@ class OrderResource extends Resource
                         Forms\Components\Textarea::make('notes')
                             ->columnSpanFull(),
                     ]),
-                Forms\Components\Section::make('Customer Info')
+                Section::make('Customer Info')
                     ->schema([
                         Forms\Components\TextInput::make('customer_name')->required(),
                         Forms\Components\TextInput::make('customer_email')->required()->email(),
@@ -49,6 +50,32 @@ class OrderResource extends Resource
                         Forms\Components\TextInput::make('shipping_zip')->required(),
                         Forms\Components\TextInput::make('shipping_country')->default('US'),
                     ])->columns(2),
+                Section::make('Order Items')
+                    ->schema([
+                        Forms\Components\Repeater::make('items')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\Select::make('product_id')
+                                    ->relationship('product', 'name')
+                                    ->disabled()
+                                    ->label('Product'),
+                                Forms\Components\TextInput::make('quantity')
+                                    ->disabled(),
+                                Forms\Components\TextInput::make('unit_price')
+                                    ->disabled()
+                                    ->prefix('$'),
+                                Forms\Components\TextInput::make('subtotal')
+                                    ->disabled()
+                                    ->prefix('$'),
+                                Forms\Components\KeyValue::make('options')
+                                    ->disabled()
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(3)
+                            ->addable(false)
+                            ->deletable(false)
+                            ->reorderable(false),
+                    ]),
             ]);
     }
 

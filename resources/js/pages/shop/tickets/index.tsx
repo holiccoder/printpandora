@@ -1,5 +1,7 @@
+// Content sourced from `content/hardcoded-content.json` via useContent('shop_tickets_index_page').
 import { Link } from '@inertiajs/react';
 import SEO from '@/components/seo';
+import { useContent } from '@/hooks/use-content';
 
 interface Ticket {
     id: number;
@@ -33,34 +35,36 @@ const priorityColors: Record<string, string> = {
 };
 
 export default function TicketIndex({ tickets }: Props) {
+    const c = useContent('shop_tickets_index_page') as any;
+
     return (
         <>
-            <SEO title="Support Tickets" />
+            <SEO title={c.seo_title} />
 
             <div className="flex min-h-screen flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
                 <header className="w-full border-b border-[#e3e3e0] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]">
                     <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-                        <Link href="/" className="text-lg font-semibold tracking-tight">PrintPandora</Link>
+                        <Link href="/" className="text-lg font-semibold tracking-tight">{c.brand}</Link>
                         <nav className="flex items-center gap-4 text-sm">
-                            <Link href="/shop" className="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]">Shop</Link>
-                            <Link href="/orders" className="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]">Orders</Link>
+                            <Link href="/shop" className="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]">{c.nav.shop}</Link>
+                            <Link href="/orders" className="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]">{c.nav.orders}</Link>
                         </nav>
                     </div>
                 </header>
 
                 <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-12">
                     <div className="mb-6 flex items-center justify-between">
-                        <h1 className="text-3xl font-semibold tracking-tight">Support Tickets</h1>
+                        <h1 className="text-3xl font-semibold tracking-tight">{c.page_heading}</h1>
                         <Link
                             href="/tickets/create"
-                            className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700"
+                            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
                         >
-                            New Ticket
+                            {c.new_ticket_button}
                         </Link>
                     </div>
 
                     {tickets.data.length === 0 ? (
-                        <p className="text-[#706f6c]">No tickets yet.</p>
+                        <p className="text-[#706f6c]">{c.empty_state}</p>
                     ) : (
                         <div className="space-y-4">
                             {tickets.data.map((ticket) => (
@@ -81,7 +85,7 @@ export default function TicketIndex({ tickets }: Props) {
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between text-sm text-[#706f6c]">
-                                        <span>{ticket.replies_count ?? 0} {ticket.replies_count === 1 ? 'reply' : 'replies'}</span>
+                                        <span>{ticket.replies_count ?? 0} {ticket.replies_count === 1 ? c.reply_singular : c.reply_plural}</span>
                                         <span>
                                             {new Date(ticket.created_at).toLocaleDateString('en-US', {
                                                 year: 'numeric', month: 'long', day: 'numeric',
@@ -97,13 +101,13 @@ export default function TicketIndex({ tickets }: Props) {
                         <div className="mt-6 flex items-center justify-center gap-4">
                             {tickets.prev_page_url && (
                                 <Link href={tickets.prev_page_url} className="text-sm text-amber-600 hover:text-amber-700">
-                                    Previous
+                                    {c.pagination.previous}
                                 </Link>
                             )}
-                            <span className="text-sm text-[#706f6c]">Page {tickets.current_page} of {tickets.last_page}</span>
+                            <span className="text-sm text-[#706f6c]">{c.pagination.page_label_prefix} {tickets.current_page} {c.pagination.page_label_separator} {tickets.last_page}</span>
                             {tickets.next_page_url && (
                                 <Link href={tickets.next_page_url} className="text-sm text-amber-600 hover:text-amber-700">
-                                    Next
+                                    {c.pagination.next}
                                 </Link>
                             )}
                         </div>

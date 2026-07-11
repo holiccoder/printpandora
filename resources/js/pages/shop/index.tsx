@@ -1,7 +1,8 @@
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
 import SEO from '@/components/seo';
-import { home } from '@/routes';
+import { useContent } from '@/hooks/use-content';
+import StorefrontLayout from '@/layouts/storefront-layout';
 
 interface Product {
     id: number;
@@ -31,6 +32,7 @@ interface Props {
 }
 
 export default function ShopIndex({ products, categories }: Props) {
+    const c = useContent('shop_index_page');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
     const filtered = selectedCategory
@@ -38,36 +40,25 @@ export default function ShopIndex({ products, categories }: Props) {
         : products.data;
 
     return (
-        <>
-            <SEO title="Shop" description="Browse our printing products." />
+        <StorefrontLayout activeCategory="Business Cards">
+            <SEO title={c.seo.title ?? 'Shop'} description={c.seo.description} />
 
-            <div className="flex min-h-screen flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <header className="w-full border-b border-[#e3e3e0] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]">
-                    <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-                        <Link href={home()} className="text-lg font-semibold tracking-tight">
-                            PrintPandora
-                        </Link>
-                        <nav className="flex items-center gap-4 text-sm">
-                            <Link href="/shop" className="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]">Shop</Link>
-                            <Link href="/blog" className="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]">Blog</Link>
-                            <Link href="/cart" className="rounded-sm bg-amber-600 px-3 py-1.5 text-white hover:bg-amber-700">Cart</Link>
-                        </nav>
-                    </div>
-                </header>
-
+            <div className="flex flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
                 <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-12">
-                    <h1 className="mb-8 text-3xl font-semibold tracking-tight">Shop</h1>
+                    <h1 className="mb-8 text-3xl font-semibold tracking-tight">
+                        {c.page_heading}
+                    </h1>
 
                     <div className="mb-8 flex flex-wrap gap-2">
                         <button
                             onClick={() => setSelectedCategory(null)}
                             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                                 selectedCategory === null
-                                    ? 'bg-amber-600 text-white'
+                                    ? 'bg-primary text-primary-foreground'
                                     : 'bg-neutral-100 text-[#706f6c] hover:bg-neutral-200 dark:bg-neutral-800 dark:text-[#A1A09A]'
                             }`}
                         >
-                            All ({products.data.length})
+                            {c.all_button_label.replace('{count}', String(products.data.length))}
                         </button>
                         {categories.map((cat) => (
                             <button
@@ -75,7 +66,7 @@ export default function ShopIndex({ products, categories }: Props) {
                                 onClick={() => setSelectedCategory(cat.slug)}
                                 className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                                     selectedCategory === cat.slug
-                                        ? 'bg-amber-600 text-white'
+                                        ? 'bg-primary text-primary-foreground'
                                         : 'bg-neutral-100 text-[#706f6c] hover:bg-neutral-200 dark:bg-neutral-800 dark:text-[#A1A09A]'
                                 }`}
                             >
@@ -85,13 +76,13 @@ export default function ShopIndex({ products, categories }: Props) {
                     </div>
 
                     {filtered.length === 0 ? (
-                        <p className="text-[#706f6c] dark:text-[#A1A09A]">No products found.</p>
+                        <p className="text-[#706f6c] dark:text-[#A1A09A]">{c.empty_state}</p>
                     ) : (
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                             {filtered.map((product) => (
                                 <Link
                                     key={product.id}
-                                    href={`/shop/${product.slug}`}
+                                    href={`/${product.slug}`}
                                     className="group block overflow-hidden rounded-lg border border-[#e3e3e0] bg-white transition-shadow hover:shadow-md dark:border-[#3E3E3A] dark:bg-[#161615]"
                                 >
                                     <div className="aspect-square overflow-hidden bg-neutral-100 dark:bg-neutral-800">
@@ -125,11 +116,7 @@ export default function ShopIndex({ products, categories }: Props) {
                         </div>
                     )}
                 </main>
-
-                <footer className="border-t border-[#e3e3e0] bg-white py-6 text-center text-sm text-[#706f6c] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#A1A09A]">
-                    &copy; {new Date().getFullYear()} PrintPandora. All rights reserved.
-                </footer>
             </div>
-        </>
+        </StorefrontLayout>
     );
 }

@@ -6,9 +6,13 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\CodeEditor\Enums\Language;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
@@ -24,7 +28,7 @@ class ProductResource extends Resource
     {
         return $schema
             ->schema([
-                Forms\Components\Section::make()
+                Section::make('Basic Information')
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
@@ -35,22 +39,63 @@ class ProductResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
+                        Forms\Components\TextInput::make('subtitle')
+                            ->maxLength(255),
                         Forms\Components\Select::make('product_category_id')
                             ->label('Category')
                             ->relationship('category', 'name')
                             ->required(),
-                        Forms\Components\TextInput::make('price')
-                            ->required()
-                            ->numeric()
-                            ->prefix('$'),
+                        Forms\Components\Toggle::make('is_active')
+                            ->label('Active')
+                            ->default(true),
+                    ]),
+
+                Section::make('Pricing')
+                    ->schema([
+                        Forms\Components\TextInput::make('price_line')
+                            ->maxLength(255)
+                            ->placeholder('e.g. From $29.99'),
+                    ]),
+
+                Section::make('Description')
+                    ->schema([
+                        Forms\Components\TextInput::make('description_title')
+                            ->maxLength(255),
+                        Forms\Components\RichEditor::make('description'),
+                        Forms\Components\TagsInput::make('bullet_points')
+                            ->placeholder('Add a bullet point')
+                            ->reorderable(),
+                    ]),
+
+                Section::make('Product Options')
+                    ->schema([
+                        Forms\Components\CodeEditor::make('product_options')
+                            ->language(Language::Json)
+                            ->formatStateUsing(fn ($state) => json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))
+                            ->dehydrateStateUsing(fn ($state) => json_decode($state, true))
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Media')
+                    ->schema([
                         Forms\Components\FileUpload::make('featured_image')
                             ->image()
                             ->directory('products')
                             ->imageEditor(),
-                        Forms\Components\RichEditor::make('description'),
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true),
+                        SpatieMediaLibraryFileUpload::make('gallery')
+                            ->collection('gallery')
+                            ->multiple()
+                            ->reorderable()
+                            ->image()
+                            ->imageEditor()
+                            ->maxFiles(8),
+                    ]),
+
+                Section::make('SEO')
+                    ->schema([
+                        Forms\Components\Textarea::make('meta_description')
+                            ->maxLength(65535)
+                            ->columnSpanFull(),
                     ]),
             ]);
     }
@@ -60,9 +105,14 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('featured_image')->square(),
+                SpatieMediaLibraryImageColumn::make('gallery')
+                    ->collection('gallery')
+                    ->circular()
+                    ->stacked()
+                    ->limit(3),
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('category.name')->sortable(),
-                Tables\Columns\TextColumn::make('price')->money('USD')->sortable(),
+                Tables\Columns\TextColumn::make('price_line')->sortable(),
                 Tables\Columns\IconColumn::make('is_active')->boolean()->label('Active'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])

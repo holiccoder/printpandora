@@ -1,13 +1,16 @@
+// Content (labels/placeholders/links) sourced from `content/hardcoded-content.json` via useContent('auth_login_page').
 import { Form } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import SEO from '@/components/seo';
+import SocialAuthButtons from '@/components/social-auth-buttons';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import { useContent } from '@/hooks/use-content';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
@@ -18,9 +21,13 @@ type Props = {
 };
 
 export default function Login({ status, canResetPassword }: Props) {
+    const c = useContent('auth_login_page') as any;
+
     return (
         <>
-            <SEO title="Log in" description="Log in to your PrintPandora account to manage your orders and designs." />
+            <SEO title={c.seo.title} description={c.seo.description} />
+
+            <SocialAuthButtons intent="login" />
 
             <Form
                 {...store.form()}
@@ -31,7 +38,7 @@ export default function Login({ status, canResetPassword }: Props) {
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">{c.labels.email}</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -40,21 +47,21 @@ export default function Login({ status, canResetPassword }: Props) {
                                     autoFocus
                                     tabIndex={1}
                                     autoComplete="email"
-                                    placeholder="email@example.com"
+                                    placeholder={c.placeholders.email}
                                 />
                                 <InputError message={errors.email} />
                             </div>
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
+                                    <Label htmlFor="password">{c.labels.password}</Label>
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
                                             className="ml-auto text-sm"
                                             tabIndex={5}
                                         >
-                                            Forgot your password?
+                                            {c.links.forgot_password}
                                         </TextLink>
                                     )}
                                 </div>
@@ -64,7 +71,7 @@ export default function Login({ status, canResetPassword }: Props) {
                                     required
                                     tabIndex={2}
                                     autoComplete="current-password"
-                                    placeholder="Password"
+                                    placeholder={c.placeholders.password}
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -75,7 +82,7 @@ export default function Login({ status, canResetPassword }: Props) {
                                     name="remember"
                                     tabIndex={3}
                                 />
-                                <Label htmlFor="remember">Remember me</Label>
+                                <Label htmlFor="remember">{c.labels.remember}</Label>
                             </div>
 
                             <Button
@@ -86,14 +93,14 @@ export default function Login({ status, canResetPassword }: Props) {
                                 data-test="login-button"
                             >
                                 {processing && <Spinner />}
-                                Log in
+                                {c.buttons.log_in}
                             </Button>
                         </div>
 
                         <div className="text-center text-sm text-muted-foreground">
-                            Don't have an account?{' '}
+                            {c.footer_text}{' '}
                             <TextLink href={register()} tabIndex={5}>
-                                Sign up
+                                {c.links.sign_up}
                             </TextLink>
                         </div>
                     </>
@@ -109,6 +116,9 @@ export default function Login({ status, canResetPassword }: Props) {
     );
 }
 
+// Layout title/description for AuthSplitLayout are read at runtime from the
+// shared content tree by the layout itself; we leave the static fallback here
+// so the Inertia layout system has values during hydration.
 Login.layout = {
     title: 'Log in to your account',
     description: 'Enter your email and password below to log in',

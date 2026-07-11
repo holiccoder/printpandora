@@ -128,7 +128,7 @@ class CheckoutController extends Controller
             'customer_phone' => 'nullable|string|max:20',
             'shipping_address' => 'required|string|max:255',
             'shipping_city' => 'required|string|max:255',
-            'shipping_state' => 'nullable|string|max:255',
+            'shipping_state' => 'required|string|max:255',
             'shipping_zip' => 'required|string|max:20',
             'shipping_country' => 'required|string|max:2',
             'notes' => 'nullable|string',
@@ -165,6 +165,7 @@ class CheckoutController extends Controller
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['price'],
                     'subtotal' => $item['price'] * $item['quantity'],
+                    'options' => $item['options'] ?? null,
                 ]);
             }
 

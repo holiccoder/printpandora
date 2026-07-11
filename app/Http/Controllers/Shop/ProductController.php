@@ -29,7 +29,17 @@ class ProductController extends Controller
         $product = Product::with('category')
             ->where('is_active', true)
             ->where('slug', $slug)
-            ->firstOrFail();
+            ->first();
+
+        // Unknown slugs render the Inertia 404 page instead of Laravel's
+        // default ModelNotFoundException response. The route is now
+        // top-level (`/{slug}`) so any unmatched single-segment URL lands
+        // here — we need to fall back gracefully when it isn't a product.
+        if (! $product) {
+            return Inertia::render('errors/not-found')
+                ->toResponse(request())
+                ->setStatusCode(404);
+        }
 
         $related = Product::with('category')
             ->where('is_active', true)
@@ -42,6 +52,32 @@ class ProductController extends Controller
         return Inertia::render('shop/show', [
             'product' => $product,
             'related' => $related,
+            'productOptions' => $this->loadProductOptions($product),
         ]);
+    }
+
+    private function loadProductOptions(Product $product): ?array
+    {
+        $categorySlug = $product->category?->slug;
+
+        if (! $categorySlug) {
+            return null;
+        }
+
+        $path = base_path("content/product-options/{$categorySlug}/{$product->slug}.json");
+
+        if (! file_exists($path)) {
+            return null;
+        }
+
+        $content = file_get_contents($path);
+
+        if ($content === false) {
+            return null;
+        }
+
+        $decoded = json_decode($content, true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 }

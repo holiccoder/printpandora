@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\HardcodedContent;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Storefront content loader — singleton so the in-memory memo is
+        // shared across all consumers within a single request.
+        $this->app->singleton(HardcodedContent::class);
     }
 
     /**
