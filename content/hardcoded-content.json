@@ -625,9 +625,9 @@
     "design_cta": {
       "heading": "How would you like to design?",
       "options": [
-        { "title": "Use a template", "body": "Browse hundreds of designs and personalise yours in minutes." },
-        { "title": "Design online", "body": "Start from scratch in our easy drag-and-drop designer." },
-        { "title": "Upload a full design", "body": "Already have artwork? Upload your own PDF or PNG." }
+        { "title": "Design in Canva", "body": "Watch the quick tutorial, design in Canva, then upload your file here." },
+        { "title": "Upload a full design (free)", "body": "Already have print-ready artwork? Send it over and we'll prepare the proof." },
+        { "title": "Design for you", "body": "Tell us what you need — our designers create the artwork for you." }
       ]
     },
     "add_to_cart_button_template": "Add to cart · ${price}",

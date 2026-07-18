@@ -4,8 +4,18 @@
 import { Link, router } from '@inertiajs/react';
 import { ChevronRight, Star } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
 import SEO from '@/components/seo';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { computeDynamicTiers } from '@/lib/pricing';
@@ -174,6 +184,27 @@ export default function ShopShow({ product, related, productOptions }: Props) {
         ? productOptions.pricing_data!.rectangle.startQuantity
         : null;
 
+    // "X cards from $Y" derived from data: X = startQuantity from the
+    // pricing JSON, Y = subtotal (currentPrice) of the first row of the
+    // quantity pricing table under the default option configuration.
+    const startingPriceText = useMemo(() => {
+        if (hasDynamicPricing) {
+            const firstTier = computeDynamicTiers(
+                productOptions.pricing_data!,
+                0, // default size
+                0, // default paper finish
+                0, // default corners
+                0, // default special finish
+            )[0];
+
+            if (firstTier) {
+                return `${firstTier.qty} cards from $${firstTier.currentPrice}`;
+            }
+        }
+
+        return productOptions?.starting_price_text;
+    }, [hasDynamicPricing, productOptions]);
+
     const staticRecommendedQty = (() => {
         if (hasDynamicPricing) {
             return null;
@@ -247,6 +278,9 @@ export default function ShopShow({ product, related, productOptions }: Props) {
         null,
     );
     const [added, setAdded] = useState(false);
+    const [designModal, setDesignModal] = useState<
+        'canva' | 'upload' | 'design-for-you' | null
+    >(null);
 
     const hasSelection =
         selectedSize != null &&
@@ -612,9 +646,9 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                         <p className="mt-4 text-sm leading-relaxed text-neutral-700">
                             {productOptions?.subtitle ?? c.product_subtitle}
                         </p>
-                        {productOptions?.starting_price_text && (
+                        {startingPriceText && (
                             <p className="mt-2 text-sm font-semibold text-neutral-900">
-                                {productOptions.starting_price_text}
+                                {startingPriceText}
                             </p>
                         )}
 
@@ -1002,6 +1036,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                     title={c.design_cta.options[0].title}
                                     body={c.design_cta.options[0].body}
                                     accent={ACCENT}
+                                    onClick={() => setDesignModal('canva')}
                                     icon={
                                         <svg
                                             viewBox="0 0 24 24"
@@ -1045,6 +1080,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                     title={c.design_cta.options[1].title}
                                     body={c.design_cta.options[1].body}
                                     accent={ACCENT}
+                                    onClick={() => setDesignModal('upload')}
                                     icon={
                                         <svg
                                             viewBox="0 0 24 24"
@@ -1064,6 +1100,9 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                     title={c.design_cta.options[2].title}
                                     body={c.design_cta.options[2].body}
                                     accent={ACCENT}
+                                    onClick={() =>
+                                        setDesignModal('design-for-you')
+                                    }
                                     icon={
                                         <svg
                                             viewBox="0 0 24 24"
@@ -1082,6 +1121,30 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                 />
                             </div>
                         </div>
+
+                        {/* design modals */}
+                        <CanvaDesignModal
+                            open={designModal === 'canva'}
+                            onOpenChange={(open) =>
+                                setDesignModal(open ? 'canva' : null)
+                            }
+                        />
+                        <DesignServiceFormModal
+                            open={designModal === 'upload'}
+                            onOpenChange={(open) =>
+                                setDesignModal(open ? 'upload' : null)
+                            }
+                            title="Upload a full design (free)"
+                            description="Send us your print-ready artwork and we'll prepare a free proof before printing."
+                        />
+                        <DesignServiceFormModal
+                            open={designModal === 'design-for-you'}
+                            onOpenChange={(open) =>
+                                setDesignModal(open ? 'design-for-you' : null)
+                            }
+                            title="Design for you"
+                            description="Tell us about your brand and what you need — our designers will create the artwork for you."
+                        />
 
                         <Button
                             onClick={addToCart}
@@ -1485,21 +1548,163 @@ function DesignChoice({
     body,
     icon,
     accent,
+    onClick,
 }: {
     title: string;
     body: string;
     icon: React.ReactNode;
     accent: string;
+    onClick?: () => void;
 }) {
     return (
         <button
             type="button"
+            onClick={onClick}
             className="flex h-full flex-col items-start gap-2 rounded-md border-2 border-neutral-200 bg-white p-4 text-left transition-colors hover:border-[#0f4c3a] hover:bg-[#0f4c3a]/5"
         >
             <span style={{ color: accent }}>{icon}</span>
             <p className="text-sm font-bold text-neutral-900">{title}</p>
             <p className="text-xs leading-relaxed text-neutral-600">{body}</p>
         </button>
+    );
+}
+
+function CanvaDesignModal({
+    open,
+    onOpenChange,
+}: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+}) {
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>Design in Canva</DialogTitle>
+                    <DialogDescription>
+                        Watch the quick tutorial, design your card in Canva,
+                        then come back and upload the file below.
+                    </DialogDescription>
+                </DialogHeader>
+
+                <div className="aspect-video w-full overflow-hidden rounded-md bg-neutral-100">
+                    <iframe
+                        className="h-full w-full"
+                        src="https://www.youtube.com/embed/r4n88m21kow?start=2"
+                        title="Canva design tutorial"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                    />
+                </div>
+
+                <form
+                    className="mt-2 space-y-3"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        toast.success(
+                            'File received — we will attach it to your order.',
+                        );
+                        onOpenChange(false);
+                    }}
+                >
+                    <h3 className="text-sm font-bold text-neutral-900">
+                        Upload your Canva design file
+                    </h3>
+                    <Input
+                        type="file"
+                        accept=".pdf,.png,.jpg,.jpeg,.svg,.ai,.psd"
+                        required
+                    />
+                    <Button type="submit" className="w-full sm:w-auto">
+                        Upload file
+                    </Button>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+function DesignServiceFormModal({
+    open,
+    onOpenChange,
+    title,
+    description,
+}: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    title: string;
+    description: string;
+}) {
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>{title}</DialogTitle>
+                    <DialogDescription>{description}</DialogDescription>
+                </DialogHeader>
+
+                <form
+                    className="space-y-4"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        toast.success(
+                            'Thanks — our design team will contact you by email shortly.',
+                        );
+                        onOpenChange(false);
+                    }}
+                >
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="ds-name">Full name *</Label>
+                            <Input id="ds-name" name="name" required />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="ds-email">Email *</Label>
+                            <Input
+                                id="ds-email"
+                                name="email"
+                                type="email"
+                                required
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="ds-phone">Phone</Label>
+                            <Input id="ds-phone" name="phone" type="tel" />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="ds-company">Company name</Label>
+                            <Input id="ds-company" name="company" />
+                        </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <Label htmlFor="ds-file">Upload your file(s)</Label>
+                        <Input
+                            id="ds-file"
+                            name="files"
+                            type="file"
+                            multiple
+                            accept=".pdf,.png,.jpg,.jpeg,.svg,.ai,.psd,.eps"
+                        />
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <Label htmlFor="ds-notes">Design instructions</Label>
+                        <textarea
+                            id="ds-notes"
+                            name="notes"
+                            rows={4}
+                            placeholder="Colours, style, text to include, references…"
+                            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        />
+                    </div>
+
+                    <Button type="submit" className="w-full">
+                        Submit
+                    </Button>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 }
 
