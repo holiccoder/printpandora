@@ -67,7 +67,16 @@
           },
           {
             "links": [
-              { "label": "Classic Business Cards", "href": "/classic-business-cards" },
+              {
+                "label": "Classic Business Cards",
+                "href": "/classic-business-cards",
+                "children": [
+                  { "label": "300g tongbangzhi+uv", "href": "/300g-tongbangzhi-uv" },
+                  { "label": "300g yishuzhi", "href": "/300g-yishuzhi" },
+                  { "label": "320g tongbanzhi", "href": "/320g-tongbanzhi" },
+                  { "label": "350g baika", "href": "/350g-baika" }
+                ]
+              },
               { "label": "Super Business Cards", "href": "/super-business-cards" },
               { "label": "Luxe Business Cards", "href": "/luxe-business-cards" },
               { "label": "Cotton Business Cards", "href": "/cotton-business-cards" },

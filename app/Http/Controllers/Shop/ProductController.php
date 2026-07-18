@@ -78,6 +78,49 @@ class ProductController extends Controller
 
         $decoded = json_decode($content, true);
 
-        return is_array($decoded) ? $decoded : null;
+        if (! is_array($decoded)) {
+            return null;
+        }
+
+        $decoded['pricing_data'] = $this->loadDynamicPricingData($product->slug);
+
+        return $decoded;
+    }
+
+    private function loadDynamicPricingData(string $slug): ?array
+    {
+        if ($slug !== '300g-tongbangzhi-uv') {
+            return null;
+        }
+
+        $basePath = base_path('storage/from-tool/数据文档/300g铜版纸');
+
+        $files = [
+            'rectangle' => '300g铜版纸 长方形.json',
+            'uv' => '300g铜版纸 uv.json',
+            'square' => '300g铜版纸 正方形.json',
+            'square_uv' => '300g铜版纸 正方形uv.json',
+        ];
+
+        $data = [];
+
+        foreach ($files as $key => $file) {
+            $path = $basePath.'/'.$file;
+
+            if (! file_exists($path)) {
+                return null;
+            }
+
+            $content = file_get_contents($path);
+            $decoded = $content !== false ? json_decode($content, true) : null;
+
+            if (! is_array($decoded)) {
+                return null;
+            }
+
+            $data[$key] = $decoded;
+        }
+
+        return $data;
     }
 }

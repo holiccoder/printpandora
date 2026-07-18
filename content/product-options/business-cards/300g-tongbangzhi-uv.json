@@ -1,28 +1,6 @@
 {
-    "subtitle": "Good quality 12 - 13pt business cards in Original paper stock",
+    "subtitle": "300 gsm coated stock with a glossy UV finish",
     "starting_price_text": "50 cards from $12",
-    "paper_type": [
-        {
-            "name": "standard",
-            "code": "standard"
-        },
-        {
-            "name": "thick",
-            "code": "thick"
-        }
-    ],
-    "paper_thickness": [
-        {
-            "name": "Standard",
-            "code": "standard",
-            "description": "110lb weight, 12pt in thickness"
-        },
-        {
-            "name": "Thick",
-            "code": "thick",
-            "description": "118lb weight, 13pt in thickness"
-        }
-    ],
     "sizes": [
         {
             "name": "Standard",
@@ -225,6 +203,70 @@
             "code": "gloss",
             "description": "Eye-catchingly shiny. Makes color photos pop.",
             "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "UV",
+            "code": "uv",
+            "description": "UV effect business card",
+            "swatch_image": "/images/product-options/uv-swatch.png",
             "added_price": [
                 {
                     "pack_size": 50,

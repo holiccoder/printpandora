@@ -2,6 +2,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import createServer from '@inertiajs/react/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import ReactDOMServer from 'react-dom/server';
+import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
@@ -22,10 +23,19 @@ createServer((page) =>
                 case name === 'about':
                 case name === 'terms':
                 case name === 'privacy':
+                case name === 'shipping':
+                case name === 'contact':
+                case name === 'sample-packs':
                     return null;
                 case name === 'dashboard':
                     return null;
                 case name.startsWith('dashboard/'):
+                    return null;
+                case name.startsWith('blog/'):
+                    return null;
+                case name.startsWith('errors/'):
+                    return null;
+                case name.startsWith('shop/'):
                     return null;
                 case name.startsWith('auth/'):
                     return AuthLayout;
@@ -43,6 +53,7 @@ createServer((page) =>
         setup: ({ App, props }) => (
             <TooltipProvider delayDuration={0}>
                 <App {...props} />
+                <Toaster />
             </TooltipProvider>
         ),
     }),

@@ -370,7 +370,7 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                 when nothing is hovered so the right-hand promos don't shift. */}
             <div className="col-span-12 md:col-span-3">
                 {activeSub && (
-                    <div className="rounded-md border border-neutral-200 bg-neutral-50 p-4">
+                    <div className="rounded-md border border-neutral-200 bg-white p-4">
                         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500">
                             {activeSub.label}
                         </p>
@@ -403,7 +403,7 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
 function PromoCard({ promo }: { promo: PromoBlock }) {
     return (
         <div className="flex flex-col">
-            <Link href={promo.cta_href} className="block overflow-hidden rounded-md bg-neutral-100">
+            <Link href={promo.cta_href} className="block overflow-hidden rounded-md bg-white">
                 <img
                     src={promo.image_url}
                     alt={promo.image_alt}
