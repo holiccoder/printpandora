@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "name": "Admin User",
+        "email": "admin@example.com",
+        "email_verified_at": "2026-06-10 05:24:38",
+        "password": "$2y$12$L0WOSFbfGrA2zMfwflopIOV3DUpSQMBECst/eKHwV.BgMw9lql2l.",
+        "remember_token": "X9QnBxqvRk",
+        "created_at": "2026-06-10 05:24:38",
+        "updated_at": "2026-06-10 05:24:38"
+    },
+    {
+        "id": 2,
+        "name": "Admin",
+        "email": "admin@admin.com",
+        "email_verified_at": "2026-06-13 03:17:40",
+        "password": "$2y$12$eNx1FmUTBbGCS5KaPlTRx.D0uOCMPSd9nLVA4eOrC83IwwUKC7Jeu",
+        "remember_token": null,
+        "created_at": "2026-06-11 03:46:00",
+        "updated_at": "2026-06-13 03:17:40"
+    }
+]

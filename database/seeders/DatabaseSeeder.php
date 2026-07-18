@@ -330,5 +330,9 @@ HTML,
                 ],
             );
         }
+
+        // Replay the live-data snapshot last so `db:seed` reproduces it exactly.
+        // Regenerate the snapshot any time with: php artisan db:export-seeders
+        $this->call(LiveDataSeeder::class);
     }
 }

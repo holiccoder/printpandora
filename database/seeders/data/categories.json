@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "name": "Getting Started",
+        "slug": "getting-started",
+        "created_at": "2026-06-13 02:38:16",
+        "updated_at": "2026-06-13 02:38:16"
+    },
+    {
+        "id": 2,
+        "name": "Design Tips",
+        "slug": "design-tips",
+        "created_at": "2026-06-13 02:38:16",
+        "updated_at": "2026-06-13 02:38:16"
+    },
+    {
+        "id": 3,
+        "name": "Product Updates",
+        "slug": "product-updates",
+        "created_at": "2026-06-13 02:38:16",
+        "updated_at": "2026-06-13 02:38:16"
+    },
+    {
+        "id": 4,
+        "name": "Tutorials",
+        "slug": "tutorials",
+        "created_at": "2026-06-13 02:38:16",
+        "updated_at": "2026-06-13 02:38:16"
+    },
+    {
+        "id": 5,
+        "name": "Case Studies",
+        "slug": "case-studies",
+        "created_at": "2026-06-13 02:38:16",
+        "updated_at": "2026-06-13 02:38:16"
+    }
+]

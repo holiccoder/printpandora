@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "user_id": 1,
+        "status": "pending",
+        "total": 100,
+        "customer_name": "Quentin Taylor",
+        "customer_email": "hywo@mailinator.com",
+        "customer_phone": "+1 (397) 124-9428",
+        "shipping_address": "Veritatis aliquid ul",
+        "shipping_city": "A velit natus sunt",
+        "shipping_state": null,
+        "shipping_zip": "87740",
+        "shipping_country": "CA",
+        "notes": "Duis fugiat dicta be",
+        "created_at": "2026-06-24 11:05:27",
+        "updated_at": "2026-06-24 11:05:27",
+        "payment_method": "manual",
+        "payment_status": "pending",
+        "payment_id": null
+    },
+    {
+        "id": 2,
+        "user_id": 1,
+        "status": "pending",
+        "total": 100,
+        "customer_name": "朱志海",
+        "customer_email": "371745307@qq.com",
+        "customer_phone": "15601756999",
+        "shipping_address": "上海市黄浦区兴安路141弄6号前门",
+        "shipping_city": "不好好刚刚",
+        "shipping_state": "01",
+        "shipping_zip": "258523",
+        "shipping_country": "JP",
+        "notes": null,
+        "created_at": "2026-06-25 03:06:13",
+        "updated_at": "2026-06-25 03:06:13",
+        "payment_method": "manual",
+        "payment_status": "pending",
+        "payment_id": null
+    }
+]
