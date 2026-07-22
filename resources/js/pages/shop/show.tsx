@@ -2,11 +2,12 @@
 // via useContent('product_detail_page'). Configurator state and price math stay
 // local to the page; JSON drives the labels and option metadata.
 import { Link, router } from '@inertiajs/react';
-import { ChevronRight, Star } from 'lucide-react';
+import { ChevronRight, Image, Package } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import SEO from '@/components/seo';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogContent,
@@ -16,6 +17,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { computeDynamicTiers } from '@/lib/pricing';
@@ -175,10 +183,10 @@ export default function ShopShow({ product, related, productOptions }: Props) {
         [hasProductOptions, productOptions],
     );
 
+    // Dynamic pricing is attached by the controller only for products
+    // that have pricing JSON configured (see loadDynamicPricingData).
     const hasDynamicPricing =
-        hasProductOptions &&
-        product.slug === '300g-tongbangzhi-uv' &&
-        productOptions.pricing_data != null;
+        hasProductOptions && productOptions.pricing_data != null;
 
     const dynamicStartQty = hasDynamicPricing
         ? productOptions.pricing_data!.rectangle.startQuantity
@@ -543,12 +551,12 @@ export default function ShopShow({ product, related, productOptions }: Props) {
             <section className="bg-white">
                 <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 lg:grid-cols-2">
                     {/* gallery */}
-                    <div className="lg:sticky lg:top-[172px] lg:self-start">
+                    <div className="lg:sticky lg:top-[10px] lg:self-start">
                         <div className="overflow-hidden rounded-lg bg-neutral-100">
                             <img
                                 src={activeImage}
                                 alt={product.name}
-                                className="aspect-[5/4] w-full object-cover"
+                                className="h-[420px] w-full object-cover sm:h-[540px] lg:h-[600px]"
                             />
                         </div>
                         <div className="mt-3 grid grid-cols-4 gap-2">
@@ -559,7 +567,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                     onClick={() => setSelectedThumbnail(src)}
                                     className={`overflow-hidden rounded-md border-2 transition-colors ${
                                         activeImage === src
-                                            ? 'border-[#0f4c3a]'
+                                            ? 'border-[#1e3a5f]'
                                             : 'border-transparent hover:border-neutral-200'
                                     }`}
                                 >
@@ -571,54 +579,40 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                 </button>
                             ))}
                         </div>
-                        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-neutral-700">
+                        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <FeatureChip
                                 accent={ACCENT}
                                 icon={
                                     <svg
                                         viewBox="0 0 24 24"
                                         fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1.6"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="size-4"
+                                        className="size-10"
                                     >
-                                        <rect
-                                            x="3"
-                                            y="6"
-                                            width="13"
-                                            height="9"
-                                            rx="1"
-                                        />
-                                        <rect
-                                            x="8"
-                                            y="11"
-                                            width="13"
-                                            height="9"
-                                            rx="1"
-                                        />
+                                        <circle cx="12" cy="12" r="11" fill="#22c55e" />
+                                        <rect x="5" y="7" width="14" height="10" rx="1" fill="white" />
+                                        <g fill="#ef4444">
+                                            <rect x="5" y="7" width="14" height="2" />
+                                            <rect x="5" y="11" width="14" height="2" />
+                                            <rect x="5" y="15" width="14" height="2" />
+                                        </g>
+                                        <rect x="5" y="7" width="6" height="6" fill="#2563eb" />
+                                        <g fill="white">
+                                            <circle cx="6.5" cy="8.5" r="0.5" />
+                                            <circle cx="8" cy="8.5" r="0.5" />
+                                            <circle cx="9.5" cy="8.5" r="0.5" />
+                                            <circle cx="7.25" cy="10" r="0.5" />
+                                            <circle cx="8.75" cy="10" r="0.5" />
+                                        </g>
                                     </svg>
                                 }
                                 label={featureChips[0]}
+                                description="Designed by you and PrintPandora, printed in the USA"
                             />
                             <FeatureChip
                                 accent={ACCENT}
-                                icon={
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1.6"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="size-4"
-                                    >
-                                        <circle cx="12" cy="12" r="9" />
-                                        <path d="M12 3v18M3 12h18" />
-                                    </svg>
-                                }
+                                icon={<Package className="size-10 stroke-[#22c55e]" />}
                                 label={featureChips[1]}
+                                description="On matte finish &amp; square corners. / Order before 2pm (EST) Mon-Fri."
                             />
                         </div>
                     </div>
@@ -631,18 +625,6 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                         <h1 className="text-3xl leading-tight font-bold text-neutral-900 lg:text-4xl">
                             {product.name}
                         </h1>
-                        <div className="mt-3 flex items-center gap-3">
-                            <Stars
-                                value={4.6}
-                                accent={ACCENT}
-                                ariaLabel={String(
-                                    c.stars_aria_label_template,
-                                ).replace('{value}', '4.6')}
-                            />
-                            <span className="text-sm text-neutral-500">
-                                {c.stars_rating_text}
-                            </span>
-                        </div>
                         <p className="mt-4 text-sm leading-relaxed text-neutral-700">
                             {productOptions?.subtitle ?? c.product_subtitle}
                         </p>
@@ -650,6 +632,30 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                             <p className="mt-2 text-sm font-semibold text-neutral-900">
                                 {startingPriceText}
                             </p>
+                        )}
+
+                        {c.description_block && (
+                            <div className="mt-6">
+                                <h2 className="text-lg font-bold text-neutral-900">
+                                    {c.description_block.title}
+                                </h2>
+                                <p className="mt-2 text-sm leading-relaxed text-neutral-700">
+                                    {c.description_block.description}
+                                </p>
+                                <ul className="mt-3 space-y-1.5 text-sm text-neutral-700">
+                                    {c.description_block.bullets.map(
+                                        (bullet: string) => (
+                                            <li
+                                                key={bullet}
+                                                className="flex gap-2"
+                                            >
+                                                <Bullet accent={ACCENT} />{' '}
+                                                {bullet}
+                                            </li>
+                                        ),
+                                    )}
+                                </ul>
+                            </div>
                         )}
 
                         <OptionGroup label={c.configurator_labels.size}>
@@ -678,7 +684,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                                         className={`block rounded-sm border-2 ${
                                                             selectedSize ===
                                                             s.id
-                                                                ? 'border-[#0f4c3a] bg-[#0f4c3a]/5'
+                                                                ? 'border-[#1e3a5f] bg-[#1e3a5f]/5'
                                                                 : 'border-neutral-300 bg-neutral-50'
                                                         } ${shape === 'rect' ? 'h-8 w-14' : 'size-10'}`}
                                                     />
@@ -697,7 +703,13 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                         </OptionGroup>
 
                         <OptionGroup label={c.configurator_labels.paper_finish}>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div
+                                className={`grid gap-3 ${
+                                    finishes.length === 3
+                                        ? 'grid-cols-1 sm:grid-cols-3'
+                                        : 'grid-cols-2'
+                                }`}
+                            >
                                 {finishes.map((f: any) => (
                                     <ChoiceTile
                                         key={f.id}
@@ -754,7 +766,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                                         } ${
                                                             selectedCorners ===
                                                             cn.id
-                                                                ? 'border-[#0f4c3a] bg-[#0f4c3a]/5'
+                                                                ? 'border-[#1e3a5f] bg-[#1e3a5f]/5'
                                                                 : 'border-neutral-300 bg-neutral-50'
                                                         }`}
                                                     />
@@ -771,7 +783,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
 
                         {specialFinishes.length > 0 && (
                             <OptionGroup label="Special finish">
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-3 gap-3">
                                     {specialFinishes.map((f: any) => (
                                         <ChoiceTile
                                             key={f.id}
@@ -855,7 +867,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                                         }
                                                         className={`cursor-pointer transition-colors ${
                                                             active
-                                                                ? 'bg-[#0f4c3a]/5'
+                                                                ? 'bg-[#1e3a5f]/5'
                                                                 : recommended
                                                                   ? 'bg-amber-50/60 hover:bg-amber-50'
                                                                   : 'hover:bg-neutral-50'
@@ -874,7 +886,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                                                             t.qty,
                                                                         )
                                                                     }
-                                                                    className="size-4 accent-[#0f4c3a]"
+                                                                    className="size-4 accent-[#1e3a5f]"
                                                                 />
                                                                 <span className="font-semibold text-neutral-900">
                                                                     {t.qty}
@@ -1136,6 +1148,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                             }
                             title="Upload a full design (free)"
                             description="Send us your print-ready artwork and we'll prepare a free proof before printing."
+                            productOptions={c.design_form_product_options}
                         />
                         <DesignServiceFormModal
                             open={designModal === 'design-for-you'}
@@ -1144,6 +1157,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                             }
                             title="Design for you"
                             description="Tell us about your brand and what you need — our designers will create the artwork for you."
+                            productOptions={c.design_form_product_options}
                         />
 
                         <Button
@@ -1167,7 +1181,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
             </section>
 
             {/* 2. design guidelines */}
-            <section className="bg-neutral-100">
+            <section className="mt-12 bg-neutral-100">
                 <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-12 lg:grid-cols-2 lg:py-16">
                     <div>
                         <h2 className="text-2xl font-bold text-neutral-900">
@@ -1460,44 +1474,25 @@ export default function ShopShow({ product, related, productOptions }: Props) {
 function FeatureChip({
     icon,
     label,
+    description,
     accent,
 }: {
     icon: React.ReactNode;
     label: string;
+    description?: string;
     accent: string;
 }) {
     return (
-        <span className="inline-flex items-center gap-1.5">
-            <span style={{ color: accent }}>{icon}</span>
-            <span className="text-xs font-semibold tracking-wide uppercase">
-                {label}
-            </span>
-        </span>
-    );
-}
-
-function Stars({
-    value,
-    accent,
-    ariaLabel,
-}: {
-    value: number;
-    accent: string;
-    ariaLabel: string;
-}) {
-    const full = Math.floor(value);
-
-    return (
-        <div className="flex items-center gap-0.5" aria-label={ariaLabel}>
-            {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                    key={i}
-                    className="size-4"
-                    fill={i < full ? accent : 'transparent'}
-                    stroke={i < full ? accent : '#cbd5d3'}
-                    strokeWidth={1.5}
-                />
-            ))}
+        <div className="flex gap-3 rounded-lg border border-neutral-200 bg-white p-4">
+            <span className="mt-0.5 shrink-0">{icon}</span>
+            <div>
+                <p className="text-sm font-bold text-neutral-900">{label}</p>
+                {description && (
+                    <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+                        {description}
+                    </p>
+                )}
+            </div>
         </div>
     );
 }
@@ -1534,7 +1529,7 @@ function ChoiceTile({
             onClick={onClick}
             className={`rounded-md border-2 p-3 text-left transition-colors ${
                 active
-                    ? 'border-[#0f4c3a] bg-[#0f4c3a]/5'
+                    ? 'border-[#1e3a5f] bg-[#1e3a5f]/5'
                     : 'border-neutral-200 hover:border-neutral-300'
             }`}
         >
@@ -1560,7 +1555,7 @@ function DesignChoice({
         <button
             type="button"
             onClick={onClick}
-            className="flex h-full flex-col items-start gap-2 rounded-md border-2 border-neutral-200 bg-white p-4 text-left transition-colors hover:border-[#0f4c3a] hover:bg-[#0f4c3a]/5"
+            className="flex h-full flex-col items-start gap-2 rounded-md border-2 border-neutral-200 bg-white p-4 text-left transition-colors hover:border-[#1e3a5f] hover:bg-[#1e3a5f]/5"
         >
             <span style={{ color: accent }}>{icon}</span>
             <p className="text-sm font-bold text-neutral-900">{title}</p>
@@ -1629,22 +1624,26 @@ function DesignServiceFormModal({
     onOpenChange,
     title,
     description,
+    productOptions,
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     title: string;
     description: string;
+    productOptions?: string[];
 }) {
+    const [agreed, setAgreed] = useState(false);
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-lg">
+            <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
 
                 <form
-                    className="space-y-4"
+                    className="mt-4 space-y-5"
                     onSubmit={(e) => {
                         e.preventDefault();
                         toast.success(
@@ -1653,58 +1652,129 @@ function DesignServiceFormModal({
                         onOpenChange(false);
                     }}
                 >
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div className="space-y-1.5">
-                            <Label htmlFor="ds-name">Full name *</Label>
-                            <Input id="ds-name" name="name" required />
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label htmlFor="ds-email">Email *</Label>
-                            <Input
-                                id="ds-email"
-                                name="email"
-                                type="email"
-                                required
-                            />
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label htmlFor="ds-phone">Phone</Label>
-                            <Input id="ds-phone" name="phone" type="tel" />
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label htmlFor="ds-company">Company name</Label>
-                            <Input id="ds-company" name="company" />
-                        </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <Label htmlFor="ds-file">Upload your file(s)</Label>
+                    <FormRow label="Your primary contact email">
                         <Input
-                            id="ds-file"
-                            name="files"
-                            type="file"
-                            multiple
-                            accept=".pdf,.png,.jpg,.jpeg,.svg,.ai,.psd,.eps"
+                            id="ds-email"
+                            name="email"
+                            type="email"
+                            placeholder="you@example.com"
+                            required
                         />
+                    </FormRow>
+
+                    <FormRow label="Company logo">
+                        <div className="space-y-2">
+                            <UploadButton />
+                            <p className="text-xs text-neutral-500">
+                                Vector format preferred (AI, EPS, SVG, PDF).
+                            </p>
+                        </div>
+                    </FormRow>
+
+                    <FormRow label="Name of your business">
+                        <Input
+                            id="ds-business"
+                            name="business_name"
+                            placeholder="Your business name"
+                            required
+                        />
+                    </FormRow>
+
+                    <FormRow label="Information on the card">
+                        <div className="space-y-2">
+                            <textarea
+                                id="ds-info"
+                                name="card_info"
+                                rows={4}
+                                placeholder="Name, title, contact information, address, website etc."
+                                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                            />
+                            <p className="text-xs text-neutral-500">
+                                Name, title, contact information, address,
+                                website etc you want to have on the card.
+                            </p>
+                        </div>
+                    </FormRow>
+
+                    <FormRow label="Business card type">
+                        <Select name="business_card_type" required>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Please select product" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {productOptions?.map((option: string) => (
+                                    <SelectItem key={option} value={option}>
+                                        {option}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </FormRow>
+
+                    <FormRow label="Business card examples you like">
+                        <UploadButton />
+                    </FormRow>
+
+                    <div className="flex items-start gap-3 rounded-md border border-neutral-200 bg-neutral-50 p-4">
+                        <Checkbox
+                            id="ds-terms"
+                            checked={agreed}
+                            onCheckedChange={(checked) =>
+                                setAgreed(checked === true)
+                            }
+                            className="mt-0.5"
+                        />
+                        <Label
+                            htmlFor="ds-terms"
+                            className="text-sm leading-relaxed text-neutral-700"
+                        >
+                            I agree with{' '}
+                            <Link
+                                href="/terms"
+                                className="text-primary hover:underline"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                PrintPandora's terms and conditions
+                            </Link>
+                        </Label>
                     </div>
 
-                    <div className="space-y-1.5">
-                        <Label htmlFor="ds-notes">Design instructions</Label>
-                        <textarea
-                            id="ds-notes"
-                            name="notes"
-                            rows={4}
-                            placeholder="Colours, style, text to include, references…"
-                            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                        />
-                    </div>
-
-                    <Button type="submit" className="w-full">
+                    <Button type="submit" className="w-full" disabled={!agreed}>
                         Submit
                     </Button>
                 </form>
             </DialogContent>
         </Dialog>
+    );
+}
+
+function FormRow({
+    label,
+    children,
+}: {
+    label: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="grid grid-cols-1 items-start gap-2 sm:grid-cols-[160px_1fr] sm:gap-4">
+            <Label className="pt-2 text-sm font-medium text-neutral-900">
+                {label}
+            </Label>
+            <div className="w-full">{children}</div>
+        </div>
+    );
+}
+
+function UploadButton() {
+    return (
+        <Button
+            type="button"
+            variant="outline"
+            className="inline-flex items-center gap-2 border-primary text-primary hover:bg-primary/5"
+        >
+            <Image className="size-4" />
+            UPLOAD FILES
+        </Button>
     );
 }
 

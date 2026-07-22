@@ -71,60 +71,41 @@
                 "label": "Classic Business Cards",
                 "href": "/classic-business-cards",
                 "children": [
-                  { "label": "300g tongbangzhi+uv", "href": "/300g-tongbangzhi-uv" },
-                  { "label": "300g yishuzhi", "href": "/300g-yishuzhi" },
-                  { "label": "320g tongbanzhi", "href": "/320g-tongbanzhi" },
-                  { "label": "350g baika", "href": "/350g-baika" }
+                  { "label": "Standard Classic Business card", "href": "/standard-classic-business-card" },
+                  { "label": "Classic special business cards", "href": "/classic-special-business-cards" },
+                  { "label": "Classic quality business cards", "href": "/classic-quality-business-cards" },
+                  { "label": "Classic lush business cards", "href": "/classic-lush-business-cards" }
                 ]
               },
               { "label": "Super Business Cards", "href": "/super-business-cards" },
               { "label": "Luxe Business Cards", "href": "/luxe-business-cards" },
-              { "label": "Cotton Business Cards", "href": "/cotton-business-cards" },
-                { "label": "PVC Business Cards", "href": "/pvc-business-cards" },
-                { "label": "Metal Business Cards", "href": "/metal-business-cards" },
-                {
-                    "label": "NFC Business Cards",
-                    "href": "/nfc-business-cards"
-                }
-            ]
-          },
-          {
-            "links": [
               {
-                "label": "Special Finishes",
-                "href": "/shop/special-finishes",
+                "label": "Cotton Business Cards",
+                "href": "/cotton-business-cards",
                 "children": [
-                  { "label": "Spot Gloss", "href": "/shop/special-finishes/spot-gloss" },
-                  { "label": "Gold Foil", "href": "/shop/special-finishes/gold-foil" },
-                  { "label": "Silver Foil", "href": "/shop/special-finishes/silver-foil" },
-                  { "label": "Rose Gold Foil", "href": "/shop/special-finishes/rose-gold-foil" },
-                  { "label": "Letterpress", "href": "/shop/special-finishes/letterpress" },
-                  { "label": "Raised Spot Gloss", "href": "/shop/special-finishes/raised-spot-gloss" }
+                  { "label": "Basic cotton business card", "href": "/basic-cotton-business-card" },
+                  { "label": "Classic cotton business card", "href": "/classic-cotton-business-card" },
+                  { "label": "Premium cotton business card", "href": "/premium-cotton-business-card" },
+                  { "label": "Luxe cotton business card", "href": "/luxe-cotton-business-card" },
+                  { "label": "Grand cotton business card", "href": "/grand-cotton-business-card" }
                 ]
               },
-              { "label": "PrintPandora Size Business Cards", "href": "/shop/PrintPandora-size-business-cards" },
-              { "label": "Square Business Cards", "href": "/shop/square-business-cards" },
-              { "label": "MiniCards", "href": "/shop/minicards" }
+              {
+                "label": "PVC Business Cards",
+                "href": "/pvc-business-cards",
+                "children": [
+                  { "label": "Standard PVC card", "href": "/standard-pvc-card" },
+                  { "label": "Premium PVC card", "href": "/premium-pvc-card" }
+                ]
+              },
+              { "label": "Metal Business Cards", "href": "/metal-business-cards" }
             ]
           },
           {
             "links": [
-              { "label": "QR Code Business Cards", "href": "/shop/qr-code-business-cards" },
-              {
-                "label": "Luxe by PrintPandora",
-                "href": "/shop/luxe-by-PrintPandora",
-                "children": [
-                  { "label": "Luxe Business Cards", "href": "/shop/luxe-by-PrintPandora/business-cards" },
-                  { "label": "Luxe Postcards", "href": "/shop/luxe-by-PrintPandora/postcards" },
-                  { "label": "Luxe Notebooks", "href": "/shop/luxe-by-PrintPandora/notebooks" },
-                  { "label": "Luxe Greeting Cards", "href": "/shop/luxe-by-PrintPandora/greeting-cards" }
-                ]
-              }
+              { "label": "Business Card Sample Pack", "href": "/shop/business-card-sample-pack" }
             ]
-          },
-          { "links": [{ "label": "Business Card Holders", "href": "/shop/business-card-holders" }] },
-          { "links": [{ "label": "Business Card Sample Pack", "href": "/shop/business-card-sample-pack" }] },
-          { "links": [{ "label": "Design a Business Card", "href": "/shop/design-a-business-card" }] }
+          }
         ],
         "promo_cards": [
           {
@@ -157,7 +138,6 @@
       "products_left_column": [
         { "label": "All Products", "href": "/shop" },
         { "label": "Business Cards", "href": "/shop?cat=business-cards" },
-        { "label": "Square Business Cards", "href": "/shop/square-business-cards" },
         { "label": "MiniCards", "href": "/shop/minicards" },
         { "label": "Letterpress Business Cards", "href": "/shop/letterpress-business-cards" },
         { "label": "Postcards", "href": "/shop?cat=postcards" },
@@ -202,6 +182,7 @@
       "help_links": [
         { "label": "Contact us", "href": "/contact" },
         { "label": "Pricing", "href": "/pricing" },
+        { "label": "Shipping Calculator", "href": "/shipping-calculator" },
         { "label": "Next Day Delivery", "href": "/next-day-delivery" },
         { "label": "FAQs", "href": "/help" },
         { "label": "Artwork guidelines", "href": "/help/artwork-guidelines" },
@@ -579,12 +560,32 @@
 
   "product_detail_page": {
     "_source_file": "resources/js/pages/shop/show.tsx",
-    "accent_color": "#0f4c3a",
+    "accent_color": "#1e3a5f",
     "breadcrumbs": ["Home"],
-    "feature_chips": ["Double-sided", "Full colour"],
-    "stars_rating_text": "4.6 · 12,431 reviews",
-    "stars_aria_label_template": "{value} out of 5",
+    "feature_chips": ["Printed in the USA", "Next Day Delivery"],
     "product_subtitle": "Thicker than your average card. Printed on 350 gsm uncoated paper — substantial in the hand without bulking up your wallet.",
+    "description_block": {
+      "title": "Get Business Cards online that set the standard for 'standard'",
+      "description": "Thicker than your average card, with a quality feel that sets a new standard for 'standard'. If you want Business Cards that look and feel as good as the impression they make, this is the way to go.",
+      "bullets": [
+        "Choose Square, Standard, or PrintPandora size",
+        "130lb weight, 16pt thickness",
+        "Available in Matte or Gloss finishes at no extra charge"
+      ]
+    },
+    "design_form_product_options": [
+      "Standard Classic Business card",
+      "Classic special business cards",
+      "Classic quality business cards",
+      "Classic lush business cards",
+      "Basic cotton business card",
+      "Classic cotton business card",
+      "Premium cotton business card",
+      "Luxe cotton business card",
+      "Grand cotton business card",
+      "Standard PVC card",
+      "Premium PVC card"
+    ],
     "configurator_labels": {
       "size": "Size",
       "paper_finish": "Paper finish",
@@ -708,7 +709,7 @@
 
   "business_cards_landing_page": {
     "_source_file": "resources/js/pages/shop/business-cards.tsx",
-    "accent_color": "#0f4c3a",
+    "accent_color": "#1e3a5f",
     "warm_bg": "#fbf6ee",
     "seo": {
       "title": "Business Cards",
