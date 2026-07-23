@@ -2,22 +2,21 @@ import { Link } from '@inertiajs/react';
 import { useContent } from '@/hooks/use-content';
 
 /**
- * Four-up value-prop strip shown on the home page beneath the hero
- * carousel. Each tile is a teal line-art icon, a bold headline, and a
- * short blurb. The icons stay hardcoded (they're code, not content);
- * the title/description/href for each perk come from JSON.
+ * Value-prop strip shown on the home page beneath the hero carousel.
+ * Each tile is a navy line-art icon, a bold headline, and a short blurb.
+ * Icons stay hardcoded; title/description per perk come from JSON.
+ * When a perk has no href, it renders as a plain <div> (non-clickable).
  */
 
-const ACCENT = '#0f4c3a';
+const ACCENT = '#1e3a5f';
 
-// Icons in the order the perks appear in content JSON. If the JSON
-// adds/removes perks, the icon set will fall back to the generic shapes
-// icon for any extra positions.
 const ICONS: Array<() => React.ReactElement> = [
-    ShippingBoxIcon,
-    PromiseSealIcon,
-    BusinessShapesIcon,
-    PrintfinityCardsIcon,
+    ProductVarietyIcon,
+    CraftsmanshipVarietyIcon,
+    MaterialVarietyIcon,
+    GreatValueIcon,
+    DesignServiceIcon,
+    GlobalPartnerIcon,
 ];
 
 export function HomePerks() {
@@ -30,53 +29,46 @@ export function HomePerks() {
             className="border-y border-neutral-100 bg-white"
         >
             <div className="mx-auto max-w-7xl px-4 py-10 lg:py-14">
-                <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                     {perks.items.map((perk, i) => {
-                        const Icon = ICONS[i] ?? BusinessShapesIcon;
+                        const Icon = ICONS[i] ?? ProductVarietyIcon;
+                        const C = perk.href ? Link : 'div';
+                        const linkProps = perk.href
+                            ? {
+                                  href: perk.href,
+                                  className:
+                                      'group flex flex-col items-center text-center',
+                              }
+                            : {
+                                  className:
+                                      'flex flex-col items-center text-center',
+                              };
 
                         return (
                             <li key={perk.title}>
-                                <Link
-                                    href={perk.href}
-                                    className="group flex flex-col items-center text-center"
-                                >
-                                    <span className="mb-4 inline-flex size-16 items-center justify-center text-[#0f4c3a]">
+                                <C {...linkProps}>
+                                    <span className="mb-4 inline-flex size-16 items-center justify-center text-[#1e3a5f]">
                                         <Icon />
                                     </span>
-                                    <h3 className="mb-2 text-base font-bold text-neutral-900 group-hover:text-[#0f4c3a]">
+                                    <h3 className="mb-2 text-base font-bold text-neutral-900 group-hover:text-[#1e3a5f]">
                                         {perk.title}
                                     </h3>
                                     <p className="max-w-xs text-sm leading-snug text-neutral-600">
                                         {perk.description}
                                     </p>
-                                </Link>
+                                </C>
                             </li>
                         );
                     })}
                 </ul>
-
-                {/* Trustpilot strip — peeks out beneath the perks the same way the
-                    reference shows it cut off at the very bottom. */}
-                <div className="mt-10 flex items-center justify-center">
-                    <a
-                        href={perks.trustpilot.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm font-semibold"
-                        style={{ color: ACCENT }}
-                    >
-                        <TrustpilotStar />
-                        <span>{perks.trustpilot.label}</span>
-                    </a>
-                </div>
             </div>
         </section>
     );
 }
 
 /* --------------------------------- icons --------------------------------- */
-/* Teal line-art, drawn at 64×64 with currentColor stroke so a parent text
-   colour drives them. Stroke width is 1.5 to match the airy PrintPandora style. */
+/* Navy line-art, drawn at 64×64 with currentColor stroke so a parent text
+   colour drives them. Stroke width is 1.5, round cap/join. */
 
 const STROKE: React.SVGProps<SVGSVGElement> = {
     xmlns: 'http://www.w3.org/2000/svg',
@@ -90,98 +82,70 @@ const STROKE: React.SVGProps<SVGSVGElement> = {
     className: 'size-full',
 };
 
-function ShippingBoxIcon() {
+function ProductVarietyIcon() {
     return (
         <svg {...STROKE}>
-            {/* tilted box (parallelogram-ish) with speed lines behind */}
-            <path d="M6 22h6M4 30h7M6 38h6" />
-            <path d="M22 18l24-4 8 8-4 26-24 4-8-8 4-26z" />
-            <path d="M22 18l8 8 24-4" />
-            <path d="M30 26l-4 26" />
-            {/* tape line */}
-            <path d="M34 16l8 8" strokeDasharray="2 3" />
+            <path d="M8 42h48" />
+            <rect x="14" y="22" width="12" height="20" rx="2" />
+            <rect x="30" y="28" width="10" height="14" rx="1.5" />
+            <circle cx="54" cy="34" r="7" />
         </svg>
     );
 }
 
-function PromiseSealIcon() {
+function CraftsmanshipVarietyIcon() {
     return (
         <svg {...STROKE}>
-            {/* 12-point starburst seal */}
-            <path d="M32 6l3.5 4 5-2 1 5 5 1-2 5 4 3.5-4 3.5 2 5-5 1-1 5-5-2-3.5 4-3.5-4-5 2-1-5-5-1 2-5-4-3.5 4-3.5-2-5 5-1 1-5 5 2 3.5-4z" />
-            {/* heart inside */}
-            <path d="M32 40s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 39 30c0 5.5-7 10-7 10z" />
+            <path d="M32 10l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" />
+            <path d="M20 38h24" />
+            <rect x="18" y="38" width="28" height="16" rx="2" />
+            <path d="M28 38v16M36 38v16" />
         </svg>
     );
 }
 
-function BusinessShapesIcon() {
+function MaterialVarietyIcon() {
     return (
         <svg {...STROKE}>
-            {/* striped rectangle */}
-            <rect x="6" y="10" width="20" height="14" rx="2" />
-            <path
-                d="M6 14h20M6 18h20M6 22h20"
-                strokeDasharray="2 3"
-            />
-            {/* dotted circle */}
-            <circle cx="46" cy="18" r="9" />
-            <circle cx="42" cy="16" r="0.8" fill="currentColor" />
-            <circle cx="50" cy="16" r="0.8" fill="currentColor" />
-            <circle cx="46" cy="20" r="0.8" fill="currentColor" />
-            <circle cx="42" cy="22" r="0.8" fill="currentColor" />
-            <circle cx="50" cy="22" r="0.8" fill="currentColor" />
-            {/* plain square */}
-            <rect x="8" y="34" width="14" height="14" rx="1.5" />
-            {/* striped tall rectangle */}
-            <rect x="28" y="34" width="10" height="20" rx="1.5" />
-            <path d="M28 39h10M28 44h10M28 49h10" />
-            {/* small circle bottom-right */}
-            <circle cx="50" cy="44" r="7" />
+            <rect x="14" y="12" width="38" height="12" rx="1.5" />
+            <rect x="12" y="22" width="42" height="12" rx="1.5" />
+            <rect x="10" y="32" width="46" height="12" rx="1.5" />
+            <rect x="8" y="42" width="50" height="12" rx="1.5" />
+            <path d="M52 12l2 2v40H8V12" />
         </svg>
     );
 }
 
-function PrintfinityCardsIcon() {
+function GreatValueIcon() {
     return (
         <svg {...STROKE}>
-            {/* three fanned cards, back to front */}
-            <g transform="translate(8 14) rotate(-12 16 12)">
-                <rect x="0" y="0" width="32" height="22" rx="2" />
-                <path d="M2 4l28 14M2 10l28 14M2 16l24 12" />
-            </g>
-            <g transform="translate(14 18) rotate(-2 16 12)">
-                <rect x="0" y="0" width="32" height="22" rx="2" />
-            </g>
-            <g transform="translate(20 22) rotate(8 16 12)">
-                <rect x="0" y="0" width="32" height="22" rx="2" />
-                <circle cx="6" cy="6" r="0.9" fill="currentColor" />
-                <circle cx="12" cy="6" r="0.9" fill="currentColor" />
-                <circle cx="18" cy="6" r="0.9" fill="currentColor" />
-                <circle cx="24" cy="6" r="0.9" fill="currentColor" />
-                <circle cx="6" cy="12" r="0.9" fill="currentColor" />
-                <circle cx="12" cy="12" r="0.9" fill="currentColor" />
-                <circle cx="18" cy="12" r="0.9" fill="currentColor" />
-                <circle cx="24" cy="12" r="0.9" fill="currentColor" />
-                <circle cx="6" cy="18" r="0.9" fill="currentColor" />
-                <circle cx="12" cy="18" r="0.9" fill="currentColor" />
-                <circle cx="18" cy="18" r="0.9" fill="currentColor" />
-                <circle cx="24" cy="18" r="0.9" fill="currentColor" />
-            </g>
+            <path d="M16 12l8-4 32 32-8 8-32-32z" />
+            <path d="M16 12l4 4" />
+            <path d="M28 24l12 12" />
+            <circle cx="24" cy="28" r="3" fill="currentColor" />
         </svg>
     );
 }
 
-function TrustpilotStar() {
+function DesignServiceIcon() {
     return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            className="size-4"
-            fill="currentColor"
-            aria-hidden
-        >
-            <path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18.1 22 12 18.3 5.9 22l1.6-7.2L2 10l7.1-1.1L12 2z" />
+        <svg {...STROKE}>
+            <path d="M44 14c7 0 12 5 12 12s-5 12-12 12h-2l-8 6 2-8c-5-2-8-6-8-10 0-7 5-12 12-12z" />
+            <path d="M8 52l24-24 8 8-24 24z" />
+            <path d="M32 28l8 8" />
+            <path d="M16 44l4 4" />
+        </svg>
+    );
+}
+
+function GlobalPartnerIcon() {
+    return (
+        <svg {...STROKE}>
+            <circle cx="32" cy="32" r="22" />
+            <ellipse cx="32" cy="32" rx="13" ry="22" />
+            <path d="M10 32h44" />
+            <path d="M32 10c-6 8-6 24 0 32" />
+            <path d="M32 10c6 8 6 24 0 32" />
         </svg>
     );
 }

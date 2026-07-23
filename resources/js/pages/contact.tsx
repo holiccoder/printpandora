@@ -1,4 +1,4 @@
-import { useForm, usePage } from '@inertiajs/react';
+﻿import { useForm, usePage } from '@inertiajs/react';
 import { Clock, Mail, MapPin, MessageSquare, Phone } from 'lucide-react';
 import type { FormEventHandler } from 'react';
 import InputError from '@/components/input-error';
@@ -25,15 +25,18 @@ const TOPICS = [
 ] as const;
 
 export default function Contact() {
-    const flashSuccess = (usePage().props.flash as { success?: string } | undefined)?.success;
+    const flashSuccess = (
+        usePage().props.flash as { success?: string } | undefined
+    )?.success;
 
-    const { data, setData, post, processing, errors, reset } = useForm<ContactForm>({
-        name: '',
-        email: '',
-        topic: TOPICS[0],
-        subject: '',
-        message: '',
-    });
+    const { data, setData, post, processing, errors, reset } =
+        useForm<ContactForm>({
+            name: '',
+            email: '',
+            topic: TOPICS[0],
+            subject: '',
+            message: '',
+        });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -47,21 +50,22 @@ export default function Contact() {
         <StorefrontLayout>
             <SEO
                 title="Contact us"
-                description="Get in touch with PrintPandora. Questions about an order, a product, or a partnership? We’d love to hear from you."
+                description="Get in touch with InkPavo. Questions about an order, a product, or a partnership? We'd love to hear from you."
             />
 
             {/* Page header */}
             <section className="bg-white py-14 md:py-20">
                 <div className="mx-auto w-full max-w-3xl px-4 text-center md:px-6">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[#0f4c3a]">
-                        We’re here to help
+                    <p className="text-xs font-semibold tracking-wider text-[#1e3a5f] uppercase">
+                        We're here to help
                     </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 md:text-4xl lg:text-5xl">
                         Get in touch
                     </h1>
                     <p className="mx-auto mt-4 max-w-xl text-base text-neutral-600 md:text-lg">
-                        Questions about an order, a product, or a partnership? Drop us a
-                        message and a real human will get back to you within one business day.
+                        Questions about an order, a product, or a partnership?
+                        Drop us a message and a real human will get back to you
+                        within one business day.
                     </p>
                 </div>
             </section>
@@ -75,7 +79,8 @@ export default function Contact() {
                             Other ways to reach us
                         </h2>
                         <p className="mt-2 text-sm text-neutral-600">
-                            Prefer not to fill out a form? Pick whichever works best for you.
+                            Prefer not to fill out a form? Pick whichever works
+                            best for you.
                         </p>
 
                         <ul className="mt-6 space-y-5 text-sm text-neutral-700">
@@ -84,10 +89,10 @@ export default function Contact() {
                                 label="Email"
                                 value={
                                     <a
-                                        href="mailto:hello@printpandora.com"
-                                        className="text-[#0f4c3a] hover:underline"
+                                        href="mailto:hello@inkpavo.com"
+                                        className="text-[#1e3a5f] hover:underline"
                                     >
-                                        hello@printpandora.com
+                                        hello@inkpavo.com
                                     </a>
                                 }
                             />
@@ -95,7 +100,10 @@ export default function Contact() {
                                 icon={<Phone className="size-4" />}
                                 label="Phone"
                                 value={
-                                    <a href="tel:+18005551234" className="text-[#0f4c3a] hover:underline">
+                                    <a
+                                        href="tel:+18005551234"
+                                        className="text-[#1e3a5f] hover:underline"
+                                    >
                                         +1 (800) 555-1234
                                     </a>
                                 }
@@ -128,10 +136,13 @@ export default function Contact() {
                                 value={
                                     <>
                                         Already a customer?{' '}
-                                        <a href="/tickets/create" className="text-[#0f4c3a] hover:underline">
+                                        <a
+                                            href="/tickets/create"
+                                            className="text-[#1e3a5f] hover:underline"
+                                        >
                                             Open a support ticket
                                         </a>{' '}
-                                        and we’ll pick it up from your account.
+                                        and we'll pick it up from your account.
                                     </>
                                 }
                             />
@@ -144,13 +155,17 @@ export default function Contact() {
                             {flashSuccess && (
                                 <div
                                     role="status"
-                                    className="mb-6 rounded-md border border-[#0f4c3a]/20 bg-[#eaf3ec] px-4 py-3 text-sm text-[#0f4c3a]"
+                                    className="mb-6 rounded-md border border-[#1e3a5f]/20 bg-[#eaf3ec] px-4 py-3 text-sm text-[#1e3a5f]"
                                 >
                                     {flashSuccess}
                                 </div>
                             )}
 
-                            <form onSubmit={submit} className="space-y-5" noValidate>
+                            <form
+                                onSubmit={submit}
+                                className="space-y-5"
+                                noValidate
+                            >
                                 <div className="grid gap-5 sm:grid-cols-2">
                                     <Field
                                         id="name"
@@ -163,7 +178,9 @@ export default function Contact() {
                                             autoComplete="name"
                                             required
                                             value={data.name}
-                                            onChange={(e) => setData('name', e.target.value)}
+                                            onChange={(e) =>
+                                                setData('name', e.target.value)
+                                            }
                                         />
                                     </Field>
                                     <Field
@@ -177,7 +194,9 @@ export default function Contact() {
                                             autoComplete="email"
                                             required
                                             value={data.email}
-                                            onChange={(e) => setData('email', e.target.value)}
+                                            onChange={(e) =>
+                                                setData('email', e.target.value)
+                                            }
                                         />
                                     </Field>
                                 </div>
@@ -190,8 +209,10 @@ export default function Contact() {
                                     <select
                                         id="topic"
                                         value={data.topic}
-                                        onChange={(e) => setData('topic', e.target.value)}
-                                        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
+                                        onChange={(e) =>
+                                            setData('topic', e.target.value)
+                                        }
+                                        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                                     >
                                         {TOPICS.map((t) => (
                                             <option key={t} value={t}>
@@ -212,7 +233,9 @@ export default function Contact() {
                                         type="text"
                                         maxLength={255}
                                         value={data.subject}
-                                        onChange={(e) => setData('subject', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('subject', e.target.value)
+                                        }
                                         placeholder="A short summary of your question"
                                     />
                                 </Field>
@@ -229,18 +252,24 @@ export default function Contact() {
                                         rows={6}
                                         maxLength={5000}
                                         value={data.message}
-                                        onChange={(e) => setData('message', e.target.value)}
-                                        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
-                                        placeholder="Tell us what's on your mind…"
+                                        onChange={(e) =>
+                                            setData('message', e.target.value)
+                                        }
+                                        className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                                        placeholder={'Tell us what\'s on your mind\u2026'}
                                     />
                                 </Field>
 
                                 <p className="text-xs text-neutral-500">
                                     By submitting this form, you agree to our{' '}
-                                    <a href="/privacy" className="text-[#0f4c3a] underline-offset-2 hover:underline">
+                                    <a
+                                        href="/privacy"
+                                        className="text-[#1e3a5f] underline-offset-2 hover:underline"
+                                    >
                                         privacy policy
                                     </a>
-                                    . We only use your details to reply to your enquiry.
+                                    . We only use your details to reply to your
+                                    enquiry.
                                 </p>
 
                                 <Button
@@ -248,7 +277,7 @@ export default function Contact() {
                                     disabled={processing}
                                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-primary/40 sm:w-auto"
                                 >
-                                    {processing ? 'Sending…' : 'Send message'}
+                                    {processing ? 'Sending\u2026' : 'Send message'}
                                 </Button>
                             </form>
                         </div>
@@ -270,14 +299,16 @@ function InfoRow({
 }) {
     return (
         <li className="flex gap-3">
-            <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0f4c3a]/10 text-[#0f4c3a]">
+            <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[#1e3a5f]/10 text-[#1e3a5f]">
                 {icon}
             </span>
             <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
+                <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase">
                     {label}
                 </p>
-                <p className="mt-1 text-sm leading-relaxed text-neutral-800">{value}</p>
+                <p className="mt-1 text-sm leading-relaxed text-neutral-800">
+                    {value}
+                </p>
             </div>
         </li>
     );
@@ -301,7 +332,10 @@ function Field({
     return (
         <div>
             <div className="mb-1.5 flex items-baseline justify-between">
-                <Label htmlFor={id} className="text-sm font-medium text-neutral-800">
+                <Label
+                    htmlFor={id}
+                    className="text-sm font-medium text-neutral-800"
+                >
                     {label}
                     {optional && (
                         <span className="ml-1 text-xs font-normal text-neutral-400">
@@ -309,7 +343,9 @@ function Field({
                         </span>
                     )}
                 </Label>
-                {hint && <span className="text-xs text-neutral-400">{hint}</span>}
+                {hint && (
+                    <span className="text-xs text-neutral-400">{hint}</span>
+                )}
             </div>
             {children}
             <InputError message={error} className="mt-1" />

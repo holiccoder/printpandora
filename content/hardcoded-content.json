@@ -1,1538 +1,1966 @@
 {
-  "_meta": {
-    "title": "PrintPandora Hardcoded Content",
-    "description": "All hardcoded text, image URLs, and link hrefs in the storefront, organized page-by-page. Database-driven content (products, posts, orders, users) is NOT included. Edit values, then update the corresponding React component to use these strings if you want this file to drive the UI.",
-    "last_generated": "2026-06-22",
-    "stack": "Laravel + Inertia.js + React/TypeScript",
-    "source_root": "resources/js/"
-  },
+    "_meta": {
+        "title": "InkPavo Hardcoded Content",
+        "description": "All hardcoded text, image URLs, and link hrefs in the storefront, organized page-by-page. Database-driven content (products, posts, orders, users) is NOT included. Edit values, then update the corresponding React component to use these strings if you want this file to drive the UI.",
+        "last_generated": "2026-06-22",
+        "stack": "Laravel + Inertia.js + React/TypeScript",
+        "source_root": "resources/js/"
+    },
 
-  "global_chrome": {
-    "_source_files": [
-      "resources/js/components/storefront-header.tsx",
-      "resources/js/components/storefront-footer.tsx",
-      "resources/js/components/announcement-bar.tsx",
-      "resources/js/components/cart-drawer.tsx",
-      "resources/js/layouts/storefront-layout.tsx"
-    ],
-
-    "header": {
-      "logo": {
-        "image_url": "/images/logo-wordmark-sm.png",
-        "alt": "PrintPandora",
-        "home_link_aria_label": "PrintPandora — Home"
-      },
-      "search": {
-        "form_action": "/search",
-        "input_name": "q",
-        "label_sr_only": "Search PrintPandora",
-        "placeholder": "Search for products, paper stocks, ideas…",
-        "mobile_icon_aria_label": "Search",
-        "mobile_icon_href": "/search"
-      },
-      "auth": {
-        "dashboard_button_label": "Dashboard",
-        "signed_in_as_label": "Signed in as",
-        "dropdown_dashboard_label": "Dashboard",
-        "dropdown_profile_label": "Profile edit",
-        "dropdown_profile_href": "/dashboard/profile",
-        "dropdown_orders_label": "Orders",
-        "dropdown_orders_href": "/dashboard/orders",
-        "dropdown_logout_label": "Log out",
-        "logged_out_login_label": "Log in",
-        "logged_out_register_label": "Register",
-        "mobile_account_aria_label_logged_in": "Dashboard",
-        "mobile_account_aria_label_logged_out": "Log in"
-      },
-      "mobile_nav": {
-        "open_menu_aria_label": "Open menu",
-        "drawer_logo_image_url": "/images/logo-wordmark-sm.png",
-        "drawer_logo_alt": "PrintPandora"
-      },
-      "top_navigation": [
-        { "label": "Business Cards", "href": "/shop?cat=business-cards" },
-        { "label": "Postcards", "href": "/shop?cat=postcards" },
-        { "label": "Stickers & Labels", "href": "/shop?cat=stickers-labels" },
-        { "label": "Flyers", "href": "/shop?cat=flyers" },
-        { "label": "Business Services", "href": "/shop?cat=business-services" },
-        { "label": "Blog", "href": "/blog" },
-        { "label": "Help & FAQs", "href": "/help" }
-      ],
-      "business_cards_mega_menu": {
-        "link_groups": [
-          {
-            "links": [
-              { "label": "All Business Cards", "href": "/business-cards" }
-            ]
-          },
-          {
-            "links": [
-              {
-                "label": "Classic Business Cards",
-                "href": "/classic-business-cards",
-                "children": [
-                  { "label": "Standard Classic Business card", "href": "/standard-classic-business-card" },
-                  { "label": "Classic special business cards", "href": "/classic-special-business-cards" },
-                  { "label": "Classic quality business cards", "href": "/classic-quality-business-cards" },
-                  { "label": "Classic lush business cards", "href": "/classic-lush-business-cards" }
-                ]
-              },
-              { "label": "Super Business Cards", "href": "/super-business-cards" },
-              { "label": "Luxe Business Cards", "href": "/luxe-business-cards" },
-              {
-                "label": "Cotton Business Cards",
-                "href": "/cotton-business-cards",
-                "children": [
-                  { "label": "Basic cotton business card", "href": "/basic-cotton-business-card" },
-                  { "label": "Classic cotton business card", "href": "/classic-cotton-business-card" },
-                  { "label": "Premium cotton business card", "href": "/premium-cotton-business-card" },
-                  { "label": "Luxe cotton business card", "href": "/luxe-cotton-business-card" },
-                  { "label": "Grand cotton business card", "href": "/grand-cotton-business-card" }
-                ]
-              },
-              {
-                "label": "PVC Business Cards",
-                "href": "/pvc-business-cards",
-                "children": [
-                  { "label": "Standard PVC card", "href": "/standard-pvc-card" },
-                  { "label": "Premium PVC card", "href": "/premium-pvc-card" }
-                ]
-              },
-              { "label": "Metal Business Cards", "href": "/metal-business-cards" }
-            ]
-          },
-          {
-            "links": [
-              { "label": "Business Card Sample Pack", "href": "/shop/business-card-sample-pack" }
-            ]
-          }
+    "global_chrome": {
+        "_source_files": [
+            "resources/js/components/storefront-header.tsx",
+            "resources/js/components/storefront-footer.tsx",
+            "resources/js/components/announcement-bar.tsx",
+            "resources/js/components/cart-drawer.tsx",
+            "resources/js/layouts/storefront-layout.tsx"
         ],
-        "promo_cards": [
-          {
-            "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=800&q=70",
-            "image_alt": "Two business cards on brown crinkled packing paper",
-            "title": "Original Business Cards",
-            "description": "Thicker than your average card, Original Business Cards set a new standard for 'standard' business cards.",
-            "cta_label": "Shop Original Business Cards",
-            "cta_href": "/shop/original-business-cards"
-          },
-          {
-            "image_url": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=70",
-            "image_alt": "Aerial view of a dense green pine forest",
-            "title": "Choose from a range of FSC® certified products",
-            "description": "Bring your brand to life with FSC® certified Business Cards, Postcards, Flyers and Brochures.",
-            "cta_label": "Discover the range",
-            "cta_href": "/shop/fsc-certified"
-          }
+
+        "header": {
+            "logo": {
+                "image_url": "/images/logo-wordmark-sm.png",
+                "alt": "InkPavo",
+                "home_link_aria_label": "InkPavo — Home"
+            },
+            "search": {
+                "form_action": "/search",
+                "input_name": "q",
+                "label_sr_only": "Search InkPavo",
+                "placeholder": "Search for products, paper stocks, ideas…",
+                "mobile_icon_aria_label": "Search",
+                "mobile_icon_href": "/search"
+            },
+            "auth": {
+                "dashboard_button_label": "Dashboard",
+                "signed_in_as_label": "Signed in as",
+                "dropdown_dashboard_label": "Dashboard",
+                "dropdown_profile_label": "Profile edit",
+                "dropdown_profile_href": "/dashboard/profile",
+                "dropdown_orders_label": "Orders",
+                "dropdown_orders_href": "/dashboard/orders",
+                "dropdown_logout_label": "Log out",
+                "logged_out_login_label": "Log in",
+                "logged_out_register_label": "Register",
+                "mobile_account_aria_label_logged_in": "Dashboard",
+                "mobile_account_aria_label_logged_out": "Log in"
+            },
+            "mobile_nav": {
+                "open_menu_aria_label": "Open menu",
+                "drawer_logo_image_url": "/images/logo-wordmark-sm.png",
+                "drawer_logo_alt": "InkPavo"
+            },
+            "top_navigation": [
+                {
+                    "label": "Business Cards",
+                    "href": "/shop?cat=business-cards"
+                },
+                { "label": "Postcards", "href": "/shop?cat=postcards" },
+                {
+                    "label": "Stickers & Labels",
+                    "href": "/shop?cat=stickers-labels"
+                },
+                { "label": "Flyers & Brochures", "href": "/shop?cat=flyers" },
+                {
+                    "label": "Design Service",
+                    "href": "/business-card-design-service"
+                },
+                { "label": "Blog", "href": "/blog" },
+                { "label": "Help & FAQs", "href": "/help" }
+            ],
+            "business_cards_mega_menu": {
+                "link_groups": [
+                    {
+                        "links": [
+                            {
+                                "label": "All Business Cards",
+                                "href": "/business-cards"
+                            }
+                        ]
+                    },
+                    {
+                        "links": [
+                            {
+                                "label": "Classic Business Cards",
+                                "href": "/classic-business-cards",
+                                "children": [
+                                    {
+                                        "label": "Standard Classic Business card",
+                                        "href": "/standard-classic-business-card"
+                                    },
+                                    {
+                                        "label": "Classic special business cards",
+                                        "href": "/classic-special-business-cards"
+                                    },
+                                    {
+                                        "label": "Classic quality business cards",
+                                        "href": "/classic-quality-business-cards"
+                                    },
+                                    {
+                                        "label": "Classic lush business cards",
+                                        "href": "/classic-lush-business-cards"
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Super Business Cards",
+                                "href": "/super-business-cards"
+                            },
+                            {
+                                "label": "Luxe Business Cards",
+                                "href": "/luxe-business-cards"
+                            },
+                            {
+                                "label": "Cotton Business Cards",
+                                "href": "/cotton-business-cards",
+                                "children": [
+                                    {
+                                        "label": "Basic cotton business card",
+                                        "href": "/basic-cotton-business-card"
+                                    },
+                                    {
+                                        "label": "Classic cotton business card",
+                                        "href": "/classic-cotton-business-card"
+                                    },
+                                    {
+                                        "label": "Premium cotton business card",
+                                        "href": "/premium-cotton-business-card"
+                                    },
+                                    {
+                                        "label": "Luxe cotton business card",
+                                        "href": "/luxe-cotton-business-card"
+                                    },
+                                    {
+                                        "label": "Grand cotton business card",
+                                        "href": "/grand-cotton-business-card"
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "PVC Business Cards",
+                                "href": "/pvc-business-cards",
+                                "children": [
+                                    {
+                                        "label": "Standard PVC card",
+                                        "href": "/standard-pvc-card"
+                                    },
+                                    {
+                                        "label": "Premium PVC card",
+                                        "href": "/premium-pvc-card"
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Metal Business Cards",
+                                "href": "/metal-business-cards"
+                            }
+                        ]
+                    },
+                    {
+                        "links": [
+                            {
+                                "label": "Business Card Sample Pack",
+                                "href": "/shop/business-card-sample-pack"
+                            },
+                            {
+                                "label": "Business Card Design Service",
+                                "href": "/business-card-design-service"
+                            }
+                        ]
+                    }
+                ],
+                "promo_cards": [
+                    {
+                        "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=800&q=70",
+                        "image_alt": "Two business cards on brown crinkled packing paper",
+                        "title": "Original Business Cards",
+                        "description": "Thicker than your average card, Original Business Cards set a new standard for 'standard' business cards.",
+                        "cta_label": "Shop Original Business Cards",
+                        "cta_href": "/shop/original-business-cards"
+                    },
+                    {
+                        "image_url": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=70",
+                        "image_alt": "Aerial view of a dense green pine forest",
+                        "title": "Choose from a range of FSC® certified products",
+                        "description": "Bring your brand to life with FSC® certified Business Cards, Postcards, Flyers and Brochures.",
+                        "cta_label": "Discover the range",
+                        "cta_href": "/shop/fsc-certified"
+                    }
+                ]
+            }
+        },
+
+        "footer": {
+            "column_headings": {
+                "products": "Products",
+                "paper_stocks": "Paper Stocks",
+                "about_us": "About us",
+                "help": "Help/Useful links"
+            },
+            "products_left_column": [
+                { "label": "All Products", "href": "/shop" },
+                {
+                    "label": "Business Cards",
+                    "href": "/shop?cat=business-cards"
+                },
+                { "label": "MiniCards", "href": "/shop/minicards" },
+                {
+                    "label": "Letterpress Business Cards",
+                    "href": "/shop/letterpress-business-cards"
+                },
+                { "label": "Postcards", "href": "/shop?cat=postcards" },
+                {
+                    "label": "Stickers and Labels",
+                    "href": "/shop?cat=stickers-labels"
+                },
+                { "label": "Flyers", "href": "/shop?cat=flyers" }
+            ],
+            "products_right_column": [
+                { "label": "Letterhead", "href": "/shop/letterhead" },
+                { "label": "Greeting Cards", "href": "/shop/greeting-cards" },
+                { "label": "Luxe Notecards", "href": "/shop/luxe-notecards" },
+                { "label": "Envelopes", "href": "/shop/envelopes" },
+                { "label": "Display Boxes", "href": "/shop/display-boxes" },
+                {
+                    "label": "Business Card Holders",
+                    "href": "/shop/business-card-holders"
+                },
+                {
+                    "label": "Notebooks & Journals",
+                    "href": "/shop/notebooks-journals"
+                },
+                { "label": "Planners", "href": "/shop/planners" }
+            ],
+            "paper_stocks": [
+                { "label": "Paper Stocks", "href": "/paper-stocks" },
+                { "label": "InkPavo Luxe", "href": "/paper-stocks/luxe" },
+                {
+                    "label": "InkPavo Super",
+                    "href": "/paper-stocks/super"
+                },
+                {
+                    "label": "InkPavo Cotton",
+                    "href": "/paper-stocks/cotton"
+                },
+                {
+                    "label": "InkPavo Original",
+                    "href": "/paper-stocks/original"
+                },
+                {
+                    "label": "InkPavo Letterpress",
+                    "href": "/paper-stocks/letterpress"
+                },
+                {
+                    "label": "Sample Packs",
+                    "href": "/paper-stocks/sample-packs"
+                },
+                {
+                    "label": "FSC® Certified Paper",
+                    "href": "/paper-stocks/fsc-certified"
+                },
+                {
+                    "label": "Luxe Collection",
+                    "href": "/paper-stocks/luxe-collection"
+                }
+            ],
+            "about_us": [
+                { "label": "About InkPavo", "href": "/about" },
+                { "label": "Media resources", "href": "/about/media" },
+                {
+                    "label": "People, products and the planet",
+                    "href": "/about/sustainability"
+                },
+                { "label": "Who we are", "href": "/about" },
+                { "label": "Careers", "href": "/careers" },
+                { "label": "The Drop", "href": "/the-drop" },
+                {
+                    "label": "Business Services",
+                    "href": "/shop?cat=business-services"
+                },
+                { "label": "Reseller", "href": "/reseller" },
+                { "label": "Printfinity", "href": "/printfinity" },
+                { "label": "The InkPavo Promise", "href": "/promise" },
+                { "label": "Packaging", "href": "/packaging" },
+                { "label": "Partner with InkPavo", "href": "/partner" }
+            ],
+            "help_links": [
+                { "label": "Contact us", "href": "/contact" },
+                { "label": "Pricing", "href": "/pricing" },
+                {
+                    "label": "Shipping Calculator",
+                    "href": "/shipping-calculator"
+                },
+                { "label": "Next Day Delivery", "href": "/next-day-delivery" },
+                { "label": "FAQs", "href": "/help" },
+                {
+                    "label": "Artwork guidelines",
+                    "href": "/help/artwork-guidelines"
+                },
+                { "label": "Affiliates", "href": "/affiliates" },
+                { "label": "Refer and Earn", "href": "/refer" },
+                {
+                    "label": "Vulnerability Disclosure",
+                    "href": "/vulnerability-disclosure"
+                }
+            ],
+            "legal_bar": {
+                "copyright_text": "© {YEAR} InkPavo — print-on-demand for the small businesses, designers, and creators we love.",
+                "_note": "{YEAR} is replaced at runtime",
+                "legal_links": [
+                    { "label": "Terms & Conditions", "href": "/terms" },
+                    { "label": "Privacy Policy", "href": "/privacy" },
+                    { "label": "Fonts", "href": "/fonts" },
+                    { "label": "Sitemap", "href": "/sitemap" },
+                    {
+                        "label": "Company information",
+                        "href": "/company-information"
+                    }
+                ]
+            }
+        },
+
+        "announcement_bar": {
+            "region_aria_label": "Announcements",
+            "default_interval_ms": 4000,
+            "default_messages": [
+                {
+                    "text": "Free standard shipping on orders over $50",
+                    "href": "/shipping"
+                },
+                {
+                    "text": "New: FSC® certified Business Cards now available",
+                    "href": "/shop?cat=business-cards"
+                },
+                {
+                    "text": "20% off your first order — use code WELCOME20",
+                    "href": "/shop"
+                },
+                {
+                    "text": "Need help? Chat with our print experts 24/7",
+                    "href": "/contact"
+                }
+            ]
+        },
+
+        "cart_drawer": {
+            "trigger_aria_label": "Open cart",
+            "header_title": "Your cart",
+            "item_count_singular": "item",
+            "item_count_plural": "items",
+            "empty_state": {
+                "heading": "Your cart is empty",
+                "description": "Looks like you haven't added anything yet. Start with our most popular print products.",
+                "cta_label": "Continue shopping",
+                "cta_href": "/shop"
+            },
+            "quantity_label_prefix": "Qty",
+            "footer": {
+                "subtotal_label": "Subtotal",
+                "subtotal_fallback": "—",
+                "shipping_note": "Shipping and taxes calculated at checkout.",
+                "checkout_button_label": "Checkout",
+                "checkout_button_href": "/checkout",
+                "view_cart_button_label": "View cart",
+                "view_cart_button_href": "/cart"
+            }
+        }
+    },
+
+    "home_page": {
+        "_source_files": [
+            "resources/js/pages/home.tsx",
+            "resources/js/components/hero-carousel.tsx",
+            "resources/js/components/home-perks.tsx",
+            "resources/js/components/popular-products.tsx",
+            "resources/js/components/sample-pack-banner.tsx",
+            "resources/js/components/recent-posts.tsx"
+        ],
+        "seo": {
+            "page_title": "Welcome",
+            "page_description": "InkPavo - your go-to solution for printing, customization, and on-demand production."
+        },
+        "hero_carousel": {
+            "aria_label": "Featured products",
+            "prev_button_label": "Previous slide",
+            "next_button_label": "Next slide",
+            "slides": [
+                {
+                    "headline": "Marketing Materials, make your brand stand out",
+                    "subheadline": "We're here to help your business stand out for your next big campaign.",
+                    "cta_text": "Shop now",
+                    "cta_href": "/shop?cat=marketing-materials",
+                    "image_url": "https://images.unsplash.com/photo-1607748862156-7c548e7e98f4?auto=format&fit=crop&w=1400&q=70",
+                    "alt": "A spread of colourful printed promotional flyers, business cards and stickers on a light wood table beside a red wire chair"
+                },
+                {
+                    "headline": "Original Business Cards, designed to be remembered",
+                    "subheadline": "Thicker than your average card, with finishes that turn first impressions into lasting ones.",
+                    "cta_text": "Shop business cards",
+                    "cta_href": "/shop?cat=business-cards",
+                    "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=1400&q=70",
+                    "alt": "Two minimalist business cards laid on textured brown packing paper"
+                },
+                {
+                    "headline": "FSC® certified products that are kinder to the planet",
+                    "subheadline": "Bring your brand to life on certified papers — Business Cards, Postcards, Flyers and Brochures.",
+                    "cta_text": "Discover the range",
+                    "cta_href": "/shop/fsc-certified",
+                    "image_url": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=70",
+                    "alt": "Aerial view of a dense, vibrant green pine forest"
+                }
+            ]
+        },
+        "popular_products": {
+            "section_title": "Popular products",
+            "section_description": "Call it the InkPavo Hall of Fame. Our most tried and trusted favourites.",
+            "footer_cta_text": "Shop All InkPavo Products",
+            "footer_cta_href": "/shop",
+            "products": [
+                {
+                    "name": "Business Cards",
+                    "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=800&q=70",
+                    "alt": "A hand tucking a peach-coloured business card into a back pocket",
+                    "cta": "Shop Business Cards",
+                    "href": "/shop?cat=business-cards"
+                },
+                {
+                    "name": "Postcards",
+                    "image_url": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=800&q=70",
+                    "alt": "A person in a green jacket holds a pink postcard up against a blue sky",
+                    "cta": "Shop Postcards",
+                    "href": "/shop?cat=postcards"
+                },
+                {
+                    "name": "Stickers & Labels",
+                    "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=800&q=70",
+                    "alt": "A \"Hello my name is\" sticker on a denim jacket",
+                    "cta": "Shop Stickers & Labels",
+                    "href": "/shop?cat=stickers-labels"
+                },
+                {
+                    "name": "Flyers",
+                    "image_url": "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=800&q=70",
+                    "alt": "Person holding a tall stack of printed flyers on their lap",
+                    "cta": "Shop Flyers",
+                    "href": "/shop?cat=flyers"
+                },
+                {
+                    "name": "Invitations",
+                    "image_url": "https://images.unsplash.com/photo-1607344645866-009c320b63e0?auto=format&fit=crop&w=800&q=70",
+                    "alt": "Overhead view of invitation cards scattered with a bowl of cereal",
+                    "cta": "Shop Invitations",
+                    "href": "/shop?cat=invitations"
+                },
+                {
+                    "name": "Greeting Cards",
+                    "image_url": "https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=800&q=70",
+                    "alt": "A hand-drawn floral \"Thanks for being you\" greeting card",
+                    "cta": "Shop Greeting Cards",
+                    "href": "/shop/greeting-cards"
+                },
+                {
+                    "name": "Luxe Notecards",
+                    "image_url": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=800&q=70",
+                    "alt": "Hands sliding a Luxe notecard out of a white envelope on a beige coat",
+                    "cta": "Shop Luxe Notecards",
+                    "href": "/shop/luxe-notecards"
+                },
+                {
+                    "name": "Finish your project",
+                    "image_url": null,
+                    "alt": null,
+                    "cta": "Finish your project",
+                    "href": "/shop"
+                }
+            ]
+        },
+        "perks": {
+            "section_aria_label": "Why shop with InkPavo",
+            "items": [
+                {
+                    "title": "Product Variety",
+                    "description": "From business cards to banners, every print essential in one place."
+                },
+                {
+                    "title": "Craftsmanship Variety",
+                    "description": "Foil, embossing, UV, die-cut and more — pick the finish that fits your brand."
+                },
+                {
+                    "title": "Material Variety",
+                    "description": "A curated range of stocks, from everyday 300gsm to ultra-thick 700gsm cotton."
+                },
+                {
+                    "title": "Great Value",
+                    "description": "Premium quality at honest prices, every single order."
+                },
+                {
+                    "title": "1-on-1 Design Service",
+                    "description": "Work directly with a designer to bring your ideas to life."
+                },
+                {
+                    "title": "Global Print Partner",
+                    "description": "We print and ship worldwide, wherever your business takes you."
+                }
+            ]
+        },
+        "sample_pack_banner": {
+            "title": "Free sample",
+            "description": "New to InkPavo? See our full print range in all the possible variations of shape, paper stock & finishes for free.",
+            "cta_text": "Get your sample pack",
+            "cta_href": "/shop/sample-pack",
+            "image_url": "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?auto=format&fit=crop&w=1400&q=70",
+            "alt": "Person in a denim jacket pulling a yellow card from a white sample pack folder on a light wood tabletop"
+        },
+        "recent_posts": {
+            "eyebrow": "Inspiration & ideas",
+            "section_title": "Get More from InkPavo",
+            "view_all_cta": "See all articles",
+            "view_all_href": "/blog"
+        }
+    },
+
+    "blog_index_page": {
+        "_source_files": [
+            "resources/js/pages/blog/index.tsx",
+            "resources/js/components/blog-hero.tsx"
+        ],
+        "seo": {
+            "title": "Blog",
+            "description": "Read our latest articles and updates.",
+            "type": "website"
+        },
+        "active_category": "Blog",
+        "page_heading": "Blog",
+        "empty_state": "No posts yet.",
+        "pagination": {
+            "prev_label": "Previous",
+            "next_label": "Next",
+            "page_indicator_template": "Page {current_page} of {last_page}"
+        },
+        "footer_copyright": "© {currentYear} InkPavo. All rights reserved.",
+        "blog_hero": {
+            "title": "The Drop",
+            "categories_aria_label": "Blog categories",
+            "search_label": "Search articles",
+            "search_placeholder": "Search...",
+            "prev_aria_label": "Previous article",
+            "next_aria_label": "Next article",
+            "tablist_aria_label": "Featured articles",
+            "go_to_article_template": "Go to article {n}",
+            "read_time_template": "{date} · {minutes} min read",
+            "default_categories": [
+                { "label": "Blog Home", "href": "/blog", "active": true },
+                { "label": "Branding", "href": "/blog?category=branding" },
+                {
+                    "label": "Inside InkPavo",
+                    "href": "/blog?category=inside-InkPavo"
+                },
+                {
+                    "label": "Case Studies",
+                    "href": "/blog?category=case-studies"
+                },
+                { "label": "Inspiration", "href": "/blog?category=inspiration" }
+            ],
+            "default_slides": [
+                {
+                    "image_url": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1400&q=70",
+                    "alt": "A hand holds up a lime-green speech-bubble sticker that reads \"Let's Workshop That\" against a softly blurred office background.",
+                    "category": "Article",
+                    "headline": "8 ways to make brainstorms less awkward",
+                    "excerpt": "The silence. The brain blank. The awkward eye contact. Here's how to fix your brainstorms.",
+                    "date": "February 25, 2026",
+                    "read_minutes": 4,
+                    "href": "/blog/brainstorms-less-awkward",
+                    "sticker_text": "Let's Workshop That"
+                },
+                {
+                    "image_url": "https://images.unsplash.com/photo-1531497865144-0464ef8fb9a9?auto=format&fit=crop&w=1400&q=70",
+                    "alt": "A neatly arranged stack of business cards on a brand designer's desk.",
+                    "category": "Article",
+                    "headline": "Designing a business card that gets remembered",
+                    "excerpt": "Small canvas, big stakes. The finishing touches that turn a stack of cards into a story people keep.",
+                    "date": "February 14, 2026",
+                    "read_minutes": 5,
+                    "href": "/blog/business-cards-remembered"
+                },
+                {
+                    "image_url": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=70",
+                    "alt": "An open laptop and notebook lit by warm morning light at a wooden desk.",
+                    "category": "Article",
+                    "headline": "Working remotely without losing your brand voice",
+                    "excerpt": "Tone slips when teams scatter. The rituals that keep your copy sounding like you, wherever everyone is.",
+                    "date": "February 6, 2026",
+                    "read_minutes": 6,
+                    "href": "/blog/remote-brand-voice"
+                },
+                {
+                    "image_url": "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?auto=format&fit=crop&w=1400&q=70",
+                    "alt": "A team collaborating around a table covered in colourful sticky notes.",
+                    "category": "Article",
+                    "headline": "The case for printed onboarding kits",
+                    "excerpt": "Why some of the most loved brands still hand new hires a tangible welcome.",
+                    "date": "January 28, 2026",
+                    "read_minutes": 3,
+                    "href": "/blog/printed-onboarding-kits"
+                },
+                {
+                    "image_url": "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1400&q=70",
+                    "alt": "A close-up of a freshly printed magazine spread with vivid colour blocks.",
+                    "category": "Article",
+                    "headline": "Print finishes that signal \"premium\" instantly",
+                    "excerpt": "Foil, letterpress, soft-touch — a designer's shortcut to making paper feel expensive.",
+                    "date": "January 19, 2026",
+                    "read_minutes": 4,
+                    "href": "/blog/premium-print-finishes"
+                },
+                {
+                    "image_url": "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=1400&q=70",
+                    "alt": "A flat-lay of brand stationery in muted earthy tones.",
+                    "category": "Article",
+                    "headline": "Building a colour palette you won't regret in a year",
+                    "excerpt": "How to pick brand colours that age well — and the trend-chasing traps to skip.",
+                    "date": "January 11, 2026",
+                    "read_minutes": 5,
+                    "href": "/blog/lasting-colour-palette"
+                },
+                {
+                    "image_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=70",
+                    "alt": "A studio team laughing during a casual creative meeting.",
+                    "category": "Article",
+                    "headline": "What we learned running 100 client workshops",
+                    "excerpt": "A decade of brand sprints, distilled into the handful of moves that always work.",
+                    "date": "January 4, 2026",
+                    "read_minutes": 7,
+                    "href": "/blog/100-client-workshops"
+                }
+            ]
+        }
+    },
+
+    "blog_show_page": {
+        "_source_file": "resources/js/pages/blog/show.tsx",
+        "active_category": "Blog",
+        "brand_name": "The InkPavo Hub",
+        "breadcrumb_aria_label": "Breadcrumb",
+        "breadcrumb_root_label": "The Drop",
+        "breadcrumb_root_href": "/blog",
+        "breadcrumb_separator": ">",
+        "metadata": {
+            "by_prefix": "by",
+            "read_time_template": "{minutes} min read"
+        },
+        "share_buttons": {
+            "twitter_label": "Share on Twitter",
+            "facebook_label": "Share on Facebook",
+            "linkedin_label": "Share on LinkedIn",
+            "copy_link_label": "Copy link"
+        },
+        "find_your_card_form": {
+            "heading": "Find the card that gets you",
+            "description": "Not sure which card suits your personality? Our print experts are on hand to help — drop your details below and we'll point you in the right direction.",
+            "fields": [
+                { "id": "first_name", "label": "First name", "required": true },
+                { "id": "last_name", "label": "Last name", "required": true },
+                { "id": "email", "label": "Email address", "required": true }
+            ],
+            "legal_text": "By submitting, unless you tell us otherwise, you'll receive marketing emails from us. You can opt out at any time — see our privacy policy for details.",
+            "legal_link_text": "privacy policy",
+            "legal_link_href": "/privacy",
+            "submit_label": "Submit",
+            "submit_label_processing": "Submitting…",
+            "success_message": "Thanks — we'll be in touch soon."
+        },
+        "newsletter_card": {
+            "title": "Keep in touch",
+            "description": "Get design inspiration, business ideas, and new product alerts sent straight to your inbox with The InkPavo Hub.",
+            "cta": "Subscribe",
+            "cta_href": "/newsletter"
+        },
+        "related_section": {
+            "heading": "May also interest you"
+        }
+    },
+
+    "shop_index_page": {
+        "_source_file": "resources/js/pages/shop/index.tsx",
+        "seo": {
+            "title": "Shop",
+            "description": "Browse our printing products."
+        },
+        "page_heading": "Shop",
+        "all_button_label": "All ({count})",
+        "empty_state": "No products found."
+    },
+
+    "product_detail_page": {
+        "_source_file": "resources/js/pages/shop/show.tsx",
+        "accent_color": "#1e3a5f",
+        "breadcrumbs": ["Home"],
+        "feature_chips": ["Printed in the USA", "Next Day Delivery"],
+        "product_subtitle": "Thicker than your average card. Printed on 350 gsm uncoated paper — substantial in the hand without bulking up your wallet.",
+        "description_block": {
+            "title": "Get Business Cards online that set the standard for 'standard'",
+            "description": "Thicker than your average card, with a quality feel that sets a new standard for 'standard'. If you want Business Cards that look and feel as good as the impression they make, this is the way to go.",
+            "bullets": [
+                "Choose Square, Standard, or InkPavo size",
+                "130lb weight, 16pt thickness",
+                "Available in Matte or Gloss finishes at no extra charge"
+            ]
+        },
+        "design_form_product_options": [
+            "Standard Classic Business card",
+            "Classic special business cards",
+            "Classic quality business cards",
+            "Classic lush business cards",
+            "Basic cotton business card",
+            "Classic cotton business card",
+            "Premium cotton business card",
+            "Luxe cotton business card",
+            "Grand cotton business card",
+            "Standard PVC card",
+            "Premium PVC card"
+        ],
+        "configurator_labels": {
+            "size": "Size",
+            "paper_finish": "Paper finish",
+            "corners": "Corners",
+            "quantity": "Quantity"
+        },
+        "configurator_options": {
+            "sizes": [
+                { "id": "standard", "label": "Standard", "dims": "85 x 55 mm" },
+                { "id": "square", "label": "Square", "dims": "65 x 65 mm" }
+            ],
+            "finishes": [
+                { "id": "matte", "label": "Matte" },
+                { "id": "gloss", "label": "Gloss" }
+            ],
+            "corners": [
+                { "id": "standard", "label": "Standard" },
+                { "id": "rounded", "label": "Rounded" }
+            ],
+            "quantity_tiers": [
+                { "qty": 50, "multiplier": 1, "save": 0 },
+                { "qty": 100, "multiplier": 1.6, "save": 0.1 },
+                {
+                    "qty": 200,
+                    "multiplier": 2.4,
+                    "save": 0.2,
+                    "recommended": true,
+                    "badge": "Best value"
+                },
+                { "qty": 400, "multiplier": 4, "save": 0.3 }
+            ]
+        },
+        "quantity_table_headers": ["Quantity", "Per card", "Was", "Now"],
+        "save_percentage_label": "Save {n}%",
+        "delivery_callout": {
+            "title": "Get it by Tue, 16 Jun",
+            "subtitle": "Order before 12pm Mon–Fri for next-day delivery on selected products."
+        },
+        "order_summary": {
+            "heading": "Your selection",
+            "labels": ["Paper", "Size", "Quantity", "Corners"],
+            "total_label": "Total"
+        },
+        "design_cta": {
+            "heading": "How would you like to design?",
+            "options": [
+                {
+                    "title": "Design in Canva",
+                    "body": "Watch the quick tutorial, design in Canva, then upload your file here."
+                },
+                {
+                    "title": "Upload a full design (free)",
+                    "body": "Already have print-ready artwork? Send it over and we'll prepare the proof."
+                },
+                {
+                    "title": "Design for you",
+                    "body": "Tell us what you need — our designers create the artwork for you."
+                }
+            ]
+        },
+        "add_to_cart_button_template": "Add to cart · ${price}",
+        "added_to_cart_button": "Added to cart",
+        "design_guidelines": {
+            "heading": "Designing your card?",
+            "description": "Set up your file with a 2 mm bleed, keep important text and logos inside the safe area, and export at 300 dpi in CMYK. The pink stripe shows where we trim — anything inside the dashed line will print.",
+            "bullets": [
+                "2 mm bleed on every edge",
+                "300 dpi minimum image resolution",
+                "CMYK colour space (RGB will auto-convert)",
+                "Embedded fonts or outlined text"
+            ],
+            "safe_area_label": "Safe area",
+            "bleed_area_label": "Bleed area"
+        },
+        "lifestyle_banner": {
+            "eyebrow": "Make a first impression",
+            "heading": "Premium cards for the moments that matter.",
+            "body": "From boardroom intros to coffee-shop hand-offs, our Original Business Cards land right every time.",
+            "image_url": "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1600&q=70"
+        },
+        "paper_stocks_section": {
+            "heading": "Discover our other paper stocks",
+            "subtitle": "Every paper has its own personality. Order a free sample pack to feel them all.",
+            "cta": "Learn more",
+            "stocks": [
+                {
+                    "id": "matte",
+                    "name": "Matte",
+                    "blurb": "Smooth, modern, and versatile. Our most popular choice for everyday print.",
+                    "image_url": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=600&q=70"
+                },
+                {
+                    "id": "soft-touch",
+                    "name": "Soft Touch",
+                    "blurb": "A velvety, tactile finish that feels as good as it looks.",
+                    "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=600&q=70"
+                },
+                {
+                    "id": "cotton",
+                    "name": "Cotton",
+                    "blurb": "100% cotton — eco-friendly, surprisingly soft, and tree-free.",
+                    "image_url": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=600&q=70"
+                },
+                {
+                    "id": "luxe",
+                    "name": "Luxe",
+                    "blurb": "Triple layered with a coloured seam — the ultimate first impression.",
+                    "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=600&q=70"
+                }
+            ]
+        },
+        "printfinity_banner": {
+            "eyebrow": "Printfinity",
+            "heading": "A different design on every card. For free.",
+            "body": "Showcase your full portfolio, your team, or every product you make — print a unique design on the back of every card in the pack at no extra cost.",
+            "cta": "Discover Printfinity",
+            "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1600&q=70"
+        },
+        "business_solutions_section": {
+            "heading": "Built for teams and businesses",
+            "subtitle": "Whether you're kitting out two staff or two thousand, we've got the tools to make it painless.",
+            "blocks": [
+                {
+                    "title": "Order for the whole team",
+                    "body": "Need cards for multiple employees? Manage everyone's details and order in one go.",
+                    "cta": "Learn more",
+                    "image_url": "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=600&q=70"
+                },
+                {
+                    "title": "Manage brand templates",
+                    "body": "Lock down your brand fonts, colours and logos so every order stays on-brand.",
+                    "cta": "Discover Brand Manager",
+                    "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=600&q=70"
+                },
+                {
+                    "title": "Dedicated account manager",
+                    "body": "Larger orders get a dedicated rep to handle quoting, proofing and shipping.",
+                    "cta": "Talk to an expert",
+                    "image_url": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=600&q=70"
+                }
+            ]
+        },
+        "cross_sell_section": {
+            "heading": "Even more good stuff",
+            "subtitle": "Round out your kit with these customer favourites.",
+            "empty_state": "More products coming soon.",
+            "shop_label_template": "Shop {name}"
+        },
+        "faq": [
+            {
+                "question": "What are the exact dimensions?",
+                "answer": "Standard: 85 × 55 mm. Square: 65 × 65 mm. MiniCard: 70 × 28 mm."
+            },
+            {
+                "question": "How thick is the paper?",
+                "answer": "Original Business Cards are printed on 350 gsm uncoated stock — substantial without being bulky."
+            },
+            {
+                "question": "Can I print on both sides?",
+                "answer": "Yes. All Original Business Cards are printed full-colour on both sides at no extra cost."
+            },
+            {
+                "question": "Will my colours print accurately?",
+                "answer": "We print in CMYK. Designs created in RGB will be auto-converted, which can shift bright tones slightly."
+            },
+            {
+                "question": "What file format should I upload?",
+                "answer": "PDF (preferred), PNG, or JPG at 300 dpi or higher. Include a 2 mm bleed on every edge."
+            },
+            {
+                "question": "How long does delivery take?",
+                "answer": "Standard: 3–5 working days. Next Day Delivery is available on selected products before 12pm."
+            },
+            {
+                "question": "Can I order a sample first?",
+                "answer": "Yes — order a free Business Card Sample Pack to feel every paper stock before you buy."
+            },
+            {
+                "question": "Do you offer Printfinity?",
+                "answer": "Yes. Print a different design on the back of every card in your pack at no extra cost."
+            },
+            {
+                "question": "Is there a money-back guarantee?",
+                "answer": "The InkPavo Promise — if you're not 100% happy with your order, we'll reprint it or refund you."
+            }
+        ],
+        "gallery_thumb_image_urls": [
+            "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=400&q=70",
+            "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=400&q=70",
+            "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=400&q=70",
+            "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=400&q=70"
+        ],
+        "finish_thumb_image_urls": [
+            "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=200&q=70",
+            "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=200&q=70"
         ]
-      }
     },
 
-    "footer": {
-      "column_headings": {
-        "products": "Products",
-        "paper_stocks": "Paper Stocks",
-        "about_us": "About us",
-        "help": "Help/Useful links"
-      },
-      "products_left_column": [
-        { "label": "All Products", "href": "/shop" },
-        { "label": "Business Cards", "href": "/shop?cat=business-cards" },
-        { "label": "MiniCards", "href": "/shop/minicards" },
-        { "label": "Letterpress Business Cards", "href": "/shop/letterpress-business-cards" },
-        { "label": "Postcards", "href": "/shop?cat=postcards" },
-        { "label": "Stickers and Labels", "href": "/shop?cat=stickers-labels" },
-        { "label": "Flyers", "href": "/shop?cat=flyers" }
-      ],
-      "products_right_column": [
-        { "label": "Letterhead", "href": "/shop/letterhead" },
-        { "label": "Greeting Cards", "href": "/shop/greeting-cards" },
-        { "label": "Luxe Notecards", "href": "/shop/luxe-notecards" },
-        { "label": "Envelopes", "href": "/shop/envelopes" },
-        { "label": "Display Boxes", "href": "/shop/display-boxes" },
-        { "label": "Business Card Holders", "href": "/shop/business-card-holders" },
-        { "label": "Notebooks & Journals", "href": "/shop/notebooks-journals" },
-        { "label": "Planners", "href": "/shop/planners" }
-      ],
-      "paper_stocks": [
-        { "label": "Paper Stocks", "href": "/paper-stocks" },
-        { "label": "PrintPandora Luxe", "href": "/paper-stocks/luxe" },
-        { "label": "PrintPandora Super", "href": "/paper-stocks/super" },
-        { "label": "PrintPandora Cotton", "href": "/paper-stocks/cotton" },
-        { "label": "PrintPandora Original", "href": "/paper-stocks/original" },
-        { "label": "PrintPandora Letterpress", "href": "/paper-stocks/letterpress" },
-        { "label": "Sample Packs", "href": "/paper-stocks/sample-packs" },
-        { "label": "FSC® Certified Paper", "href": "/paper-stocks/fsc-certified" },
-        { "label": "Luxe Collection", "href": "/paper-stocks/luxe-collection" }
-      ],
-      "about_us": [
-        { "label": "About PrintPandora", "href": "/about" },
-        { "label": "Media resources", "href": "/about/media" },
-        { "label": "People, products and the planet", "href": "/about/sustainability" },
-        { "label": "Who we are", "href": "/about" },
-        { "label": "Careers", "href": "/careers" },
-        { "label": "The Drop", "href": "/the-drop" },
-        { "label": "Business Services", "href": "/shop?cat=business-services" },
-        { "label": "Reseller", "href": "/reseller" },
-        { "label": "Printfinity", "href": "/printfinity" },
-        { "label": "The PrintPandora Promise", "href": "/promise" },
-        { "label": "Packaging", "href": "/packaging" },
-        { "label": "Partner with PrintPandora", "href": "/partner" }
-      ],
-      "help_links": [
-        { "label": "Contact us", "href": "/contact" },
-        { "label": "Pricing", "href": "/pricing" },
-        { "label": "Shipping Calculator", "href": "/shipping-calculator" },
-        { "label": "Next Day Delivery", "href": "/next-day-delivery" },
-        { "label": "FAQs", "href": "/help" },
-        { "label": "Artwork guidelines", "href": "/help/artwork-guidelines" },
-        { "label": "Affiliates", "href": "/affiliates" },
-        { "label": "Refer and Earn", "href": "/refer" },
-        { "label": "Vulnerability Disclosure", "href": "/vulnerability-disclosure" }
-      ],
-      "legal_bar": {
-        "copyright_text": "© {YEAR} PrintPandora — print-on-demand for the small businesses, designers, and creators we love.",
-        "_note": "{YEAR} is replaced at runtime",
-        "legal_links": [
-          { "label": "Terms & Conditions", "href": "/terms" },
-          { "label": "Privacy Policy", "href": "/privacy" },
-          { "label": "Fonts", "href": "/fonts" },
-          { "label": "Sitemap", "href": "/sitemap" },
-          { "label": "Company information", "href": "/company-information" }
+    "design_service_page": {
+        "_source_file": "resources/js/pages/business-card-design-service.tsx",
+        "seo": {
+            "title": "Business Card Design Service",
+            "description": "Professional business card design services from InkPavo. Our designers create custom artwork based on your brand, logo, and style preferences."
+        },
+        "heading": "Business Card Design Service",
+        "intro": "Our talented design team is here to help with professional design services. If you would like a business logo on your cards, you must provide the original logo file in an editable vector format (AI, EPS, PDF, SVG). If your logo is not in the correct format, our designers can redraw it for an additional fee based on its complexity. Before discussing your card design with our team, we strongly recommend browsing our range of print products to get familiar with the card stocks and print features you may want in your design. Please note: if you are printing elsewhere, our business card design service will incur an additional charge.",
+        "process_heading": "Design Process",
+        "process_steps": [
+            "Once we receive your payment, our service team will contact you by email during regular business hours (Monday–Friday, 9:00 AM–5:00 PM PST).",
+            "Our service team will review your design questionnaire to confirm or collect any remaining details — including your print budget, card stock and print feature preferences, and creative or style references — before passing them to our design team.",
+            "Once your preferences are confirmed, our design team will create your initial business card design within 1–3 business days. Our service team will then email you the design as a PDF for review.",
+            "To keep revisions within the project scope, please be as detailed as possible about style. The most effective approach is to send us examples of styles you like — written instructions, photos of other designs, drawings, screenshots, or anything that conveys your ideas are all welcome by email. Revision requests beyond the project scope may require purchasing additional design services.",
+            "With every design concept and subsequent revision, please proofread all information carefully and check spelling.",
+            "After the design is finalized, confirm your stock, finish, size, order quantity, and shipping address. You will receive a shipping quote and be asked to choose your preferred shipping method. Once paid, we will start producing your cards."
+        ],
+        "notes_heading": "Business Card Design Notes",
+        "notes": [
+            "Please be sure to provide your logo in an editable vector format (AI or EPS).",
+            "If you don't have access to a vector version of your logo, we can help redraw it for an additional fee; the cost depends on the complexity of the logo and the quality of the original file.",
+            "The initial design will be emailed to you within 1–3 business days. Subsequent refinements and revisions may each take up to 1 additional business day. The total duration depends on timely communication and the number and complexity of revision requests.",
+            "Please note: our design service develops an initial design concept based on the preferences and examples you provide. If you are not satisfied with the result, we will do our best to work with you on revisions to find a direction that better suits your style; work beyond the project scope may incur additional design fees.",
+            "Design service fees are non-refundable once work on the initial concept has begun.",
+            "Our design services are reserved for customers who print with us. Any files requested by customers who have not purchased our printing services will incur an additional charge.",
+            "Customers who do not print with us will be charged an additional USD $100 per design.",
+            "Customers are responsible for confirming that spelling and information on the proof are correct. Even if corrections were previously made or a correct version was provided, errors can still occur. Once the final proof is approved, we accept no liability for any spelling mistakes or inaccuracies."
+        ],
+        "form_heading": "Start your design request",
+        "form_description": "Tell us about your business and what you're looking for. Our team will review your request and get back to you by email.",
+        "form_submit_label": "Submit",
+        "form_product_options": [
+            "Standard Classic Business card",
+            "Classic special business cards",
+            "Classic quality business cards",
+            "Classic lush business cards",
+            "Basic cotton business card",
+            "Classic cotton business card",
+            "Premium cotton business card",
+            "Luxe cotton business card",
+            "Grand cotton business card",
+            "Standard PVC card",
+            "Premium PVC card"
         ]
-      }
     },
 
-    "announcement_bar": {
-      "region_aria_label": "Announcements",
-      "default_interval_ms": 4000,
-      "default_messages": [
-        { "text": "Free standard shipping on orders over $50", "href": "/shipping" },
-        { "text": "New: FSC® certified Business Cards now available", "href": "/shop?cat=business-cards" },
-        { "text": "20% off your first order — use code WELCOME20", "href": "/shop" },
-        { "text": "Need help? Chat with our print experts 24/7", "href": "/contact" }
-      ]
+    "business_cards_landing_page": {
+        "_source_file": "resources/js/pages/shop/business-cards.tsx",
+        "accent_color": "#1e3a5f",
+        "warm_bg": "#fbf6ee",
+        "seo": {
+            "title": "Business Cards",
+            "description": "Business Cards that mean business. Unique paper, colours, shapes and textures to help you stand out — from InkPavo."
+        },
+        "hero": {
+            "heading": "Business Cards that mean business.",
+            "body": "As a forward-thinking print company, we offer unique paper, colours, shapes, and textures to help your card stand out the moment it leaves your hand.",
+            "cta": "Browse all Business Cards"
+        },
+        "hero_collage": [
+            {
+                "alt": "Gold foil business card on cream paper",
+                "image_url": "https://picsum.photos/seed/bc-gold-foil/360/520"
+            },
+            {
+                "alt": "Business card with coloured edges",
+                "image_url": "https://picsum.photos/seed/bc-coloured-edge/360/520"
+            },
+            {
+                "alt": "Felt paper business card",
+                "image_url": "https://picsum.photos/seed/bc-felt-paper/360/520"
+            },
+            {
+                "alt": "Thick cardstock business card",
+                "image_url": "https://picsum.photos/seed/bc-thick-stock/360/520"
+            },
+            {
+                "alt": "Square business card",
+                "image_url": "https://picsum.photos/seed/bc-mini-square/360/360"
+            }
+        ],
+        "sections": {
+            "shop_by_paper": {
+                "heading": "Shop Business Cards by Paper",
+                "subtitle": "Pick the stock that matches your brand — from everyday classics to triple-layered luxury.",
+                "cta_template": "Shop {name}",
+                "items": [
+                    {
+                        "name": "Original Business Cards",
+                        "blurb": "The 98% customer favourite, available in white or premium cardstock.",
+                        "image_url": "https://picsum.photos/seed/paper-original/640/480"
+                    },
+                    {
+                        "name": "Super Business Cards",
+                        "blurb": "320 gsm thick paper available in four colour options.",
+                        "image_url": "https://picsum.photos/seed/paper-super/640/480"
+                    },
+                    {
+                        "name": "Luxe Business Cards",
+                        "blurb": "100% cotton rag paper with a thick, tactile feel.",
+                        "image_url": "https://picsum.photos/seed/paper-luxe/640/480"
+                    },
+                    {
+                        "name": "Cotton Business Cards",
+                        "blurb": "100% recycled cotton with a fibrous, hand-finished texture.",
+                        "image_url": "https://picsum.photos/seed/paper-cotton/640/480"
+                    }
+                ]
+            },
+            "shop_by_size": {
+                "heading": "Shop Business Cards by Size",
+                "subtitle": "Classic, square, or somewhere in between — find the format that fits your style.",
+                "cta_template": "Shop {name}",
+                "items": [
+                    {
+                        "name": "Standard",
+                        "blurb": "The classic US / EU size — fits every wallet.",
+                        "image_url": "https://picsum.photos/seed/size-standard/640/480"
+                    },
+                    {
+                        "name": "Square",
+                        "blurb": "Stand out with a 65 × 65 mm square, finished in gold logo detail.",
+                        "image_url": "https://picsum.photos/seed/size-square-green/640/480"
+                    },
+                    {
+                        "name": "Square — Premium",
+                        "blurb": "Same square cut, deep black stock, foil-stamped logo.",
+                        "image_url": "https://picsum.photos/seed/size-square-black/640/480"
+                    }
+                ]
+            },
+            "shop_by_finish": {
+                "heading": "Shop by Special Finish",
+                "subtitle": "Foiled edges, neon edges, metallic stamps and tactile papers — make every handoff a moment.",
+                "items": [
+                    {
+                        "name": "Rose Gold Foil Edges",
+                        "image_url": "https://picsum.photos/seed/finish-rose-gold/640/480",
+                        "cta": "Shop finish"
+                    },
+                    {
+                        "name": "Neon Edges",
+                        "image_url": "https://picsum.photos/seed/finish-neon/640/480",
+                        "cta": "Shop finish"
+                    },
+                    {
+                        "name": "Silver Metal Edge",
+                        "image_url": "https://picsum.photos/seed/finish-silver/640/480",
+                        "cta": "Shop finish"
+                    },
+                    {
+                        "name": "Gold Foil Edge",
+                        "image_url": "https://picsum.photos/seed/finish-gold-edge/640/480",
+                        "cta": "Shop finish"
+                    },
+                    {
+                        "name": "Matt Textured Thick Paper",
+                        "image_url": "https://picsum.photos/seed/finish-matt/640/480",
+                        "cta": "Shop finish"
+                    },
+                    {
+                        "name": "Business Card Design Templates",
+                        "blurb": "Jump-start your card with our free in-browser design tool.",
+                        "image_url": "https://picsum.photos/seed/finish-templates/640/480",
+                        "cta": "Start designing",
+                        "emphasised": true
+                    }
+                ],
+                "free_shipping_promo": {
+                    "eyebrow": "On every order",
+                    "heading": "Free shipping worldwide",
+                    "body": "Wherever your card needs to land, we'll get it there — free — on every single order.",
+                    "cta": "Start an order",
+                    "image_url": "https://picsum.photos/seed/free-shipping-lifestyle/900/600",
+                    "image_alt": "Person packing business cards"
+                }
+            },
+            "templates": {
+                "heading": "InkPavo Business Card Templates",
+                "subtitle": "Designer-made starting points — drop in your details and ship in minutes.",
+                "cta": "Browse 1000s of Business Card Templates",
+                "items": [
+                    {
+                        "name": "Pink Foil Logo Series",
+                        "image_url": "https://picsum.photos/seed/tpl-pink-foil/600/450"
+                    },
+                    {
+                        "name": "Monogram Series",
+                        "image_url": "https://picsum.photos/seed/tpl-monogram/600/450"
+                    },
+                    {
+                        "name": "Handwritten & Calligraphy",
+                        "image_url": "https://picsum.photos/seed/tpl-handwritten/600/450"
+                    },
+                    {
+                        "name": "Minimalist Layouts",
+                        "image_url": "https://picsum.photos/seed/tpl-minimal/600/450"
+                    }
+                ]
+            },
+            "make_your_own": {
+                "heading": "Make your own Business Cards",
+                "subtitle": "Three ways to get from idea to printed card — pick the one that fits how you work.",
+                "items": [
+                    {
+                        "name": "Design from scratch",
+                        "blurb": "A blank canvas — start fresh and build your card from the ground up.",
+                        "cta": "Get started"
+                    },
+                    {
+                        "name": "Upload your design",
+                        "blurb": "Already have artwork? Upload a PDF, PNG, or JPG and we'll handle the rest.",
+                        "cta": "Get started"
+                    },
+                    {
+                        "name": "Grab images from the web",
+                        "blurb": "Pull images straight from Pinterest, Instagram, and other social feeds.",
+                        "cta": "Get started"
+                    }
+                ]
+            },
+            "why_inkpavo": {
+                "heading": "Why InkPavo?",
+                "body": "We're obsessed with quality, sustainability, and getting your order to you fast. Here's how we keep that promise.",
+                "cta": "Learn more",
+                "perks": [
+                    {
+                        "name": "The InkPavo Promise",
+                        "blurb": "A full refund if you're not 100% satisfied — no questions asked."
+                    },
+                    {
+                        "name": "Design with Nature",
+                        "blurb": "Sustainably sourced paper and eco-friendly inks, every order."
+                    },
+                    {
+                        "name": "Fast & Free",
+                        "blurb": "Free worldwide shipping on every order, with express options available."
+                    }
+                ]
+            },
+            "how_to_use": {
+                "heading": "How to use Business Cards",
+                "subtitle": "A card is more than your phone number — here are three ways to put yours to work.",
+                "items": [
+                    {
+                        "title": "Use colour blocks",
+                        "blurb": "Bold full-bleed colour makes your card unmissable in a stack.",
+                        "image_url": "https://picsum.photos/seed/howto-color-blocks/640/480"
+                    },
+                    {
+                        "title": "Customer appreciation cards",
+                        "blurb": "A handwritten thank-you turns one-time buyers into loyal fans.",
+                        "image_url": "https://picsum.photos/seed/howto-thank-you/640/480"
+                    },
+                    {
+                        "title": "Custom luggage tag",
+                        "blurb": "Punch a hole, add a loop — instantly the most stylish tag at baggage claim.",
+                        "image_url": "https://picsum.photos/seed/howto-luggage-tag/640/480"
+                    }
+                ]
+            },
+            "cross_sell": {
+                "heading": "Even more good stuff",
+                "subtitle": "Round out your kit with these customer favourites.",
+                "cta_template": "Shop {name}",
+                "items": [
+                    {
+                        "name": "Notebooks",
+                        "image_url": "https://picsum.photos/seed/cs-notebooks/640/480"
+                    },
+                    {
+                        "name": "Thank You Cards",
+                        "image_url": "https://picsum.photos/seed/cs-thankyou/640/480"
+                    },
+                    {
+                        "name": "Stickers",
+                        "image_url": "https://picsum.photos/seed/cs-stickers/640/480"
+                    },
+                    {
+                        "name": "Card Holders",
+                        "image_url": "https://picsum.photos/seed/cs-holders/640/480"
+                    }
+                ]
+            }
+        },
+        "faq": [
+            {
+                "question": "How do I order business cards?",
+                "answer": "Pick a paper, choose a size, then either use a template, upload artwork, or design from scratch in the browser. Add to cart and we ship within 3–5 working days."
+            },
+            {
+                "question": "Which InkPavo paper is best for my business?",
+                "answer": "Original is our most popular all-rounder. Super suits agencies that want a thicker hand-feel; Luxe and Cotton are for premium first impressions."
+            },
+            {
+                "question": "How do I find a good design for my cards?",
+                "answer": "Browse 1000s of free templates in our design tool, or start from scratch with our preset layouts and brand colour picker."
+            },
+            {
+                "question": "Which side should I print on?",
+                "answer": "Both. Front for your name, role, and primary contact details; back for your tagline, social handles, or QR code."
+            },
+            {
+                "question": "Which file formats are best?",
+                "answer": "PDF (300 DPI, CMYK) gives the sharpest result. PNG and JPG at 300 DPI also work — just make sure colours are CMYK, not RGB."
+            },
+            {
+                "question": "What is SF Express and other shipping options?",
+                "answer": "SF Express is our default carrier for fast worldwide delivery. DHL and USPS are available at checkout depending on destination."
+            }
+        ]
     },
 
-    "cart_drawer": {
-      "trigger_aria_label": "Open cart",
-      "header_title": "Your cart",
-      "item_count_singular": "item",
-      "item_count_plural": "items",
-      "empty_state": {
-        "heading": "Your cart is empty",
-        "description": "Looks like you haven't added anything yet. Start with our most popular print products.",
-        "cta_label": "Continue shopping",
-        "cta_href": "/shop"
-      },
-      "quantity_label_prefix": "Qty",
-      "footer": {
+    "cart_page": {
+        "_source_file": "resources/js/pages/shop/cart.tsx",
+        "seo_title": "Cart",
+        "header_logo_text": "InkPavo",
+        "continue_shopping_link": "Continue Shopping",
+        "page_heading": "Shopping Cart",
+        "empty_state": "Your cart is empty.",
+        "empty_state_cta": "Browse products",
+        "quantity_decrement": "-",
+        "quantity_increment": "+",
+        "remove_button": "Remove",
         "subtotal_label": "Subtotal",
-        "subtotal_fallback": "—",
-        "shipping_note": "Shipping and taxes calculated at checkout.",
-        "checkout_button_label": "Checkout",
-        "checkout_button_href": "/checkout",
-        "view_cart_button_label": "View cart",
-        "view_cart_button_href": "/cart"
-      }
-    }
-  },
-
-  "home_page": {
-    "_source_files": [
-      "resources/js/pages/home.tsx",
-      "resources/js/components/hero-carousel.tsx",
-      "resources/js/components/home-perks.tsx",
-      "resources/js/components/popular-products.tsx",
-      "resources/js/components/sample-pack-banner.tsx",
-      "resources/js/components/recent-posts.tsx"
-    ],
-    "seo": {
-      "page_title": "Welcome",
-      "page_description": "PrintPandora - your go-to solution for printing, customization, and on-demand production."
+        "checkout_cta": "Proceed to Checkout"
     },
-    "hero_carousel": {
-      "aria_label": "Featured products",
-      "prev_button_label": "Previous slide",
-      "next_button_label": "Next slide",
-      "slides": [
-        {
-          "headline": "Marketing Materials, make your brand stand out",
-          "subheadline": "We're here to help your business stand out for your next big campaign.",
-          "cta_text": "Shop now",
-          "cta_href": "/shop?cat=marketing-materials",
-          "image_url": "https://images.unsplash.com/photo-1607748862156-7c548e7e98f4?auto=format&fit=crop&w=1400&q=70",
-          "alt": "A spread of colourful printed promotional flyers, business cards and stickers on a light wood table beside a red wire chair"
+
+    "checkout_page": {
+        "_source_file": "resources/js/pages/shop/checkout.tsx",
+        "seo_title": "Checkout",
+        "header_logo_text": "InkPavo",
+        "back_to_cart_link": "Back to Cart",
+        "page_heading": "Checkout",
+        "form_sections": {
+            "contact_information": {
+                "heading": "Contact Information",
+                "fields": {
+                    "name": { "label": "Name *", "type": "text" },
+                    "email": { "label": "Email *", "type": "email" },
+                    "phone": { "label": "Phone", "type": "text" }
+                }
+            },
+            "shipping_address": {
+                "heading": "Shipping Address",
+                "fields": {
+                    "address": { "label": "Address *", "type": "text" },
+                    "city": { "label": "City *", "type": "text" },
+                    "state": { "label": "State", "type": "text" },
+                    "zip": { "label": "ZIP Code *", "type": "text" },
+                    "country": {
+                        "label": "Country",
+                        "type": "text",
+                        "default_value": "US"
+                    },
+                    "notes": { "label": "Order Notes", "type": "textarea" }
+                }
+            },
+            "payment_method": {
+                "heading": "Payment Method",
+                "options": [
+                    {
+                        "value": "manual",
+                        "label": "Manual / Pay Later",
+                        "description": "Place the order and arrange payment offline."
+                    },
+                    {
+                        "value": "paypal",
+                        "label": "PayPal",
+                        "sandbox_badge": "Sandbox",
+                        "description_configured": "Pay securely with PayPal or a credit card.",
+                        "description_not_configured": "PayPal is not configured."
+                    }
+                ]
+            }
         },
-        {
-          "headline": "Original Business Cards, designed to be remembered",
-          "subheadline": "Thicker than your average card, with finishes that turn first impressions into lasting ones.",
-          "cta_text": "Shop business cards",
-          "cta_href": "/shop?cat=business-cards",
-          "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=1400&q=70",
-          "alt": "Two minimalist business cards laid on textured brown packing paper"
+        "order_summary_sidebar": {
+            "heading": "Order Summary",
+            "subtotal_label": "Subtotal",
+            "total_label": "Total",
+            "place_order_button": "Place Order",
+            "placing_order_button": "Placing Order..."
         },
-        {
-          "headline": "FSC® certified products that are kinder to the planet",
-          "subheadline": "Bring your brand to life on certified papers — Business Cards, Postcards, Flyers and Brochures.",
-          "cta_text": "Discover the range",
-          "cta_href": "/shop/fsc-certified",
-          "image_url": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=70",
-          "alt": "Aerial view of a dense, vibrant green pine forest"
+        "paypal_section": {
+            "loading": "Loading PayPal…",
+            "finalizing": "Finalizing payment…",
+            "disclaimer": "Make sure your contact & shipping details are filled in before paying."
+        },
+        "error_messages": {
+            "paypal_not_configured": "PayPal is not configured.",
+            "sdk_load_failed": "Failed to load PayPal SDK.",
+            "create_order_failed": "Unable to create PayPal order.",
+            "capture_failed": "Payment capture failed.",
+            "generic_error": "PayPal encountered an error. Please try again.",
+            "cancelled": "Payment was cancelled.",
+            "render_failed": "Failed to render PayPal buttons."
         }
-      ]
     },
-    "popular_products": {
-      "section_title": "Popular products",
-      "section_description": "Call it the PrintPandora Hall of Fame. Our most tried and trusted favourites.",
-      "footer_cta_text": "Shop All PrintPandora Products",
-      "footer_cta_href": "/shop",
-      "products": [
-        {
-          "name": "Business Cards",
-          "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=800&q=70",
-          "alt": "A hand tucking a peach-coloured business card into a back pocket",
-          "cta": "Shop Business Cards",
-          "href": "/shop?cat=business-cards"
-        },
-        {
-          "name": "Postcards",
-          "image_url": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=800&q=70",
-          "alt": "A person in a green jacket holds a pink postcard up against a blue sky",
-          "cta": "Shop Postcards",
-          "href": "/shop?cat=postcards"
-        },
-        {
-          "name": "Stickers & Labels",
-          "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=800&q=70",
-          "alt": "A \"Hello my name is\" sticker on a denim jacket",
-          "cta": "Shop Stickers & Labels",
-          "href": "/shop?cat=stickers-labels"
-        },
-        {
-          "name": "Flyers",
-          "image_url": "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=800&q=70",
-          "alt": "Person holding a tall stack of printed flyers on their lap",
-          "cta": "Shop Flyers",
-          "href": "/shop?cat=flyers"
-        },
-        {
-          "name": "Invitations",
-          "image_url": "https://images.unsplash.com/photo-1607344645866-009c320b63e0?auto=format&fit=crop&w=800&q=70",
-          "alt": "Overhead view of invitation cards scattered with a bowl of cereal",
-          "cta": "Shop Invitations",
-          "href": "/shop?cat=invitations"
-        },
-        {
-          "name": "Greeting Cards",
-          "image_url": "https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=800&q=70",
-          "alt": "A hand-drawn floral \"Thanks for being you\" greeting card",
-          "cta": "Shop Greeting Cards",
-          "href": "/shop/greeting-cards"
-        },
-        {
-          "name": "Luxe Notecards",
-          "image_url": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=800&q=70",
-          "alt": "Hands sliding a Luxe notecard out of a white envelope on a beige coat",
-          "cta": "Shop Luxe Notecards",
-          "href": "/shop/luxe-notecards"
-        },
-        {
-          "name": "Finish your project",
-          "image_url": null,
-          "alt": null,
-          "cta": "Finish your project",
-          "href": "/shop"
-        }
-      ]
-    },
-    "perks": {
-      "section_aria_label": "Why shop with PrintPandora",
-      "items": [
-        {
-          "title": "Next day delivery!",
-          "description": "Available on selected products. Order before 12pm Mon-Fri.*",
-          "href": "/next-day-delivery"
-        },
-        {
-          "title": "The PrintPandora Promise",
-          "description": "We move heaven and earth so you're happy with your order!",
-          "href": "/promise"
-        },
-        {
-          "title": "More perks for your business",
-          "description": "Get more for your print with PrintPandora Business Services",
-          "href": "/shop?cat=business-services"
-        },
-        {
-          "title": "Printfinity",
-          "description": "Enjoy a different design on the back of every card – or every Sticker – for free!",
-          "href": "/printfinity"
-        }
-      ],
-      "trustpilot": {
-        "label": "Trustpilot",
-        "href": "https://www.trustpilot.com"
-      }
-    },
-    "sample_pack_banner": {
-      "title": "Free sample",
-      "description": "New to PrintPandora? See our full print range in all the possible variations of shape, paper stock & finishes for free.",
-      "cta_text": "Get your sample pack",
-      "cta_href": "/shop/sample-pack",
-      "image_url": "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?auto=format&fit=crop&w=1400&q=70",
-      "alt": "Person in a denim jacket pulling a yellow card from a white sample pack folder on a light wood tabletop"
-    },
-    "recent_posts": {
-      "eyebrow": "Inspiration & ideas",
-      "section_title": "Get More from PrintPandora",
-      "view_all_cta": "See all articles",
-      "view_all_href": "/blog"
-    }
-  },
 
-  "blog_index_page": {
-    "_source_files": [
-      "resources/js/pages/blog/index.tsx",
-      "resources/js/components/blog-hero.tsx"
-    ],
-    "seo": {
-      "title": "Blog",
-      "description": "Read our latest articles and updates.",
-      "type": "website"
-    },
-    "active_category": "Blog",
-    "page_heading": "Blog",
-    "empty_state": "No posts yet.",
-    "pagination": {
-      "prev_label": "Previous",
-      "next_label": "Next",
-      "page_indicator_template": "Page {current_page} of {last_page}"
-    },
-    "footer_copyright": "© {currentYear} PrintPandora. All rights reserved.",
-    "blog_hero": {
-      "title": "The Drop",
-      "categories_aria_label": "Blog categories",
-      "search_label": "Search articles",
-      "search_placeholder": "Search...",
-      "prev_aria_label": "Previous article",
-      "next_aria_label": "Next article",
-      "tablist_aria_label": "Featured articles",
-      "go_to_article_template": "Go to article {n}",
-      "read_time_template": "{date} · {minutes} min read",
-      "default_categories": [
-        { "label": "Blog Home", "href": "/blog", "active": true },
-        { "label": "Branding", "href": "/blog?category=branding" },
-        { "label": "Inside PrintPandora", "href": "/blog?category=inside-PrintPandora" },
-        { "label": "Case Studies", "href": "/blog?category=case-studies" },
-        { "label": "Inspiration", "href": "/blog?category=inspiration" }
-      ],
-      "default_slides": [
-        {
-          "image_url": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1400&q=70",
-          "alt": "A hand holds up a lime-green speech-bubble sticker that reads \"Let's Workshop That\" against a softly blurred office background.",
-          "category": "Article",
-          "headline": "8 ways to make brainstorms less awkward",
-          "excerpt": "The silence. The brain blank. The awkward eye contact. Here's how to fix your brainstorms.",
-          "date": "February 25, 2026",
-          "read_minutes": 4,
-          "href": "/blog/brainstorms-less-awkward",
-          "sticker_text": "Let's Workshop That"
-        },
-        {
-          "image_url": "https://images.unsplash.com/photo-1531497865144-0464ef8fb9a9?auto=format&fit=crop&w=1400&q=70",
-          "alt": "A neatly arranged stack of business cards on a brand designer's desk.",
-          "category": "Article",
-          "headline": "Designing a business card that gets remembered",
-          "excerpt": "Small canvas, big stakes. The finishing touches that turn a stack of cards into a story people keep.",
-          "date": "February 14, 2026",
-          "read_minutes": 5,
-          "href": "/blog/business-cards-remembered"
-        },
-        {
-          "image_url": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=70",
-          "alt": "An open laptop and notebook lit by warm morning light at a wooden desk.",
-          "category": "Article",
-          "headline": "Working remotely without losing your brand voice",
-          "excerpt": "Tone slips when teams scatter. The rituals that keep your copy sounding like you, wherever everyone is.",
-          "date": "February 6, 2026",
-          "read_minutes": 6,
-          "href": "/blog/remote-brand-voice"
-        },
-        {
-          "image_url": "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?auto=format&fit=crop&w=1400&q=70",
-          "alt": "A team collaborating around a table covered in colourful sticky notes.",
-          "category": "Article",
-          "headline": "The case for printed onboarding kits",
-          "excerpt": "Why some of the most loved brands still hand new hires a tangible welcome.",
-          "date": "January 28, 2026",
-          "read_minutes": 3,
-          "href": "/blog/printed-onboarding-kits"
-        },
-        {
-          "image_url": "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1400&q=70",
-          "alt": "A close-up of a freshly printed magazine spread with vivid colour blocks.",
-          "category": "Article",
-          "headline": "Print finishes that signal \"premium\" instantly",
-          "excerpt": "Foil, letterpress, soft-touch — a designer's shortcut to making paper feel expensive.",
-          "date": "January 19, 2026",
-          "read_minutes": 4,
-          "href": "/blog/premium-print-finishes"
-        },
-        {
-          "image_url": "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=1400&q=70",
-          "alt": "A flat-lay of brand stationery in muted earthy tones.",
-          "category": "Article",
-          "headline": "Building a colour palette you won't regret in a year",
-          "excerpt": "How to pick brand colours that age well — and the trend-chasing traps to skip.",
-          "date": "January 11, 2026",
-          "read_minutes": 5,
-          "href": "/blog/lasting-colour-palette"
-        },
-        {
-          "image_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=70",
-          "alt": "A studio team laughing during a casual creative meeting.",
-          "category": "Article",
-          "headline": "What we learned running 100 client workshops",
-          "excerpt": "A decade of brand sprints, distilled into the handful of moves that always work.",
-          "date": "January 4, 2026",
-          "read_minutes": 7,
-          "href": "/blog/100-client-workshops"
-        }
-      ]
-    }
-  },
-
-  "blog_show_page": {
-    "_source_file": "resources/js/pages/blog/show.tsx",
-    "active_category": "Blog",
-    "brand_name": "The PrintPandora Hub",
-    "breadcrumb_aria_label": "Breadcrumb",
-    "breadcrumb_root_label": "The Drop",
-    "breadcrumb_root_href": "/blog",
-    "breadcrumb_separator": ">",
-    "metadata": {
-      "by_prefix": "by",
-      "read_time_template": "{minutes} min read"
-    },
-    "share_buttons": {
-      "twitter_label": "Share on Twitter",
-      "facebook_label": "Share on Facebook",
-      "linkedin_label": "Share on LinkedIn",
-      "copy_link_label": "Copy link"
-    },
-    "find_your_card_form": {
-      "heading": "Find the card that gets you",
-      "description": "Not sure which card suits your personality? Our print experts are on hand to help — drop your details below and we'll point you in the right direction.",
-      "fields": [
-        { "id": "first_name", "label": "First name", "required": true },
-        { "id": "last_name", "label": "Last name", "required": true },
-        { "id": "email", "label": "Email address", "required": true }
-      ],
-      "legal_text": "By submitting, unless you tell us otherwise, you'll receive marketing emails from us. You can opt out at any time — see our privacy policy for details.",
-      "legal_link_text": "privacy policy",
-      "legal_link_href": "/privacy",
-      "submit_label": "Submit",
-      "submit_label_processing": "Submitting…",
-      "success_message": "Thanks — we'll be in touch soon."
-    },
-    "newsletter_card": {
-      "title": "Keep in touch",
-      "description": "Get design inspiration, business ideas, and new product alerts sent straight to your inbox with The PrintPandora Hub.",
-      "cta": "Subscribe",
-      "cta_href": "/newsletter"
-    },
-    "related_section": {
-      "heading": "May also interest you"
-    }
-  },
-
-  "shop_index_page": {
-    "_source_file": "resources/js/pages/shop/index.tsx",
-    "seo": {
-      "title": "Shop",
-      "description": "Browse our printing products."
-    },
-    "page_heading": "Shop",
-    "all_button_label": "All ({count})",
-    "empty_state": "No products found."
-  },
-
-  "product_detail_page": {
-    "_source_file": "resources/js/pages/shop/show.tsx",
-    "accent_color": "#1e3a5f",
-    "breadcrumbs": ["Home"],
-    "feature_chips": ["Printed in the USA", "Next Day Delivery"],
-    "product_subtitle": "Thicker than your average card. Printed on 350 gsm uncoated paper — substantial in the hand without bulking up your wallet.",
-    "description_block": {
-      "title": "Get Business Cards online that set the standard for 'standard'",
-      "description": "Thicker than your average card, with a quality feel that sets a new standard for 'standard'. If you want Business Cards that look and feel as good as the impression they make, this is the way to go.",
-      "bullets": [
-        "Choose Square, Standard, or PrintPandora size",
-        "130lb weight, 16pt thickness",
-        "Available in Matte or Gloss finishes at no extra charge"
-      ]
-    },
-    "design_form_product_options": [
-      "Standard Classic Business card",
-      "Classic special business cards",
-      "Classic quality business cards",
-      "Classic lush business cards",
-      "Basic cotton business card",
-      "Classic cotton business card",
-      "Premium cotton business card",
-      "Luxe cotton business card",
-      "Grand cotton business card",
-      "Standard PVC card",
-      "Premium PVC card"
-    ],
-    "configurator_labels": {
-      "size": "Size",
-      "paper_finish": "Paper finish",
-      "corners": "Corners",
-      "quantity": "Quantity"
-    },
-    "configurator_options": {
-      "sizes": [
-        { "id": "standard", "label": "Standard", "dims": "85 x 55 mm" },
-        { "id": "square", "label": "Square", "dims": "65 x 65 mm" }
-      ],
-      "finishes": [
-        { "id": "matte", "label": "Matte" },
-        { "id": "gloss", "label": "Gloss" }
-      ],
-      "corners": [
-        { "id": "standard", "label": "Standard" },
-        { "id": "rounded", "label": "Rounded" }
-      ],
-      "quantity_tiers": [
-        { "qty": 50, "multiplier": 1, "save": 0 },
-        { "qty": 100, "multiplier": 1.6, "save": 0.1 },
-        { "qty": 200, "multiplier": 2.4, "save": 0.2, "recommended": true, "badge": "Best value" },
-        { "qty": 400, "multiplier": 4, "save": 0.3 }
-      ]
-    },
-    "quantity_table_headers": ["Quantity", "Per card", "Was", "Now"],
-    "save_percentage_label": "Save {n}%",
-    "delivery_callout": {
-      "title": "Get it by Tue, 16 Jun",
-      "subtitle": "Order before 12pm Mon–Fri for next-day delivery on selected products."
-    },
-    "order_summary": {
-      "heading": "Your selection",
-      "labels": ["Paper", "Size", "Quantity", "Corners"],
-      "total_label": "Total"
-    },
-    "design_cta": {
-      "heading": "How would you like to design?",
-      "options": [
-        { "title": "Design in Canva", "body": "Watch the quick tutorial, design in Canva, then upload your file here." },
-        { "title": "Upload a full design (free)", "body": "Already have print-ready artwork? Send it over and we'll prepare the proof." },
-        { "title": "Design for you", "body": "Tell us what you need — our designers create the artwork for you." }
-      ]
-    },
-    "add_to_cart_button_template": "Add to cart · ${price}",
-    "added_to_cart_button": "Added to cart",
-    "design_guidelines": {
-      "heading": "Designing your card?",
-      "description": "Set up your file with a 2 mm bleed, keep important text and logos inside the safe area, and export at 300 dpi in CMYK. The pink stripe shows where we trim — anything inside the dashed line will print.",
-      "bullets": [
-        "2 mm bleed on every edge",
-        "300 dpi minimum image resolution",
-        "CMYK colour space (RGB will auto-convert)",
-        "Embedded fonts or outlined text"
-      ],
-      "safe_area_label": "Safe area",
-      "bleed_area_label": "Bleed area"
-    },
-    "lifestyle_banner": {
-      "eyebrow": "Make a first impression",
-      "heading": "Premium cards for the moments that matter.",
-      "body": "From boardroom intros to coffee-shop hand-offs, our Original Business Cards land right every time.",
-      "image_url": "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1600&q=70"
-    },
-    "paper_stocks_section": {
-      "heading": "Discover our other paper stocks",
-      "subtitle": "Every paper has its own personality. Order a free sample pack to feel them all.",
-      "cta": "Learn more",
-      "stocks": [
-        { "id": "matte", "name": "Matte", "blurb": "Smooth, modern, and versatile. Our most popular choice for everyday print.", "image_url": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=600&q=70" },
-        { "id": "soft-touch", "name": "Soft Touch", "blurb": "A velvety, tactile finish that feels as good as it looks.", "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=600&q=70" },
-        { "id": "cotton", "name": "Cotton", "blurb": "100% cotton — eco-friendly, surprisingly soft, and tree-free.", "image_url": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=600&q=70" },
-        { "id": "luxe", "name": "Luxe", "blurb": "Triple layered with a coloured seam — the ultimate first impression.", "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=600&q=70" }
-      ]
-    },
-    "printfinity_banner": {
-      "eyebrow": "Printfinity",
-      "heading": "A different design on every card. For free.",
-      "body": "Showcase your full portfolio, your team, or every product you make — print a unique design on the back of every card in the pack at no extra cost.",
-      "cta": "Discover Printfinity",
-      "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1600&q=70"
-    },
-    "business_solutions_section": {
-      "heading": "Built for teams and businesses",
-      "subtitle": "Whether you're kitting out two staff or two thousand, we've got the tools to make it painless.",
-      "blocks": [
-        { "title": "Order for the whole team", "body": "Need cards for multiple employees? Manage everyone's details and order in one go.", "cta": "Learn more", "image_url": "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=600&q=70" },
-        { "title": "Manage brand templates", "body": "Lock down your brand fonts, colours and logos so every order stays on-brand.", "cta": "Discover Brand Manager", "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=600&q=70" },
-        { "title": "Dedicated account manager", "body": "Larger orders get a dedicated rep to handle quoting, proofing and shipping.", "cta": "Talk to an expert", "image_url": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=600&q=70" }
-      ]
-    },
-    "cross_sell_section": {
-      "heading": "Even more good stuff",
-      "subtitle": "Round out your kit with these customer favourites.",
-      "empty_state": "More products coming soon.",
-      "shop_label_template": "Shop {name}"
-    },
-    "faq": [
-      { "question": "What are the exact dimensions?", "answer": "Standard: 85 × 55 mm. Square: 65 × 65 mm. MiniCard: 70 × 28 mm." },
-      { "question": "How thick is the paper?", "answer": "Original Business Cards are printed on 350 gsm uncoated stock — substantial without being bulky." },
-      { "question": "Can I print on both sides?", "answer": "Yes. All Original Business Cards are printed full-colour on both sides at no extra cost." },
-      { "question": "Will my colours print accurately?", "answer": "We print in CMYK. Designs created in RGB will be auto-converted, which can shift bright tones slightly." },
-      { "question": "What file format should I upload?", "answer": "PDF (preferred), PNG, or JPG at 300 dpi or higher. Include a 2 mm bleed on every edge." },
-      { "question": "How long does delivery take?", "answer": "Standard: 3–5 working days. Next Day Delivery is available on selected products before 12pm." },
-      { "question": "Can I order a sample first?", "answer": "Yes — order a free Business Card Sample Pack to feel every paper stock before you buy." },
-      { "question": "Do you offer Printfinity?", "answer": "Yes. Print a different design on the back of every card in your pack at no extra cost." },
-      { "question": "Is there a money-back guarantee?", "answer": "The PrintPandora Promise — if you're not 100% happy with your order, we'll reprint it or refund you." }
-    ],
-    "gallery_thumb_image_urls": [
-      "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=400&q=70",
-      "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=400&q=70",
-      "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=400&q=70",
-      "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=400&q=70"
-    ],
-    "finish_thumb_image_urls": [
-      "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=200&q=70",
-      "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=200&q=70"
-    ]
-  },
-
-  "business_cards_landing_page": {
-    "_source_file": "resources/js/pages/shop/business-cards.tsx",
-    "accent_color": "#1e3a5f",
-    "warm_bg": "#fbf6ee",
-    "seo": {
-      "title": "Business Cards",
-      "description": "Business Cards that mean business. Unique paper, colours, shapes and textures to help you stand out — from PrintPandora."
-    },
-    "hero": {
-      "heading": "Business Cards that mean business.",
-      "body": "As a forward-thinking print company, we offer unique paper, colours, shapes, and textures to help your card stand out the moment it leaves your hand.",
-      "cta": "Browse all Business Cards"
-    },
-    "hero_collage": [
-      { "alt": "Gold foil business card on cream paper", "image_url": "https://picsum.photos/seed/bc-gold-foil/360/520" },
-      { "alt": "Business card with coloured edges", "image_url": "https://picsum.photos/seed/bc-coloured-edge/360/520" },
-      { "alt": "Felt paper business card", "image_url": "https://picsum.photos/seed/bc-felt-paper/360/520" },
-      { "alt": "Thick cardstock business card", "image_url": "https://picsum.photos/seed/bc-thick-stock/360/520" },
-      { "alt": "Square business card", "image_url": "https://picsum.photos/seed/bc-mini-square/360/360" }
-    ],
-    "sections": {
-      "shop_by_paper": {
-        "heading": "Shop Business Cards by Paper",
-        "subtitle": "Pick the stock that matches your brand — from everyday classics to triple-layered luxury.",
-        "cta_template": "Shop {name}",
-        "items": [
-          { "name": "Original Business Cards", "blurb": "The 98% customer favourite, available in white or premium cardstock.", "image_url": "https://picsum.photos/seed/paper-original/640/480" },
-          { "name": "Super Business Cards", "blurb": "320 gsm thick paper available in four colour options.", "image_url": "https://picsum.photos/seed/paper-super/640/480" },
-          { "name": "Luxe Business Cards", "blurb": "100% cotton rag paper with a thick, tactile feel.", "image_url": "https://picsum.photos/seed/paper-luxe/640/480" },
-          { "name": "Cotton Business Cards", "blurb": "100% recycled cotton with a fibrous, hand-finished texture.", "image_url": "https://picsum.photos/seed/paper-cotton/640/480" }
-        ]
-      },
-      "shop_by_size": {
-        "heading": "Shop Business Cards by Size",
-        "subtitle": "Classic, square, or somewhere in between — find the format that fits your style.",
-        "cta_template": "Shop {name}",
-        "items": [
-          { "name": "Standard", "blurb": "The classic US / EU size — fits every wallet.", "image_url": "https://picsum.photos/seed/size-standard/640/480" },
-          { "name": "Square", "blurb": "Stand out with a 65 × 65 mm square, finished in gold logo detail.", "image_url": "https://picsum.photos/seed/size-square-green/640/480" },
-          { "name": "Square — Premium", "blurb": "Same square cut, deep black stock, foil-stamped logo.", "image_url": "https://picsum.photos/seed/size-square-black/640/480" }
-        ]
-      },
-      "shop_by_finish": {
-        "heading": "Shop by Special Finish",
-        "subtitle": "Foiled edges, neon edges, metallic stamps and tactile papers — make every handoff a moment.",
-        "items": [
-          { "name": "Rose Gold Foil Edges", "image_url": "https://picsum.photos/seed/finish-rose-gold/640/480", "cta": "Shop finish" },
-          { "name": "Neon Edges", "image_url": "https://picsum.photos/seed/finish-neon/640/480", "cta": "Shop finish" },
-          { "name": "Silver Metal Edge", "image_url": "https://picsum.photos/seed/finish-silver/640/480", "cta": "Shop finish" },
-          { "name": "Gold Foil Edge", "image_url": "https://picsum.photos/seed/finish-gold-edge/640/480", "cta": "Shop finish" },
-          { "name": "Matt Textured Thick Paper", "image_url": "https://picsum.photos/seed/finish-matt/640/480", "cta": "Shop finish" },
-          { "name": "Business Card Design Templates", "blurb": "Jump-start your card with our free in-browser design tool.", "image_url": "https://picsum.photos/seed/finish-templates/640/480", "cta": "Start designing", "emphasised": true }
+    "about_page": {
+        "_source_file": "resources/js/pages/about.tsx",
+        "eyebrow": "Who we are",
+        "title": "About InkPavo",
+        "description": "InkPavo is a print-on-demand studio helping small businesses and creators bring their brands to life on premium paper.",
+        "body_paragraphs": [
+            "InkPavo was founded with one belief: print is personal. From the weight of a business card to the texture of a postcard, the way your brand feels in someone's hands says as much about you as the design itself. We exist to make that experience effortless — beautifully designed, reliably produced, and shipped to your door."
         ],
-        "free_shipping_promo": {
-          "eyebrow": "On every order",
-          "heading": "Free shipping worldwide",
-          "body": "Wherever your card needs to land, we'll get it there — free — on every single order.",
-          "cta": "Start an order",
-          "image_url": "https://picsum.photos/seed/free-shipping-lifestyle/900/600",
-          "image_alt": "Person packing business cards"
-        }
-      },
-      "templates": {
-        "heading": "PrintPandora Business Card Templates",
-        "subtitle": "Designer-made starting points — drop in your details and ship in minutes.",
-        "cta": "Browse 1000s of Business Card Templates",
-        "items": [
-          { "name": "Pink Foil Logo Series", "image_url": "https://picsum.photos/seed/tpl-pink-foil/600/450" },
-          { "name": "Monogram Series", "image_url": "https://picsum.photos/seed/tpl-monogram/600/450" },
-          { "name": "Handwritten & Calligraphy", "image_url": "https://picsum.photos/seed/tpl-handwritten/600/450" },
-          { "name": "Minimalist Layouts", "image_url": "https://picsum.photos/seed/tpl-minimal/600/450" }
-        ]
-      },
-      "make_your_own": {
-        "heading": "Make your own Business Cards",
-        "subtitle": "Three ways to get from idea to printed card — pick the one that fits how you work.",
-        "items": [
-          { "name": "Design from scratch", "blurb": "A blank canvas — start fresh and build your card from the ground up.", "cta": "Get started" },
-          { "name": "Upload your design", "blurb": "Already have artwork? Upload a PDF, PNG, or JPG and we'll handle the rest.", "cta": "Get started" },
-          { "name": "Grab images from the web", "blurb": "Pull images straight from Pinterest, Instagram, and other social feeds.", "cta": "Get started" }
-        ]
-      },
-      "why_printpandora": {
-        "heading": "Why PrintPandora?",
-        "body": "We're obsessed with quality, sustainability, and getting your order to you fast. Here's how we keep that promise.",
-        "cta": "Learn more",
-        "perks": [
-          { "name": "The PrintPandora Promise", "blurb": "A full refund if you're not 100% satisfied — no questions asked." },
-          { "name": "Design with Nature", "blurb": "Sustainably sourced paper and eco-friendly inks, every order." },
-          { "name": "Fast & Free", "blurb": "Free worldwide shipping on every order, with express options available." }
-        ]
-      },
-      "how_to_use": {
-        "heading": "How to use Business Cards",
-        "subtitle": "A card is more than your phone number — here are three ways to put yours to work.",
-        "items": [
-          { "title": "Use colour blocks", "blurb": "Bold full-bleed colour makes your card unmissable in a stack.", "image_url": "https://picsum.photos/seed/howto-color-blocks/640/480" },
-          { "title": "Customer appreciation cards", "blurb": "A handwritten thank-you turns one-time buyers into loyal fans.", "image_url": "https://picsum.photos/seed/howto-thank-you/640/480" },
-          { "title": "Custom luggage tag", "blurb": "Punch a hole, add a loop — instantly the most stylish tag at baggage claim.", "image_url": "https://picsum.photos/seed/howto-luggage-tag/640/480" }
-        ]
-      },
-      "cross_sell": {
-        "heading": "Even more good stuff",
-        "subtitle": "Round out your kit with these customer favourites.",
-        "cta_template": "Shop {name}",
-        "items": [
-          { "name": "Notebooks", "image_url": "https://picsum.photos/seed/cs-notebooks/640/480" },
-          { "name": "Thank You Cards", "image_url": "https://picsum.photos/seed/cs-thankyou/640/480" },
-          { "name": "Stickers", "image_url": "https://picsum.photos/seed/cs-stickers/640/480" },
-          { "name": "Card Holders", "image_url": "https://picsum.photos/seed/cs-holders/640/480" }
-        ]
-      }
+        "sections": [
+            {
+                "heading": "Our story",
+                "level": "h2",
+                "body": "We started in a small studio with a single press and a stack of paper samples. A decade later we've grown into a print-on-demand platform that serves tens of thousands of independent businesses across the world, but our obsession with craft hasn't budged. Every order — one card or ten thousand — runs through the same quality checks."
+            },
+            {
+                "heading": "What we believe",
+                "level": "h2",
+                "body": "Great print should not be a luxury, and it should never come at the expense of the planet. That's why we offer FSC® certified papers, soy-based inks, and a recyclable packaging programme on every order. When you choose InkPavo, you're choosing print that's kinder by design."
+            },
+            {
+                "heading": "Our values",
+                "level": "h3",
+                "list_items": [
+                    {
+                        "strong": "Craft over compromise.",
+                        "text": "If a card isn't right, it doesn't ship. Period."
+                    },
+                    {
+                        "strong": "People-first service.",
+                        "text": "Real humans answer your questions, every day of the week."
+                    },
+                    {
+                        "strong": "Sustainability as standard.",
+                        "text": "Certified papers and responsible logistics on every order."
+                    },
+                    {
+                        "strong": "Always learning.",
+                        "text": "New finishes, new stocks, new products — your feedback shapes everything we build."
+                    }
+                ]
+            },
+            {
+                "heading": "Where we're going",
+                "level": "h2",
+                "body": "Our roadmap is built around the small businesses, designers, and creators who put their trust in us. Whether you're printing your very first business card or rebranding for the third time, we want InkPavo to be the easiest, most rewarding part of the process."
+            }
+        ],
+        "closing_paragraph": "Have an idea, a question, or a story to share? Get in touch — we'd love to hear from you.",
+        "closing_link_text": "Get in touch",
+        "closing_link_href": "/contact"
     },
-    "faq": [
-      { "question": "How do I order business cards?", "answer": "Pick a paper, choose a size, then either use a template, upload artwork, or design from scratch in the browser. Add to cart and we ship within 3–5 working days." },
-      { "question": "Which PrintPandora paper is best for my business?", "answer": "Original is our most popular all-rounder. Super suits agencies that want a thicker hand-feel; Luxe and Cotton are for premium first impressions." },
-      { "question": "How do I find a good design for my cards?", "answer": "Browse 1000s of free templates in our design tool, or start from scratch with our preset layouts and brand colour picker." },
-      { "question": "Which side should I print on?", "answer": "Both. Front for your name, role, and primary contact details; back for your tagline, social handles, or QR code." },
-      { "question": "Which file formats are best?", "answer": "PDF (300 DPI, CMYK) gives the sharpest result. PNG and JPG at 300 DPI also work — just make sure colours are CMYK, not RGB." },
-      { "question": "What is SF Express and other shipping options?", "answer": "SF Express is our default carrier for fast worldwide delivery. DHL and USPS are available at checkout depending on destination." }
-    ]
-  },
 
-  "cart_page": {
-    "_source_file": "resources/js/pages/shop/cart.tsx",
-    "seo_title": "Cart",
-    "header_logo_text": "PrintPandora",
-    "continue_shopping_link": "Continue Shopping",
-    "page_heading": "Shopping Cart",
-    "empty_state": "Your cart is empty.",
-    "empty_state_cta": "Browse products",
-    "quantity_decrement": "-",
-    "quantity_increment": "+",
-    "remove_button": "Remove",
-    "subtotal_label": "Subtotal",
-    "checkout_cta": "Proceed to Checkout"
-  },
-
-  "checkout_page": {
-    "_source_file": "resources/js/pages/shop/checkout.tsx",
-    "seo_title": "Checkout",
-    "header_logo_text": "PrintPandora",
-    "back_to_cart_link": "Back to Cart",
-    "page_heading": "Checkout",
-    "form_sections": {
-      "contact_information": {
-        "heading": "Contact Information",
-        "fields": {
-          "name": { "label": "Name *", "type": "text" },
-          "email": { "label": "Email *", "type": "email" },
-          "phone": { "label": "Phone", "type": "text" }
-        }
-      },
-      "shipping_address": {
-        "heading": "Shipping Address",
-        "fields": {
-          "address": { "label": "Address *", "type": "text" },
-          "city": { "label": "City *", "type": "text" },
-          "state": { "label": "State", "type": "text" },
-          "zip": { "label": "ZIP Code *", "type": "text" },
-          "country": { "label": "Country", "type": "text", "default_value": "US" },
-          "notes": { "label": "Order Notes", "type": "textarea" }
-        }
-      },
-      "payment_method": {
-        "heading": "Payment Method",
-        "options": [
-          {
-            "value": "manual",
-            "label": "Manual / Pay Later",
-            "description": "Place the order and arrange payment offline."
-          },
-          {
-            "value": "paypal",
-            "label": "PayPal",
-            "sandbox_badge": "Sandbox",
-            "description_configured": "Pay securely with PayPal or a credit card.",
-            "description_not_configured": "PayPal is not configured."
-          }
+    "privacy_page": {
+        "_source_file": "resources/js/pages/privacy.tsx",
+        "eyebrow": "Last updated June 2026",
+        "title": "Privacy Policy",
+        "description": "How InkPavo collects, uses, and protects your personal information.",
+        "intro": "This Privacy Policy explains how InkPavo (\"we\", \"us\", or \"our\") collects, uses, shares, and protects information about you when you visit our website or use our services. This is sample copy provided for layout purposes and should be replaced with a privacy policy tailored to your business and reviewed by your legal counsel before you go live.",
+        "sections": [
+            {
+                "heading": "1. Information we collect",
+                "body": "We collect three broad categories of information:",
+                "list_items": [
+                    {
+                        "strong": "Information you provide.",
+                        "text": "Account details, billing and shipping addresses, artwork you upload, and any messages you send to our support team."
+                    },
+                    {
+                        "strong": "Information collected automatically.",
+                        "text": "Usage data such as pages visited, device and browser type, IP address, and cookies that help us recognise you across visits."
+                    },
+                    {
+                        "strong": "Information from third parties.",
+                        "text": "Payment confirmation from our payment processors and shipping events from carriers."
+                    }
+                ]
+            },
+            {
+                "heading": "2. How we use your information",
+                "list_items": [
+                    "To process orders, fulfil them, and keep you updated on their progress.",
+                    "To provide customer support and respond to your enquiries.",
+                    "To improve our products, services, and the way our website works.",
+                    "To send marketing communications where you've opted in. You can unsubscribe at any time using the link in any email.",
+                    "To comply with legal obligations and protect against fraud or misuse."
+                ]
+            },
+            {
+                "heading": "3. Sharing your information",
+                "body": "We share data only with parties who help us operate the business — payment processors, fulfilment partners, shipping carriers, and the analytics tools we use to understand how the site is performing. We never sell your personal information."
+            },
+            {
+                "heading": "4. Cookies",
+                "body": "Cookies are small text files stored on your device. We use them to keep you signed in, remember items in your cart, and measure how visitors use the site. You can disable non-essential cookies at any time through your browser settings or our cookie preferences panel."
+            },
+            {
+                "heading": "5. Your rights",
+                "body": "Depending on where you live, you may have rights to access, correct, or delete the personal information we hold about you, to object to certain processing, or to receive your data in a portable format. To exercise any of these rights, email privacy@inkpavo.com.",
+                "email_link": "privacy@inkpavo.com"
+            },
+            {
+                "heading": "6. Data retention",
+                "body": "We keep personal information only as long as necessary to provide our services, comply with legal obligations, and resolve disputes. Order records are typically kept for seven years to satisfy tax and accounting requirements."
+            },
+            {
+                "heading": "7. Security",
+                "body": "We use industry-standard administrative, technical, and physical safeguards to protect your information. No system is perfect, however, and we encourage you to use a strong, unique password and to keep your account credentials confidential."
+            },
+            {
+                "heading": "8. Children's privacy",
+                "body": "Our services are not directed to children under 16, and we do not knowingly collect personal information from them. If you believe a child has provided us with personal information, contact us and we'll delete it."
+            },
+            {
+                "heading": "9. Changes to this policy",
+                "body": "We may update this Privacy Policy from time to time. The most current version will always be posted on this page; we'll let you know about significant changes by email or through a notice on the site."
+            },
+            {
+                "heading": "10. Contact",
+                "body": "Questions about this Privacy Policy? Email privacy@inkpavo.com or visit our contact page.",
+                "email_link": "privacy@inkpavo.com",
+                "contact_link_text": "contact page",
+                "contact_link_href": "/contact"
+            }
         ]
-      }
     },
-    "order_summary_sidebar": {
-      "heading": "Order Summary",
-      "subtotal_label": "Subtotal",
-      "total_label": "Total",
-      "place_order_button": "Place Order",
-      "placing_order_button": "Placing Order..."
-    },
-    "paypal_section": {
-      "loading": "Loading PayPal…",
-      "finalizing": "Finalizing payment…",
-      "disclaimer": "Make sure your contact & shipping details are filled in before paying."
-    },
-    "error_messages": {
-      "paypal_not_configured": "PayPal is not configured.",
-      "sdk_load_failed": "Failed to load PayPal SDK.",
-      "create_order_failed": "Unable to create PayPal order.",
-      "capture_failed": "Payment capture failed.",
-      "generic_error": "PayPal encountered an error. Please try again.",
-      "cancelled": "Payment was cancelled.",
-      "render_failed": "Failed to render PayPal buttons."
-    }
-  },
 
-  "about_page": {
-    "_source_file": "resources/js/pages/about.tsx",
-    "eyebrow": "Who we are",
-    "title": "About PrintPandora",
-    "description": "PrintPandora is a print-on-demand studio helping small businesses and creators bring their brands to life on premium paper.",
-    "body_paragraphs": [
-      "PrintPandora was founded with one belief: print is personal. From the weight of a business card to the texture of a postcard, the way your brand feels in someone's hands says as much about you as the design itself. We exist to make that experience effortless — beautifully designed, reliably produced, and shipped to your door."
-    ],
-    "sections": [
-      {
-        "heading": "Our story",
-        "level": "h2",
-        "body": "We started in a small studio with a single press and a stack of paper samples. A decade later we've grown into a print-on-demand platform that serves tens of thousands of independent businesses across the world, but our obsession with craft hasn't budged. Every order — one card or ten thousand — runs through the same quality checks."
-      },
-      {
-        "heading": "What we believe",
-        "level": "h2",
-        "body": "Great print should not be a luxury, and it should never come at the expense of the planet. That's why we offer FSC® certified papers, soy-based inks, and a recyclable packaging programme on every order. When you choose PrintPandora, you're choosing print that's kinder by design."
-      },
-      {
-        "heading": "Our values",
-        "level": "h3",
-        "list_items": [
-          { "strong": "Craft over compromise.", "text": "If a card isn't right, it doesn't ship. Period." },
-          { "strong": "People-first service.", "text": "Real humans answer your questions, every day of the week." },
-          { "strong": "Sustainability as standard.", "text": "Certified papers and responsible logistics on every order." },
-          { "strong": "Always learning.", "text": "New finishes, new stocks, new products — your feedback shapes everything we build." }
+    "terms_page": {
+        "_source_file": "resources/js/pages/terms.tsx",
+        "eyebrow": "Last updated June 2026",
+        "title": "Terms & Conditions",
+        "description": "The terms and conditions governing your use of the InkPavo website and the products and services we provide.",
+        "intro": "These Terms & Conditions (\"Terms\") govern your access to and use of the InkPavo website and the products and services we offer. By placing an order, creating an account, or otherwise using our services, you agree to be bound by these Terms. Please read them carefully — this is sample copy provided for layout purposes and should be replaced with terms reviewed by your legal counsel before you go live.",
+        "sections": [
+            {
+                "heading": "1. About these terms",
+                "body": "InkPavo (\"we\", \"us\", or \"our\") provides on-demand print services to customers worldwide. By using our services you confirm that you are at least 18 years old, or that you have the consent of a parent or legal guardian, and that you have the authority to enter into a binding contract."
+            },
+            {
+                "heading": "2. Your account",
+                "body": "You are responsible for keeping your account credentials confidential and for all activity that takes place under your account. Notify us immediately if you suspect unauthorized use. We reserve the right to suspend or terminate accounts that violate these Terms."
+            },
+            {
+                "heading": "3. Orders and payment",
+                "body": "All orders are subject to acceptance and product availability. Prices shown on the site are inclusive of applicable taxes unless otherwise stated. Payment is taken at the point of order, and a confirmation email is sent once your order has been received. We reserve the right to cancel any order at our discretion, including for reasons of pricing errors or suspected fraud."
+            },
+            {
+                "heading": "4. Intellectual property and your artwork",
+                "body": "You retain ownership of any artwork or content you upload to InkPavo. By uploading content, you confirm that you have the right to reproduce it and grant us a limited licence to print, fulfil, and ship your order. You agree not to upload content that infringes the rights of a third party or that is unlawful, defamatory, or obscene."
+            },
+            {
+                "heading": "5. Delivery",
+                "body": "Estimated delivery times are provided at checkout and are indicative only. We are not responsible for delays caused by carriers, customs, or events outside our reasonable control. Risk in the products passes to you on delivery."
+            },
+            {
+                "heading": "6. Returns and refunds",
+                "body": "Because each order is printed to your specification, products are generally non-returnable. If your order arrives damaged, defective, or materially different from what you ordered, contact us within 14 days of delivery and we'll arrange a reprint or refund."
+            },
+            {
+                "heading": "7. Limitation of liability",
+                "body": "To the fullest extent permitted by law, InkPavo is not liable for indirect, incidental, or consequential losses arising from your use of our services. Our total liability for any claim relating to an order is limited to the amount you paid for that order."
+            },
+            {
+                "heading": "8. Changes to these terms",
+                "body": "We may update these Terms from time to time. The most current version will always be posted on this page; substantial changes will be highlighted at the top of the page. Continued use of the service after changes are posted constitutes acceptance."
+            },
+            {
+                "heading": "9. Contact",
+                "body": "Questions about these Terms? Email legal@inkpavo.com or visit our contact page.",
+                "email_link": "legal@inkpavo.com",
+                "contact_link_text": "contact page",
+                "contact_link_href": "/contact"
+            }
         ]
-      },
-      {
-        "heading": "Where we're going",
-        "level": "h2",
-        "body": "Our roadmap is built around the small businesses, designers, and creators who put their trust in us. Whether you're printing your very first business card or rebranding for the third time, we want PrintPandora to be the easiest, most rewarding part of the process."
-      }
-    ],
-    "closing_paragraph": "Have an idea, a question, or a story to share? Get in touch — we'd love to hear from you.",
-    "closing_link_text": "Get in touch",
-    "closing_link_href": "/contact"
-  },
-
-  "privacy_page": {
-    "_source_file": "resources/js/pages/privacy.tsx",
-    "eyebrow": "Last updated June 2026",
-    "title": "Privacy Policy",
-    "description": "How PrintPandora collects, uses, and protects your personal information.",
-    "intro": "This Privacy Policy explains how PrintPandora (\"we\", \"us\", or \"our\") collects, uses, shares, and protects information about you when you visit our website or use our services. This is sample copy provided for layout purposes and should be replaced with a privacy policy tailored to your business and reviewed by your legal counsel before you go live.",
-    "sections": [
-      {
-        "heading": "1. Information we collect",
-        "body": "We collect three broad categories of information:",
-        "list_items": [
-          { "strong": "Information you provide.", "text": "Account details, billing and shipping addresses, artwork you upload, and any messages you send to our support team." },
-          { "strong": "Information collected automatically.", "text": "Usage data such as pages visited, device and browser type, IP address, and cookies that help us recognise you across visits." },
-          { "strong": "Information from third parties.", "text": "Payment confirmation from our payment processors and shipping events from carriers." }
-        ]
-      },
-      {
-        "heading": "2. How we use your information",
-        "list_items": [
-          "To process orders, fulfil them, and keep you updated on their progress.",
-          "To provide customer support and respond to your enquiries.",
-          "To improve our products, services, and the way our website works.",
-          "To send marketing communications where you've opted in. You can unsubscribe at any time using the link in any email.",
-          "To comply with legal obligations and protect against fraud or misuse."
-        ]
-      },
-      {
-        "heading": "3. Sharing your information",
-        "body": "We share data only with parties who help us operate the business — payment processors, fulfilment partners, shipping carriers, and the analytics tools we use to understand how the site is performing. We never sell your personal information."
-      },
-      {
-        "heading": "4. Cookies",
-        "body": "Cookies are small text files stored on your device. We use them to keep you signed in, remember items in your cart, and measure how visitors use the site. You can disable non-essential cookies at any time through your browser settings or our cookie preferences panel."
-      },
-      {
-        "heading": "5. Your rights",
-        "body": "Depending on where you live, you may have rights to access, correct, or delete the personal information we hold about you, to object to certain processing, or to receive your data in a portable format. To exercise any of these rights, email privacy@printpandora.com.",
-        "email_link": "privacy@printpandora.com"
-      },
-      {
-        "heading": "6. Data retention",
-        "body": "We keep personal information only as long as necessary to provide our services, comply with legal obligations, and resolve disputes. Order records are typically kept for seven years to satisfy tax and accounting requirements."
-      },
-      {
-        "heading": "7. Security",
-        "body": "We use industry-standard administrative, technical, and physical safeguards to protect your information. No system is perfect, however, and we encourage you to use a strong, unique password and to keep your account credentials confidential."
-      },
-      {
-        "heading": "8. Children's privacy",
-        "body": "Our services are not directed to children under 16, and we do not knowingly collect personal information from them. If you believe a child has provided us with personal information, contact us and we'll delete it."
-      },
-      {
-        "heading": "9. Changes to this policy",
-        "body": "We may update this Privacy Policy from time to time. The most current version will always be posted on this page; we'll let you know about significant changes by email or through a notice on the site."
-      },
-      {
-        "heading": "10. Contact",
-        "body": "Questions about this Privacy Policy? Email privacy@printpandora.com or visit our contact page.",
-        "email_link": "privacy@printpandora.com",
-        "contact_link_text": "contact page",
-        "contact_link_href": "/contact"
-      }
-    ]
-  },
-
-  "terms_page": {
-    "_source_file": "resources/js/pages/terms.tsx",
-    "eyebrow": "Last updated June 2026",
-    "title": "Terms & Conditions",
-    "description": "The terms and conditions governing your use of the PrintPandora website and the products and services we provide.",
-    "intro": "These Terms & Conditions (\"Terms\") govern your access to and use of the PrintPandora website and the products and services we offer. By placing an order, creating an account, or otherwise using our services, you agree to be bound by these Terms. Please read them carefully — this is sample copy provided for layout purposes and should be replaced with terms reviewed by your legal counsel before you go live.",
-    "sections": [
-      {
-        "heading": "1. About these terms",
-        "body": "PrintPandora (\"we\", \"us\", or \"our\") provides on-demand print services to customers worldwide. By using our services you confirm that you are at least 18 years old, or that you have the consent of a parent or legal guardian, and that you have the authority to enter into a binding contract."
-      },
-      {
-        "heading": "2. Your account",
-        "body": "You are responsible for keeping your account credentials confidential and for all activity that takes place under your account. Notify us immediately if you suspect unauthorized use. We reserve the right to suspend or terminate accounts that violate these Terms."
-      },
-      {
-        "heading": "3. Orders and payment",
-        "body": "All orders are subject to acceptance and product availability. Prices shown on the site are inclusive of applicable taxes unless otherwise stated. Payment is taken at the point of order, and a confirmation email is sent once your order has been received. We reserve the right to cancel any order at our discretion, including for reasons of pricing errors or suspected fraud."
-      },
-      {
-        "heading": "4. Intellectual property and your artwork",
-        "body": "You retain ownership of any artwork or content you upload to PrintPandora. By uploading content, you confirm that you have the right to reproduce it and grant us a limited licence to print, fulfil, and ship your order. You agree not to upload content that infringes the rights of a third party or that is unlawful, defamatory, or obscene."
-      },
-      {
-        "heading": "5. Delivery",
-        "body": "Estimated delivery times are provided at checkout and are indicative only. We are not responsible for delays caused by carriers, customs, or events outside our reasonable control. Risk in the products passes to you on delivery."
-      },
-      {
-        "heading": "6. Returns and refunds",
-        "body": "Because each order is printed to your specification, products are generally non-returnable. If your order arrives damaged, defective, or materially different from what you ordered, contact us within 14 days of delivery and we'll arrange a reprint or refund."
-      },
-      {
-        "heading": "7. Limitation of liability",
-        "body": "To the fullest extent permitted by law, PrintPandora is not liable for indirect, incidental, or consequential losses arising from your use of our services. Our total liability for any claim relating to an order is limited to the amount you paid for that order."
-      },
-      {
-        "heading": "8. Changes to these terms",
-        "body": "We may update these Terms from time to time. The most current version will always be posted on this page; substantial changes will be highlighted at the top of the page. Continued use of the service after changes are posted constitutes acceptance."
-      },
-      {
-        "heading": "9. Contact",
-        "body": "Questions about these Terms? Email legal@printpandora.com or visit our contact page.",
-        "email_link": "legal@printpandora.com",
-        "contact_link_text": "contact page",
-        "contact_link_href": "/contact"
-      }
-    ]
-  },
-
-  "not_found_page": {
-    "_source_file": "resources/js/pages/errors/not-found.tsx",
-    "seo": {
-      "title": "Page Not Found",
-      "description": "The page you're looking for doesn't exist or has been moved.",
-      "robots": "noindex,follow"
     },
-    "graphic_text": "404",
-    "heading": "Page not found",
-    "description": "The page you were looking for doesn't exist, may have been moved, or is temporarily unavailable. Let's get you back on track.",
-    "action_links": [
-      { "label": "Go Home", "href": "/" },
-      { "label": "Browse Shop", "href": "/shop" },
-      { "label": "Contact Support", "href": "/contact" }
-    ],
-    "quick_links_heading": "Popular pages",
-    "quick_links": [
-      { "label": "Shop Business Cards", "href": "/shop?cat=business-cards" },
-      { "label": "Shop Postcards", "href": "/shop?cat=postcards" },
-      { "label": "View All Products", "href": "/shop" },
-      { "label": "Help & FAQs", "href": "/help" }
-    ]
-  },
 
-  "dashboard_index_page": {
-    "_source_file": "resources/js/pages/dashboard.tsx",
-    "seo": {
-      "title": "Dashboard",
-      "description": "Your PrintPandora dashboard - manage orders, designs, and account settings."
-    },
-    "welcome_heading_template": "Welcome back, {user.name}",
-    "welcome_description": "Manage your orders, profile, address and affiliate program from one place.",
-    "cards": {
-      "profile": {
-        "title": "Profile",
-        "edit_link": "Edit",
-        "rows": {
-          "name": "Name",
-          "email": "Email",
-          "status": "Status",
-          "member_since": "Member since"
+    "not_found_page": {
+        "_source_file": "resources/js/pages/errors/not-found.tsx",
+        "seo": {
+            "title": "Page Not Found",
+            "description": "The page you're looking for doesn't exist or has been moved.",
+            "robots": "noindex,follow"
         },
-        "status_verified": "Email verified",
-        "status_unverified": "Email not verified"
-      },
-      "recent_orders": {
-        "title": "Recent orders",
-        "view_all_link": "View all",
+        "graphic_text": "404",
+        "heading": "Page not found",
+        "description": "The page you were looking for doesn't exist, may have been moved, or is temporarily unavailable. Let's get you back on track.",
+        "action_links": [
+            { "label": "Go Home", "href": "/" },
+            { "label": "Browse Shop", "href": "/shop" },
+            { "label": "Contact Support", "href": "/contact" }
+        ],
+        "quick_links_heading": "Popular pages",
+        "quick_links": [
+            {
+                "label": "Shop Business Cards",
+                "href": "/shop?cat=business-cards"
+            },
+            { "label": "Shop Postcards", "href": "/shop?cat=postcards" },
+            { "label": "View All Products", "href": "/shop" },
+            { "label": "Help & FAQs", "href": "/help" }
+        ]
+    },
+
+    "dashboard_index_page": {
+        "_source_file": "resources/js/pages/dashboard.tsx",
+        "seo": {
+            "title": "Dashboard",
+            "description": "Your InkPavo dashboard - manage orders, designs, and account settings."
+        },
+        "welcome_heading_template": "Welcome back, {user.name}",
+        "welcome_description": "Manage your orders, profile, address and affiliate program from one place.",
+        "cards": {
+            "profile": {
+                "title": "Profile",
+                "edit_link": "Edit",
+                "rows": {
+                    "name": "Name",
+                    "email": "Email",
+                    "status": "Status",
+                    "member_since": "Member since"
+                },
+                "status_verified": "Email verified",
+                "status_unverified": "Email not verified"
+            },
+            "recent_orders": {
+                "title": "Recent orders",
+                "view_all_link": "View all",
+                "empty_state_prefix": "You haven't placed any orders yet. ",
+                "empty_state_link": "Start shopping",
+                "empty_state_suffix": ".",
+                "order_label_prefix": "Order #",
+                "item_singular": "item",
+                "item_plural": "items"
+            },
+            "address": {
+                "title": "Delivery address",
+                "empty_state": "No address on file yet — we'll save your shipping details after your first order.",
+                "phone_label": "Phone:"
+            },
+            "affiliate": {
+                "title": "Affiliate program",
+                "manage_link": "Manage",
+                "empty_state_prefix": "You aren't in the affiliate program yet. ",
+                "empty_state_link": "Join now",
+                "empty_state_suffix": " to start earning commissions.",
+                "rows": {
+                    "referral_code": "Referral code",
+                    "commission_rate": "Commission rate"
+                },
+                "stats": {
+                    "total_earned": "Total earned",
+                    "paid_out": "Paid out",
+                    "pending": "Pending"
+                }
+            }
+        }
+    },
+
+    "dashboard_orders_page": {
+        "_source_file": "resources/js/pages/dashboard/orders.tsx",
+        "seo": {
+            "title": "My orders",
+            "description": "View and track all your InkPavo orders."
+        },
+        "page_heading": "My orders",
+        "page_subheading_singular": "order, newest first.",
+        "page_subheading_plural": "orders, newest first.",
+        "back_link": "Back to dashboard",
         "empty_state_prefix": "You haven't placed any orders yet. ",
         "empty_state_link": "Start shopping",
         "empty_state_suffix": ".",
-        "order_label_prefix": "Order #",
-        "item_singular": "item",
-        "item_plural": "items"
-      },
-      "address": {
-        "title": "Delivery address",
-        "empty_state": "No address on file yet — we'll save your shipping details after your first order.",
-        "phone_label": "Phone:"
-      },
-      "affiliate": {
-        "title": "Affiliate program",
-        "manage_link": "Manage",
-        "empty_state_prefix": "You aren't in the affiliate program yet. ",
-        "empty_state_link": "Join now",
-        "empty_state_suffix": " to start earning commissions.",
-        "rows": {
-          "referral_code": "Referral code",
-          "commission_rate": "Commission rate"
+        "table_headers": {
+            "order": "Order",
+            "date": "Date",
+            "items": "Items",
+            "status": "Status",
+            "payment": "Payment",
+            "total": "Total",
+            "actions": "Actions"
         },
-        "stats": {
-          "total_earned": "Total earned",
-          "paid_out": "Paid out",
-          "pending": "Pending"
+        "view_link": "View",
+        "pagination": {
+            "showing": "Showing",
+            "of": "of",
+            "prev": "Prev",
+            "next": "Next"
         }
-      }
+    },
+
+    "dashboard_profile_page": {
+        "_source_file": "resources/js/pages/dashboard/profile.tsx",
+        "seo": {
+            "title": "Edit profile",
+            "description": "Update your InkPavo profile name and email address."
+        },
+        "back_link": "Back to dashboard",
+        "page_heading": "Edit profile",
+        "page_subheading": "Update your name and email address.",
+        "labels": {
+            "name": "Name",
+            "email": "Email",
+            "new_password": "New password",
+            "confirm_new_password": "Confirm new password"
+        },
+        "placeholders": {
+            "name": "Full name",
+            "email": "you@example.com",
+            "password": "At least 8 characters",
+            "password_confirmation": "Repeat new password"
+        },
+        "unverified_email_notice": "Your email address is unverified.",
+        "password_help": "Leave the password fields blank to keep your current password.",
+        "buttons": {
+            "save": "Save changes",
+            "saving": "Saving…"
+        },
+        "success_inline": "Saved."
+    },
+
+    "shop_orders_index_page": {
+        "_source_file": "resources/js/pages/shop/orders/index.tsx",
+        "seo_title": "My Orders",
+        "brand": "InkPavo",
+        "nav_continue_shopping": "Continue Shopping",
+        "page_heading": "My Orders",
+        "empty_state": "No orders yet.",
+        "order_label_prefix": "Order #",
+        "items_suffix": "item(s)"
+    },
+
+    "shop_orders_show_page": {
+        "_source_file": "resources/js/pages/shop/orders/show.tsx",
+        "seo_title_prefix": "Order #",
+        "brand": "InkPavo",
+        "nav_my_orders": "My Orders",
+        "back_link": "All orders",
+        "page_heading_prefix": "Order #",
+        "section_headings": {
+            "items": "Items",
+            "customer": "Customer",
+            "shipping": "Shipping",
+            "notes": "Notes"
+        },
+        "qty_label": "Qty:",
+        "total_label": "Total:"
+    },
+
+    "shop_tickets_index_page": {
+        "_source_file": "resources/js/pages/shop/tickets/index.tsx",
+        "seo_title": "Support Tickets",
+        "brand": "InkPavo",
+        "nav": {
+            "shop": "Shop",
+            "orders": "Orders"
+        },
+        "page_heading": "Support Tickets",
+        "new_ticket_button": "New Ticket",
+        "empty_state": "No tickets yet.",
+        "reply_singular": "reply",
+        "reply_plural": "replies",
+        "pagination": {
+            "previous": "Previous",
+            "next": "Next",
+            "page_label_prefix": "Page",
+            "page_label_separator": "of"
+        }
+    },
+
+    "shop_tickets_show_page": {
+        "_source_file": "resources/js/pages/shop/tickets/show.tsx",
+        "seo_title_prefix": "Ticket #",
+        "brand": "InkPavo",
+        "nav_my_tickets": "My Tickets",
+        "back_link": "All tickets",
+        "opened_label": "Opened",
+        "order_label_prefix": "Order #",
+        "staff_badge": "Staff",
+        "reply_section_heading": "Add Reply",
+        "reply_placeholder": "Type your reply...",
+        "buttons": {
+            "send_reply": "Send Reply",
+            "sending": "Sending..."
+        }
+    },
+
+    "shop_tickets_create_page": {
+        "_source_file": "resources/js/pages/shop/tickets/create.tsx",
+        "seo_title": "Create Ticket",
+        "brand": "InkPavo",
+        "nav_my_tickets": "My Tickets",
+        "back_link": "All tickets",
+        "page_heading": "New Support Ticket",
+        "labels": {
+            "subject": "Subject",
+            "priority": "Priority",
+            "order_id": "Order (optional)",
+            "message": "Message"
+        },
+        "placeholders": {
+            "subject": "Brief description of your issue",
+            "order_id": "Order number if applicable",
+            "message": "Describe your issue in detail"
+        },
+        "priority_options": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
+        "buttons": {
+            "submit": "Submit Ticket",
+            "submitting": "Submitting..."
+        }
+    },
+
+    "auth_login_page": {
+        "_source_file": "resources/js/pages/auth/login.tsx",
+        "seo": {
+            "title": "Log in",
+            "description": "Log in to your InkPavo account to manage your orders and designs."
+        },
+        "layout_title": "Log in to your account",
+        "layout_description": "Enter your email and password below to log in",
+        "labels": {
+            "email": "Email address",
+            "password": "Password",
+            "remember": "Remember me"
+        },
+        "placeholders": {
+            "email": "email@example.com",
+            "password": "Password"
+        },
+        "links": {
+            "forgot_password": "Forgot your password?",
+            "sign_up": "Sign up"
+        },
+        "buttons": {
+            "log_in": "Log in"
+        },
+        "footer_text": "Don't have an account?"
+    },
+
+    "auth_register_page": {
+        "_source_file": "resources/js/pages/auth/register.tsx",
+        "seo": {
+            "title": "Register",
+            "description": "Create your InkPavo account and start designing custom prints today."
+        },
+        "layout_title": "Create an account",
+        "layout_description": "Enter your details below to create your account",
+        "labels": {
+            "name": "Name",
+            "email": "Email address",
+            "password": "Password",
+            "password_confirmation": "Confirm password"
+        },
+        "placeholders": {
+            "name": "Full name",
+            "email": "email@example.com",
+            "password": "Password",
+            "password_confirmation": "Confirm password"
+        },
+        "buttons": {
+            "create_account": "Create account"
+        },
+        "footer_text": "Already have an account?",
+        "links": {
+            "log_in": "Log in"
+        }
+    },
+
+    "auth_forgot_password_page": {
+        "_source_file": "resources/js/pages/auth/forgot-password.tsx",
+        "seo": {
+            "title": "Forgot password",
+            "description": "Reset your InkPavo account password. We'll send you a reset link via email."
+        },
+        "layout_title": "Forgot password",
+        "layout_description": "Enter your email to receive a password reset link",
+        "labels": {
+            "email": "Email address"
+        },
+        "placeholders": {
+            "email": "email@example.com"
+        },
+        "buttons": {
+            "submit": "Email password reset link"
+        },
+        "footer_text": "Or, return to",
+        "links": {
+            "log_in": "log in"
+        }
+    },
+
+    "auth_reset_password_page": {
+        "_source_file": "resources/js/pages/auth/reset-password.tsx",
+        "seo": {
+            "title": "Reset password",
+            "description": "Set a new password for your InkPavo account."
+        },
+        "layout_title": "Reset password",
+        "layout_description": "Please enter your new password below",
+        "labels": {
+            "email": "Email",
+            "password": "Password",
+            "password_confirmation": "Confirm password"
+        },
+        "placeholders": {
+            "password": "Password",
+            "password_confirmation": "Confirm password"
+        },
+        "buttons": {
+            "submit": "Reset password"
+        }
+    },
+
+    "auth_confirm_password_page": {
+        "_source_file": "resources/js/pages/auth/confirm-password.tsx",
+        "seo": {
+            "title": "Confirm password",
+            "description": "This is a secure area of InkPavo. Please confirm your password before continuing."
+        },
+        "layout_title": "Confirm password",
+        "layout_description": "This is a secure area of the application. Please confirm your password before continuing.",
+        "labels": {
+            "password": "Password"
+        },
+        "placeholders": {
+            "password": "Password"
+        },
+        "buttons": {
+            "submit": "Confirm password"
+        }
+    },
+
+    "auth_verify_email_page": {
+        "_source_file": "resources/js/pages/auth/verify-email.tsx",
+        "seo": {
+            "title": "Email verification",
+            "description": "Please verify your email address to activate your InkPavo account."
+        },
+        "layout_title": "Email verification",
+        "layout_description": "Please verify your email address by clicking on the link we just emailed to you.",
+        "success_message": "A new verification link has been sent to the email address you provided during registration.",
+        "buttons": {
+            "resend": "Resend verification email"
+        },
+        "links": {
+            "log_out": "Log out"
+        }
+    },
+
+    "auth_two_factor_page": {
+        "_source_file": "resources/js/pages/auth/two-factor-challenge.tsx",
+        "seo": {
+            "title": "Two-factor authentication",
+            "description": "Enter your authentication code to securely access your InkPavo account."
+        },
+        "auth_code_mode": {
+            "title": "Authentication code",
+            "description": "Enter the authentication code provided by your authenticator application.",
+            "toggle_text": "login using a recovery code"
+        },
+        "recovery_code_mode": {
+            "title": "Recovery code",
+            "description": "Please confirm access to your account by entering one of your emergency recovery codes.",
+            "toggle_text": "login using an authentication code"
+        },
+        "placeholders": {
+            "recovery_code": "Enter recovery code"
+        },
+        "buttons": {
+            "continue": "Continue"
+        },
+        "toggle_prefix": "or you can "
+    },
+
+    "settings_profile_page": {
+        "_source_file": "resources/js/pages/settings/profile.tsx",
+        "seo": {
+            "title": "Profile settings",
+            "description": "Update your InkPavo profile name and email address."
+        },
+        "sr_heading": "Profile settings",
+        "section_heading": "Profile",
+        "section_description": "Update your name and email address",
+        "breadcrumb": "Profile settings",
+        "labels": {
+            "name": "Name",
+            "email": "Email address"
+        },
+        "placeholders": {
+            "name": "Full name",
+            "email": "Email address"
+        },
+        "unverified_email_prefix": "Your email address is unverified. ",
+        "unverified_email_link": "Click here to re-send the verification email.",
+        "verification_sent_message": "A new verification link has been sent to your email address.",
+        "buttons": {
+            "save": "Save"
+        }
+    },
+
+    "settings_security_page": {
+        "_source_file": "resources/js/pages/settings/security.tsx",
+        "seo": {
+            "title": "Security settings",
+            "description": "Manage your InkPavo account password and two-factor authentication."
+        },
+        "sr_heading": "Security settings",
+        "section_heading": "Update password",
+        "section_description": "Ensure your account is using a long, random password to stay secure",
+        "breadcrumb": "Security settings",
+        "labels": {
+            "current_password": "Current password",
+            "new_password": "New password",
+            "password_confirmation": "Confirm password"
+        },
+        "placeholders": {
+            "current_password": "Current password",
+            "new_password": "New password",
+            "password_confirmation": "Confirm password"
+        },
+        "buttons": {
+            "save": "Save"
+        }
+    },
+
+    "settings_affiliate_page": {
+        "_source_file": "resources/js/pages/settings/affiliate.tsx",
+        "seo": {
+            "title": "Affiliate settings",
+            "description": "Manage your InkPavo affiliate account, referral link, and earnings."
+        },
+        "sr_heading": "Affiliate settings",
+        "breadcrumb": "Affiliate settings"
+    },
+
+    "settings_appearance_page": {
+        "_source_file": "resources/js/pages/settings/appearance.tsx",
+        "seo": {
+            "title": "Appearance settings",
+            "description": "Customize the look and feel of your InkPavo dashboard."
+        },
+        "sr_heading": "Appearance settings",
+        "section_heading": "Appearance settings",
+        "section_description": "Update the appearance settings for your account",
+        "breadcrumb": "Appearance settings"
     }
-  },
-
-  "dashboard_orders_page": {
-    "_source_file": "resources/js/pages/dashboard/orders.tsx",
-    "seo": {
-      "title": "My orders",
-      "description": "View and track all your PrintPandora orders."
-    },
-    "page_heading": "My orders",
-    "page_subheading_singular": "order, newest first.",
-    "page_subheading_plural": "orders, newest first.",
-    "back_link": "Back to dashboard",
-    "empty_state_prefix": "You haven't placed any orders yet. ",
-    "empty_state_link": "Start shopping",
-    "empty_state_suffix": ".",
-    "table_headers": {
-      "order": "Order",
-      "date": "Date",
-      "items": "Items",
-      "status": "Status",
-      "payment": "Payment",
-      "total": "Total",
-      "actions": "Actions"
-    },
-    "view_link": "View",
-    "pagination": {
-      "showing": "Showing",
-      "of": "of",
-      "prev": "Prev",
-      "next": "Next"
-    }
-  },
-
-  "dashboard_profile_page": {
-    "_source_file": "resources/js/pages/dashboard/profile.tsx",
-    "seo": {
-      "title": "Edit profile",
-      "description": "Update your PrintPandora profile name and email address."
-    },
-    "back_link": "Back to dashboard",
-    "page_heading": "Edit profile",
-    "page_subheading": "Update your name and email address.",
-    "labels": {
-      "name": "Name",
-      "email": "Email",
-      "new_password": "New password",
-      "confirm_new_password": "Confirm new password"
-    },
-    "placeholders": {
-      "name": "Full name",
-      "email": "you@example.com",
-      "password": "At least 8 characters",
-      "password_confirmation": "Repeat new password"
-    },
-    "unverified_email_notice": "Your email address is unverified.",
-    "password_help": "Leave the password fields blank to keep your current password.",
-    "buttons": {
-      "save": "Save changes",
-      "saving": "Saving…"
-    },
-    "success_inline": "Saved."
-  },
-
-  "shop_orders_index_page": {
-    "_source_file": "resources/js/pages/shop/orders/index.tsx",
-    "seo_title": "My Orders",
-    "brand": "PrintPandora",
-    "nav_continue_shopping": "Continue Shopping",
-    "page_heading": "My Orders",
-    "empty_state": "No orders yet.",
-    "order_label_prefix": "Order #",
-    "items_suffix": "item(s)"
-  },
-
-  "shop_orders_show_page": {
-    "_source_file": "resources/js/pages/shop/orders/show.tsx",
-    "seo_title_prefix": "Order #",
-    "brand": "PrintPandora",
-    "nav_my_orders": "My Orders",
-    "back_link": "All orders",
-    "page_heading_prefix": "Order #",
-    "section_headings": {
-      "items": "Items",
-      "customer": "Customer",
-      "shipping": "Shipping",
-      "notes": "Notes"
-    },
-    "qty_label": "Qty:",
-    "total_label": "Total:"
-  },
-
-  "shop_tickets_index_page": {
-    "_source_file": "resources/js/pages/shop/tickets/index.tsx",
-    "seo_title": "Support Tickets",
-    "brand": "PrintPandora",
-    "nav": {
-      "shop": "Shop",
-      "orders": "Orders"
-    },
-    "page_heading": "Support Tickets",
-    "new_ticket_button": "New Ticket",
-    "empty_state": "No tickets yet.",
-    "reply_singular": "reply",
-    "reply_plural": "replies",
-    "pagination": {
-      "previous": "Previous",
-      "next": "Next",
-      "page_label_prefix": "Page",
-      "page_label_separator": "of"
-    }
-  },
-
-  "shop_tickets_show_page": {
-    "_source_file": "resources/js/pages/shop/tickets/show.tsx",
-    "seo_title_prefix": "Ticket #",
-    "brand": "PrintPandora",
-    "nav_my_tickets": "My Tickets",
-    "back_link": "All tickets",
-    "opened_label": "Opened",
-    "order_label_prefix": "Order #",
-    "staff_badge": "Staff",
-    "reply_section_heading": "Add Reply",
-    "reply_placeholder": "Type your reply...",
-    "buttons": {
-      "send_reply": "Send Reply",
-      "sending": "Sending..."
-    }
-  },
-
-  "shop_tickets_create_page": {
-    "_source_file": "resources/js/pages/shop/tickets/create.tsx",
-    "seo_title": "Create Ticket",
-    "brand": "PrintPandora",
-    "nav_my_tickets": "My Tickets",
-    "back_link": "All tickets",
-    "page_heading": "New Support Ticket",
-    "labels": {
-      "subject": "Subject",
-      "priority": "Priority",
-      "order_id": "Order (optional)",
-      "message": "Message"
-    },
-    "placeholders": {
-      "subject": "Brief description of your issue",
-      "order_id": "Order number if applicable",
-      "message": "Describe your issue in detail"
-    },
-    "priority_options": {
-      "low": "Low",
-      "medium": "Medium",
-      "high": "High"
-    },
-    "buttons": {
-      "submit": "Submit Ticket",
-      "submitting": "Submitting..."
-    }
-  },
-
-  "auth_login_page": {
-    "_source_file": "resources/js/pages/auth/login.tsx",
-    "seo": {
-      "title": "Log in",
-      "description": "Log in to your PrintPandora account to manage your orders and designs."
-    },
-    "layout_title": "Log in to your account",
-    "layout_description": "Enter your email and password below to log in",
-    "labels": {
-      "email": "Email address",
-      "password": "Password",
-      "remember": "Remember me"
-    },
-    "placeholders": {
-      "email": "email@example.com",
-      "password": "Password"
-    },
-    "links": {
-      "forgot_password": "Forgot your password?",
-      "sign_up": "Sign up"
-    },
-    "buttons": {
-      "log_in": "Log in"
-    },
-    "footer_text": "Don't have an account?"
-  },
-
-  "auth_register_page": {
-    "_source_file": "resources/js/pages/auth/register.tsx",
-    "seo": {
-      "title": "Register",
-      "description": "Create your PrintPandora account and start designing custom prints today."
-    },
-    "layout_title": "Create an account",
-    "layout_description": "Enter your details below to create your account",
-    "labels": {
-      "name": "Name",
-      "email": "Email address",
-      "password": "Password",
-      "password_confirmation": "Confirm password"
-    },
-    "placeholders": {
-      "name": "Full name",
-      "email": "email@example.com",
-      "password": "Password",
-      "password_confirmation": "Confirm password"
-    },
-    "buttons": {
-      "create_account": "Create account"
-    },
-    "footer_text": "Already have an account?",
-    "links": {
-      "log_in": "Log in"
-    }
-  },
-
-  "auth_forgot_password_page": {
-    "_source_file": "resources/js/pages/auth/forgot-password.tsx",
-    "seo": {
-      "title": "Forgot password",
-      "description": "Reset your PrintPandora account password. We'll send you a reset link via email."
-    },
-    "layout_title": "Forgot password",
-    "layout_description": "Enter your email to receive a password reset link",
-    "labels": {
-      "email": "Email address"
-    },
-    "placeholders": {
-      "email": "email@example.com"
-    },
-    "buttons": {
-      "submit": "Email password reset link"
-    },
-    "footer_text": "Or, return to",
-    "links": {
-      "log_in": "log in"
-    }
-  },
-
-  "auth_reset_password_page": {
-    "_source_file": "resources/js/pages/auth/reset-password.tsx",
-    "seo": {
-      "title": "Reset password",
-      "description": "Set a new password for your PrintPandora account."
-    },
-    "layout_title": "Reset password",
-    "layout_description": "Please enter your new password below",
-    "labels": {
-      "email": "Email",
-      "password": "Password",
-      "password_confirmation": "Confirm password"
-    },
-    "placeholders": {
-      "password": "Password",
-      "password_confirmation": "Confirm password"
-    },
-    "buttons": {
-      "submit": "Reset password"
-    }
-  },
-
-  "auth_confirm_password_page": {
-    "_source_file": "resources/js/pages/auth/confirm-password.tsx",
-    "seo": {
-      "title": "Confirm password",
-      "description": "This is a secure area of PrintPandora. Please confirm your password before continuing."
-    },
-    "layout_title": "Confirm password",
-    "layout_description": "This is a secure area of the application. Please confirm your password before continuing.",
-    "labels": {
-      "password": "Password"
-    },
-    "placeholders": {
-      "password": "Password"
-    },
-    "buttons": {
-      "submit": "Confirm password"
-    }
-  },
-
-  "auth_verify_email_page": {
-    "_source_file": "resources/js/pages/auth/verify-email.tsx",
-    "seo": {
-      "title": "Email verification",
-      "description": "Please verify your email address to activate your PrintPandora account."
-    },
-    "layout_title": "Email verification",
-    "layout_description": "Please verify your email address by clicking on the link we just emailed to you.",
-    "success_message": "A new verification link has been sent to the email address you provided during registration.",
-    "buttons": {
-      "resend": "Resend verification email"
-    },
-    "links": {
-      "log_out": "Log out"
-    }
-  },
-
-  "auth_two_factor_page": {
-    "_source_file": "resources/js/pages/auth/two-factor-challenge.tsx",
-    "seo": {
-      "title": "Two-factor authentication",
-      "description": "Enter your authentication code to securely access your PrintPandora account."
-    },
-    "auth_code_mode": {
-      "title": "Authentication code",
-      "description": "Enter the authentication code provided by your authenticator application.",
-      "toggle_text": "login using a recovery code"
-    },
-    "recovery_code_mode": {
-      "title": "Recovery code",
-      "description": "Please confirm access to your account by entering one of your emergency recovery codes.",
-      "toggle_text": "login using an authentication code"
-    },
-    "placeholders": {
-      "recovery_code": "Enter recovery code"
-    },
-    "buttons": {
-      "continue": "Continue"
-    },
-    "toggle_prefix": "or you can "
-  },
-
-  "settings_profile_page": {
-    "_source_file": "resources/js/pages/settings/profile.tsx",
-    "seo": {
-      "title": "Profile settings",
-      "description": "Update your PrintPandora profile name and email address."
-    },
-    "sr_heading": "Profile settings",
-    "section_heading": "Profile",
-    "section_description": "Update your name and email address",
-    "breadcrumb": "Profile settings",
-    "labels": {
-      "name": "Name",
-      "email": "Email address"
-    },
-    "placeholders": {
-      "name": "Full name",
-      "email": "Email address"
-    },
-    "unverified_email_prefix": "Your email address is unverified. ",
-    "unverified_email_link": "Click here to re-send the verification email.",
-    "verification_sent_message": "A new verification link has been sent to your email address.",
-    "buttons": {
-      "save": "Save"
-    }
-  },
-
-  "settings_security_page": {
-    "_source_file": "resources/js/pages/settings/security.tsx",
-    "seo": {
-      "title": "Security settings",
-      "description": "Manage your PrintPandora account password and two-factor authentication."
-    },
-    "sr_heading": "Security settings",
-    "section_heading": "Update password",
-    "section_description": "Ensure your account is using a long, random password to stay secure",
-    "breadcrumb": "Security settings",
-    "labels": {
-      "current_password": "Current password",
-      "new_password": "New password",
-      "password_confirmation": "Confirm password"
-    },
-    "placeholders": {
-      "current_password": "Current password",
-      "new_password": "New password",
-      "password_confirmation": "Confirm password"
-    },
-    "buttons": {
-      "save": "Save"
-    }
-  },
-
-  "settings_affiliate_page": {
-    "_source_file": "resources/js/pages/settings/affiliate.tsx",
-    "seo": {
-      "title": "Affiliate settings",
-      "description": "Manage your PrintPandora affiliate account, referral link, and earnings."
-    },
-    "sr_heading": "Affiliate settings",
-    "breadcrumb": "Affiliate settings"
-  },
-
-  "settings_appearance_page": {
-    "_source_file": "resources/js/pages/settings/appearance.tsx",
-    "seo": {
-      "title": "Appearance settings",
-      "description": "Customize the look and feel of your PrintPandora dashboard."
-    },
-    "sr_heading": "Appearance settings",
-    "section_heading": "Appearance settings",
-    "section_description": "Update the appearance settings for your account",
-    "breadcrumb": "Appearance settings"
-  }
 }
