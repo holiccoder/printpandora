@@ -416,60 +416,74 @@
             "footer_cta_href": "/shop",
             "products": [
                 {
-                    "name": "Business Cards",
+                    "name": "棉纸名片",
                     "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=800&q=70",
                     "alt": "A hand tucking a peach-coloured business card into a back pocket",
-                    "cta": "Shop Business Cards",
+                    "cta": "Cotton Business Cards",
+                    "href": "/shop?cat=cotton-business-cards"
+                },
+                {
+                    "name": "精品名片",
+                    "image_url": "https://images.unsplash.com/photo-1607344645866-009c320b63e0?auto=format&fit=crop&w=800&q=70",
+                    "alt": "Overhead view of premium invitation cards scattered with a bowl of cereal",
+                    "cta": "Premium Business Cards",
+                    "href": "/shop?cat=premium-business-cards"
+                },
+                {
+                    "name": "PVC名片",
+                    "image_url": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=800&q=70",
+                    "alt": "Hands sliding a card out of a white envelope on a beige coat",
+                    "cta": "PVC Business Cards",
+                    "href": "/shop?cat=pvc-business-cards"
+                },
+                {
+                    "name": "经典名片",
+                    "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=800&q=70",
+                    "alt": "A hand tucking a business card into a back pocket",
+                    "cta": "Classic Business Cards",
+                    "href": "/shop?cat=classic-business-cards"
+                },
+                {
+                    "name": "商用卡片",
+                    "image_url": "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=800&q=70",
+                    "alt": "Person holding a stack of printed materials on their lap",
+                    "cta": "Business Cards",
                     "href": "/shop?cat=business-cards"
                 },
                 {
-                    "name": "Postcards",
+                    "name": "明信片",
                     "image_url": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=800&q=70",
                     "alt": "A person in a green jacket holds a pink postcard up against a blue sky",
-                    "cta": "Shop Postcards",
+                    "cta": "Postcards",
                     "href": "/shop?cat=postcards"
                 },
                 {
-                    "name": "Stickers & Labels",
+                    "name": "动漫卡片",
                     "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=800&q=70",
-                    "alt": "A \"Hello my name is\" sticker on a denim jacket",
-                    "cta": "Shop Stickers & Labels",
+                    "alt": "A sticker on a denim jacket",
+                    "cta": "Character Cards",
                     "href": "/shop?cat=stickers-labels"
                 },
                 {
-                    "name": "Flyers",
+                    "name": "贴纸标签",
+                    "image_url": "https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=800&q=70",
+                    "alt": "A hand-drawn floral greeting card",
+                    "cta": "Stickers & Labels",
+                    "href": "/shop?cat=stickers-labels"
+                },
+                {
+                    "name": "传单",
                     "image_url": "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=800&q=70",
-                    "alt": "Person holding a tall stack of printed flyers on their lap",
-                    "cta": "Shop Flyers",
+                    "alt": "Person holding a tall stack of printed flyers",
+                    "cta": "Flyers",
                     "href": "/shop?cat=flyers"
                 },
                 {
-                    "name": "Invitations",
-                    "image_url": "https://images.unsplash.com/photo-1607344645866-009c320b63e0?auto=format&fit=crop&w=800&q=70",
-                    "alt": "Overhead view of invitation cards scattered with a bowl of cereal",
-                    "cta": "Shop Invitations",
-                    "href": "/shop?cat=invitations"
-                },
-                {
-                    "name": "Greeting Cards",
-                    "image_url": "https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=800&q=70",
-                    "alt": "A hand-drawn floral \"Thanks for being you\" greeting card",
-                    "cta": "Shop Greeting Cards",
-                    "href": "/shop/greeting-cards"
-                },
-                {
-                    "name": "Luxe Notecards",
-                    "image_url": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=800&q=70",
-                    "alt": "Hands sliding a Luxe notecard out of a white envelope on a beige coat",
-                    "cta": "Shop Luxe Notecards",
-                    "href": "/shop/luxe-notecards"
-                },
-                {
-                    "name": "Finish your project",
+                    "name": "设计服务",
                     "image_url": null,
                     "alt": null,
-                    "cta": "Finish your project",
-                    "href": "/shop"
+                    "cta": "Design Service",
+                    "href": "/business-card-design-service"
                 }
             ]
         },

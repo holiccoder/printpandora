@@ -13,7 +13,7 @@ import { useContent } from '@/hooks/use-content';
  * Products with null `image_url` get the SVG illustration treatment.
  */
 
-const ACCENT = '#0f4c3a';
+const ACCENT = '#1e3a5f';
 
 /**
  * Finish your project illustration — a large document with two smaller
@@ -99,12 +99,17 @@ export function PopularProducts() {
                                     )}
                                 </div>
                                 <div className="flex flex-1 items-center justify-between gap-2 px-4 py-4">
-                                    <span
-                                        className="text-sm font-semibold group-hover:underline"
-                                        style={{ color: ACCENT }}
-                                    >
-                                        {card.cta}
-                                    </span>
+                                    <div className="flex flex-col gap-0.5">
+                                        <span
+                                            className="text-sm font-semibold group-hover:underline"
+                                            style={{ color: ACCENT }}
+                                        >
+                                            {card.name}
+                                        </span>
+                                        <span className="text-xs text-neutral-500">
+                                            {card.cta}
+                                        </span>
+                                    </div>
                                     <ChevronRight
                                         className="size-4 transition-transform group-hover:translate-x-0.5"
                                         style={{ color: ACCENT }}
