@@ -388,7 +388,7 @@
                     "subheadline": "We're here to help your business stand out for your next big campaign.",
                     "cta_text": "Shop now",
                     "cta_href": "/shop?cat=marketing-materials",
-                    "image_url": "https://images.unsplash.com/photo-1607748862156-7c548e7e98f4?auto=format&fit=crop&w=1400&q=70",
+                    "image_url": "/images/home/hero-marketing-materials.png",
                     "alt": "A spread of colourful printed promotional flyers, business cards and stickers on a light wood table beside a red wire chair"
                 },
                 {
@@ -396,7 +396,7 @@
                     "subheadline": "Thicker than your average card, with finishes that turn first impressions into lasting ones.",
                     "cta_text": "Shop business cards",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=1400&q=70",
+                    "image_url": "/images/home/hero-original-business-cards.png",
                     "alt": "Two minimalist business cards laid on textured brown packing paper"
                 },
                 {
@@ -404,7 +404,7 @@
                     "subheadline": "Bring your brand to life on certified papers — Business Cards, Postcards, Flyers and Brochures.",
                     "cta_text": "Discover the range",
                     "cta_href": "/shop/fsc-certified",
-                    "image_url": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1400&q=70",
+                    "image_url": "/images/home/hero-fsc-eco-paper.png",
                     "alt": "Aerial view of a dense, vibrant green pine forest"
                 }
             ]
@@ -417,70 +417,70 @@
             "products": [
                 {
                     "name": "棉纸名片",
-                    "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=800&q=70",
+                    "image_url": "/images/home/product-cotton-cards.png",
                     "alt": "A hand tucking a peach-coloured business card into a back pocket",
                     "cta": "Cotton Business Cards",
                     "href": "/shop?cat=cotton-business-cards"
                 },
                 {
                     "name": "精品名片",
-                    "image_url": "https://images.unsplash.com/photo-1607344645866-009c320b63e0?auto=format&fit=crop&w=800&q=70",
+                    "image_url": "/images/home/product-premium-cards.png",
                     "alt": "Overhead view of premium invitation cards scattered with a bowl of cereal",
                     "cta": "Premium Business Cards",
                     "href": "/shop?cat=premium-business-cards"
                 },
                 {
                     "name": "PVC名片",
-                    "image_url": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=800&q=70",
+                    "image_url": "/images/home/product-pvc-cards.png",
                     "alt": "Hands sliding a card out of a white envelope on a beige coat",
                     "cta": "PVC Business Cards",
                     "href": "/shop?cat=pvc-business-cards"
                 },
                 {
                     "name": "经典名片",
-                    "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=800&q=70",
+                    "image_url": "/images/home/product-classic-cards.png",
                     "alt": "A hand tucking a business card into a back pocket",
                     "cta": "Classic Business Cards",
                     "href": "/shop?cat=classic-business-cards"
                 },
                 {
                     "name": "商用卡片",
-                    "image_url": "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=800&q=70",
+                    "image_url": "/images/home/product-business-cards.png",
                     "alt": "Person holding a stack of printed materials on their lap",
                     "cta": "Business Cards",
                     "href": "/shop?cat=business-cards"
                 },
                 {
                     "name": "明信片",
-                    "image_url": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=800&q=70",
+                    "image_url": "/images/home/product-postcards.png",
                     "alt": "A person in a green jacket holds a pink postcard up against a blue sky",
                     "cta": "Postcards",
                     "href": "/shop?cat=postcards"
                 },
                 {
                     "name": "动漫卡片",
-                    "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=800&q=70",
+                    "image_url": "/images/home/product-anime-cards.png",
                     "alt": "A sticker on a denim jacket",
                     "cta": "Character Cards",
                     "href": "/shop?cat=stickers-labels"
                 },
                 {
                     "name": "贴纸标签",
-                    "image_url": "https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=800&q=70",
+                    "image_url": "/images/home/product-stickers-labels.png",
                     "alt": "A hand-drawn floral greeting card",
                     "cta": "Stickers & Labels",
                     "href": "/shop?cat=stickers-labels"
                 },
                 {
                     "name": "传单",
-                    "image_url": "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=800&q=70",
+                    "image_url": "/images/home/product-flyers.png",
                     "alt": "Person holding a tall stack of printed flyers",
                     "cta": "Flyers",
                     "href": "/shop?cat=flyers"
                 },
                 {
                     "name": "设计服务",
-                    "image_url": null,
+                    "image_url": "/images/home/product-design-service.png",
                     "alt": null,
                     "cta": "Design Service",
                     "href": "/business-card-design-service"
@@ -521,7 +521,7 @@
             "description": "New to InkPavo? See our full print range in all the possible variations of shape, paper stock & finishes for free.",
             "cta_text": "Get your sample pack",
             "cta_href": "/shop/sample-pack",
-            "image_url": "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?auto=format&fit=crop&w=1400&q=70",
+            "image_url": "/images/home/sample-pack-banner.png",
             "alt": "Person in a denim jacket pulling a yellow card from a white sample pack folder on a light wood tabletop"
         },
         "recent_posts": {
