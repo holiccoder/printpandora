@@ -2,12 +2,12 @@
 // via useContent('product_detail_page'). Configurator state and price math stay
 // local to the page; JSON drives the labels and option metadata.
 import { Link, router } from '@inertiajs/react';
-import { ChevronRight, Image, Package } from 'lucide-react';
+import { ChevronRight, Package } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import DesignServiceForm from '@/components/design-service-form';
 import SEO from '@/components/seo';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogContent,
@@ -16,14 +16,6 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { computeDynamicTiers } from '@/lib/pricing';
@@ -472,6 +464,14 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                 break;
             case 'paper_finish':
                 setSelectedFinish(value);
+                // Gloss only allows "no special finish" — reset if needed
+                if (
+                    value === 'gloss' &&
+                    selectedSpecialFinish != null &&
+                    selectedSpecialFinish !== 'no-special-finish'
+                ) {
+                    setSelectedSpecialFinish('no-special-finish');
+                }
                 break;
             case 'corners':
                 setSelectedCorners(value);
@@ -588,14 +588,47 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                         fill="none"
                                         className="size-10"
                                     >
-                                        <circle cx="12" cy="12" r="11" fill="#22c55e" />
-                                        <rect x="5" y="7" width="14" height="10" rx="1" fill="white" />
+                                        <circle
+                                            cx="12"
+                                            cy="12"
+                                            r="11"
+                                            fill="#22c55e"
+                                        />
+                                        <rect
+                                            x="5"
+                                            y="7"
+                                            width="14"
+                                            height="10"
+                                            rx="1"
+                                            fill="white"
+                                        />
                                         <g fill="#ef4444">
-                                            <rect x="5" y="7" width="14" height="2" />
-                                            <rect x="5" y="11" width="14" height="2" />
-                                            <rect x="5" y="15" width="14" height="2" />
+                                            <rect
+                                                x="5"
+                                                y="7"
+                                                width="14"
+                                                height="2"
+                                            />
+                                            <rect
+                                                x="5"
+                                                y="11"
+                                                width="14"
+                                                height="2"
+                                            />
+                                            <rect
+                                                x="5"
+                                                y="15"
+                                                width="14"
+                                                height="2"
+                                            />
                                         </g>
-                                        <rect x="5" y="7" width="6" height="6" fill="#2563eb" />
+                                        <rect
+                                            x="5"
+                                            y="7"
+                                            width="6"
+                                            height="6"
+                                            fill="#2563eb"
+                                        />
                                         <g fill="white">
                                             <circle cx="6.5" cy="8.5" r="0.5" />
                                             <circle cx="8" cy="8.5" r="0.5" />
@@ -606,11 +639,13 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                     </svg>
                                 }
                                 label={featureChips[0]}
-                                description="Designed by you and PrintPandora, printed in the USA"
+                                description="Designed by you and InkPavo, printed in the USA"
                             />
                             <FeatureChip
                                 accent={ACCENT}
-                                icon={<Package className="size-10 stroke-[#22c55e]" />}
+                                icon={
+                                    <Package className="size-10 stroke-[#22c55e]" />
+                                }
                                 label={featureChips[1]}
                                 description="On matte finish &amp; square corners. / Order before 2pm (EST) Mon-Fri."
                             />
@@ -784,34 +819,42 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                         {specialFinishes.length > 0 && (
                             <OptionGroup label="Special finish">
                                 <div className="grid grid-cols-3 gap-3">
-                                    {specialFinishes.map((f: any) => (
-                                        <ChoiceTile
-                                            key={f.id}
-                                            active={
-                                                selectedSpecialFinish === f.id
-                                            }
-                                            onClick={() =>
-                                                selectOption(
-                                                    'special_finish',
-                                                    f.id,
-                                                )
-                                            }
-                                        >
-                                            <img
-                                                src={f.thumb}
-                                                alt=""
-                                                className="aspect-[3/2] w-full rounded-sm object-cover"
-                                            />
-                                            <p className="mt-2 text-sm font-semibold">
-                                                {f.label}
-                                            </p>
-                                            {f.description && (
-                                                <p className="text-xs text-neutral-500">
-                                                    {f.description}
+                                    {specialFinishes.map((f: any) => {
+                                        const glossLimited =
+                                            selectedFinish === 'gloss' &&
+                                            f.id !== 'no-special-finish';
+
+                                        return (
+                                            <ChoiceTile
+                                                key={f.id}
+                                                active={
+                                                    selectedSpecialFinish ===
+                                                    f.id
+                                                }
+                                                disabled={glossLimited}
+                                                onClick={() =>
+                                                    selectOption(
+                                                        'special_finish',
+                                                        f.id,
+                                                    )
+                                                }
+                                            >
+                                                <img
+                                                    src={f.thumb}
+                                                    alt=""
+                                                    className="aspect-[3/2] w-full rounded-sm object-cover"
+                                                />
+                                                <p className="mt-2 text-sm font-semibold">
+                                                    {f.label}
                                                 </p>
-                                            )}
-                                        </ChoiceTile>
-                                    ))}
+                                                {f.description && (
+                                                    <p className="text-xs text-neutral-500">
+                                                        {f.description}
+                                                    </p>
+                                                )}
+                                            </ChoiceTile>
+                                        );
+                                    })}
                                 </div>
                             </OptionGroup>
                         )}
@@ -1516,21 +1559,26 @@ function OptionGroup({
 
 function ChoiceTile({
     active,
+    disabled,
     onClick,
     children,
 }: {
     active: boolean;
+    disabled?: boolean;
     onClick: () => void;
     children: React.ReactNode;
 }) {
     return (
         <button
             type="button"
+            disabled={disabled}
             onClick={onClick}
             className={`rounded-md border-2 p-3 text-left transition-colors ${
-                active
-                    ? 'border-[#1e3a5f] bg-[#1e3a5f]/5'
-                    : 'border-neutral-200 hover:border-neutral-300'
+                disabled
+                    ? 'cursor-not-allowed border-neutral-100 bg-neutral-50 opacity-50'
+                    : active
+                      ? 'border-[#1e3a5f] bg-[#1e3a5f]/5'
+                      : 'border-neutral-200 hover:border-neutral-300'
             }`}
         >
             {children}
@@ -1632,8 +1680,6 @@ function DesignServiceFormModal({
     description: string;
     productOptions?: string[];
 }) {
-    const [agreed, setAgreed] = useState(false);
-
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-2xl">
@@ -1642,139 +1688,13 @@ function DesignServiceFormModal({
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
 
-                <form
-                    className="mt-4 space-y-5"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        toast.success(
-                            'Thanks — our design team will contact you by email shortly.',
-                        );
-                        onOpenChange(false);
-                    }}
-                >
-                    <FormRow label="Your primary contact email">
-                        <Input
-                            id="ds-email"
-                            name="email"
-                            type="email"
-                            placeholder="you@example.com"
-                            required
-                        />
-                    </FormRow>
-
-                    <FormRow label="Company logo">
-                        <div className="space-y-2">
-                            <UploadButton />
-                            <p className="text-xs text-neutral-500">
-                                Vector format preferred (AI, EPS, SVG, PDF).
-                            </p>
-                        </div>
-                    </FormRow>
-
-                    <FormRow label="Name of your business">
-                        <Input
-                            id="ds-business"
-                            name="business_name"
-                            placeholder="Your business name"
-                            required
-                        />
-                    </FormRow>
-
-                    <FormRow label="Information on the card">
-                        <div className="space-y-2">
-                            <textarea
-                                id="ds-info"
-                                name="card_info"
-                                rows={4}
-                                placeholder="Name, title, contact information, address, website etc."
-                                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                            />
-                            <p className="text-xs text-neutral-500">
-                                Name, title, contact information, address,
-                                website etc you want to have on the card.
-                            </p>
-                        </div>
-                    </FormRow>
-
-                    <FormRow label="Business card type">
-                        <Select name="business_card_type" required>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Please select product" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {productOptions?.map((option: string) => (
-                                    <SelectItem key={option} value={option}>
-                                        {option}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </FormRow>
-
-                    <FormRow label="Business card examples you like">
-                        <UploadButton />
-                    </FormRow>
-
-                    <div className="flex items-start gap-3 rounded-md border border-neutral-200 bg-neutral-50 p-4">
-                        <Checkbox
-                            id="ds-terms"
-                            checked={agreed}
-                            onCheckedChange={(checked) =>
-                                setAgreed(checked === true)
-                            }
-                            className="mt-0.5"
-                        />
-                        <Label
-                            htmlFor="ds-terms"
-                            className="text-sm leading-relaxed text-neutral-700"
-                        >
-                            I agree with{' '}
-                            <Link
-                                href="/terms"
-                                className="text-primary hover:underline"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                PrintPandora's terms and conditions
-                            </Link>
-                        </Label>
-                    </div>
-
-                    <Button type="submit" className="w-full" disabled={!agreed}>
-                        Submit
-                    </Button>
-                </form>
+                <DesignServiceForm
+                    productOptions={productOptions}
+                    onSuccess={() => onOpenChange(false)}
+                    className="mt-4"
+                />
             </DialogContent>
         </Dialog>
-    );
-}
-
-function FormRow({
-    label,
-    children,
-}: {
-    label: string;
-    children: React.ReactNode;
-}) {
-    return (
-        <div className="grid grid-cols-1 items-start gap-2 sm:grid-cols-[160px_1fr] sm:gap-4">
-            <Label className="pt-2 text-sm font-medium text-neutral-900">
-                {label}
-            </Label>
-            <div className="w-full">{children}</div>
-        </div>
-    );
-}
-
-function UploadButton() {
-    return (
-        <Button
-            type="button"
-            variant="outline"
-            className="inline-flex items-center gap-2 border-primary text-primary hover:bg-primary/5"
-        >
-            <Image className="size-4" />
-            UPLOAD FILES
-        </Button>
     );
 }
 

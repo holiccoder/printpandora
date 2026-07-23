@@ -1,0 +1,1184 @@
+{
+    "subtitle": "300 gsm coated stock with a glossy UV finish",
+    "starting_price_text": "50 cards from $12",
+    "sizes": [
+        {
+            "name": "Standard",
+            "code": "standard",
+            "width": "2.0",
+            "height": "3.5",
+            "swatch_image": "/images/product-options/business-cards/sizes/business_card-standard-526x325.jpg",
+            "added_price":[
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "Square",
+            "code": "square",
+            "width": "2.16",
+            "height": "3.3",
+            "swatch_image": "/images/product-options/business-cards/sizes/business_card-square-526x325.jpg",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        }
+    ],
+    "paper_finish": [
+        {
+            "name": "Matte",
+            "code": "matte",
+            "description": "With a smooth feel. Shine-free so no glare.",
+            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "Gloss",
+            "code": "gloss",
+            "description": "Eye-catchingly shiny. Makes color photos pop.",
+            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "UV",
+            "code": "uv",
+            "description": "UV effect business card",
+            "swatch_image": "/images/product-options/uv-swatch.png",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        }
+    ],
+    "corners": [
+        {
+            "name": "Square",
+            "code": "square",
+            "description": "Sharp and Stylish",
+            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M6.5 6.5V15h3V9.5h29v29H33v3h8.5v-35h-35zm3 27.5h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8z\"></path></svg>",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "Rounded",
+            "code": "rounded",
+            "description": "",
+            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M9.5 34h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8zM8 6.5H6.5V15h3V9.537A30.542 30.542 0 0 1 38.463 38.5H33v3h8.5V40A33.538 33.538 0 0 0 8 6.5z\"></path></svg>",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        }
+    ],
+    "special_finish": [
+        {
+            "name": "no special finish",
+            "code": "no_special_finish",
+            "description": "no special finish, thanks",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/no-special-finish-526x251.jpg",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "spot glass",
+            "code": "spot_glass",
+            "description": "A little shiny, light-reflecting glossiness goes a long way.",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/spot_gloss-526x251.jpg",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "raised spot glass",
+            "code": "raised_spot_glass",
+            "description": "Shininess so thick, you can feel it. This tactile finish brings even the unprinted parts of your design to life. ",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/raised_spot_gloss-526x251.jpg",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "gold foil",
+            "code": "gold_foil",
+            "description": "Even the simplest designs dazzle with this extra-special gilded finish.",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/gold_foil-526x251.jpg",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "silver foil",
+            "code": "silver_foil",
+            "description": "Add dazzling, shimmering silver foil accents to any part of your design.",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/silver_foil-526x251.jpg",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        }
+    ],
+    "print_code": [
+        {
+            "name": "no print code",
+            "code": "no_print_code",
+            "description": "no need to print codes",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "need print code",
+            "code": "need_print_code",
+            "description": "no need to print codes",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        }
+    ],
+    "drill": [
+        {
+            "name": "no drilling",
+            "code": "no_drilling",
+            "swatch_image": "",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "needs drilling",
+            "code": "needs_drilling",
+            "swatch_image": "",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        }
+    ],
+    "quantity_price_table": [
+        {
+            "quantity": "50",
+            "price_per_card": "0.54",
+            "pack_price": "23",
+            "pack_original_price": "",
+            "is_recommended": false
+        },
+        {
+            "quantity": "100",
+            "price_per_card": "0.45",
+            "pack_price": "45",
+            "pack_original_price": "46",
+            "is_recommended": false
+        },
+        {
+            "quantity": "200",
+            "price_per_card": "0.39",
+            "pack_price": "78",
+            "pack_original_price": "92",
+            "is_recommended": true
+        }
+    ],
+    "galleries": [
+        {
+            "id": "default",
+            "is_default": true,
+            "match": {},
+            "images": [
+                "/images/product-options/business-cards/galleries/standard-classic/matte/01.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte/02.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte/03.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte/04.webp"
+            ]
+        },
+        {
+            "id": "gloss",
+            "match": {
+                "paper_finish": "Gloss",
+                "corners": "Square",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/standard-classic/gloss/01.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/gloss/02.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/gloss/03.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/gloss/04.webp"
+            ]
+        },
+        {
+            "id": "gloss-rounded",
+            "match": {
+                "paper_finish": "Gloss",
+                "corners": "Rounded",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/standard-classic/gloss-rounded/01.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/gloss-rounded/02.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/gloss-rounded/03.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/gloss-rounded/04.webp"
+            ]
+        },
+        {
+            "id": "matte",
+            "match": {
+                "paper_finish": "Matte",
+                "corners": "Square",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/standard-classic/matte/01.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte/02.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte/03.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte/04.webp"
+            ]
+        },
+        {
+            "id": "matte-rounded",
+            "match": {
+                "paper_finish": "Matte",
+                "corners": "Rounded",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded/01.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded/02.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded/03.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded/04.webp"
+            ]
+        },
+        {
+            "id": "matte-uv",
+            "match": {
+                "paper_finish": "UV",
+                "corners": "Square",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/01.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/02.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/03.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/04.webp"
+            ]
+        },
+        {
+            "id": "matte-rounded-uv",
+            "match": {
+                "paper_finish": "UV",
+                "corners": "Rounded",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/01.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/02.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/03.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/04.webp"
+            ]
+        },
+        {
+            "id": "matte-foil",
+            "match": {
+                "paper_finish": "Matte",
+                "corners": "Square",
+                "special_finish": "gold foil"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/standard-classic/matte-foil/01.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-foil/02.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-foil/03.webp"
+            ]
+        },
+        {
+            "id": "matte-foil-rounded",
+            "match": {
+                "paper_finish": "Matte",
+                "corners": "Rounded",
+                "special_finish": "gold foil"
+            },
+            "images": [
+                "/images/product-options/business-cards/galleries/standard-classic/matte-foil/01.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-foil/02.webp",
+                "/images/product-options/business-cards/galleries/standard-classic/matte-foil/03.webp"
+            ]
+        }
+    ]
+}
