@@ -33,5 +33,19 @@
         "slug": "stationery",
         "created_at": "2026-06-13 03:17:40",
         "updated_at": "2026-06-13 03:17:40"
+    },
+    {
+        "id": 6,
+        "name": "Cotton Business Cards",
+        "slug": "cotton-business-cards",
+        "created_at": "2026-07-22 10:33:08",
+        "updated_at": "2026-07-22 10:33:08"
+    },
+    {
+        "id": 7,
+        "name": "PVC Business Cards",
+        "slug": "pvc-business-cards",
+        "created_at": "2026-07-22 10:33:08",
+        "updated_at": "2026-07-22 10:33:08"
     }
 ]

@@ -89,22 +89,109 @@ class ProductController extends Controller
 
     private function loadDynamicPricingData(string $slug): ?array
     {
-        if ($slug !== '300g-tongbangzhi-uv') {
+        // Per-product pricing data: scenario key => JSON file in
+        // storage/from-tool/数据文档/<dir>. Products with no UV finish
+        // only provide the rectangle/square scenarios.
+        $configs = [
+            'standard-classic-business-card' => [
+                'dir' => '300g铜版纸',
+                'files' => [
+                    'rectangle' => '300g铜版纸 长方形.json',
+                    'uv' => '300g铜版纸 uv.json',
+                    'square' => '300g铜版纸 正方形.json',
+                    'square_uv' => '300g铜版纸 正方形uv.json',
+                ],
+            ],
+            'classic-special-business-cards' => [
+                'dir' => '300g艺术纸',
+                'files' => [
+                    'rectangle' => '300g艺术纸-荷兰白卡.json',
+                    'square' => '300g艺术纸-荷兰白卡-正方形.json',
+                ],
+            ],
+            'classic-quality-business-cards' => [
+                'dir' => '320g铜版纸',
+                'files' => [
+                    'rectangle' => '320g铜版纸.json',
+                    'square' => '320g铜版纸-正方形.json',
+                ],
+            ],
+            'classic-lush-business-cards' => [
+                'dir' => '350g白卡',
+                'files' => [
+                    'rectangle' => '350g白卡.json',
+                    'square' => '350g白卡-正方形.json',
+                ],
+            ],
+            'basic-cotton-business-card' => [
+                'dir' => '棉纸',
+                'files' => [
+                    'rectangle' => '棉纸-基础型.json',
+                ],
+            ],
+            'classic-cotton-business-card' => [
+                'dir' => '棉纸',
+                'files' => [
+                    'rectangle' => '棉纸-经典型.json',
+                ],
+            ],
+            'premium-cotton-business-card' => [
+                'dir' => '棉纸',
+                'files' => [
+                    'rectangle' => '棉纸-高级型.json',
+                ],
+            ],
+            'luxe-cotton-business-card' => [
+                'dir' => '棉纸',
+                'files' => [
+                    'rectangle' => '棉纸-豪华型.json',
+                ],
+            ],
+            'grand-cotton-business-card' => [
+                'dir' => '棉纸',
+                'files' => [
+                    'rectangle' => '棉纸-奢华型.json',
+                ],
+            ],
+            'standard-pvc-card' => [
+                'dir' => 'pvc',
+                'files' => [
+                    'rectangle' => 'pvc0.38.json',
+                ],
+            ],
+            'premium-pvc-card' => [
+                'dir' => 'pvc',
+                'files' => [
+                    'rectangle' => 'pvc0.76.json',
+                ],
+            ],
+            'super-business-cards' => [
+                'dir' => '350g精品纸',
+                'files' => [
+                    'rectangle' => '350g精品纸.json',
+                    'square' => '350g精品纸-正方形.json',
+                ],
+            ],
+            'luxe-business-cards' => [
+                'dir' => '700g精品纸',
+                'files' => [
+                    'rectangle' => '700g精品纸.json',
+                    'square' => '700g精品纸-正方形.json',
+                ],
+            ],
+        ];
+
+        $config = $configs[$slug] ?? null;
+
+        if ($config === null) {
             return null;
         }
 
-        $basePath = base_path('storage/from-tool/数据文档/300g铜版纸');
-
-        $files = [
-            'rectangle' => '300g铜版纸 长方形.json',
-            'uv' => '300g铜版纸 uv.json',
-            'square' => '300g铜版纸 正方形.json',
-            'square_uv' => '300g铜版纸 正方形uv.json',
-        ];
+        $basePath = base_path('storage/from-tool/数据文档/'.$config['dir']);
 
         $data = [];
 
-        foreach ($files as $key => $file) {
+        foreach ($config['files'] as $key => $file) {
             $path = $basePath.'/'.$file;
 
             if (! file_exists($path)) {
