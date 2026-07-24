@@ -4,17 +4,18 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="robots" content="noindex, follow">
 
         {{-- Default SEO fallback --}}
-        <meta name="description" content="{{ config('app.name', 'PrintPandora') }} - Your printing solution.">
-        <meta property="og:site_name" content="{{ config('app.name', 'PrintPandora') }}">
+        <meta name="description" content="{{ config('app.name', 'InkPavo') }} - Your printing solution.">
+        <meta property="og:site_name" content="{{ config('app.name', 'InkPavo') }}">
         <meta property="og:locale" content="en_US">
         <meta name="twitter:card" content="summary_large_image">
         <script type="application/ld+json">
             {
                 "@@context": "https://schema.org",
                 "@type": "Organization",
-                "name": "{{ config('app.name', 'PrintPandora') }}",
+                "name": "{{ config('app.name', 'InkPavo') }}",
                 "url": "{{ config('app.url', 'http://localhost') }}"
             }
         </script>
