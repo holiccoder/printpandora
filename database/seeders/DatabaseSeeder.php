@@ -26,7 +26,10 @@ class DatabaseSeeder extends Seeder
 
         User::firstOrCreate(
             ['email' => 'test@example.com'],
-            ['name' => 'Test User'],
+            [
+                'name' => 'Test User',
+                'password' => Hash::make('password'),
+            ],
         );
 
         $admin = Admin::updateOrCreate(
@@ -54,12 +57,12 @@ class DatabaseSeeder extends Seeder
 
         $samplePosts = [
             [
-                'title' => 'Welcome to PrintPandora — Your Printing Partner',
+                'title' => 'Welcome to InkPavo — Your Printing Partner',
                 'category' => 'getting-started',
                 'body' => <<<'HTML'
-<p>We&rsquo;re thrilled to launch PrintPandora &mdash; the platform that makes custom printing effortless. Whether you need business cards, flyers, apparel, or large-format signage, we&rsquo;ve got you covered.</p>
-<h2>Why we built PrintPandora</h2>
-<p>After years in the printing industry, we noticed a gap: most online print shops are either too complicated or too limited. PrintPandora bridges that gap with a clean interface, transparent pricing, and lightning-fast turnaround times.</p>
+<p>We&rsquo;re thrilled to launch InkPavo &mdash; the platform that makes custom printing effortless. Whether you need business cards, flyers, apparel, or large-format signage, we&rsquo;ve got you covered.</p>
+<h2>Why we built InkPavo</h2>
+<p>After years in the printing industry, we noticed a gap: most online print shops are either too complicated or too limited. InkPavo bridges that gap with a clean interface, transparent pricing, and lightning-fast turnaround times.</p>
 <p>Our mission is simple: make professional printing accessible to everyone, from freelancers to Fortune 500 companies.</p>
 <h2>What you can expect</h2>
 <p>Over the coming weeks, we&rsquo;ll be sharing design tips, product spotlights, and behind-the-scenes looks at our printing process. Subscribe to stay in the loop!</p>
@@ -87,7 +90,7 @@ HTML,
                 'title' => 'Introducing Our New Custom Apparel Line',
                 'category' => 'product-updates',
                 'body' => <<<'HTML'
-<p>We&rsquo;re excited to announce the launch of our custom apparel line! From t-shirts and hoodies to caps and tote bags, you can now design and order personalized clothing directly through PrintPandora.</p>
+<p>We&rsquo;re excited to announce the launch of our custom apparel line! From t-shirts and hoodies to caps and tote bags, you can now design and order personalized clothing directly through InkPavo.</p>
 <h2>What&rsquo;s new</h2>
 <p>Our apparel collection features premium-quality blanks from trusted brands. Choose from a wide range of colors, sizes, and styles. You can upload your own artwork or use our built-in design tool to create something unique.</p>
 <h2>Printing techniques</h2>
@@ -115,7 +118,7 @@ HTML,
 <h2>Step 4: Pick quality materials</h2>
 <p>The paper stock matters as much as the design. We recommend at least 350 GSM matte or silk laminate for a premium feel. Consider spot UV coating on your logo for added texture and visual interest.</p>
 <h2>Step 5: Order and review</h2>
-<p>Once your design is ready, upload it to PrintPandora, select your options, and place your order. We&rsquo;ll send you a digital proof before printing so you can review every detail.</p>
+<p>Once your design is ready, upload it to InkPavo, select your options, and place your order. We&rsquo;ll send you a digital proof before printing so you can review every detail.</p>
 HTML,
             ],
             [
@@ -324,7 +327,7 @@ HTML,
                 [
                     'name' => $data['name'],
                     'description' => $data['description'],
-                    'price' => $data['price'],
+                    'price_line' => '$'.$data['price'],
                     'product_category_id' => $categoryId,
                     'is_active' => true,
                 ],
