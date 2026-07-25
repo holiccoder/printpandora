@@ -9,12 +9,13 @@
 
 | 软件 | 版本 | 说明 |
 |---|---|---|
-| PHP | **8.4**（必须 ≥8.4） | 宝塔「软件商店 → PHP-8.4」安装；扩展需含：`sqlite3` `pdo_sqlite` `mbstring` `openssl` `curl` `fileinfo` `intl` `gd` `zip` |
+| PHP | **8.4**（必须 ≥8.4） | 宝塔「软件商店 → PHP-8.4」安装；扩展需含：`pdo_mysql` `mysqli` `mbstring` `openssl` `curl` `fileinfo` `intl` `gd` `zip` |
 | Nginx | 任意稳定版 | 宝塔默认即可 |
+| MySQL | **8.0+** | 宝塔「软件商店 → MySQL」安装（生产数据库） |
 | Node.js | **20+** | 宝塔「软件商店 → Node 版本管理器」安装 |
 | Composer | 2.x | 宝塔软件商店安装，或命令行安装 |
 
-数据库用 SQLite（文件），**无需安装 MySQL**。
+生产环境使用 **MySQL**；本地开发环境可继续用 SQLite，互不影响（迁移与 seeder 两者通用）。
 
 ---
 
@@ -38,26 +39,38 @@ cd /www/wwwroot
 git clone https://github.com/holiccoder/printpandora.git
 cd printpandora
 
-# 2. 配置环境
+# 2. 创建数据库（宝塔 → 数据库 → 添加数据库）:
+#    数据库名: printpandora
+#    用户名:   printpandora（建议独立账号，勿用 root）
+#    密码:     生成强密码
+#    访问权限: 本地服务器（127.0.0.1）
+#    字符集:   utf8mb4 / 排序规则 utf8mb4_unicode_ci
+
+# 3. 配置环境
 cp .env.example .env
 # 编辑 .env，至少修改:
 #   APP_ENV=production
 #   APP_DEBUG=false
 #   APP_URL=https://你的域名
+#   DB_CONNECTION=mysql
+#   DB_HOST=127.0.0.1
+#   DB_PORT=3306
+#   DB_DATABASE=printpandora
+#   DB_USERNAME=printpandora
+#   DB_PASSWORD=上一步的数据库密码
 php artisan key:generate
 
-# 3. 安装依赖并构建
+# 4. 安装依赖并构建
 composer install --no-dev --optimize-autoloader
 npm ci && npm run build
 
-# 4. 初始化数据库（仅此一次！用快照数据填充）
-touch database/database.sqlite
+# 5. 初始化数据库（仅此一次！用快照数据填充 MySQL）
 php artisan migrate:fresh --seed
 
 # 5. 缓存与权限
 php artisan config:cache && php artisan route:cache && php artisan view:cache
 chown -R www:www /www/wwwroot/printpandora
-chmod -R 775 storage bootstrap/cache database
+chmod -R 775 storage bootstrap/cache
 
 # 6. git 安全目录信任（避免 WebHook 以 root 执行时 pull 失败）
 git config --global --add safe.directory /www/wwwroot/printpandora
