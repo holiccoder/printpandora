@@ -4,7 +4,7 @@ import type { NavLink } from '@/types/content';
 
 /**
  * Storefront footer — clean white background, dark column headers, and
- * teal/green link text. Mirrors the PrintPandora footer reference: Products (split
+ * teal/green link text. Mirrors the InkPavo footer reference: Products (split
  * into two link lists), Paper Stocks, About us, Help/Useful links, and a
  * legal/utility bar at the bottom.
  *
@@ -12,7 +12,7 @@ import type { NavLink } from '@/types/content';
  * from `content/hardcoded-content.json` → `global_chrome.footer`.
  */
 
-const TEAL = 'text-[#0f4c3a] hover:underline';
+const TEAL = 'text-[#800020] hover:underline';
 
 function ColumnHeading({ children }: { children: React.ReactNode }) {
     return (
@@ -45,7 +45,9 @@ export function StorefrontFooter() {
                 <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
                     {/* Products — spans two of the five columns and renders two side-by-side lists */}
                     <div className="lg:col-span-2">
-                        <ColumnHeading>{f.column_headings.products}</ColumnHeading>
+                        <ColumnHeading>
+                            {f.column_headings.products}
+                        </ColumnHeading>
                         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                             <LinkList links={f.products_left_column} />
                             <LinkList links={f.products_right_column} />
@@ -53,12 +55,16 @@ export function StorefrontFooter() {
                     </div>
 
                     <div>
-                        <ColumnHeading>{f.column_headings.paper_stocks}</ColumnHeading>
+                        <ColumnHeading>
+                            {f.column_headings.paper_stocks}
+                        </ColumnHeading>
                         <LinkList links={f.paper_stocks} />
                     </div>
 
                     <div>
-                        <ColumnHeading>{f.column_headings.about_us}</ColumnHeading>
+                        <ColumnHeading>
+                            {f.column_headings.about_us}
+                        </ColumnHeading>
                         <LinkList links={f.about_us} />
                     </div>
 
@@ -69,7 +75,10 @@ export function StorefrontFooter() {
                 </div>
 
                 {/* Faint divider before the legal bar */}
-                <div className="mt-12 border-t border-neutral-200" aria-hidden />
+                <div
+                    className="mt-12 border-t border-neutral-200"
+                    aria-hidden
+                />
 
                 {/* Legal/utility bar */}
                 <div className="flex flex-col gap-4 pt-6 text-xs md:flex-row md:items-center md:justify-between">
@@ -98,7 +107,7 @@ function TeardropIcon() {
         <svg
             aria-hidden
             viewBox="0 0 24 24"
-            className="size-4 shrink-0 text-[#0f4c3a]"
+            className="size-4 shrink-0 text-[#800020]"
             fill="currentColor"
         >
             <path d="M12 2C12 2 5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13z" />

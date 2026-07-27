@@ -51,7 +51,13 @@ export type Props = {
     payouts: Payout[];
 };
 
-export default function ManageAffiliate({ isAffiliate, affiliate, commissions, referrals, payouts }: Props) {
+export default function ManageAffiliate({
+    isAffiliate,
+    affiliate,
+    commissions,
+    referrals,
+    payouts,
+}: Props) {
     const [copied, setCopied] = useState(false);
     const [showPayoutForm, setShowPayoutForm] = useState(false);
 
@@ -64,8 +70,8 @@ export default function ManageAffiliate({ isAffiliate, affiliate, commissions, r
 
     const copyLink = () => {
         if (!affiliate) {
-return;
-}
+            return;
+        }
 
         navigator.clipboard.writeText(affiliate.referral_url);
         setCopied(true);
@@ -87,11 +93,13 @@ return;
                 <Heading
                     variant="small"
                     title="Affiliate program"
-                    description="Earn commissions by referring new customers to PrintPandora"
+                    description="Earn commissions by referring new customers to InkPavo"
                 />
                 <div className="flex flex-col items-start space-y-4">
                     <p className="text-sm text-muted-foreground">
-                        Join our affiliate program and earn {10}% commission on every order made by customers you refer. Share your unique referral link and start earning today.
+                        Join our affiliate program and earn {10}% commission on
+                        every order made by customers you refer. Share your
+                        unique referral link and start earning today.
                     </p>
                     <Button
                         type="button"
@@ -111,8 +119,8 @@ return;
     }
 
     if (!affiliate) {
-return null;
-}
+        return null;
+    }
 
     return (
         <div className="space-y-12">
@@ -129,17 +137,27 @@ return null;
                             <TrendingUp className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                         </div>
                         <div>
-                            <p className="text-xs text-muted-foreground">Commission rate</p>
-                            <p className="text-lg font-bold">{affiliate.commission_rate}%</p>
+                            <p className="text-xs text-muted-foreground">
+                                Commission rate
+                            </p>
+                            <p className="text-lg font-bold">
+                                {affiliate.commission_rate}%
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4 rounded-lg border p-4">
                         <div className="rounded-full bg-green-100 p-2 dark:bg-green-900">
-                            <span className="flex h-5 w-5 items-center justify-center text-sm font-bold text-green-600 dark:text-green-400">$</span>
+                            <span className="flex h-5 w-5 items-center justify-center text-sm font-bold text-green-600 dark:text-green-400">
+                                $
+                            </span>
                         </div>
                         <div>
-                            <p className="text-xs text-muted-foreground">Total earnings</p>
-                            <p className="text-lg font-bold">${affiliate.total_earnings.toFixed(2)}</p>
+                            <p className="text-xs text-muted-foreground">
+                                Total earnings
+                            </p>
+                            <p className="text-lg font-bold">
+                                ${affiliate.total_earnings.toFixed(2)}
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4 rounded-lg border p-4">
@@ -147,8 +165,12 @@ return null;
                             <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
-                            <p className="text-xs text-muted-foreground">Pending payout</p>
-                            <p className="text-lg font-bold">${affiliate.pending_earnings.toFixed(2)}</p>
+                            <p className="text-xs text-muted-foreground">
+                                Pending payout
+                            </p>
+                            <p className="text-lg font-bold">
+                                ${affiliate.pending_earnings.toFixed(2)}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -167,9 +189,15 @@ return null;
                         readOnly
                         className="font-mono text-sm"
                     />
-                    <Button variant="outline" onClick={copyLink} className="shrink-0">
+                    <Button
+                        variant="outline"
+                        onClick={copyLink}
+                        className="shrink-0"
+                    >
                         <Copy className="h-4 w-4" />
-                        <span className="ml-2">{copied ? 'Copied!' : 'Copy'}</span>
+                        <span className="ml-2">
+                            {copied ? 'Copied!' : 'Copy'}
+                        </span>
                     </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -186,13 +214,18 @@ return null;
                     />
 
                     {!showPayoutForm ? (
-                        <Button variant="outline" onClick={() => setShowPayoutForm(true)}>
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowPayoutForm(true)}
+                        >
                             Request payout
                         </Button>
                     ) : (
                         <div className="max-w-md space-y-4 rounded-lg border p-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="payout_amount">Amount ($)</Label>
+                                <Label htmlFor="payout_amount">
+                                    Amount ($)
+                                </Label>
                                 <Input
                                     id="payout_amount"
                                     type="number"
@@ -200,28 +233,49 @@ return null;
                                     min="10"
                                     max={affiliate.pending_earnings}
                                     value={payoutForm.data.amount}
-                                    onChange={(e) => payoutForm.setData('amount', e.target.value)}
+                                    onChange={(e) =>
+                                        payoutForm.setData(
+                                            'amount',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder={`Max $${affiliate.pending_earnings.toFixed(2)}`}
                                 />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="payout_method">Payment method</Label>
+                                <Label htmlFor="payout_method">
+                                    Payment method
+                                </Label>
                                 <select
                                     id="payout_method"
                                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
                                     value={payoutForm.data.payment_method}
-                                    onChange={(e) => payoutForm.setData('payment_method', e.target.value)}
+                                    onChange={(e) =>
+                                        payoutForm.setData(
+                                            'payment_method',
+                                            e.target.value,
+                                        )
+                                    }
                                 >
                                     <option value="paypal">PayPal</option>
-                                    <option value="bank_transfer">Bank transfer</option>
+                                    <option value="bank_transfer">
+                                        Bank transfer
+                                    </option>
                                 </select>
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="payout_details">Payment details</Label>
+                                <Label htmlFor="payout_details">
+                                    Payment details
+                                </Label>
                                 <Input
                                     id="payout_details"
                                     value={payoutForm.data.payment_details}
-                                    onChange={(e) => payoutForm.setData('payment_details', e.target.value)}
+                                    onChange={(e) =>
+                                        payoutForm.setData(
+                                            'payment_details',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="PayPal email or bank account info"
                                 />
                             </div>
@@ -260,25 +314,41 @@ return null;
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b text-left">
-                                    <th className="pb-2 pr-4 font-medium text-muted-foreground">Order</th>
-                                    <th className="pb-2 pr-4 font-medium text-muted-foreground">Amount</th>
-                                    <th className="pb-2 pr-4 font-medium text-muted-foreground">Rate</th>
-                                    <th className="pb-2 pr-4 font-medium text-muted-foreground">Status</th>
-                                    <th className="pb-2 font-medium text-muted-foreground">Date</th>
+                                    <th className="pr-4 pb-2 font-medium text-muted-foreground">
+                                        Order
+                                    </th>
+                                    <th className="pr-4 pb-2 font-medium text-muted-foreground">
+                                        Amount
+                                    </th>
+                                    <th className="pr-4 pb-2 font-medium text-muted-foreground">
+                                        Rate
+                                    </th>
+                                    <th className="pr-4 pb-2 font-medium text-muted-foreground">
+                                        Status
+                                    </th>
+                                    <th className="pb-2 font-medium text-muted-foreground">
+                                        Date
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {commissions.map((c) => (
                                     <tr key={c.id} className="border-b">
-                                        <td className="py-2 pr-4">#{c.order_id}</td>
-                                        <td className="py-2 pr-4 font-medium">${c.amount.toFixed(2)}</td>
+                                        <td className="py-2 pr-4">
+                                            #{c.order_id}
+                                        </td>
+                                        <td className="py-2 pr-4 font-medium">
+                                            ${c.amount.toFixed(2)}
+                                        </td>
                                         <td className="py-2 pr-4">{c.rate}%</td>
                                         <td className="py-2 pr-4">
                                             <span className="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900 dark:text-green-300">
                                                 {c.status}
                                             </span>
                                         </td>
-                                        <td className="py-2 text-muted-foreground">{c.created_at}</td>
+                                        <td className="py-2 text-muted-foreground">
+                                            {c.created_at}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -299,17 +369,29 @@ return null;
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b text-left">
-                                    <th className="pb-2 pr-4 font-medium text-muted-foreground">Name</th>
-                                    <th className="pb-2 pr-4 font-medium text-muted-foreground">Email</th>
-                                    <th className="pb-2 font-medium text-muted-foreground">Joined</th>
+                                    <th className="pr-4 pb-2 font-medium text-muted-foreground">
+                                        Name
+                                    </th>
+                                    <th className="pr-4 pb-2 font-medium text-muted-foreground">
+                                        Email
+                                    </th>
+                                    <th className="pb-2 font-medium text-muted-foreground">
+                                        Joined
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {referrals.map((r) => (
                                     <tr key={r.id} className="border-b">
-                                        <td className="py-2 pr-4">{r.user_name}</td>
-                                        <td className="py-2 pr-4 text-muted-foreground">{r.user_email}</td>
-                                        <td className="py-2 text-muted-foreground">{r.created_at}</td>
+                                        <td className="py-2 pr-4">
+                                            {r.user_name}
+                                        </td>
+                                        <td className="py-2 pr-4 text-muted-foreground">
+                                            {r.user_email}
+                                        </td>
+                                        <td className="py-2 text-muted-foreground">
+                                            {r.created_at}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -330,27 +412,40 @@ return null;
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b text-left">
-                                    <th className="pb-2 pr-4 font-medium text-muted-foreground">Amount</th>
-                                    <th className="pb-2 pr-4 font-medium text-muted-foreground">Status</th>
-                                    <th className="pb-2 font-medium text-muted-foreground">Date</th>
+                                    <th className="pr-4 pb-2 font-medium text-muted-foreground">
+                                        Amount
+                                    </th>
+                                    <th className="pr-4 pb-2 font-medium text-muted-foreground">
+                                        Status
+                                    </th>
+                                    <th className="pb-2 font-medium text-muted-foreground">
+                                        Date
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {payouts.map((p) => (
                                     <tr key={p.id} className="border-b">
-                                        <td className="py-2 pr-4 font-medium">${p.amount.toFixed(2)}</td>
+                                        <td className="py-2 pr-4 font-medium">
+                                            ${p.amount.toFixed(2)}
+                                        </td>
                                         <td className="py-2 pr-4">
-                                            <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                                                p.status === 'paid'
-                                                    ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                                                    : p.status === 'rejected'
-                                                      ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
-                                                      : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
-                                            }`}>
+                                            <span
+                                                className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                                                    p.status === 'paid'
+                                                        ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                                                        : p.status ===
+                                                            'rejected'
+                                                          ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+                                                          : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
+                                                }`}
+                                            >
                                                 {p.status}
                                             </span>
                                         </td>
-                                        <td className="py-2 text-muted-foreground">{p.created_at}</td>
+                                        <td className="py-2 text-muted-foreground">
+                                            {p.created_at}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

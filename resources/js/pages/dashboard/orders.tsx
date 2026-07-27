@@ -5,7 +5,7 @@ import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
-const ACCENT = '#0f4c3a';
+const ACCENT = '#800020';
 
 type Order = {
     id: number;
@@ -37,10 +37,7 @@ export default function DashboardOrders({ orders }: Props) {
 
     return (
         <StorefrontLayout>
-            <SEO
-                title={c.seo.title}
-                description={c.seo.description}
-            />
+            <SEO title={c.seo.title} description={c.seo.description} />
 
             <section className="bg-neutral-50">
                 <div className="mx-auto max-w-7xl px-4 py-10 lg:py-14">
@@ -50,7 +47,10 @@ export default function DashboardOrders({ orders }: Props) {
                                 {c.page_heading}
                             </h1>
                             <p className="mt-1 text-sm text-neutral-600">
-                                {orders.total} {orders.total === 1 ? c.page_subheading_singular : c.page_subheading_plural}
+                                {orders.total}{' '}
+                                {orders.total === 1
+                                    ? c.page_subheading_singular
+                                    : c.page_subheading_plural}
                             </p>
                         </div>
                         <Link
@@ -78,35 +78,50 @@ export default function DashboardOrders({ orders }: Props) {
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm">
-                                    <thead className="bg-neutral-50 text-xs uppercase tracking-wide text-neutral-500">
+                                    <thead className="bg-neutral-50 text-xs tracking-wide text-neutral-500 uppercase">
                                         <tr>
                                             <Th>{c.table_headers.order}</Th>
                                             <Th>{c.table_headers.date}</Th>
                                             <Th>{c.table_headers.items}</Th>
                                             <Th>{c.table_headers.status}</Th>
                                             <Th>{c.table_headers.payment}</Th>
-                                            <Th className="text-right">{c.table_headers.total}</Th>
-                                            <Th className="sr-only">{c.table_headers.actions}</Th>
+                                            <Th className="text-right">
+                                                {c.table_headers.total}
+                                            </Th>
+                                            <Th className="sr-only">
+                                                {c.table_headers.actions}
+                                            </Th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100">
                                         {orders.data.map((order) => (
-                                            <tr key={order.id} className="hover:bg-neutral-50">
+                                            <tr
+                                                key={order.id}
+                                                className="hover:bg-neutral-50"
+                                            >
                                                 <Td className="font-semibold text-neutral-900">
                                                     #{order.id}
                                                 </Td>
                                                 <Td className="text-neutral-600">
                                                     {order.created_at
-                                                        ? new Date(order.created_at).toLocaleDateString()
+                                                        ? new Date(
+                                                              order.created_at,
+                                                          ).toLocaleDateString()
                                                         : '—'}
                                                 </Td>
-                                                <Td className="text-neutral-600">{order.item_count}</Td>
+                                                <Td className="text-neutral-600">
+                                                    {order.item_count}
+                                                </Td>
                                                 <Td>
-                                                    <StatusPill status={order.status} />
+                                                    <StatusPill
+                                                        status={order.status}
+                                                    />
                                                 </Td>
                                                 <Td className="text-neutral-600 capitalize">
                                                     {order.payment_status}
-                                                    {order.payment_method ? ` · ${order.payment_method}` : ''}
+                                                    {order.payment_method
+                                                        ? ` · ${order.payment_method}`
+                                                        : ''}
                                                 </Td>
                                                 <Td className="text-right font-semibold text-neutral-900">
                                                     ${order.total.toFixed(2)}
@@ -115,9 +130,12 @@ export default function DashboardOrders({ orders }: Props) {
                                                     <Link
                                                         href={`/orders/${order.id}`}
                                                         className="inline-flex items-center gap-1 text-sm font-semibold hover:underline"
-                                                        style={{ color: ACCENT }}
+                                                        style={{
+                                                            color: ACCENT,
+                                                        }}
                                                     >
-                                                        {c.view_link} <ChevronRight className="size-3.5" />
+                                                        {c.view_link}{' '}
+                                                        <ChevronRight className="size-3.5" />
                                                     </Link>
                                                 </Td>
                                             </tr>
@@ -180,7 +198,8 @@ function Pagination({ orders, c }: { orders: PaginatedOrders; c: any }) {
     return (
         <nav className="flex items-center justify-between border-t border-neutral-100 bg-white px-4 py-3 text-sm">
             <p className="text-neutral-600">
-                {c.showing} <span className="font-semibold">{orders.from ?? 0}</span>–
+                {c.showing}{' '}
+                <span className="font-semibold">{orders.from ?? 0}</span>–
                 <span className="font-semibold">{orders.to ?? 0}</span> {c.of}{' '}
                 <span className="font-semibold">{orders.total}</span>
             </p>

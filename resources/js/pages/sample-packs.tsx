@@ -1,15 +1,15 @@
 import { Link } from '@inertiajs/react';
 import { ArrowRight, ShoppingCart } from 'lucide-react';
-import { useState  } from 'react';
-import type {FormEvent} from 'react';
+import { useState } from 'react';
+import type { FormEvent } from 'react';
 import SEO from '@/components/seo';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
-const ACCENT = '#0f4c3a';
+const ACCENT = '#800020';
 
 const businessCardListItems = [
     { label: 'Paper stocks', value: 'Original, Super, Luxe, Cotton' },
-    { label: 'Sizes', value: 'PrintPandora, Square, Standard, Mini' },
+    { label: 'Sizes', value: 'InkPavo, Square, Standard, Mini' },
     { label: 'Paper finishes', value: 'Matte, Gloss, Soft Touch' },
     { label: 'Special finishes', value: 'Gold Foil, Silver Foil, Spot UV' },
 ];
@@ -89,13 +89,18 @@ function BulletList({ items }: { items: { label: string; value: string }[] }) {
     return (
         <ul className="mt-6 space-y-2">
             {items.map((item) => (
-                <li key={item.label} className="flex items-baseline gap-3 text-sm">
+                <li
+                    key={item.label}
+                    className="flex items-baseline gap-3 text-sm"
+                >
                     <span
                         className="size-1.5 shrink-0 rounded-full"
                         style={{ backgroundColor: ACCENT }}
                     />
                     <span>
-                        <strong className="font-bold text-neutral-900">{item.label}:</strong>{' '}
+                        <strong className="font-bold text-neutral-900">
+                            {item.label}:
+                        </strong>{' '}
                         <span className="text-neutral-600">{item.value}</span>
                     </span>
                 </li>
@@ -127,8 +132,12 @@ function FeatureBlock({
                     className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
             </div>
-            <h3 className="mt-5 text-base font-bold text-neutral-900 sm:text-lg">{title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-neutral-600">{description}</p>
+            <h3 className="mt-5 text-base font-bold text-neutral-900 sm:text-lg">
+                {title}
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+                {description}
+            </p>
             <Link
                 href={linkHref}
                 className="mt-4 inline-flex items-center gap-1 text-sm font-bold"
@@ -152,8 +161,8 @@ export default function SamplePacks() {
         e.preventDefault();
 
         if (!email.trim()) {
-return;
-}
+            return;
+        }
 
         setSubmitted(true);
         setEmail('');
@@ -163,14 +172,14 @@ return;
         <StorefrontLayout>
             <SEO
                 title="Free Sample Packs"
-                description="Get a feel for the full PrintPandora range with a free sample pack — papers, finishes, cards and stickers, posted to your door."
+                description="Get a feel for the full InkPavo range with a free sample pack — papers, finishes, cards and stickers, posted to your door."
             />
 
             {/* 1. Hero — Lifestyle photo with text overlay ------------------------------------------------------ */}
             <section className="relative min-h-[560px] bg-neutral-100">
                 <img
                     src="https://picsum.photos/seed/sample-pack-hero/1920/1080"
-                    alt="Hands opening a PrintPandora sample folder on a wooden desk"
+                    alt="Hands opening a InkPavo sample folder on a wooden desk"
                     className="absolute inset-0 size-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/70 to-transparent" />
@@ -180,7 +189,8 @@ return;
                             We&apos;ll let the paper do the talking
                         </h1>
                         <p className="mt-5 text-lg text-neutral-700 sm:text-xl">
-                            Get a feel for the full PrintPandora range, with a free sample pack.
+                            Get a feel for the full InkPavo range, with a
+                            free sample pack.
                         </p>
                     </div>
                 </div>
@@ -228,9 +238,9 @@ return;
                             Business Card Sample Pack
                         </h2>
                         <p className="mt-4 text-base leading-relaxed text-neutral-600 sm:text-lg">
-                            Buy your hands on our full range of Business Cards. Feel the paper,
-                            check the print quality, and decide which stock makes the right first
-                            impression.
+                            Buy your hands on our full range of Business Cards.
+                            Feel the paper, check the print quality, and decide
+                            which stock makes the right first impression.
                         </p>
 
                         <BulletList items={businessCardListItems} />
@@ -272,8 +282,9 @@ return;
                             All Products Sample Pack
                         </h2>
                         <p className="mt-4 text-base leading-relaxed text-neutral-600 sm:text-lg">
-                            Papers you&apos;ll want to stroke. Finishes you&apos;ll hold up to the
-                            light. This is the world of PrintPandora print, in one pack.
+                            Papers you&apos;ll want to stroke. Finishes
+                            you&apos;ll hold up to the light. This is the world
+                            of InkPavo print, in one pack.
                         </p>
 
                         <BulletList items={allProductsListItems} />
@@ -300,7 +311,7 @@ return;
             {/* 4. Secondary Features — "There's more where those came from" 2-card grid -------------------- */}
             <section className="border-t border-neutral-100 bg-white">
                 <div className="mx-auto max-w-7xl px-4 py-20 md:py-24">
-                    <h2 className="text-center text-3xl font-bold italic text-neutral-800 sm:text-4xl">
+                    <h2 className="text-center text-3xl font-bold text-neutral-800 italic sm:text-4xl">
                         There&apos;s more where those came from
                     </h2>
 
@@ -314,7 +325,7 @@ return;
                         />
                         <FeatureBlock
                             image="https://picsum.photos/seed/business-collab/800/500"
-                            title="PrintPandora business plans"
+                            title="InkPavo business plans"
                             description="Pro designers, special discounts, and more — on tap. Everything you need to look the part, without doing it all yourself."
                             linkText="More plans"
                             linkHref="/contact"
@@ -349,14 +360,20 @@ return;
                 </div>
 
                 {/* Newsletter signup — Full-width horizontal bar */}
-                <div className="border-t border-neutral-200" style={{ backgroundColor: ACCENT }}>
+                <div
+                    className="border-t border-neutral-200"
+                    style={{ backgroundColor: ACCENT }}
+                >
                     <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-12 md:flex-row md:justify-between md:py-10">
                         <h3 className="max-w-xl text-center text-xl font-bold text-white md:text-left md:text-2xl">
-                            Sign up to the PrintPandora newsletter for special offers, news and
-                            inspiration
+                            Sign up to the InkPavo newsletter for special
+                            offers, news and inspiration
                         </h3>
                         {submitted ? (
-                            <p className="shrink-0 text-sm font-semibold text-white/90" role="status">
+                            <p
+                                className="shrink-0 text-sm font-semibold text-white/90"
+                                role="status"
+                            >
                                 Thanks — you&apos;re on the list.
                             </p>
                         ) : (
@@ -365,7 +382,10 @@ return;
                                 className="flex w-full max-w-md shrink-0 items-center gap-0 md:w-auto"
                                 noValidate
                             >
-                                <label htmlFor="faq-newsletter-email" className="sr-only">
+                                <label
+                                    htmlFor="faq-newsletter-email"
+                                    className="sr-only"
+                                >
                                     Your email address
                                 </label>
                                 <input
@@ -375,7 +395,7 @@ return;
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="Your email address"
-                                    className="flex-1 rounded-l-md border-0 bg-white px-5 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-white md:w-72"
+                                    className="flex-1 rounded-l-md border-0 bg-white px-5 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:ring-2 focus:ring-white focus:outline-none md:w-72"
                                 />
                                 <button
                                     type="submit"

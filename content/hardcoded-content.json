@@ -384,12 +384,18 @@
             "next_button_label": "Next slide",
             "slides": [
                 {
-                    "headline": "Marketing Materials, make your brand stand out",
-                    "subheadline": "We're here to help your business stand out for your next big campaign.",
-                    "cta_text": "Shop now",
-                    "cta_href": "/shop?cat=marketing-materials",
-                    "image_url": "/images/home/hero-marketing-materials.png",
-                    "alt": "A spread of colourful printed promotional flyers, business cards and stickers on a light wood table beside a red wire chair"
+                    "eyebrow": "FINE PRINT CRAFT",
+                    "headline": "MADE TO BE\nREMEMBERED",
+                    "subheadline": "Exquisite letterpress craftsmanship that turns every connection into a lasting impression.",
+                    "cta_text": "EXPLORE COLLECTION",
+                    "cta_href": "/shop",
+                    "image_url": "/images/home/hero-letterpress.png",
+                    "alt": "Letterpress business cards on a stone slab with eucalyptus",
+                    "features": [
+                        { "icon": "card", "title": "BUSINESS CARDS", "description": "Premium & Professional" },
+                        { "icon": "press", "title": "FINE PRINT CRAFT", "description": "Quality in Every Detail" },
+                        { "icon": "pencil", "title": "CUSTOM DESIGN", "description": "Tailored for You" }
+                    ]
                 },
                 {
                     "headline": "Original Business Cards, designed to be remembered",
@@ -410,81 +416,16 @@
             ]
         },
         "popular_products": {
-            "section_title": "Popular products",
-            "section_description": "Call it the InkPavo Hall of Fame. Our most tried and trusted favourites.",
-            "footer_cta_text": "Shop All InkPavo Products",
-            "footer_cta_href": "/shop",
-            "products": [
-                {
-                    "name": "棉纸名片",
-                    "image_url": "/images/home/product-cotton-cards.png",
-                    "alt": "A hand tucking a peach-coloured business card into a back pocket",
-                    "cta": "Cotton Business Cards",
-                    "href": "/shop?cat=cotton-business-cards"
-                },
-                {
-                    "name": "精品名片",
-                    "image_url": "/images/home/product-premium-cards.png",
-                    "alt": "Overhead view of premium invitation cards scattered with a bowl of cereal",
-                    "cta": "Premium Business Cards",
-                    "href": "/shop?cat=premium-business-cards"
-                },
-                {
-                    "name": "PVC名片",
-                    "image_url": "/images/home/product-pvc-cards.png",
-                    "alt": "Hands sliding a card out of a white envelope on a beige coat",
-                    "cta": "PVC Business Cards",
-                    "href": "/shop?cat=pvc-business-cards"
-                },
-                {
-                    "name": "经典名片",
-                    "image_url": "/images/home/product-classic-cards.png",
-                    "alt": "A hand tucking a business card into a back pocket",
-                    "cta": "Classic Business Cards",
-                    "href": "/shop?cat=classic-business-cards"
-                },
-                {
-                    "name": "商用卡片",
-                    "image_url": "/images/home/product-business-cards.png",
-                    "alt": "Person holding a stack of printed materials on their lap",
-                    "cta": "Business Cards",
-                    "href": "/shop?cat=business-cards"
-                },
-                {
-                    "name": "明信片",
-                    "image_url": "/images/home/product-postcards.png",
-                    "alt": "A person in a green jacket holds a pink postcard up against a blue sky",
-                    "cta": "Postcards",
-                    "href": "/shop?cat=postcards"
-                },
-                {
-                    "name": "动漫卡片",
-                    "image_url": "/images/home/product-anime-cards.png",
-                    "alt": "A sticker on a denim jacket",
-                    "cta": "Character Cards",
-                    "href": "/shop?cat=stickers-labels"
-                },
-                {
-                    "name": "贴纸标签",
-                    "image_url": "/images/home/product-stickers-labels.png",
-                    "alt": "A hand-drawn floral greeting card",
-                    "cta": "Stickers & Labels",
-                    "href": "/shop?cat=stickers-labels"
-                },
-                {
-                    "name": "传单",
-                    "image_url": "/images/home/product-flyers.png",
-                    "alt": "Person holding a tall stack of printed flyers",
-                    "cta": "Flyers",
-                    "href": "/shop?cat=flyers"
-                },
-                {
-                    "name": "设计服务",
-                    "image_url": "/images/home/product-design-service.png",
-                    "alt": null,
-                    "cta": "Design Service",
-                    "href": "/business-card-design-service"
-                }
+            "eyebrow": "EXPLORE OUR PRODUCTS",
+            "headline": "Original Business Cards, Designed to Be Remembered",
+            "description": "Discover our range of premium business cards, crafted with exceptional materials and finishes.",
+            "cta_text": "VIEW ALL PRODUCTS",
+            "cta_href": "/shop",
+            "cards": [
+                { "title": "Letterpress Business Cards", "description": "Timeless impression, touch that lasts.", "image_url": "/images/home/card-letterpress.png", "href": "/luxe-business-cards" },
+                { "title": "Foil Stamped Cards",         "description": "Shine with metallic foil finishes.",  "image_url": "/images/home/card-foil-stamped.png",  "href": "/super-business-cards" },
+                { "title": "Debossed Business Cards",    "description": "Subtle depth that speaks elegance.",  "image_url": "/images/home/card-debossed.png",     "href": "/standard-classic-business-card" },
+                { "title": "Die-cut Business Cards",     "description": "Unique shapes for bold brands.",      "image_url": "/images/home/card-die-cut.png",      "href": "/shop?cat=business-cards" }
             ]
         },
         "perks": {
@@ -529,6 +470,17 @@
             "section_title": "Get More from InkPavo",
             "view_all_cta": "See all articles",
             "view_all_href": "/blog"
+        },
+        "logo_wall": {
+            "heading": "Great businesses print with InkPavo.",
+            "logos": [
+                { "text": "BRANDONE", "font": "bold-sans" },
+                { "text": "mellow", "font": "script" },
+                { "text": "Atelier.", "font": "serif" },
+                { "text": "Northwind", "font": "serif-bold" },
+                { "text": "bluehill", "font": "sans" },
+                { "text": "SUMMIT", "font": "black-sans" }
+            ]
         }
     },
 
@@ -707,7 +659,7 @@
 
     "product_detail_page": {
         "_source_file": "resources/js/pages/shop/show.tsx",
-        "accent_color": "#1e3a5f",
+        "accent_color": "#800020",
         "breadcrumbs": ["Home"],
         "feature_chips": ["Printed in the USA", "Next Day Delivery"],
         "product_subtitle": "Thicker than your average card. Printed on 350 gsm uncoated paper — substantial in the hand without bulking up your wallet.",
@@ -979,7 +931,7 @@
 
     "business_cards_landing_page": {
         "_source_file": "resources/js/pages/shop/business-cards.tsx",
-        "accent_color": "#1e3a5f",
+        "accent_color": "#800020",
         "warm_bg": "#fbf6ee",
         "seo": {
             "title": "Business Cards",

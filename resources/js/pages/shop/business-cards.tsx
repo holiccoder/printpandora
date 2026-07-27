@@ -78,15 +78,27 @@ function SectionHeader({
                     {eyebrow}
                 </p>
             )}
-            <h2 className="text-2xl font-bold text-neutral-900 sm:text-3xl">{title}</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 sm:text-3xl">
+                {title}
+            </h2>
             {subtitle && (
-                <p className="mt-2 text-sm text-neutral-600 sm:text-base">{subtitle}</p>
+                <p className="mt-2 text-sm text-neutral-600 sm:text-base">
+                    {subtitle}
+                </p>
             )}
         </header>
     );
 }
 
-function ShopLink({ children, href, accent }: { children: React.ReactNode; href: string; accent: string }) {
+function ShopLink({
+    children,
+    href,
+    accent,
+}: {
+    children: React.ReactNode;
+    href: string;
+    accent: string;
+}) {
     return (
         <Link
             href={href}
@@ -113,10 +125,7 @@ export default function BusinessCardsLanding() {
 
     return (
         <StorefrontLayout activeCategory="Business Cards">
-            <SEO
-                title={c.seo.title}
-                description={c.seo.description}
-            />
+            <SEO title={c.seo.title} description={c.seo.description} />
 
             {/* 1. Hero ------------------------------------------------------ */}
             <section style={{ backgroundColor: WARM_BG }}>
@@ -163,33 +172,43 @@ export default function BusinessCardsLanding() {
                         accent={ACCENT}
                     />
                     <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                        {sections.shop_by_paper.items.map((paper: any, i: number) => {
-                            const href = paperHrefs[i] ?? '/shop?cat=business-cards';
+                        {sections.shop_by_paper.items.map(
+                            (paper: any, i: number) => {
+                                const href =
+                                    paperHrefs[i] ?? '/shop?cat=business-cards';
 
-                            return (
-                                <li key={paper.name} className="group">
-                                    <Link href={href} className="block">
-                                        <div className="overflow-hidden rounded-md bg-neutral-100">
-                                            <img
-                                                src={paper.image_url}
-                                                alt={paper.name}
-                                                loading="lazy"
-                                                className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                            />
-                                        </div>
-                                        <h3 className="mt-4 text-base font-bold text-neutral-900">
-                                            {paper.name}
-                                        </h3>
-                                        <p className="mt-1 text-sm text-neutral-600">
-                                            {paper.blurb}
-                                        </p>
-                                        <ShopLink href={href} accent={ACCENT}>
-                                            {formatCta(sections.shop_by_paper.cta_template, paper.name)}
-                                        </ShopLink>
-                                    </Link>
-                                </li>
-                            );
-                        })}
+                                return (
+                                    <li key={paper.name} className="group">
+                                        <Link href={href} className="block">
+                                            <div className="overflow-hidden rounded-md bg-neutral-100">
+                                                <img
+                                                    src={paper.image_url}
+                                                    alt={paper.name}
+                                                    loading="lazy"
+                                                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                            </div>
+                                            <h3 className="mt-4 text-base font-bold text-neutral-900">
+                                                {paper.name}
+                                            </h3>
+                                            <p className="mt-1 text-sm text-neutral-600">
+                                                {paper.blurb}
+                                            </p>
+                                            <ShopLink
+                                                href={href}
+                                                accent={ACCENT}
+                                            >
+                                                {formatCta(
+                                                    sections.shop_by_paper
+                                                        .cta_template,
+                                                    paper.name,
+                                                )}
+                                            </ShopLink>
+                                        </Link>
+                                    </li>
+                                );
+                            },
+                        )}
                     </ul>
                 </div>
             </section>
@@ -203,31 +222,43 @@ export default function BusinessCardsLanding() {
                         accent={ACCENT}
                     />
                     <ul className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-                        {sections.shop_by_size.items.map((size: any, i: number) => {
-                            const href = sizeHrefs[i] ?? '/shop?cat=business-cards';
+                        {sections.shop_by_size.items.map(
+                            (size: any, i: number) => {
+                                const href =
+                                    sizeHrefs[i] ?? '/shop?cat=business-cards';
 
-                            return (
-                                <li key={size.name} className="group">
-                                    <Link href={href} className="block">
-                                        <div className="overflow-hidden rounded-md bg-neutral-100">
-                                            <img
-                                                src={size.image_url}
-                                                alt={size.name}
-                                                loading="lazy"
-                                                className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                            />
-                                        </div>
-                                        <h3 className="mt-4 text-base font-bold text-neutral-900">
-                                            {size.name}
-                                        </h3>
-                                        <p className="mt-1 text-sm text-neutral-600">{size.blurb}</p>
-                                        <ShopLink href={href} accent={ACCENT}>
-                                            {formatCta(sections.shop_by_size.cta_template, size.name)}
-                                        </ShopLink>
-                                    </Link>
-                                </li>
-                            );
-                        })}
+                                return (
+                                    <li key={size.name} className="group">
+                                        <Link href={href} className="block">
+                                            <div className="overflow-hidden rounded-md bg-neutral-100">
+                                                <img
+                                                    src={size.image_url}
+                                                    alt={size.name}
+                                                    loading="lazy"
+                                                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                            </div>
+                                            <h3 className="mt-4 text-base font-bold text-neutral-900">
+                                                {size.name}
+                                            </h3>
+                                            <p className="mt-1 text-sm text-neutral-600">
+                                                {size.blurb}
+                                            </p>
+                                            <ShopLink
+                                                href={href}
+                                                accent={ACCENT}
+                                            >
+                                                {formatCta(
+                                                    sections.shop_by_size
+                                                        .cta_template,
+                                                    size.name,
+                                                )}
+                                            </ShopLink>
+                                        </Link>
+                                    </li>
+                                );
+                            },
+                        )}
                     </ul>
                 </div>
             </section>
@@ -246,7 +277,9 @@ export default function BusinessCardsLanding() {
                                 <Link href={finishHref} className="block">
                                     <div
                                         className={`overflow-hidden rounded-md ${
-                                            finish.emphasised ? 'bg-neutral-900' : 'bg-neutral-100'
+                                            finish.emphasised
+                                                ? 'bg-neutral-900'
+                                                : 'bg-neutral-100'
                                         }`}
                                     >
                                         <img
@@ -282,25 +315,43 @@ export default function BusinessCardsLanding() {
                                 className="text-xs font-semibold tracking-widest uppercase"
                                 style={{ color: ACCENT }}
                             >
-                                {sections.shop_by_finish.free_shipping_promo.eyebrow}
+                                {
+                                    sections.shop_by_finish.free_shipping_promo
+                                        .eyebrow
+                                }
                             </p>
                             <h3 className="mt-2 text-2xl font-bold text-neutral-900 sm:text-3xl">
-                                {sections.shop_by_finish.free_shipping_promo.heading}
+                                {
+                                    sections.shop_by_finish.free_shipping_promo
+                                        .heading
+                                }
                             </h3>
                             <p className="mt-3 text-sm text-neutral-700 sm:text-base">
-                                {sections.shop_by_finish.free_shipping_promo.body}
+                                {
+                                    sections.shop_by_finish.free_shipping_promo
+                                        .body
+                                }
                             </p>
                             <Link
                                 href="/shop?cat=business-cards"
                                 className="mt-5 inline-flex w-fit items-center gap-2 rounded-md border border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                             >
-                                {sections.shop_by_finish.free_shipping_promo.cta}
+                                {
+                                    sections.shop_by_finish.free_shipping_promo
+                                        .cta
+                                }
                                 <ArrowRight className="size-4" />
                             </Link>
                         </div>
                         <img
-                            src={sections.shop_by_finish.free_shipping_promo.image_url}
-                            alt={sections.shop_by_finish.free_shipping_promo.image_alt}
+                            src={
+                                sections.shop_by_finish.free_shipping_promo
+                                    .image_url
+                            }
+                            alt={
+                                sections.shop_by_finish.free_shipping_promo
+                                    .image_alt
+                            }
                             loading="lazy"
                             className="h-64 w-full object-cover sm:h-full"
                         />
@@ -356,76 +407,91 @@ export default function BusinessCardsLanding() {
                         accent={ACCENT}
                     />
                     <ul className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-                        {sections.make_your_own.items.map((entry: any, i: number) => {
-                            const Icon = designIcons[i] ?? Pencil;
+                        {sections.make_your_own.items.map(
+                            (entry: any, i: number) => {
+                                const Icon = designIcons[i] ?? Pencil;
 
-                            return (
-                                <li key={entry.name}>
-                                    <Link
-                                        href={designHref}
-                                        className="group flex h-full flex-col items-start rounded-lg border border-neutral-200 bg-white p-6 transition-all hover:-translate-y-0.5 hover:shadow-md"
-                                    >
-                                        <span
-                                            className="flex size-12 items-center justify-center rounded-full"
-                                            style={{ backgroundColor: `${ACCENT}1a`, color: ACCENT }}
+                                return (
+                                    <li key={entry.name}>
+                                        <Link
+                                            href={designHref}
+                                            className="group flex h-full flex-col items-start rounded-lg border border-neutral-200 bg-white p-6 transition-all hover:-translate-y-0.5 hover:shadow-md"
                                         >
-                                            <Icon className="size-5" />
-                                        </span>
-                                        <h3 className="mt-5 text-lg font-bold text-neutral-900">
-                                            {entry.name}
-                                        </h3>
-                                        <p className="mt-2 text-sm text-neutral-600">{entry.blurb}</p>
-                                        <span
-                                            className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-semibold group-hover:underline"
-                                            style={{ color: ACCENT }}
-                                        >
-                                            {entry.cta} <ChevronRight className="size-3.5" />
-                                        </span>
-                                    </Link>
-                                </li>
-                            );
-                        })}
+                                            <span
+                                                className="flex size-12 items-center justify-center rounded-full"
+                                                style={{
+                                                    backgroundColor: `${ACCENT}1a`,
+                                                    color: ACCENT,
+                                                }}
+                                            >
+                                                <Icon className="size-5" />
+                                            </span>
+                                            <h3 className="mt-5 text-lg font-bold text-neutral-900">
+                                                {entry.name}
+                                            </h3>
+                                            <p className="mt-2 text-sm text-neutral-600">
+                                                {entry.blurb}
+                                            </p>
+                                            <span
+                                                className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-semibold group-hover:underline"
+                                                style={{ color: ACCENT }}
+                                            >
+                                                {entry.cta}{' '}
+                                                <ChevronRight className="size-3.5" />
+                                            </span>
+                                        </Link>
+                                    </li>
+                                );
+                            },
+                        )}
                     </ul>
                 </div>
             </section>
 
-            {/* 7. Why PrintPandora? --------------------------------------- */}
+            {/* 7. Why InkPavo? --------------------------------------- */}
             <section style={{ backgroundColor: WARM_BG }}>
                 <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 lg:grid-cols-[1fr_2fr] lg:gap-16 lg:py-20">
                     <div className="flex flex-col justify-center">
                         <h2 className="text-3xl font-bold text-neutral-900 sm:text-4xl">
-                            {sections.why_printpandora.heading}
+                            {sections.why_inkpavo.heading}
                         </h2>
                         <p className="mt-3 text-sm text-neutral-700 sm:text-base">
-                            {sections.why_printpandora.body}
+                            {sections.why_inkpavo.body}
                         </p>
                         <Link
                             href="/about"
                             className="mt-6 inline-flex w-fit items-center gap-2 rounded-md border border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                         >
-                            {sections.why_printpandora.cta}
+                            {sections.why_inkpavo.cta}
                             <ArrowRight className="size-4" />
                         </Link>
                     </div>
                     <ul className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-                        {sections.why_printpandora.perks.map((perk: any, i: number) => {
-                            const Icon = perkIcons[i] ?? ShieldCheck;
+                        {sections.why_inkpavo.perks.map(
+                            (perk: any, i: number) => {
+                                const Icon = perkIcons[i] ?? ShieldCheck;
 
-                            return (
-                                <li key={perk.name}>
-                                    <span
-                                        className="flex size-11 items-center justify-center rounded-full"
-                                        style={{ backgroundColor: 'white', color: ACCENT }}
-                                    >
-                                        <Icon className="size-5" />
-                                    </span>
-                                    <h3 className="mt-4 text-base font-bold text-neutral-900">
-                                        {perk.name}
-                                    </h3>
-                                    <p className="mt-1 text-sm text-neutral-700">{perk.blurb}</p>
-                                </li>
-                            );
-                        })}
+                                return (
+                                    <li key={perk.name}>
+                                        <span
+                                            className="flex size-11 items-center justify-center rounded-full"
+                                            style={{
+                                                backgroundColor: 'white',
+                                                color: ACCENT,
+                                            }}
+                                        >
+                                            <Icon className="size-5" />
+                                        </span>
+                                        <h3 className="mt-4 text-base font-bold text-neutral-900">
+                                            {perk.name}
+                                        </h3>
+                                        <p className="mt-1 text-sm text-neutral-700">
+                                            {perk.blurb}
+                                        </p>
+                                    </li>
+                                );
+                            },
+                        )}
                     </ul>
                 </div>
             </section>
@@ -452,7 +518,9 @@ export default function BusinessCardsLanding() {
                                 <h3 className="mt-4 text-base font-bold text-neutral-900">
                                     {tip.title}
                                 </h3>
-                                <p className="mt-1 text-sm text-neutral-600">{tip.blurb}</p>
+                                <p className="mt-1 text-sm text-neutral-600">
+                                    {tip.blurb}
+                                </p>
                             </li>
                         ))}
                     </ul>
@@ -468,7 +536,9 @@ export default function BusinessCardsLanding() {
                     <ul className="grid grid-cols-1 gap-x-10 gap-y-8 md:grid-cols-2">
                         {c.faq.map((faq: any) => (
                             <li key={faq.question}>
-                                <h3 className="text-sm font-bold text-neutral-900">{faq.question}</h3>
+                                <h3 className="text-sm font-bold text-neutral-900">
+                                    {faq.question}
+                                </h3>
                                 <p className="mt-2 text-sm leading-relaxed text-neutral-600">
                                     {faq.answer}
                                 </p>
@@ -487,30 +557,39 @@ export default function BusinessCardsLanding() {
                         accent={ACCENT}
                     />
                     <ul className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                        {sections.cross_sell.items.map((item: any, i: number) => {
-                            const href = crossSellHrefs[i] ?? '/shop';
+                        {sections.cross_sell.items.map(
+                            (item: any, i: number) => {
+                                const href = crossSellHrefs[i] ?? '/shop';
 
-                            return (
-                                <li key={item.name} className="group">
-                                    <Link href={href} className="block">
-                                        <div className="overflow-hidden rounded-md bg-neutral-100">
-                                            <img
-                                                src={item.image_url}
-                                                alt={item.name}
-                                                loading="lazy"
-                                                className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                            />
-                                        </div>
-                                        <h3 className="mt-3 text-base font-bold text-neutral-900">
-                                            {item.name}
-                                        </h3>
-                                        <ShopLink href={href} accent={ACCENT}>
-                                            {formatCta(sections.cross_sell.cta_template, item.name)}
-                                        </ShopLink>
-                                    </Link>
-                                </li>
-                            );
-                        })}
+                                return (
+                                    <li key={item.name} className="group">
+                                        <Link href={href} className="block">
+                                            <div className="overflow-hidden rounded-md bg-neutral-100">
+                                                <img
+                                                    src={item.image_url}
+                                                    alt={item.name}
+                                                    loading="lazy"
+                                                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                            </div>
+                                            <h3 className="mt-3 text-base font-bold text-neutral-900">
+                                                {item.name}
+                                            </h3>
+                                            <ShopLink
+                                                href={href}
+                                                accent={ACCENT}
+                                            >
+                                                {formatCta(
+                                                    sections.cross_sell
+                                                        .cta_template,
+                                                    item.name,
+                                                )}
+                                            </ShopLink>
+                                        </Link>
+                                    </li>
+                                );
+                            },
+                        )}
                     </ul>
                 </div>
             </section>

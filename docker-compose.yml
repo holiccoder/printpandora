@@ -6,8 +6,8 @@ services:
             args:
                 WWWUSER: '${WWWUSER:-1337}'
                 WWWGROUP: '${WWWGROUP:-33}'
-        image: printpandora:latest
-        container_name: printpandora-app
+        image: inkpavo:latest
+        container_name: inkpavo-app
         ports:
             - '${APP_PORT:-8080}:80'
             - '${VITE_PORT:-5173}:5173'
@@ -29,7 +29,7 @@ services:
             - 'sail-vendor:/var/www/html/vendor'
             - 'sail-node-modules:/var/www/html/node_modules'
         networks:
-            - printpandora
+            - inkpavo
         healthcheck:
             test: ['CMD', 'curl', '-f', 'http://localhost:80/up']
             interval: 30s
@@ -38,7 +38,7 @@ services:
             start_period: 40s
 
 networks:
-    printpandora:
+    inkpavo:
         driver: bridge
 
 volumes:

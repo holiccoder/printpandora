@@ -68,7 +68,9 @@ export default function Register({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">{c.labels.password}</Label>
+                                <Label htmlFor="password">
+                                    {c.labels.password}
+                                </Label>
                                 <PasswordInput
                                     id="password"
                                     required
@@ -91,7 +93,9 @@ export default function Register({ passwordRules }: Props) {
                                     tabIndex={4}
                                     autoComplete="new-password"
                                     name="password_confirmation"
-                                    placeholder={c.placeholders.password_confirmation}
+                                    placeholder={
+                                        c.placeholders.password_confirmation
+                                    }
                                     passwordrules={passwordRules}
                                 />
                                 <InputError

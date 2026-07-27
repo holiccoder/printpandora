@@ -39,8 +39,8 @@ export function AnnouncementBar({ messages, intervalMs, className }: Props) {
 
     useEffect(() => {
         if (items.length <= 1) {
-return;
-}
+            return;
+        }
 
         const id = window.setInterval(() => {
             setIndex((i) => (i + 1) % items.length);
@@ -50,13 +50,13 @@ return;
     }, [items.length, tick]);
 
     if (items.length === 0) {
-return null;
-}
+        return null;
+    }
 
     return (
         <div
             className={cn(
-                'relative overflow-hidden bg-[#0f4c3a] text-white',
+                'relative overflow-hidden bg-[#800020] text-white',
                 className,
             )}
             role="region"
@@ -85,7 +85,9 @@ return null;
                                         'transition-transform duration-700 ease-in-out',
                                     isActive && 'translate-y-0',
                                     wasActive && '-translate-y-full',
-                                    !isActive && !wasActive && 'translate-y-full',
+                                    !isActive &&
+                                        !wasActive &&
+                                        'translate-y-full',
                                 )}
                             >
                                 {msg.text}

@@ -1,5 +1,14 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { ChevronDown, ChevronRight, LogOut, Menu, Package, Search, User, UserCog } from 'lucide-react';
+import {
+    ChevronDown,
+    ChevronRight,
+    LogOut,
+    Menu,
+    Package,
+    Search,
+    User,
+    UserCog,
+} from 'lucide-react';
 import { useState } from 'react';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Button } from '@/components/ui/button';
@@ -59,49 +68,62 @@ type NavCategory = {
     mega?: MegaMenu;
 };
 
-const ACTIVE_GREEN = 'text-[#0f4c3a]';
+const ACTIVE_GREEN = 'text-[#800020]';
 const INACTIVE_GREY = 'text-neutral-500 hover:text-neutral-900';
 
-export function StorefrontHeader({ activeCategory }: { activeCategory?: string } = {}) {
+export function StorefrontHeader({
+    activeCategory,
+}: { activeCategory?: string } = {}) {
     const chrome = useContent('global_chrome');
     const h = chrome.header;
-    const { auth } = usePage().props as unknown as { auth?: { user?: { name?: string } | null } };
+    const { auth } = usePage().props as unknown as {
+        auth?: { user?: { name?: string } | null };
+    };
     const user = auth?.user;
 
     // Build nav categories from JSON content
-    const navCategories: NavCategory[] = h.top_navigation.map((nav: NavLink) => {
-        if (nav.label === 'Business Cards') {
-            const bc = h.business_cards_mega_menu;
+    const navCategories: NavCategory[] = h.top_navigation.map(
+        (nav: NavLink) => {
+            if (nav.label === 'Business Cards') {
+                const bc = h.business_cards_mega_menu;
 
-            return {
-                label: nav.label,
-                href: nav.href,
-                mega: {
-                    groups: bc.link_groups.map((g) => ({
-                        links: g.links.map((l) => ({
-                            ...l,
-                            children: l.children as MegaLink[] | undefined,
+                return {
+                    label: nav.label,
+                    href: nav.href,
+                    mega: {
+                        groups: bc.link_groups.map((g) => ({
+                            links: g.links.map((l) => ({
+                                ...l,
+                                children: l.children as MegaLink[] | undefined,
+                            })),
                         })),
-                    })),
-                    promos: bc.promo_cards as [PromoBlock, PromoBlock],
-                },
-            };
-        }
+                        promos: bc.promo_cards as [PromoBlock, PromoBlock],
+                    },
+                };
+            }
 
-        return { label: nav.label, href: nav.href };
-    });
+            return { label: nav.label, href: nav.href };
+        },
+    );
 
     return (
-        <header className="relative z-40 w-full border-b border-neutral-200 bg-white">
+        <header className="[--popover:#ffffff] relative z-40 w-full border-b border-neutral-200 bg-white">
             {/* top row — mobile menu / logo / search / cart */}
             <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4">
                 {/* mobile menu */}
                 <div className="lg:hidden">
-                    <MobileNav activeCategory={activeCategory} navCategories={navCategories} />
+                    <MobileNav
+                        activeCategory={activeCategory}
+                        navCategories={navCategories}
+                    />
                 </div>
 
                 {/* logo */}
-                <Link href={home()} className="flex items-center gap-2" aria-label={h.logo.home_link_aria_label}>
+                <Link
+                    href={home()}
+                    className="flex items-center gap-2"
+                    aria-label={h.logo.home_link_aria_label}
+                >
                     <img
                         src={h.logo.image_url}
                         alt={h.logo.alt}
@@ -120,13 +142,13 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                         {h.search.label_sr_only}
                     </label>
                     <div className="relative">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
+                        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-neutral-400" />
                         <input
                             id="storefront-search"
                             name={h.search.input_name}
                             type="search"
                             placeholder={h.search.placeholder}
-                            className="h-10 w-full rounded-full border border-neutral-200 bg-neutral-50 pl-10 pr-4 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-[#0f4c3a] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0f4c3a]/20"
+                            className="h-10 w-full rounded-full border border-neutral-200 bg-neutral-50 pr-4 pl-10 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-[#800020] focus:bg-white focus:ring-2 focus:ring-[#800020]/20 focus:outline-none"
                         />
                     </div>
                 </form>
@@ -148,17 +170,23 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                             <DropdownMenuTrigger asChild>
                                 <Button
                                     variant="ghost"
-                                    className="hidden h-9 gap-2 px-3 text-sm font-medium text-neutral-700 hover:text-[#0f4c3a] lg:inline-flex"
+                                    className="hidden h-9 gap-2 px-3 text-sm font-medium text-neutral-700 hover:text-[#800020] lg:inline-flex"
                                 >
                                     <User className="size-4" />
                                     <span>{h.auth.dashboard_button_label}</span>
                                     <ChevronDown className="size-3.5 opacity-70" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" sideOffset={8} className="w-56">
+                            <DropdownMenuContent
+                                align="end"
+                                sideOffset={8}
+                                className="w-56"
+                            >
                                 {user.name && (
                                     <DropdownMenuLabel className="font-normal">
-                                        <p className="text-xs text-neutral-500">{h.auth.signed_in_as_label}</p>
+                                        <p className="text-xs text-neutral-500">
+                                            {h.auth.signed_in_as_label}
+                                        </p>
                                         <p className="truncate text-sm font-semibold text-neutral-900">
                                             {user.name}
                                         </p>
@@ -166,19 +194,28 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                                 )}
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild>
-                                    <Link href={dashboard()} className="cursor-pointer">
+                                    <Link
+                                        href={dashboard()}
+                                        className="cursor-pointer"
+                                    >
                                         <User className="mr-2 size-4" />
                                         {h.auth.dropdown_dashboard_label}
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href={h.auth.dropdown_profile_href} className="cursor-pointer">
+                                    <Link
+                                        href={h.auth.dropdown_profile_href}
+                                        className="cursor-pointer"
+                                    >
                                         <UserCog className="mr-2 size-4" />
                                         {h.auth.dropdown_profile_label}
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href={h.auth.dropdown_orders_href} className="cursor-pointer">
+                                    <Link
+                                        href={h.auth.dropdown_orders_href}
+                                        className="cursor-pointer"
+                                    >
                                         <Package className="mr-2 size-4" />
                                         {h.auth.dropdown_orders_label}
                                     </Link>
@@ -203,15 +240,19 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                             <Button
                                 asChild
                                 variant="ghost"
-                                className="h-9 px-3 text-sm font-medium text-neutral-700 hover:text-[#0f4c3a]"
+                                className="h-9 px-3 text-sm font-medium text-neutral-700 hover:text-[#800020]"
                             >
-                                <Link href={login()}>{h.auth.logged_out_login_label}</Link>
+                                <Link href={login()}>
+                                    {h.auth.logged_out_login_label}
+                                </Link>
                             </Button>
                             <Button
                                 asChild
                                 className="h-9 bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                             >
-                                <Link href={register()}>{h.auth.logged_out_register_label}</Link>
+                                <Link href={register()}>
+                                    {h.auth.logged_out_register_label}
+                                </Link>
                             </Button>
                         </div>
                     )}
@@ -244,7 +285,8 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                         <NavigationMenuList className="flex h-12 items-stretch justify-start gap-0">
                             {navCategories.map((cat) => {
                                 const isActive =
-                                    activeCategory != null && cat.label === activeCategory;
+                                    activeCategory != null &&
+                                    cat.label === activeCategory;
                                 const triggerCls = cn(
                                     'relative flex h-12 items-center px-4 text-base font-medium transition-colors',
                                     isActive ? ACTIVE_GREEN : INACTIVE_GREY,
@@ -253,9 +295,14 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                                 if (!cat.mega) {
                                     return (
                                         <NavigationMenuItem key={cat.label}>
-                                            <Link href={cat.href} className={triggerCls}>
+                                            <Link
+                                                href={cat.href}
+                                                className={triggerCls}
+                                            >
                                                 <span>{cat.label}</span>
-                                                {isActive && <ActiveUnderline />}
+                                                {isActive && (
+                                                    <ActiveUnderline />
+                                                )}
                                             </Link>
                                         </NavigationMenuItem>
                                     );
@@ -268,7 +315,7 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                                                 triggerCls,
                                                 // Override the shadcn pill background — the storefront
                                                 // header uses an underline indicator instead.
-                                                'rounded-none bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent data-[active=true]:bg-transparent',
+                                                'rounded-none bg-transparent hover:bg-transparent focus:bg-transparent data-[active=true]:bg-transparent data-[state=open]:bg-transparent',
                                                 // Hide the chevron icon on this header
                                                 '[&>svg]:hidden',
                                             )}
@@ -283,7 +330,7 @@ export function StorefrontHeader({ activeCategory }: { activeCategory?: string }
                                             // intentionally covered while the dropdown is open. z-50 keeps
                                             // it above sibling sections (hero carousel, banners) that open
                                             // their own stacking context with `position: relative`.
-                                            className="!fixed !inset-x-0 !top-[164px] !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 bg-white p-0 shadow-lg"
+                                            className="!fixed !inset-x-0 !top-[164px] !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 !bg-white p-0 shadow-lg"
                                         >
                                             <MegaPanel mega={cat.mega} />
                                         </NavigationMenuContent>
@@ -302,7 +349,7 @@ function ActiveUnderline() {
     return (
         <span
             aria-hidden
-            className="pointer-events-none absolute inset-x-3 bottom-0 h-[3px] rounded-t-sm bg-[#0f4c3a]"
+            className="pointer-events-none absolute inset-x-3 bottom-0 h-[3px] rounded-t-sm bg-[#800020]"
         />
     );
 }
@@ -326,28 +373,32 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                         <ul className="space-y-1">
                             {group.links.map((link) => {
                                 const hasChildren = !!link.children?.length;
-                                const isActive = activeSub?.label === link.label;
+                                const isActive =
+                                    activeSub?.label === link.label;
 
                                 return (
                                     <li
                                         key={link.label}
                                         onMouseEnter={() =>
-                                            setActiveSub(hasChildren ? link : null)
+                                            setActiveSub(
+                                                hasChildren ? link : null,
+                                            )
                                         }
                                     >
                                         <Link
                                             href={link.href}
                                             className={cn(
-                                                'group flex items-center justify-between rounded-sm py-1 text-sm text-neutral-700 hover:text-[#0f4c3a]',
-                                                isActive && 'text-[#0f4c3a]',
+                                                'group flex items-center justify-between rounded-sm py-1 text-sm text-neutral-700 hover:text-[#800020]',
+                                                isActive && 'text-[#800020]',
                                             )}
                                         >
                                             <span>{link.label}</span>
                                             {hasChildren && (
                                                 <ChevronRight
                                                     className={cn(
-                                                        'size-4 text-neutral-400 group-hover:text-[#0f4c3a]',
-                                                        isActive && 'text-[#0f4c3a]',
+                                                        'size-4 text-neutral-400 group-hover:text-[#800020]',
+                                                        isActive &&
+                                                            'text-[#800020]',
                                                     )}
                                                 />
                                             )}
@@ -371,7 +422,7 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
             <div className="col-span-12 md:col-span-3">
                 {activeSub && (
                     <div className="rounded-md border border-neutral-200 bg-white p-4">
-                        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                        <p className="mb-3 text-xs font-semibold tracking-wide text-neutral-500 uppercase">
                             {activeSub.label}
                         </p>
                         <ul className="space-y-1">
@@ -379,7 +430,7 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                                 <li key={sub.label}>
                                     <Link
                                         href={sub.href}
-                                        className="block rounded-sm py-1 text-sm text-neutral-700 hover:text-[#0f4c3a]"
+                                        className="block rounded-sm py-1 text-sm text-neutral-700 hover:text-[#800020]"
                                     >
                                         {sub.label}
                                     </Link>
@@ -403,7 +454,10 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
 function PromoCard({ promo }: { promo: PromoBlock }) {
     return (
         <div className="flex flex-col">
-            <Link href={promo.cta_href} className="block overflow-hidden rounded-md bg-white">
+            <Link
+                href={promo.cta_href}
+                className="block overflow-hidden rounded-md bg-white"
+            >
                 <img
                     src={promo.image_url}
                     alt={promo.image_alt}
@@ -411,7 +465,7 @@ function PromoCard({ promo }: { promo: PromoBlock }) {
                     loading="lazy"
                 />
             </Link>
-            <h3 className="mt-2 text-sm font-bold leading-snug text-neutral-900">
+            <h3 className="mt-2 text-sm leading-snug font-bold text-neutral-900">
                 {promo.title}
             </h3>
             <p className="mt-1 line-clamp-2 text-xs leading-snug text-neutral-600">
@@ -419,7 +473,7 @@ function PromoCard({ promo }: { promo: PromoBlock }) {
             </p>
             <Link
                 href={promo.cta_href}
-                className="mt-2 inline-flex items-center gap-0.5 text-xs font-semibold text-[#0f4c3a] hover:underline"
+                className="mt-2 inline-flex items-center gap-0.5 text-xs font-semibold text-[#800020] hover:underline"
             >
                 {promo.cta_label} <ChevronRight className="size-3.5" />
             </Link>
@@ -432,7 +486,13 @@ function PromoCard({ promo }: { promo: PromoBlock }) {
  * link to the category page; sub-categories still show as a nested list
  * so the user can drill in from a phone.
  */
-function MobileNav({ activeCategory, navCategories }: { activeCategory?: string; navCategories: NavCategory[] }) {
+function MobileNav({
+    activeCategory,
+    navCategories,
+}: {
+    activeCategory?: string;
+    navCategories: NavCategory[];
+}) {
     const [openMega, setOpenMega] = useState<string | null>(null);
     const chrome = useContent('global_chrome');
     const h = chrome.header;
@@ -440,7 +500,12 @@ function MobileNav({ activeCategory, navCategories }: { activeCategory?: string;
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9" aria-label={h.mobile_nav.open_menu_aria_label}>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9"
+                    aria-label={h.mobile_nav.open_menu_aria_label}
+                >
                     <Menu className="size-5" />
                 </Button>
             </SheetTrigger>
@@ -457,18 +522,28 @@ function MobileNav({ activeCategory, navCategories }: { activeCategory?: string;
                 <nav className="py-2">
                     {navCategories.map((cat) => {
                         const isActive =
-                            activeCategory != null && cat.label === activeCategory;
+                            activeCategory != null &&
+                            cat.label === activeCategory;
                         const isOpen = openMega === cat.label;
 
                         return (
-                            <div key={cat.label} className="border-b border-neutral-100 last:border-b-0">
+                            <div
+                                key={cat.label}
+                                className="border-b border-neutral-100 last:border-b-0"
+                            >
                                 {cat.mega ? (
                                     <button
                                         type="button"
-                                        onClick={() => setOpenMega(isOpen ? null : cat.label)}
+                                        onClick={() =>
+                                            setOpenMega(
+                                                isOpen ? null : cat.label,
+                                            )
+                                        }
                                         className={cn(
                                             'flex w-full items-center justify-between px-4 py-3 text-sm font-medium',
-                                            isActive ? ACTIVE_GREEN : 'text-neutral-700',
+                                            isActive
+                                                ? ACTIVE_GREEN
+                                                : 'text-neutral-700',
                                         )}
                                     >
                                         <span>{cat.label}</span>
@@ -484,7 +559,9 @@ function MobileNav({ activeCategory, navCategories }: { activeCategory?: string;
                                         href={cat.href}
                                         className={cn(
                                             'flex w-full items-center justify-between px-4 py-3 text-sm font-medium',
-                                            isActive ? ACTIVE_GREEN : 'text-neutral-700',
+                                            isActive
+                                                ? ACTIVE_GREEN
+                                                : 'text-neutral-700',
                                         )}
                                     >
                                         {cat.label}
@@ -492,16 +569,18 @@ function MobileNav({ activeCategory, navCategories }: { activeCategory?: string;
                                 )}
                                 {cat.mega && isOpen && (
                                     <ul className="bg-neutral-50 pb-2">
-                                        {cat.mega.groups.flatMap((g) => g.links).map((link) => (
-                                            <li key={link.label}>
-                                                <Link
-                                                    href={link.href}
-                                                    className="block px-6 py-2 text-sm text-neutral-600 hover:text-[#0f4c3a]"
-                                                >
-                                                    {link.label}
-                                                </Link>
-                                            </li>
-                                        ))}
+                                        {cat.mega.groups
+                                            .flatMap((g) => g.links)
+                                            .map((link) => (
+                                                <li key={link.label}>
+                                                    <Link
+                                                        href={link.href}
+                                                        className="block px-6 py-2 text-sm text-neutral-600 hover:text-[#800020]"
+                                                    >
+                                                        {link.label}
+                                                    </Link>
+                                                </li>
+                                            ))}
                                     </ul>
                                 )}
                             </div>

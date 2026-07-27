@@ -3,33 +3,37 @@
 > 目标：宝塔面板一键环境 + **git push 自动持续部署**。
 > 架构：`git push → GitHub Webhook → 宝塔 WebHook 插件 → 服务器执行 deploy.sh`
 
----
+***
 
 ## 0. 前置要求
 
-| 软件 | 版本 | 说明 |
-|---|---|---|
-| PHP | **8.4**（必须 ≥8.4） | 宝塔「软件商店 → PHP-8.4」安装；扩展需含：`pdo_mysql` `mysqli` `mbstring` `openssl` `curl` `fileinfo` `intl` `gd` `zip` |
-| Nginx | 任意稳定版 | 宝塔默认即可 |
-| MySQL | **8.0+** | 宝塔「软件商店 → MySQL」安装（生产数据库） |
-| Node.js | **20+** | 宝塔「软件商店 → Node 版本管理器」安装 |
-| Composer | 2.x | 宝塔软件商店安装，或命令行安装 |
+| 软件       | 版本               | 说明                                                                                                      |
+| -------- | ---------------- | ------------------------------------------------------------------------------------------------------- |
+| PHP      | **8.4**（必须 ≥8.4） | 宝塔「软件商店 → PHP-8.4」安装；扩展需含：`pdo_mysql` `mysqli` `mbstring` `openssl` `curl` `fileinfo` `intl` `gd` `zip` |
+| Nginx    | 任意稳定版            | 宝塔默认即可                                                                                                  |
+| MySQL    | **8.0+**         | 宝塔「软件商店 → MySQL」安装（生产数据库）                                                                               |
+| Node.js  | **20+**          | 宝塔「软件商店 → Node 版本管理器」安装                                                                                 |
+| Composer | 2.x              | 宝塔软件商店安装，或命令行安装                                                                                         |
 
 生产环境使用 **MySQL**；本地开发环境可继续用 SQLite，互不影响（迁移与 seeder 两者通用）。
 
----
+***
 
 ## 1. 创建网站
 
 1. 宝塔 →「网站」→「添加站点」：
-   - 域名：填你的域名（先解析到服务器 IP）
-   - PHP 版本：选 **PHP-84**
+
+   * 域名：填你的域名（先解析到服务器 IP）
+
+   * PHP 版本：选 **PHP-84**
 2. 站点设置：
-   - **运行目录**：`/public`
-   - **伪静态**：选 `laravel5`（或填入 `try_files $uri $uri/ /index.php?$query_string;`）
+
+   * **运行目录**：`/public`
+
+   * **伪静态**：选 `laravel5`（或填入 `try_files $uri $uri/ /index.php?$query_string;`）
 3. SSL：站点设置 → SSL → Let's Encrypt 一键申请 → 强制 HTTPS
 
----
+***
 
 ## 2. 首次部署（手动执行一次）
 
@@ -88,7 +92,7 @@ git config --global --add safe.directory /www/wwwroot/printpandora
 cd /www/wwwroot/printpandora && php artisan schedule:run >> /dev/null 2>&1
 ```
 
----
+***
 
 ## 4. 持续部署（push 自动发布）
 
@@ -96,9 +100,12 @@ cd /www/wwwroot/printpandora && php artisan schedule:run >> /dev/null 2>&1
 
 1. 宝塔「软件商店」搜索并安装 **WebHook** 插件
 2. 打开插件 →「添加」：
-   - 名称：`printpandora-deploy`
-   - 执行脚本：粘贴 `deploy.sh` 的内容（或写 `bash /www/wwwroot/printpandora/deploy.sh`）
-   - 密钥：自定义一串复杂随机字符串（记下来）
+
+   * 名称：`printpandora-deploy`
+
+   * 执行脚本：粘贴 `deploy.sh` 的内容（或写 `bash /www/wwwroot/printpandora/deploy.sh`）
+
+   * 密钥：自定义一串复杂随机字符串（记下来）
 3. 保存后插件会显示完整的 Hook URL，形如：
    `http://面板地址:8888/hook?access_key=你的密钥`
 4. **放行端口**：宝塔「安全」+ 云服务器安全组，确认面板端口（默认 8888）对 GitHub 可达
@@ -107,12 +114,12 @@ cd /www/wwwroot/printpandora && php artisan schedule:run >> /dev/null 2>&1
 
 仓库 → **Settings → Webhooks → Add webhook**：
 
-| 字段 | 值 |
-|---|---|
-| Payload URL | 上一步宝塔给的完整 Hook URL |
-| Content type | `application/json` |
-| Secret | 宝塔 WebHook 的密钥（如插件要求） |
-| 触发事件 | Just the push event |
+| 字段           | 值                     |
+| ------------ | --------------------- |
+| Payload URL  | 上一步宝塔给的完整 Hook URL    |
+| Content type | `application/json`    |
+| Secret       | 宝塔 WebHook 的密钥（如插件要求） |
+| 触发事件         | Just the push event   |
 
 ### 4.3 验证
 
@@ -121,26 +128,26 @@ cd /www/wwwroot/printpandora && php artisan schedule:run >> /dev/null 2>&1
 3. 宝塔 WebHook 插件 → 查看执行日志，确认 deploy.sh 各步骤输出
 4. 网站刷新确认改动生效
 
----
+***
 
 ## 5. 日常运维
 
-| 操作 | 命令 / 位置 |
-|---|---|
-| 手动部署 | `bash /www/wwwroot/printpandora/deploy.sh` |
-| 回滚 | `cd /www/wwwroot/printpandora && git reset --hard <上一个commit> && bash deploy.sh` |
-| 查看部署日志 | 宝塔 WebHook 插件日志面板 |
-| 查看应用日志 | `storage/logs/laravel.log` |
+| 操作     | 命令 / 位置                                                                          |
+| ------ | -------------------------------------------------------------------------------- |
+| 手动部署   | `bash /www/wwwroot/printpandora/deploy.sh`                                       |
+| 回滚     | `cd /www/wwwroot/printpandora && git reset --hard <上一个commit> && bash deploy.sh` |
+| 查看部署日志 | 宝塔 WebHook 插件日志面板                                                                |
+| 查看应用日志 | `storage/logs/laravel.log`                                                       |
 
 ## 6. 故障排查
 
-| 症状 | 原因与解法 |
-|---|---|
+| 症状                                       | 原因与解法                                                                                            |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | WebHook 日志报 `detected dubious ownership` | root 操作 www 目录的 git 仓库 → 执行 `git config --global --add safe.directory /www/wwwroot/printpandora` |
-| `npm run build` 被杀（Killed） | 内存不足 → 加 swap，或把 deploy.sh 第 4 步换成注释里的 `NODE_OPTIONS=--max-old-space-size=1024` 版本 |
-| 页面 500 / 空白 | 查 `storage/logs/laravel.log`；多半是 `.env` 或 `storage` 权限问题 |
-| composer 报 PHP 版本不符 | 网站设置里 PHP 版本没切到 84；或 CLI 的 php 是旧版 → `deploy.sh` 里 `PHP_BIN` 改绝对路径 `/www/server/php/84/bin/php` |
-| GitHub delivery 超时/403 | 面板端口未放行 / access_key 不匹配 / 宝塔防火墙拦截 |
+| `npm run build` 被杀（Killed）               | 内存不足 → 加 swap，或把 deploy.sh 第 4 步换成注释里的 `NODE_OPTIONS=--max-old-space-size=1024` 版本               |
+| 页面 500 / 空白                              | 查 `storage/logs/laravel.log`；多半是 `.env` 或 `storage` 权限问题                                         |
+| composer 报 PHP 版本不符                      | 网站设置里 PHP 版本没切到 84；或 CLI 的 php 是旧版 → `deploy.sh` 里 `PHP_BIN` 改绝对路径 `/www/server/php/84/bin/php`  |
+| GitHub delivery 超时/403                   | 面板端口未放行 / access\_key 不匹配 / 宝塔防火墙拦截                                                              |
 
 ## 7. 备选方案：GitHub Actions + SSH
 

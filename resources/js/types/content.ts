@@ -152,10 +152,7 @@ export interface LegalSection {
     heading?: string;
     level?: string;
     body?: string;
-    list_items?: Array<
-        | string
-        | { strong?: string; text?: string }
-    >;
+    list_items?: Array<string | { strong?: string; text?: string }>;
     email_link?: string;
     contact_link_text?: string;
     contact_link_href?: string;
@@ -202,6 +199,20 @@ export interface AboutPageContent {
     closing_link_href: string;
 }
 
+export interface DesignServicePageContent {
+    seo: SeoMeta;
+    heading: string;
+    intro: string;
+    process_heading: string;
+    process_steps: string[];
+    notes_heading: string;
+    notes: string[];
+    form_heading: string;
+    form_description: string;
+    form_submit_label: string;
+    form_product_options: string[];
+}
+
 // ---------------------------------------------------------------------------
 // Tier C — storefront pages
 // ---------------------------------------------------------------------------
@@ -216,12 +227,18 @@ export interface SeoMeta {
 }
 
 export interface HeroSlide {
+    eyebrow?: string;
     headline: string;
     subheadline: string;
     cta_text: string;
     cta_href: string;
     image_url: string;
     alt: string;
+    features?: Array<{
+        icon: string;
+        title: string;
+        description: string;
+    }>;
 }
 
 export interface PerkItem {
@@ -339,16 +356,22 @@ export interface HomePageContent {
         slides: HeroSlide[];
     };
     popular_products: {
-        section_title: string;
-        section_description: string;
-        footer_cta_text: string;
-        footer_cta_href: string;
-        products: PopularProduct[];
+        eyebrow: string;
+        headline: string;
+        description: string;
+        cta_text: string;
+        cta_href: string;
+        cards: Array<{
+            title: string;
+            description: string;
+            image_url: string;
+            href: string;
+        }>;
     };
     perks: {
         section_aria_label: string;
         items: PerkItem[];
-        trustpilot: { label: string; href: string };
+
     };
     sample_pack_banner: {
         title: string;
@@ -363,6 +386,13 @@ export interface HomePageContent {
         section_title: string;
         view_all_cta: string;
         view_all_href: string;
+    };
+    logo_wall: {
+        heading: string;
+        logos: Array<{
+            text: string;
+            font: string;
+        }>;
     };
 }
 
@@ -384,6 +414,7 @@ export interface ContentSections {
     terms_page: TermsPageContent;
     not_found_page: NotFoundPageContent;
     about_page: AboutPageContent;
+    design_service_page: DesignServicePageContent;
     // untuned sections fall through to unknown
 }
 

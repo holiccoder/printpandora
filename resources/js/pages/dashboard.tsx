@@ -1,11 +1,17 @@
 // Content (labels/headings/links) sourced from `content/hardcoded-content.json` via useContent('dashboard_index_page').
 import { Link } from '@inertiajs/react';
-import { ChevronRight, MapPin, Package, ShieldCheck, User as UserIcon } from 'lucide-react';
+import {
+    ChevronRight,
+    MapPin,
+    Package,
+    ShieldCheck,
+    User as UserIcon,
+} from 'lucide-react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
-const ACCENT = '#0f4c3a';
+const ACCENT = '#800020';
 
 type RecentOrder = {
     id: number;
@@ -49,21 +55,26 @@ type Props = {
     affiliate: AffiliateInfo | null;
 };
 
-export default function Dashboard({ user, recentOrders, address, affiliate }: Props) {
+export default function Dashboard({
+    user,
+    recentOrders,
+    address,
+    affiliate,
+}: Props) {
     const c = useContent('dashboard_index_page') as any;
 
     return (
         <StorefrontLayout>
-            <SEO
-                title={c.seo.title}
-                description={c.seo.description}
-            />
+            <SEO title={c.seo.title} description={c.seo.description} />
 
             <section className="bg-neutral-50">
                 <div className="mx-auto max-w-7xl px-4 py-10 lg:py-14">
                     <header className="mb-8">
                         <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
-                            {String(c.welcome_heading_template).replace('{user.name}', user.name)}
+                            {String(c.welcome_heading_template).replace(
+                                '{user.name}',
+                                user.name,
+                            )}
                         </h1>
                         <p className="mt-2 text-sm text-neutral-600 sm:text-base">
                             {c.welcome_description}
@@ -72,9 +83,15 @@ export default function Dashboard({ user, recentOrders, address, affiliate }: Pr
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <ProfileCard user={user} c={c.cards.profile} />
-                        <RecentOrdersCard orders={recentOrders} c={c.cards.recent_orders} />
+                        <RecentOrdersCard
+                            orders={recentOrders}
+                            c={c.cards.recent_orders}
+                        />
                         <AddressCard address={address} c={c.cards.address} />
-                        <AffiliateCard affiliate={affiliate} c={c.cards.affiliate} />
+                        <AffiliateCard
+                            affiliate={affiliate}
+                            c={c.cards.affiliate}
+                        />
                     </div>
                 </div>
             </section>
@@ -100,7 +117,9 @@ function Card({
             <header className="flex items-center justify-between border-b border-neutral-100 px-5 py-4">
                 <div className="flex items-center gap-2">
                     <span style={{ color: ACCENT }}>{icon}</span>
-                    <h2 className="text-base font-bold text-neutral-900">{title}</h2>
+                    <h2 className="text-base font-bold text-neutral-900">
+                        {title}
+                    </h2>
                 </div>
                 {action}
             </header>
@@ -135,7 +154,7 @@ function ProfileCard({ user, c }: { user: Props['user']; c: any }) {
                         <span
                             className={
                                 verified
-                                    ? 'inline-flex items-center gap-1 text-[#0f4c3a]'
+                                    ? 'inline-flex items-center gap-1 text-[#800020]'
                                     : 'inline-flex items-center gap-1 text-amber-600'
                             }
                         >
@@ -185,15 +204,24 @@ function RecentOrdersCard({ orders, c }: { orders: RecentOrder[]; c: any }) {
             ) : (
                 <ul className="divide-y divide-neutral-100">
                     {orders.map((order) => (
-                        <li key={order.id} className="flex items-center justify-between py-3">
+                        <li
+                            key={order.id}
+                            className="flex items-center justify-between py-3"
+                        >
                             <div>
                                 <p className="text-sm font-semibold text-neutral-900">
-                                    {c.order_label_prefix}{order.id}
+                                    {c.order_label_prefix}
+                                    {order.id}
                                 </p>
                                 <p className="text-xs text-neutral-500">
                                     {order.created_at &&
-                                        new Date(order.created_at).toLocaleDateString()}{' '}
-                                    · {order.item_count} {order.item_count === 1 ? c.item_singular : c.item_plural}
+                                        new Date(
+                                            order.created_at,
+                                        ).toLocaleDateString()}{' '}
+                                    · {order.item_count}{' '}
+                                    {order.item_count === 1
+                                        ? c.item_singular
+                                        : c.item_plural}
                                 </p>
                             </div>
                             <div className="flex items-center gap-3">
@@ -214,19 +242,25 @@ function AddressCard({ address, c }: { address: Address | null; c: any }) {
     return (
         <Card title={c.title} icon={<MapPin className="size-4" />}>
             {!address ? (
-                <EmptyHint>
-                    {c.empty_state}
-                </EmptyHint>
+                <EmptyHint>{c.empty_state}</EmptyHint>
             ) : (
                 <div className="space-y-1 text-sm leading-relaxed text-neutral-700">
-                    {address.name && <p className="font-semibold text-neutral-900">{address.name}</p>}
+                    {address.name && (
+                        <p className="font-semibold text-neutral-900">
+                            {address.name}
+                        </p>
+                    )}
                     {address.line && <p>{address.line}</p>}
                     <p>
-                        {[address.city, address.state, address.zip].filter(Boolean).join(', ')}
+                        {[address.city, address.state, address.zip]
+                            .filter(Boolean)
+                            .join(', ')}
                     </p>
                     {address.country && <p>{address.country}</p>}
                     {address.phone && (
-                        <p className="pt-1 text-xs text-neutral-500">{c.phone_label} {address.phone}</p>
+                        <p className="pt-1 text-xs text-neutral-500">
+                            {c.phone_label} {address.phone}
+                        </p>
                     )}
                 </div>
             )}
@@ -234,7 +268,13 @@ function AddressCard({ address, c }: { address: Address | null; c: any }) {
     );
 }
 
-function AffiliateCard({ affiliate, c }: { affiliate: AffiliateInfo | null; c: any }) {
+function AffiliateCard({
+    affiliate,
+    c,
+}: {
+    affiliate: AffiliateInfo | null;
+    c: any;
+}) {
     return (
         <Card
             title={c.title}
@@ -292,8 +332,14 @@ function AffiliateCard({ affiliate, c }: { affiliate: AffiliateInfo | null; c: a
                         value={`${affiliate.commission_rate.toFixed(2)}%`}
                     />
                     <div className="grid grid-cols-3 gap-3 pt-2">
-                        <Stat label={c.stats.total_earned} value={`$${affiliate.total_earnings.toFixed(2)}`} />
-                        <Stat label={c.stats.paid_out} value={`$${affiliate.paid_earnings.toFixed(2)}`} />
+                        <Stat
+                            label={c.stats.total_earned}
+                            value={`$${affiliate.total_earnings.toFixed(2)}`}
+                        />
+                        <Stat
+                            label={c.stats.paid_out}
+                            value={`$${affiliate.paid_earnings.toFixed(2)}`}
+                        />
                         <Stat
                             label={c.stats.pending}
                             value={`$${affiliate.pending_earnings.toFixed(2)}`}
@@ -311,7 +357,9 @@ function AffiliateCard({ affiliate, c }: { affiliate: AffiliateInfo | null; c: a
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
     return (
         <div className="flex items-start justify-between gap-3">
-            <dt className="text-xs font-medium uppercase tracking-wide text-neutral-500">{label}</dt>
+            <dt className="text-xs font-medium tracking-wide text-neutral-500 uppercase">
+                {label}
+            </dt>
             <dd className="text-right text-sm text-neutral-900">{value}</dd>
         </div>
     );
@@ -328,7 +376,7 @@ function Stat({
 }) {
     return (
         <div className="rounded-md border border-neutral-100 bg-neutral-50 px-3 py-2">
-            <p className="text-[10px] font-medium uppercase tracking-wide text-neutral-500">
+            <p className="text-[10px] font-medium tracking-wide text-neutral-500 uppercase">
                 {label}
             </p>
             <p

@@ -1,0 +1,136 @@
+{
+    "subtitle": "Standard PVC card — 0.38mm durable and waterproof",
+    "starting_price_text": "50 cards from $30",
+    "sizes": [
+        {
+            "name": "Standard",
+            "code": "standard",
+            "width": "2.0",
+            "height": "3.5",
+            "swatch_image": "/images/product-options/business-cards/sizes/business_card-standard-526x325.jpg",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        }
+    ],
+    "paper_finish": [
+        {
+            "name": "PVC",
+            "code": "pvc",
+            "description": "Durable PVC plastic with a smooth finish.",
+            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        }
+    ],
+    "corners": [
+        {
+            "name": "Square",
+            "code": "square",
+            "description": "Sharp and clean",
+            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M6.5 6.5V15h3V9.5h29v29H33v3h8.5v-35h-35zm3 27.5h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8z\"></path></svg>",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        },
+        {
+            "name": "Rounded",
+            "code": "rounded",
+            "description": "Smooth rounded corners",
+            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M9.5 34h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8zM8 6.5H6.5V15h3V9.537A30.542 30.542 0 0 1 38.463 38.5H33v3h8.5V40A33.538 33.538 0 0 0 8 6.5z\"></path></svg>",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        }
+    ],
+    "special_finish": [],
+    "print_code": [
+        {
+            "name": "no print code",
+            "code": "no_print_code",
+            "description": "no need to print codes",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        }
+    ],
+    "drill": [
+        {
+            "name": "no drilling",
+            "code": "no_drilling",
+            "swatch_image": "",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        }
+    ],
+    "quantity_price_table": [
+        { "quantity": "50", "price_per_card": "0.60", "pack_price": "30", "pack_original_price": "", "is_recommended": true }
+    ],
+    "galleries": [
+        {
+            "id": "default",
+            "is_default": true,
+            "match": {},
+            "images": [
+                "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=1200&q=70",
+                "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=1200&q=70"
+            ]
+        }
+    ]
+}

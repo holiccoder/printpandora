@@ -54,7 +54,9 @@ export default function Login({ status, canResetPassword }: Props) {
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">{c.labels.password}</Label>
+                                    <Label htmlFor="password">
+                                        {c.labels.password}
+                                    </Label>
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
@@ -82,7 +84,9 @@ export default function Login({ status, canResetPassword }: Props) {
                                     name="remember"
                                     tabIndex={3}
                                 />
-                                <Label htmlFor="remember">{c.labels.remember}</Label>
+                                <Label htmlFor="remember">
+                                    {c.labels.remember}
+                                </Label>
                             </div>
 
                             <Button

@@ -25,8 +25,8 @@ function excerpt(body: string, length = 110): string {
     const text = body.replace(/<[^>]+>/g, '').trim();
 
     if (text.length <= length) {
-return text;
-}
+        return text;
+    }
 
     return text.slice(0, length).replace(/\s+\S*$/, '') + '…';
 }
@@ -52,8 +52,8 @@ export default function RecentPosts({ posts, heading, eyebrow }: Props) {
     const e = eyebrow ?? rp.eyebrow;
 
     if (posts.length === 0) {
-return null;
-}
+        return null;
+    }
 
     return (
         <section className="bg-white py-14 md:py-20">
@@ -61,7 +61,7 @@ return null;
                 <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                     <div>
                         {e && (
-                            <p className="text-xs font-semibold uppercase tracking-wider text-[#0f4c3a]">
+                            <p className="text-xs font-semibold tracking-wider text-[#800020] uppercase">
                                 {e}
                             </p>
                         )}
@@ -71,7 +71,7 @@ return null;
                     </div>
                     <Link
                         href={rp.view_all_href}
-                        className="inline-flex items-center gap-1 text-sm font-semibold text-[#0f4c3a] hover:underline"
+                        className="inline-flex items-center gap-1 text-sm font-semibold text-[#800020] hover:underline"
                     >
                         {rp.view_all_cta} <ArrowRight className="size-4" />
                     </Link>
@@ -120,10 +120,10 @@ function PostCard({ post }: { post: RecentPost }) {
                 )}
             </div>
             <div className="flex flex-1 flex-col p-5">
-                <span className="self-start rounded-full bg-[#e6efe9] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#0f4c3a]">
+                <span className="self-start rounded-full bg-[#e6efe9] px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-[#800020] uppercase">
                     {post.category.name}
                 </span>
-                <h3 className="mt-3 text-base font-semibold leading-snug text-neutral-900 group-hover:text-[#0f4c3a]">
+                <h3 className="mt-3 text-base leading-snug font-semibold text-neutral-900 group-hover:text-[#800020]">
                     {post.title}
                 </h3>
                 <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-neutral-600">

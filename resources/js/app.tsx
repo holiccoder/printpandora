@@ -20,6 +20,7 @@ createInertiaApp({
             case name === 'shipping':
             case name === 'contact':
             case name === 'sample-packs':
+            case name === 'business-card-design-service':
                 return null;
             case name === 'dashboard':
                 return null;

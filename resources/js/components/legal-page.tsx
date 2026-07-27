@@ -50,27 +50,18 @@ export default function LegalPage({
             <div className="bg-white py-14 md:py-20">
                 <article className="mx-auto w-full max-w-3xl px-4 md:px-6">
                     {eyebrow && (
-                        <p className="text-xs font-semibold uppercase tracking-wider text-[#0f4c3a]">
+                        <p className="text-xs font-semibold tracking-wider text-[#800020] uppercase">
                             {eyebrow}
                         </p>
                     )}
                     <h1 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 md:text-4xl lg:text-5xl">
                         {title}
                     </h1>
-                    <div
-                        className="
-                            mt-8 space-y-6 text-base leading-relaxed text-neutral-700
-                            [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-neutral-900
-                            [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-neutral-900
-                            [&_p]:text-base [&_p]:leading-relaxed
-                            [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6
-                            [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-6
-                            [&_a]:text-[#0f4c3a] [&_a]:underline-offset-2 hover:[&_a]:underline
-                            [&_strong]:font-semibold [&_strong]:text-neutral-900
-                        "
-                    >
+                    <div className="mt-8 space-y-6 text-base leading-relaxed text-neutral-700 [&_a]:text-[#800020] [&_a]:underline-offset-2 hover:[&_a]:underline [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-neutral-900 [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-neutral-900 [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-6 [&_p]:text-base [&_p]:leading-relaxed [&_strong]:font-semibold [&_strong]:text-neutral-900 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6">
                         {intro && <p>{intro}</p>}
-                        {bodyParagraphs?.map((p, i) => <p key={`body-${i}`}>{p}</p>)}
+                        {bodyParagraphs?.map((p, i) => (
+                            <p key={`body-${i}`}>{p}</p>
+                        ))}
                         {sections?.map((s, i) => (
                             <Section key={`section-${i}`} section={s} />
                         ))}
@@ -78,7 +69,9 @@ export default function LegalPage({
                             <p>
                                 {closingParagraph}{' '}
                                 {closingLinkText && closingLinkHref && (
-                                    <a href={closingLinkHref}>{closingLinkText}</a>
+                                    <a href={closingLinkHref}>
+                                        {closingLinkText}
+                                    </a>
                                 )}
                             </p>
                         )}
@@ -106,7 +99,9 @@ function Section({ section }: { section: LegalSection }) {
                                 item
                             ) : (
                                 <>
-                                    {item.strong && <strong>{item.strong}</strong>}
+                                    {item.strong && (
+                                        <strong>{item.strong}</strong>
+                                    )}
                                     {item.strong && item.text && ' '}
                                     {item.text}
                                 </>
@@ -129,8 +124,8 @@ function BodyWithLinks({ section }: { section: LegalSection }) {
     const { body, email_link, contact_link_text, contact_link_href } = section;
 
     if (!body) {
-return null;
-}
+        return null;
+    }
 
     let nodes: ReactNode[] = [body];
 
@@ -180,15 +175,15 @@ function splitAround(
         }
 
         if (idx > 0) {
-out.push(node.slice(0, idx));
-}
+            out.push(node.slice(0, idx));
+        }
 
         out.push(make(`${needle}-${counter++}`));
         const tail = node.slice(idx + needle.length);
 
         if (tail) {
-out.push(tail);
-}
+            out.push(tail);
+        }
     });
 
     return out;

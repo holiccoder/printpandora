@@ -56,7 +56,7 @@ export default function Contact() {
             {/* Page header */}
             <section className="bg-white py-14 md:py-20">
                 <div className="mx-auto w-full max-w-3xl px-4 text-center md:px-6">
-                    <p className="text-xs font-semibold tracking-wider text-[#1e3a5f] uppercase">
+                    <p className="text-xs font-semibold tracking-wider text-[#800020] uppercase">
                         We're here to help
                     </p>
                     <h1 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 md:text-4xl lg:text-5xl">
@@ -90,7 +90,7 @@ export default function Contact() {
                                 value={
                                     <a
                                         href="mailto:hello@inkpavo.com"
-                                        className="text-[#1e3a5f] hover:underline"
+                                        className="text-[#800020] hover:underline"
                                     >
                                         hello@inkpavo.com
                                     </a>
@@ -102,7 +102,7 @@ export default function Contact() {
                                 value={
                                     <a
                                         href="tel:+18005551234"
-                                        className="text-[#1e3a5f] hover:underline"
+                                        className="text-[#800020] hover:underline"
                                     >
                                         +1 (800) 555-1234
                                     </a>
@@ -138,7 +138,7 @@ export default function Contact() {
                                         Already a customer?{' '}
                                         <a
                                             href="/tickets/create"
-                                            className="text-[#1e3a5f] hover:underline"
+                                            className="text-[#800020] hover:underline"
                                         >
                                             Open a support ticket
                                         </a>{' '}
@@ -155,7 +155,7 @@ export default function Contact() {
                             {flashSuccess && (
                                 <div
                                     role="status"
-                                    className="mb-6 rounded-md border border-[#1e3a5f]/20 bg-[#eaf3ec] px-4 py-3 text-sm text-[#1e3a5f]"
+                                    className="mb-6 rounded-md border border-[#800020]/20 bg-[#eaf3ec] px-4 py-3 text-sm text-[#800020]"
                                 >
                                     {flashSuccess}
                                 </div>
@@ -264,7 +264,7 @@ export default function Contact() {
                                     By submitting this form, you agree to our{' '}
                                     <a
                                         href="/privacy"
-                                        className="text-[#1e3a5f] underline-offset-2 hover:underline"
+                                        className="text-[#800020] underline-offset-2 hover:underline"
                                     >
                                         privacy policy
                                     </a>
@@ -299,7 +299,7 @@ function InfoRow({
 }) {
     return (
         <li className="flex gap-3">
-            <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[#1e3a5f]/10 text-[#1e3a5f]">
+            <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[#800020]/10 text-[#800020]">
                 {icon}
             </span>
             <div>

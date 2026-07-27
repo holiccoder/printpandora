@@ -70,14 +70,18 @@ export default function Security(props: Props) {
                                     name="current_password"
                                     className="mt-1 block w-full"
                                     autoComplete="current-password"
-                                    placeholder={c.placeholders.current_password}
+                                    placeholder={
+                                        c.placeholders.current_password
+                                    }
                                 />
 
                                 <InputError message={errors.current_password} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">{c.labels.new_password}</Label>
+                                <Label htmlFor="password">
+                                    {c.labels.new_password}
+                                </Label>
 
                                 <PasswordInput
                                     id="password"
@@ -102,7 +106,9 @@ export default function Security(props: Props) {
                                     name="password_confirmation"
                                     className="mt-1 block w-full"
                                     autoComplete="new-password"
-                                    placeholder={c.placeholders.password_confirmation}
+                                    placeholder={
+                                        c.placeholders.password_confirmation
+                                    }
                                     passwordrules={props.passwordRules}
                                 />
 

@@ -20,10 +20,7 @@ type Props = {
  * `useContent('global_chrome')` so they stay in sync with
  * `content/hardcoded-content.json` without any props from here.
  */
-export default function StorefrontLayout({
-    children,
-    activeCategory,
-}: Props) {
+export default function StorefrontLayout({ children, activeCategory }: Props) {
     return (
         <div className="flex min-h-screen flex-col bg-white text-neutral-900">
             <AnnouncementBar />

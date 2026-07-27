@@ -26,9 +26,12 @@ export default function SocialAuthButtons({ intent, className }: Props) {
         <div className={className}>
             <div className="grid gap-3">
                 <SocialButton provider="google" label={`${verb} with Google`} />
-                <SocialButton provider="facebook" label={`${verb} with Facebook`} />
+                <SocialButton
+                    provider="facebook"
+                    label={`${verb} with Facebook`}
+                />
             </div>
-            <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-wider text-muted-foreground">
+            <div className="my-6 flex items-center gap-3 text-xs tracking-wider text-muted-foreground uppercase">
                 <span aria-hidden className="h-px flex-1 bg-border" />
                 <span>or</span>
                 <span aria-hidden className="h-px flex-1 bg-border" />
@@ -37,7 +40,13 @@ export default function SocialAuthButtons({ intent, className }: Props) {
     );
 }
 
-function SocialButton({ provider, label }: { provider: Provider; label: string }) {
+function SocialButton({
+    provider,
+    label,
+}: {
+    provider: Provider;
+    label: string;
+}) {
     return (
         <Button
             asChild

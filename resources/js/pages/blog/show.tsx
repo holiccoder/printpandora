@@ -1,12 +1,6 @@
 // Content sourced from `content/hardcoded-content.json` via useContent('blog_show_page').
 import { Link, useForm } from '@inertiajs/react';
-import {
-    Facebook,
-    Leaf,
-    Link2,
-    Linkedin,
-    Twitter,
-} from 'lucide-react';
+import { Facebook, Leaf, Link2, Linkedin, Twitter } from 'lucide-react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
@@ -32,7 +26,11 @@ interface Props {
  * count words at roughly 200 wpm, rounded up, never less than 1.
  */
 function readingTimeMinutes(html: string): number {
-    const words = html.replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+    const words = html
+        .replace(/<[^>]+>/g, ' ')
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean).length;
 
     return Math.max(1, Math.ceil(words / 200));
 }
@@ -97,13 +95,16 @@ export default function BlogShow({ post, related }: Props) {
 
                     <article>
                         {/* Headline */}
-                        <h1 className="max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-tight text-neutral-900 md:text-5xl lg:text-[3.5rem]">
+                        <h1 className="max-w-4xl text-4xl leading-[1.1] font-extrabold tracking-tight text-neutral-900 md:text-5xl lg:text-[3.5rem]">
                             {post.title}
                         </h1>
 
                         {/* Metadata row: hub label · divider · author · read time */}
                         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-neutral-600">
-                            <span className="inline-flex items-center gap-2 font-medium" style={{ color: HUB_GREEN }}>
+                            <span
+                                className="inline-flex items-center gap-2 font-medium"
+                                style={{ color: HUB_GREEN }}
+                            >
                                 <Leaf className="size-4" aria-hidden />
                                 {c.brand_name}
                             </span>
@@ -113,10 +114,18 @@ export default function BlogShow({ post, related }: Props) {
                                 style={{ backgroundColor: HUB_GREEN }}
                             />
                             <span>
-                                {c.metadata.by_prefix} <span className="font-medium text-neutral-900">{post.author.name}</span>
+                                {c.metadata.by_prefix}{' '}
+                                <span className="font-medium text-neutral-900">
+                                    {post.author.name}
+                                </span>
                             </span>
                             <span className="text-neutral-400">·</span>
-                            <span>{c.metadata.read_time_template.replace('{minutes}', String(minutes))}</span>
+                            <span>
+                                {c.metadata.read_time_template.replace(
+                                    '{minutes}',
+                                    String(minutes),
+                                )}
+                            </span>
                         </div>
 
                         {/* Social share */}
@@ -136,7 +145,10 @@ export default function BlogShow({ post, related }: Props) {
                                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareEnc}`}
                                 icon={<Linkedin className="size-4" />}
                             />
-                            <CopyLinkButton url={shareUrl} label={c.share_buttons.copy_link_label} />
+                            <CopyLinkButton
+                                url={shareUrl}
+                                label={c.share_buttons.copy_link_label}
+                            />
                         </div>
 
                         {/* Hero image */}
@@ -151,14 +163,17 @@ export default function BlogShow({ post, related }: Props) {
                         )}
 
                         {/* Intro hub label above the article body */}
-                        <div className="mt-12 flex items-center gap-2 text-sm font-medium" style={{ color: HUB_GREEN }}>
+                        <div
+                            className="mt-12 flex items-center gap-2 text-sm font-medium"
+                            style={{ color: HUB_GREEN }}
+                        >
                             <Leaf className="size-4" aria-hidden />
                             {c.brand_name}
                         </div>
 
                         {/* Article body — rendered HTML, styled to match the editorial feel */}
                         <div
-                            className="prose prose-neutral mx-auto mt-6 max-w-3xl text-[17px] leading-[1.7] prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-2xl prose-h2:md:text-3xl prose-h3:mt-10 prose-h3:text-xl prose-p:my-5 prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-img:my-8 prose-img:rounded-xl prose-img:w-full"
+                            className="prose prose-neutral prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-2xl prose-h2:md:text-3xl prose-h3:mt-10 prose-h3:text-xl prose-p:my-5 prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-img:my-8 prose-img:rounded-xl prose-img:w-full mx-auto mt-6 max-w-3xl text-[17px] leading-[1.7]"
                             // The article body comes from the CMS; render trusted HTML and
                             // recolour links to match the green hub accent.
                             style={
@@ -201,21 +216,36 @@ export default function BlogShow({ post, related }: Props) {
                                             />
                                         ) : (
                                             <div className="flex h-full w-full items-center justify-center text-neutral-300">
-                                                <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v9a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 16.5z" />
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5L8.25 11.25l4.5 4.5 3-3L21 16.5" />
+                                                <svg
+                                                    className="h-10 w-10"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={1.5}
+                                                        d="M3 16.5V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v9a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 16.5z"
+                                                    />
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={1.5}
+                                                        d="M3 16.5L8.25 11.25l4.5 4.5 3-3L21 16.5"
+                                                    />
                                                 </svg>
                                             </div>
                                         )}
                                     </div>
                                     <div className="mt-4">
                                         <div
-                                            className="text-xs font-medium uppercase tracking-wide"
+                                            className="text-xs font-medium tracking-wide uppercase"
                                             style={{ color: HUB_GREEN }}
                                         >
                                             {item.category.name}
                                         </div>
-                                        <h3 className="mt-2 text-lg font-bold leading-snug text-neutral-900 group-hover:underline">
+                                        <h3 className="mt-2 text-lg leading-snug font-bold text-neutral-900 group-hover:underline">
                                             {item.title}
                                         </h3>
                                         <p className="mt-2 text-xs text-neutral-500">
@@ -249,7 +279,7 @@ function ShareLink({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            className="inline-flex size-9 items-center justify-center rounded-full border border-neutral-300 text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1f3d2f]"
+            className="inline-flex size-9 items-center justify-center rounded-full border border-neutral-300 text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50 focus-visible:ring-2 focus-visible:ring-[#1f3d2f] focus-visible:outline-none"
         >
             {icon}
         </a>
@@ -259,8 +289,8 @@ function ShareLink({
 function CopyLinkButton({ url, label }: { url: string; label: string }) {
     const onCopy = () => {
         if (!url || typeof navigator === 'undefined') {
-return;
-}
+            return;
+        }
 
         navigator.clipboard?.writeText(url);
     };
@@ -270,7 +300,7 @@ return;
             type="button"
             onClick={onCopy}
             aria-label={label}
-            className="inline-flex size-9 items-center justify-center rounded-full border border-neutral-300 text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1f3d2f]"
+            className="inline-flex size-9 items-center justify-center rounded-full border border-neutral-300 text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50 focus-visible:ring-2 focus-visible:ring-[#1f3d2f] focus-visible:outline-none"
         >
             <Link2 className="size-4" />
         </button>
@@ -279,11 +309,12 @@ return;
 
 function FindYourCardForm() {
     const c = useContent('blog_show_page').find_your_card_form;
-    const { data, setData, post, processing, wasSuccessful, errors, reset } = useForm({
-        first_name: '',
-        last_name: '',
-        email: '',
-    });
+    const { data, setData, post, processing, wasSuccessful, errors, reset } =
+        useForm({
+            first_name: '',
+            last_name: '',
+            email: '',
+        });
 
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -314,7 +345,10 @@ function FindYourCardForm() {
             >
                 <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                        <label htmlFor="first_name" className="text-sm font-medium text-neutral-700">
+                        <label
+                            htmlFor="first_name"
+                            className="text-sm font-medium text-neutral-700"
+                        >
                             {fieldLabel('first_name')}
                         </label>
                         <input
@@ -322,15 +356,22 @@ function FindYourCardForm() {
                             type="text"
                             required
                             value={data.first_name}
-                            onChange={(e) => setData('first_name', e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-[#1f3d2f] focus:outline-none focus:ring-2 focus:ring-[#1f3d2f]/30"
+                            onChange={(e) =>
+                                setData('first_name', e.target.value)
+                            }
+                            className="mt-1 block w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-[#1f3d2f] focus:ring-2 focus:ring-[#1f3d2f]/30 focus:outline-none"
                         />
                         {errors.first_name && (
-                            <p className="mt-1 text-xs text-red-600">{errors.first_name}</p>
+                            <p className="mt-1 text-xs text-red-600">
+                                {errors.first_name}
+                            </p>
                         )}
                     </div>
                     <div>
-                        <label htmlFor="last_name" className="text-sm font-medium text-neutral-700">
+                        <label
+                            htmlFor="last_name"
+                            className="text-sm font-medium text-neutral-700"
+                        >
                             {fieldLabel('last_name')}
                         </label>
                         <input
@@ -338,16 +379,23 @@ function FindYourCardForm() {
                             type="text"
                             required
                             value={data.last_name}
-                            onChange={(e) => setData('last_name', e.target.value)}
-                            className="mt-1 block w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-[#1f3d2f] focus:outline-none focus:ring-2 focus:ring-[#1f3d2f]/30"
+                            onChange={(e) =>
+                                setData('last_name', e.target.value)
+                            }
+                            className="mt-1 block w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-[#1f3d2f] focus:ring-2 focus:ring-[#1f3d2f]/30 focus:outline-none"
                         />
                         {errors.last_name && (
-                            <p className="mt-1 text-xs text-red-600">{errors.last_name}</p>
+                            <p className="mt-1 text-xs text-red-600">
+                                {errors.last_name}
+                            </p>
                         )}
                     </div>
                 </div>
                 <div>
-                    <label htmlFor="email" className="text-sm font-medium text-neutral-700">
+                    <label
+                        htmlFor="email"
+                        className="text-sm font-medium text-neutral-700"
+                    >
                         {fieldLabel('email')}
                     </label>
                     <input
@@ -356,16 +404,22 @@ function FindYourCardForm() {
                         required
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
-                        className="mt-1 block w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-[#1f3d2f] focus:outline-none focus:ring-2 focus:ring-[#1f3d2f]/30"
+                        className="mt-1 block w-full rounded-md border border-neutral-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-[#1f3d2f] focus:ring-2 focus:ring-[#1f3d2f]/30 focus:outline-none"
                     />
                     {errors.email && (
-                        <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+                        <p className="mt-1 text-xs text-red-600">
+                            {errors.email}
+                        </p>
                     )}
                 </div>
 
                 <p className="text-xs text-neutral-500">
                     {c.legal_text.split(c.legal_link_text)[0]}
-                    <Link href={c.legal_link_href} className="underline" style={{ color: HUB_GREEN }}>
+                    <Link
+                        href={c.legal_link_href}
+                        className="underline"
+                        style={{ color: HUB_GREEN }}
+                    >
                         {c.legal_link_text}
                     </Link>
                     {c.legal_text.split(c.legal_link_text)[1] ?? ''}
@@ -399,13 +453,11 @@ function NewsletterCard() {
                     <h3 className="text-2xl font-bold tracking-tight text-neutral-900 md:text-3xl">
                         {c.title}
                     </h3>
-                    <p className="mt-2 text-neutral-700">
-                        {c.description}
-                    </p>
+                    <p className="mt-2 text-neutral-700">{c.description}</p>
                 </div>
                 <Link
                     href={c.cta_href}
-                    className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold transition hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1f3d2f]"
+                    className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold transition hover:bg-neutral-50 focus-visible:ring-2 focus-visible:ring-[#1f3d2f] focus-visible:outline-none"
                     style={{ color: HUB_GREEN }}
                 >
                     {c.cta}

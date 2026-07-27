@@ -42,7 +42,7 @@ type Props = {
     subtotal?: string;
 };
 
-const ACCENT = '#0f4c3a';
+const ACCENT = '#800020';
 
 export function CartDrawer({ trigger, items = [], subtotal }: Props) {
     const c = useContent('global_chrome').cart_drawer;
@@ -79,20 +79,33 @@ export function CartDrawer({ trigger, items = [], subtotal }: Props) {
                         {c.header_title}
                         {itemCount > 0 && (
                             <span className="ml-2 text-sm font-normal text-neutral-500">
-                                ({itemCount} {itemCount === 1 ? c.item_count_singular : c.item_count_plural})
+                                ({itemCount}{' '}
+                                {itemCount === 1
+                                    ? c.item_count_singular
+                                    : c.item_count_plural}
+                                )
                             </span>
                         )}
                     </SheetTitle>
                 </SheetHeader>
 
                 <div className="flex-1 overflow-y-auto px-6 py-4">
-                    {isEmpty ? <EmptyState /> : <CartLines items={items} qtyLabelPrefix={c.quantity_label_prefix} />}
+                    {isEmpty ? (
+                        <EmptyState />
+                    ) : (
+                        <CartLines
+                            items={items}
+                            qtyLabelPrefix={c.quantity_label_prefix}
+                        />
+                    )}
                 </div>
 
                 {!isEmpty && (
                     <SheetFooter className="border-t border-neutral-200 bg-white p-6">
                         <div className="mb-3 flex items-center justify-between text-sm">
-                            <span className="text-neutral-600">{c.footer.subtotal_label}</span>
+                            <span className="text-neutral-600">
+                                {c.footer.subtotal_label}
+                            </span>
                             <span className="font-bold text-neutral-900">
                                 {subtotal ?? c.footer.subtotal_fallback}
                             </span>
@@ -104,10 +117,14 @@ export function CartDrawer({ trigger, items = [], subtotal }: Props) {
                             asChild
                             className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                         >
-                            <Link href={c.footer.checkout_button_href}>{c.footer.checkout_button_label}</Link>
+                            <Link href={c.footer.checkout_button_href}>
+                                {c.footer.checkout_button_label}
+                            </Link>
                         </Button>
                         <Button asChild variant="outline" className="w-full">
-                            <Link href={c.footer.view_cart_button_href}>{c.footer.view_cart_button_label}</Link>
+                            <Link href={c.footer.view_cart_button_href}>
+                                {c.footer.view_cart_button_label}
+                            </Link>
                         </Button>
                     </SheetFooter>
                 )}
@@ -130,14 +147,23 @@ function EmptyState() {
             <p className="mb-6 max-w-xs text-sm text-neutral-500">
                 {c.description}
             </p>
-            <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button
+                asChild
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
                 <Link href={c.cta_href}>{c.cta_label}</Link>
             </Button>
         </div>
     );
 }
 
-function CartLines({ items, qtyLabelPrefix }: { items: CartItem[]; qtyLabelPrefix: string }) {
+function CartLines({
+    items,
+    qtyLabelPrefix,
+}: {
+    items: CartItem[];
+    qtyLabelPrefix: string;
+}) {
     return (
         <ul className="divide-y divide-neutral-200">
             {items.map((item) => (
@@ -158,7 +184,7 @@ function CartLines({ items, qtyLabelPrefix }: { items: CartItem[]; qtyLabelPrefi
                     <div className="flex flex-1 flex-col">
                         <Link
                             href={item.href}
-                            className="text-sm font-medium text-neutral-900 hover:text-[#0f4c3a]"
+                            className="text-sm font-medium text-neutral-900 hover:text-[#800020]"
                         >
                             {item.name}
                         </Link>

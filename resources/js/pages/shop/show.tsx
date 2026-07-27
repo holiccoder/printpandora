@@ -567,7 +567,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                     onClick={() => setSelectedThumbnail(src)}
                                     className={`overflow-hidden rounded-md border-2 transition-colors ${
                                         activeImage === src
-                                            ? 'border-[#1e3a5f]'
+                                            ? 'border-[#800020]'
                                             : 'border-transparent hover:border-neutral-200'
                                     }`}
                                 >
@@ -719,7 +719,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                                         className={`block rounded-sm border-2 ${
                                                             selectedSize ===
                                                             s.id
-                                                                ? 'border-[#1e3a5f] bg-[#1e3a5f]/5'
+                                                                ? 'border-[#800020] bg-[#800020]/5'
                                                                 : 'border-neutral-300 bg-neutral-50'
                                                         } ${shape === 'rect' ? 'h-8 w-14' : 'size-10'}`}
                                                     />
@@ -801,7 +801,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                                         } ${
                                                             selectedCorners ===
                                                             cn.id
-                                                                ? 'border-[#1e3a5f] bg-[#1e3a5f]/5'
+                                                                ? 'border-[#800020] bg-[#800020]/5'
                                                                 : 'border-neutral-300 bg-neutral-50'
                                                         }`}
                                                     />
@@ -910,7 +910,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                                         }
                                                         className={`cursor-pointer transition-colors ${
                                                             active
-                                                                ? 'bg-[#1e3a5f]/5'
+                                                                ? 'bg-[#800020]/5'
                                                                 : recommended
                                                                   ? 'bg-amber-50/60 hover:bg-amber-50'
                                                                   : 'hover:bg-neutral-50'
@@ -929,7 +929,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                                                             t.qty,
                                                                         )
                                                                     }
-                                                                    className="size-4 accent-[#1e3a5f]"
+                                                                    className="size-4 accent-[#800020]"
                                                                 />
                                                                 <span className="font-semibold text-neutral-900">
                                                                     {t.qty}
@@ -1577,7 +1577,7 @@ function ChoiceTile({
                 disabled
                     ? 'cursor-not-allowed border-neutral-100 bg-neutral-50 opacity-50'
                     : active
-                      ? 'border-[#1e3a5f] bg-[#1e3a5f]/5'
+                      ? 'border-[#800020] bg-[#800020]/5'
                       : 'border-neutral-200 hover:border-neutral-300'
             }`}
         >
@@ -1603,7 +1603,7 @@ function DesignChoice({
         <button
             type="button"
             onClick={onClick}
-            className="flex h-full flex-col items-start gap-2 rounded-md border-2 border-neutral-200 bg-white p-4 text-left transition-colors hover:border-[#1e3a5f] hover:bg-[#1e3a5f]/5"
+            className="flex h-full flex-col items-start gap-2 rounded-md border-2 border-neutral-200 bg-white p-4 text-left transition-colors hover:border-[#800020] hover:bg-[#800020]/5"
         >
             <span style={{ color: accent }}>{icon}</span>
             <p className="text-sm font-bold text-neutral-900">{title}</p>

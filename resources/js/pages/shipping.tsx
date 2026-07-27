@@ -8,7 +8,7 @@ export default function Shipping() {
             description="Production times, shipping methods, carriers, costs, and what to do if something goes wrong."
         >
             <p>
-                Every PrintPandora order is printed to order — so the total time
+                Every InkPavo order is printed to order — so the total time
                 from checkout to doorstep is made up of two parts:{' '}
                 <strong>production</strong> (the time it takes us to print,
                 finish, and pack your order) and <strong>shipping</strong> (the
@@ -23,29 +23,33 @@ export default function Shipping() {
             </p>
             <ul>
                 <li>
-                    <strong>Business Cards, MiniCards, Postcards, Flyers</strong>
-                    {' '}— 2 to 3 business days
+                    <strong>
+                        Business Cards, MiniCards, Postcards, Flyers
+                    </strong>{' '}
+                    — 2 to 3 business days
                 </li>
                 <li>
                     <strong>Stickers & Labels</strong> — 3 to 4 business days
                 </li>
                 <li>
-                    <strong>Letterpress, Foil, and Hot Foil products</strong>{' '}
-                    — 5 to 7 business days
+                    <strong>Letterpress, Foil, and Hot Foil products</strong> —
+                    5 to 7 business days
                 </li>
                 <li>
                     <strong>Notebooks, Journals, Planners</strong> — 4 to 6
                     business days
                 </li>
                 <li>
-                    <strong>Display Boxes, Greeting Cards, Luxe Notecards</strong>
-                    {' '}— 3 to 5 business days
+                    <strong>
+                        Display Boxes, Greeting Cards, Luxe Notecards
+                    </strong>{' '}
+                    — 3 to 5 business days
                 </li>
             </ul>
             <p>
-                If you need your order sooner, select <strong>Rush
-                production</strong> at checkout (where available) — this halves
-                production time for an additional fee.
+                If you need your order sooner, select{' '}
+                <strong>Rush production</strong> at checkout (where available) —
+                this halves production time for an additional fee.
             </p>
 
             <h2>2. Shipping methods</h2>
@@ -71,8 +75,7 @@ export default function Shipping() {
                 </li>
                 <li>
                     <strong>Economy</strong> — 5 to 10 business days, lowest
-                    cost. Tracked. Not available for fragile or oversized
-                    items.
+                    cost. Tracked. Not available for fragile or oversized items.
                 </li>
             </ul>
 
@@ -114,9 +117,8 @@ export default function Shipping() {
             </p>
             <ul>
                 <li>
-                    <strong>Free Standard Shipping</strong> on orders over £50
-                    / €60 / $65 / A$95 to the UK, EU, US, Canada, and
-                    Australia.
+                    <strong>Free Standard Shipping</strong> on orders over £50 /
+                    €60 / $65 / A$95 to the UK, EU, US, Canada, and Australia.
                 </li>
                 <li>
                     <strong>Flat-rate Express</strong> — see the rates page at
@@ -156,11 +158,10 @@ export default function Shipping() {
                     delays of 2 to 10 days are common around peak periods.
                 </li>
                 <li>
-                    <strong>Duties and taxes.</strong> You may be charged
-                    import duty, VAT, or sales tax by your country's customs
-                    authority. These charges are based on the declared value of
-                    your order — we cannot mark parcels as gifts or under-declare
-                    value.
+                    <strong>Duties and taxes.</strong> You may be charged import
+                    duty, VAT, or sales tax by your country's customs authority.
+                    These charges are based on the declared value of your order
+                    — we cannot mark parcels as gifts or under-declare value.
                 </li>
                 <li>
                     <strong>Restricted destinations.</strong> We do not ship to
@@ -176,7 +177,10 @@ export default function Shipping() {
             </ul>
 
             <h2>7. Delivery issues</h2>
-            <p>If your order arrives damaged, incomplete, or doesn't arrive at all:</p>
+            <p>
+                If your order arrives damaged, incomplete, or doesn't arrive at
+                all:
+            </p>
             <ul>
                 <li>
                     <strong>Damaged in transit.</strong> Photograph the parcel
@@ -186,20 +190,20 @@ export default function Shipping() {
                 <li>
                     <strong>Missing item.</strong> Check the packing slip
                     against what arrived, then contact us. Items occasionally
-                    ship from separate facilities and arrive on different days
-                    — your packing slip will note this.
+                    ship from separate facilities and arrive on different days —
+                    your packing slip will note this.
                 </li>
                 <li>
                     <strong>Lost in transit.</strong> If tracking shows no
                     movement after 5 business days (domestic) or 10 business
-                    days (international), contact us and we'll open a claim
-                    with the carrier.
+                    days (international), contact us and we'll open a claim with
+                    the carrier.
                 </li>
                 <li>
-                    <strong>Returned to sender.</strong> If a parcel is
-                    returned because of an incorrect address, failed delivery,
-                    or unpaid customs fees, we'll contact you to arrange a
-                    reshipment. Reshipping fees may apply.
+                    <strong>Returned to sender.</strong> If a parcel is returned
+                    because of an incorrect address, failed delivery, or unpaid
+                    customs fees, we'll contact you to arrange a reshipment.
+                    Reshipping fees may apply.
                 </li>
             </ul>
             <p>
@@ -207,8 +211,8 @@ export default function Shipping() {
                 the latest expected delivery date for non-arrivals) by{' '}
                 <a href="/tickets/create">opening a support ticket</a> or
                 emailing{' '}
-                <a href="mailto:support@printpandora.com">
-                    support@printpandora.com
+                <a href="mailto:support@inkpavo.com">
+                    support@inkpavo.com
                 </a>
                 .
             </p>
@@ -221,26 +225,26 @@ export default function Shipping() {
                     our UK facility.
                 </li>
                 <li>
-                    <strong>12:00 noon ET</strong> for orders printing at our
-                    US facility.
+                    <strong>12:00 noon ET</strong> for orders printing at our US
+                    facility.
                 </li>
                 <li>
-                    <strong>2:00 pm AEST</strong> for orders printing at our
-                    AU partner facility.
+                    <strong>2:00 pm AEST</strong> for orders printing at our AU
+                    partner facility.
                 </li>
             </ul>
             <p>
                 Orders placed after the cut-off start production the next
-                business day. Orders placed on weekends or public holidays
-                start production on the next business day.
+                business day. Orders placed on weekends or public holidays start
+                production on the next business day.
             </p>
 
             <h2>9. Address accuracy</h2>
             <p>
-                Please double-check your shipping address before submitting
-                your order. We are not able to redirect a parcel once it has
-                been handed to the carrier, and orders returned to us because
-                of an incorrect address will incur a reshipping fee. Apartment
+                Please double-check your shipping address before submitting your
+                order. We are not able to redirect a parcel once it has been
+                handed to the carrier, and orders returned to us because of an
+                incorrect address will incur a reshipping fee. Apartment
                 numbers, postal codes, and recipient phone numbers are
                 particularly important for international shipments.
             </p>
@@ -257,14 +261,14 @@ export default function Shipping() {
 
             <h2>11. Contact</h2>
             <p>
-                Questions about an order, a delivery, or a shipping method?
-                We'd love to help.
+                Questions about an order, a delivery, or a shipping method? We'd
+                love to help.
             </p>
             <ul>
                 <li>
                     Email:{' '}
-                    <a href="mailto:support@printpandora.com">
-                        support@printpandora.com
+                    <a href="mailto:support@inkpavo.com">
+                        support@inkpavo.com
                     </a>
                 </li>
                 <li>

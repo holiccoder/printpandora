@@ -1,10 +1,10 @@
-# PrintPandora
+# InkPavo
 
 A Laravel + React (Inertia) e-commerce application.
 
 ## Project overview
 
-PrintPandora is a full-stack print-commerce platform built as a Laravel monolith with an Inertia-powered React frontend. It combines a public marketing/storefront site, authenticated customer workflows, and an internal admin panel in one codebase.
+InkPavo is a full-stack print-commerce platform built as a Laravel monolith with an Inertia-powered React frontend. It combines a public marketing/storefront site, authenticated customer workflows, and an internal admin panel in one codebase.
 
 ### Core capabilities
 

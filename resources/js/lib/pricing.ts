@@ -12,9 +12,9 @@ export interface PricingScenario {
 
 export interface DynamicPricingData {
     rectangle: PricingScenario;
-    uv: PricingScenario;
+    uv?: PricingScenario;
     square: PricingScenario;
-    square_uv: PricingScenario;
+    square_uv?: PricingScenario;
 }
 
 export interface QuantityTier {
@@ -27,14 +27,18 @@ export interface QuantityTier {
 }
 
 export function resolvePricingScenario(
+    data: DynamicPricingData,
     sizeIndex: number,
     finishIndex: number,
 ): keyof DynamicPricingData {
+    const hasUv = data.uv != null;
+    const isUv = hasUv && finishIndex === 2;
+
     if (sizeIndex === 0) {
-        return finishIndex === 2 ? 'uv' : 'rectangle';
+        return isUv ? 'uv' : 'rectangle';
     }
 
-    return finishIndex === 2 ? 'square_uv' : 'square';
+    return isUv ? 'square_uv' : 'square';
 }
 
 export function computeDynamicTiers(
@@ -44,19 +48,29 @@ export function computeDynamicTiers(
     cornersIndex: number,
     specialFinishIndex: number,
 ): QuantityTier[] {
-    const scenario = data[resolvePricingScenario(sizeIndex, finishIndex)];
+    const scenario = data[resolvePricingScenario(data, sizeIndex, finishIndex)];
 
     if (!scenario) {
         return [];
     }
 
-    const quantities = Object.keys(scenario.paperRates)
-        .map((q) => parseInt(q, 10))
-        .filter((q) => q >= scenario.startQuantity)
-        .sort((a, b) => a - b);
+    // Tier rows: the start quantity itself (full base price, recommended)
+    // plus every paper-rate quantity at or above it. Some products list
+    // rates only from a higher quantity (e.g. 100) while allowing orders
+    // from a lower startQuantity (e.g. 50) — include it explicitly.
+    const quantities = [
+        ...new Set([
+            scenario.startQuantity,
+            ...Object.keys(scenario.paperRates)
+                .map((q) => parseInt(q, 10))
+                .filter((q) => q >= scenario.startQuantity),
+        ]),
+    ].sort((a, b) => a - b);
 
     const roundedProcess = scenario.processes.find((p) => p.name === '圆角');
-    const foilProcess = scenario.processes.find((p) => p.name === '烫金');
+    const foilProcess = scenario.processes.find(
+        (p) => p.name === '烫金' || p.name === 'nfc',
+    );
 
     const rounded = cornersIndex === 1 && roundedProcess != null;
     const foiled = specialFinishIndex > 0 && foilProcess != null;

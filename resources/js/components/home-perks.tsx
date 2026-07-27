@@ -8,7 +8,7 @@ import { useContent } from '@/hooks/use-content';
  * When a perk has no href, it renders as a plain <div> (non-clickable).
  */
 
-const ACCENT = '#1e3a5f';
+const ACCENT = '#800020';
 
 const ICONS: Array<() => React.ReactElement> = [
     ProductVarietyIcon,
@@ -47,10 +47,10 @@ export function HomePerks() {
                         return (
                             <li key={perk.title}>
                                 <C {...linkProps}>
-                                    <span className="mb-4 inline-flex size-16 items-center justify-center text-[#1e3a5f]">
+                                    <span className="mb-4 inline-flex size-16 items-center justify-center text-[#C9A96A]">
                                         <Icon />
                                     </span>
-                                    <h3 className="mb-2 text-base font-bold text-neutral-900 group-hover:text-[#1e3a5f]">
+                                    <h3 className="mb-2 text-base font-bold text-neutral-900 group-hover:text-[#800020]">
                                         {perk.title}
                                     </h3>
                                     <p className="max-w-xs text-sm leading-snug text-neutral-600">

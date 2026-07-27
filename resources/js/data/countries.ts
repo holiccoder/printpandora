@@ -143,7 +143,7 @@ export const countries: Country[] = [
             { code: 'NAQ', name: 'Nouvelle-Aquitaine' },
             { code: 'OCC', name: 'Occitanie' },
             { code: 'PDL', name: 'Pays de la Loire' },
-            { code: 'PAC', name: 'Provence-Alpes-Côte d\'Azur' },
+            { code: 'PAC', name: "Provence-Alpes-Côte d'Azur" },
         ],
     },
     {

@@ -41,7 +41,7 @@ export default function SamplePackBanner({
     return (
         <section
             className={cn(
-                'relative grid w-full grid-cols-1 overflow-hidden bg-[#1d130f] md:grid-cols-2 md:h-[420px]',
+                'relative grid w-full grid-cols-1 overflow-hidden bg-[#1d130f] md:h-[420px] md:grid-cols-2',
                 className,
             )}
             aria-label={h}
@@ -55,7 +55,7 @@ export default function SamplePackBanner({
                 }}
             >
                 <div className="relative z-10 max-w-md">
-                    <h2 className="text-3xl font-bold leading-tight md:text-4xl lg:text-[2.5rem]">
+                    <h2 className="text-3xl leading-tight font-bold md:text-4xl lg:text-[2.5rem]">
                         {h}
                     </h2>
                     <p className="mt-3 text-sm leading-relaxed text-white/80 md:text-base">
@@ -63,7 +63,7 @@ export default function SamplePackBanner({
                     </p>
                     <Link
                         href={ctaUrl}
-                        className="mt-6 inline-flex items-center justify-center rounded-sm border border-white px-6 py-3 text-sm font-semibold text-white transition hover:bg-white hover:text-[#1d130f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1d130f]"
+                        className="mt-6 inline-flex items-center justify-center rounded-sm border border-white px-6 py-3 text-sm font-semibold text-white transition hover:bg-white hover:text-[#1d130f] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1d130f] focus-visible:outline-none"
                     >
                         {ctaText}
                     </Link>

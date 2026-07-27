@@ -12,8 +12,8 @@ const TOKEN_RE = /\{(YEAR|currentYear)\}/g;
 function substituteTokens<T>(value: T, year: number): T {
     if (typeof value === 'string') {
         if (!value.includes('{')) {
-return value;
-}
+            return value;
+        }
 
         return value.replace(TOKEN_RE, () => String(year)) as unknown as T;
     }
@@ -50,7 +50,9 @@ return value;
  * copyright stays correct past midnight on Dec 31.
  */
 export function useContent(): Content;
-export function useContent<K extends SectionKey>(section: K): ContentSections[K];
+export function useContent<K extends SectionKey>(
+    section: K,
+): ContentSections[K];
 // Untyped fallback: any string key returns Record<string, unknown> so pages
 // can opt in to JSON-driven content before a full interface has been declared
 // in `types/content.ts`. Cast at the destructure site to remove the unknown.
@@ -62,7 +64,8 @@ export function useContent(section?: string) {
     // is stable across renders of the same page, so this hits the cache
     // until Inertia replaces the props (i.e. on navigation).
     const year = new Date().getFullYear();
-    const slice = section === undefined ? content : (content?.[section] as unknown);
+    const slice =
+        section === undefined ? content : (content?.[section] as unknown);
 
     return useMemo(() => substituteTokens(slice, year), [slice, year]);
 }

@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
-const ACCENT = '#0f4c3a';
+const ACCENT = '#800020';
 
 type Props = {
     user: {
@@ -25,10 +25,7 @@ export default function DashboardProfile({ user, status }: Props) {
 
     return (
         <StorefrontLayout>
-            <SEO
-                title={c.seo.title}
-                description={c.seo.description}
-            />
+            <SEO title={c.seo.title} description={c.seo.description} />
 
             <section className="bg-neutral-50">
                 <div className="mx-auto max-w-3xl px-4 py-10 lg:py-14">
@@ -59,13 +56,18 @@ export default function DashboardProfile({ user, status }: Props) {
                             action="/dashboard/profile"
                             method="patch"
                             options={{ preserveScroll: true }}
-                            resetOnSuccess={['password', 'password_confirmation']}
+                            resetOnSuccess={[
+                                'password',
+                                'password_confirmation',
+                            ]}
                             className="space-y-6"
                         >
                             {({ processing, errors, recentlySuccessful }) => (
                                 <>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name">{c.labels.name}</Label>
+                                        <Label htmlFor="name">
+                                            {c.labels.name}
+                                        </Label>
                                         <Input
                                             id="name"
                                             name="name"
@@ -78,7 +80,9 @@ export default function DashboardProfile({ user, status }: Props) {
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="email">{c.labels.email}</Label>
+                                        <Label htmlFor="email">
+                                            {c.labels.email}
+                                        </Label>
                                         <Input
                                             id="email"
                                             type="email"
@@ -104,28 +108,44 @@ export default function DashboardProfile({ user, status }: Props) {
                                         </p>
                                         <div className="grid gap-4 sm:grid-cols-2">
                                             <div className="grid gap-2">
-                                                <Label htmlFor="password">{c.labels.new_password}</Label>
+                                                <Label htmlFor="password">
+                                                    {c.labels.new_password}
+                                                </Label>
                                                 <Input
                                                     id="password"
                                                     type="password"
                                                     name="password"
                                                     autoComplete="new-password"
-                                                    placeholder={c.placeholders.password}
+                                                    placeholder={
+                                                        c.placeholders.password
+                                                    }
                                                 />
-                                                <InputError message={errors.password} />
+                                                <InputError
+                                                    message={errors.password}
+                                                />
                                             </div>
                                             <div className="grid gap-2">
                                                 <Label htmlFor="password_confirmation">
-                                                    {c.labels.confirm_new_password}
+                                                    {
+                                                        c.labels
+                                                            .confirm_new_password
+                                                    }
                                                 </Label>
                                                 <Input
                                                     id="password_confirmation"
                                                     type="password"
                                                     name="password_confirmation"
                                                     autoComplete="new-password"
-                                                    placeholder={c.placeholders.password_confirmation}
+                                                    placeholder={
+                                                        c.placeholders
+                                                            .password_confirmation
+                                                    }
                                                 />
-                                                <InputError message={errors.password_confirmation} />
+                                                <InputError
+                                                    message={
+                                                        errors.password_confirmation
+                                                    }
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -136,10 +156,14 @@ export default function DashboardProfile({ user, status }: Props) {
                                             disabled={processing}
                                             className="bg-primary text-primary-foreground hover:bg-primary/90"
                                         >
-                                            {processing ? c.buttons.saving : c.buttons.save}
+                                            {processing
+                                                ? c.buttons.saving
+                                                : c.buttons.save}
                                         </Button>
                                         {recentlySuccessful && (
-                                            <span className="text-sm text-emerald-700">{c.success_inline}</span>
+                                            <span className="text-sm text-emerald-700">
+                                                {c.success_inline}
+                                            </span>
                                         )}
                                     </div>
                                 </>

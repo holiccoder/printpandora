@@ -17,7 +17,7 @@ export default function NotFound() {
             <div className="bg-white py-20 md:py-28 lg:py-36">
                 <div className="mx-auto max-w-2xl px-4 text-center md:px-6">
                     {/* Large 404 graphic */}
-                    <p className="text-[120px] font-bold leading-none tracking-tighter text-[#0f4c3a] md:text-[180px] lg:text-[220px]">
+                    <p className="text-[120px] leading-none font-bold tracking-tighter text-[#800020] md:text-[180px] lg:text-[220px]">
                         {c.graphic_text}
                     </p>
 
@@ -39,7 +39,7 @@ export default function NotFound() {
                                 href={link.href}
                                 className={
                                     i === 0
-                                        ? 'inline-flex items-center rounded-lg bg-[#0f4c3a] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0d3f30]'
+                                        ? 'inline-flex items-center rounded-lg bg-[#800020] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#C9A96A]'
                                         : 'inline-flex items-center rounded-lg border border-neutral-300 bg-white px-6 py-2.5 text-sm font-semibold text-neutral-700 shadow-sm transition hover:bg-neutral-50'
                                 }
                             >
@@ -58,7 +58,7 @@ export default function NotFound() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="text-sm text-[#0f4c3a] transition hover:underline"
+                                    className="text-sm text-[#800020] transition hover:underline"
                                 >
                                     {link.label}
                                 </Link>

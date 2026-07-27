@@ -12,10 +12,7 @@ export default function Affiliate(props: Props) {
 
     return (
         <>
-            <SEO
-                title={c.seo.title}
-                description={c.seo.description}
-            />
+            <SEO title={c.seo.title} description={c.seo.description} />
             <h1 className="sr-only">{c.sr_heading}</h1>
             <ManageAffiliate
                 isAffiliate={props.isAffiliate}

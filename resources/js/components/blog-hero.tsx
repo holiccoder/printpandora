@@ -58,7 +58,12 @@ export function BlogHero({
     const c = useContent('blog_index_page').blog_hero;
 
     const cats: BlogHeroCategory[] =
-        categories ?? c.default_categories.map((x) => ({ label: x.label, href: x.href, active: x.active }));
+        categories ??
+        c.default_categories.map((x) => ({
+            label: x.label,
+            href: x.href,
+            active: x.active,
+        }));
 
     const slideItems: BlogHeroSlide[] =
         slides ??
@@ -82,8 +87,8 @@ export function BlogHero({
 
     useEffect(() => {
         if (autoPlayMs <= 0 || paused || total <= 1) {
-return;
-}
+            return;
+        }
 
         const id = window.setInterval(() => {
             setIndex((i) => (i + 1) % total);
@@ -93,8 +98,8 @@ return;
     }, [autoPlayMs, paused, total]);
 
     if (total === 0) {
-return null;
-}
+        return null;
+    }
 
     const goTo = (i: number) => setIndex(((i % total) + total) % total);
     const prev = () => goTo(index - 1);
@@ -132,7 +137,7 @@ return null;
                             href={cat.href}
                             aria-current={cat.active ? 'page' : undefined}
                             className={cn(
-                                'inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f4c3a] focus-visible:ring-offset-2',
+                                'inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none',
                                 cat.active
                                     ? 'bg-[#1f3d2f] text-white hover:bg-[#173024]'
                                     : 'border border-neutral-300 text-neutral-900 hover:border-neutral-400 hover:bg-neutral-50',
@@ -151,13 +156,16 @@ return null;
                         <label className="sr-only" htmlFor="blog-hero-search">
                             {c.search_label}
                         </label>
-                        <div className="flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-600 focus-within:border-neutral-400 focus-within:ring-2 focus-within:ring-[#0f4c3a]/30">
-                            <Search className="size-4 text-neutral-500" aria-hidden />
+                        <div className="flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-600 focus-within:border-neutral-400 focus-within:ring-2 focus-within:ring-[#800020]/30">
+                            <Search
+                                className="size-4 text-neutral-500"
+                                aria-hidden
+                            />
                             <input
                                 id="blog-hero-search"
                                 type="search"
                                 placeholder={c.search_placeholder}
-                                className="w-32 border-0 bg-transparent p-0 text-sm placeholder:text-neutral-500 focus:outline-none focus:ring-0 md:w-40"
+                                className="w-32 border-0 bg-transparent p-0 text-sm placeholder:text-neutral-500 focus:ring-0 focus:outline-none md:w-40"
                             />
                         </div>
                     </form>
@@ -172,7 +180,7 @@ return null;
                             type="button"
                             onClick={prev}
                             aria-label={c.prev_aria_label}
-                            className="absolute left-0 top-1/2 z-10 -translate-y-1/2 -translate-x-1 rounded-full p-2 text-neutral-400 transition hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f4c3a] md:-translate-x-3"
+                            className="absolute top-1/2 left-0 z-10 -translate-x-1 -translate-y-1/2 rounded-full p-2 text-neutral-400 transition hover:text-neutral-700 focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:outline-none md:-translate-x-3"
                         >
                             <ChevronLeft className="size-7" />
                         </button>
@@ -180,19 +188,19 @@ return null;
                             type="button"
                             onClick={next}
                             aria-label={c.next_aria_label}
-                            className="absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-1 rounded-full p-2 text-neutral-400 transition hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f4c3a] md:translate-x-3"
+                            className="absolute top-1/2 right-0 z-10 translate-x-1 -translate-y-1/2 rounded-full p-2 text-neutral-400 transition hover:text-neutral-700 focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:outline-none md:translate-x-3"
                         >
                             <ChevronRight className="size-7" />
                         </button>
                     </>
                 )}
 
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 md:items-center">
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-center md:gap-12">
                     {/* Left — featured image */}
                     <Link
                         href={slide.href}
                         aria-label={slide.headline}
-                        className="relative block overflow-hidden rounded-2xl bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f4c3a] focus-visible:ring-offset-2"
+                        className="relative block overflow-hidden rounded-2xl bg-neutral-100 focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
                         <div className="aspect-[4/3] w-full overflow-hidden">
                             <img
@@ -206,7 +214,9 @@ return null;
                                 loading="eager"
                             />
                         </div>
-                        {slide.sticker && <StickerOverlay text={slide.sticker.text} />}
+                        {slide.sticker && (
+                            <StickerOverlay text={slide.sticker.text} />
+                        )}
                     </Link>
 
                     {/* Right — article copy */}
@@ -217,7 +227,7 @@ return null;
                         </div>
 
                         <Link href={slide.href} className="group mt-4">
-                            <h2 className="text-3xl font-bold leading-tight text-neutral-900 group-hover:text-[#1f3d2f] md:text-[2.5rem] md:leading-[1.15]">
+                            <h2 className="text-3xl leading-tight font-bold text-neutral-900 group-hover:text-[#1f3d2f] md:text-[2.5rem] md:leading-[1.15]">
                                 {slide.headline}
                             </h2>
                         </Link>
@@ -226,7 +236,9 @@ return null;
                             {slide.excerpt}
                         </p>
 
-                        <p className="mt-6 text-sm text-neutral-400">{readTime}</p>
+                        <p className="mt-6 text-sm text-neutral-400">
+                            {readTime}
+                        </p>
 
                         {/* Pagination dots */}
                         {total > 1 && (
@@ -241,7 +253,10 @@ return null;
                                         type="button"
                                         role="tab"
                                         aria-selected={i === index}
-                                        aria-label={(c.go_to_article_template ?? 'Go to article {n}').replace('{n}', String(i + 1))}
+                                        aria-label={(
+                                            c.go_to_article_template ??
+                                            'Go to article {n}'
+                                        ).replace('{n}', String(i + 1))}
                                         onClick={() => goTo(i)}
                                         className={cn(
                                             'size-2.5 rounded-full transition-colors',

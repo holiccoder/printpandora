@@ -73,8 +73,18 @@ export default function BlogIndex({ posts }: Props) {
                                             </div>
                                         ) : (
                                             <div className="flex aspect-video items-center justify-center bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500">
-                                                <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                                <svg
+                                                    className="h-10 w-10"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={1.5}
+                                                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                                    />
                                                 </svg>
                                             </div>
                                         )}
@@ -82,7 +92,7 @@ export default function BlogIndex({ posts }: Props) {
                                             <span className="mb-2 inline-block rounded-sm bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900 dark:text-amber-100">
                                                 {post.category.name}
                                             </span>
-                                            <h2 className="mb-2 text-lg font-semibold leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400">
+                                            <h2 className="mb-2 text-lg leading-snug font-semibold group-hover:text-amber-600 dark:group-hover:text-amber-400">
                                                 {post.title}
                                             </h2>
                                             <p className="mb-3 text-sm leading-relaxed text-[#706f6c] dark:text-[#A1A09A]">
@@ -92,11 +102,16 @@ export default function BlogIndex({ posts }: Props) {
                                                 <span>{post.author.name}</span>
                                                 <span>·</span>
                                                 <time>
-                                                    {new Date(post.published_at).toLocaleDateString('en-US', {
-                                                        year: 'numeric',
-                                                        month: 'long',
-                                                        day: 'numeric',
-                                                    })}
+                                                    {new Date(
+                                                        post.published_at,
+                                                    ).toLocaleDateString(
+                                                        'en-US',
+                                                        {
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric',
+                                                        },
+                                                    )}
                                                 </time>
                                             </div>
                                         </div>
@@ -120,8 +135,14 @@ export default function BlogIndex({ posts }: Props) {
                                     )}
                                     <span className="text-sm text-[#706f6c] dark:text-[#A1A09A]">
                                         {c.pagination.page_indicator_template
-                                            .replace('{current_page}', String(posts.current_page))
-                                            .replace('{last_page}', String(posts.last_page))}
+                                            .replace(
+                                                '{current_page}',
+                                                String(posts.current_page),
+                                            )
+                                            .replace(
+                                                '{last_page}',
+                                                String(posts.last_page),
+                                            )}
                                     </span>
                                     {posts.next_page_url ? (
                                         <Link
@@ -142,7 +163,8 @@ export default function BlogIndex({ posts }: Props) {
                 </main>
 
                 <footer className="border-t border-[#e3e3e0] bg-white py-6 text-center text-sm text-[#706f6c] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#A1A09A]">
-                    &copy; {new Date().getFullYear()} PrintPandora. All rights reserved.
+                    &copy; {new Date().getFullYear()} InkPavo. All rights
+                    reserved.
                 </footer>
             </div>
         </StorefrontLayout>

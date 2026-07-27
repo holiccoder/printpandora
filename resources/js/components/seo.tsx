@@ -12,7 +12,11 @@ interface SEOProps {
     /** OG type: website, article, product, etc. */
     type?: 'website' | 'article' | 'product' | 'profile';
     /** Robots directives */
-    robots?: 'index,follow' | 'noindex,follow' | 'index,nofollow' | 'noindex,nofollow';
+    robots?:
+        | 'index,follow'
+        | 'noindex,follow'
+        | 'index,nofollow'
+        | 'noindex,nofollow';
     /** Published date for articles (ISO 8601) */
     publishedAt?: string;
     /** Modified date for articles (ISO 8601) */
@@ -33,19 +37,25 @@ export default function SEO({
     author,
 }: SEOProps) {
     const { url, props } = usePage<{ appName?: string }>();
-    const appName = props.appName || import.meta.env.VITE_APP_NAME || 'PrintPandora';
+    const appName =
+        props.appName || import.meta.env.VITE_APP_NAME || 'InkPavo';
     const fullTitle = title ? `${title} - ${appName}` : appName;
 
     // Build absolute URL for canonical
-    const baseUrl = typeof window !== 'undefined'
-        ? window.location.origin
-        : import.meta.env.VITE_APP_URL || 'http://localhost';
+    const baseUrl =
+        typeof window !== 'undefined'
+            ? window.location.origin
+            : import.meta.env.VITE_APP_URL || 'http://localhost';
     const pagePath = canonical ?? url;
-    const fullUrl = pagePath.startsWith('http') ? pagePath : `${baseUrl}${pagePath}`;
+    const fullUrl = pagePath.startsWith('http')
+        ? pagePath
+        : `${baseUrl}${pagePath}`;
 
     // Build absolute URL for image
     const fullImageUrl = image
-        ? (image.startsWith('http') ? image : `${baseUrl}${image}`)
+        ? image.startsWith('http')
+            ? image
+            : `${baseUrl}${image}`
         : undefined;
 
     return (
@@ -79,11 +89,16 @@ export default function SEO({
             )}
 
             {/* Twitter Card */}
-            <meta name="twitter:card" content={fullImageUrl ? 'summary_large_image' : 'summary'} />
+            <meta
+                name="twitter:card"
+                content={fullImageUrl ? 'summary_large_image' : 'summary'}
+            />
             <meta name="twitter:url" content={fullUrl} />
             <meta name="twitter:title" content={fullTitle} />
 
-            {fullImageUrl && <meta name="twitter:image" content={fullImageUrl} />}
+            {fullImageUrl && (
+                <meta name="twitter:image" content={fullImageUrl} />
+            )}
 
             {/* Canonical */}
             <link rel="canonical" href={fullUrl} />

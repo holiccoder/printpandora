@@ -26,12 +26,12 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('PrintPandora')
+            ->brandName('InkPavo')
             ->login()
             ->authGuard('admin')
             ->authPasswordBroker('admins')
             ->colors([
-                'primary' => Color::hex('#0f4c3a'),
+                'primary' => Color::hex('#1e3a5f'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

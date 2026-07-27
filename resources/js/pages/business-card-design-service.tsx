@@ -3,7 +3,7 @@ import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
-const ACCENT = '#1e3a5f';
+const ACCENT = '#800020';
 
 export default function BusinessCardDesignService() {
     const c = useContent('design_service_page');
