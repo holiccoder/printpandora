@@ -54,12 +54,15 @@
                     "label": "Business Cards",
                     "href": "/shop?cat=business-cards"
                 },
-                { "label": "Postcards", "href": "/shop?cat=postcards" },
+                { "label": "Postcards", "href": "/postcards" },
                 {
                     "label": "Stickers & Labels",
-                    "href": "/shop?cat=stickers-labels"
+                    "href": "/stickers-and-labels"
                 },
-                { "label": "Flyers & Brochures", "href": "/shop?cat=flyers" },
+                {
+                    "label": "Flyers & Brochures",
+                    "href": "/flyers-and-brochures"
+                },
                 {
                     "label": "Design Service",
                     "href": "/business-card-design-service"
@@ -207,12 +210,12 @@
                     "label": "Letterpress Business Cards",
                     "href": "/shop/letterpress-business-cards"
                 },
-                { "label": "Postcards", "href": "/shop?cat=postcards" },
+                { "label": "Postcards", "href": "/postcards" },
                 {
                     "label": "Stickers and Labels",
-                    "href": "/shop?cat=stickers-labels"
+                    "href": "/stickers-and-labels"
                 },
-                { "label": "Flyers", "href": "/shop?cat=flyers" }
+                { "label": "Flyers", "href": "/flyers-and-brochures" }
             ],
             "products_right_column": [
                 { "label": "Letterhead", "href": "/shop/letterhead" },
@@ -300,6 +303,33 @@
                 {
                     "label": "Vulnerability Disclosure",
                     "href": "/vulnerability-disclosure"
+                }
+            ],
+            "social_links": [
+                {
+                    "network": "facebook",
+                    "label": "Facebook",
+                    "href": "https://www.facebook.com/inkpavo"
+                },
+                {
+                    "network": "pinterest",
+                    "label": "Pinterest",
+                    "href": "https://www.pinterest.com/inkpavo"
+                },
+                {
+                    "network": "instagram",
+                    "label": "Instagram",
+                    "href": "https://www.instagram.com/inkpavo"
+                },
+                {
+                    "network": "x",
+                    "label": "X",
+                    "href": "https://x.com/inkpavo"
+                },
+                {
+                    "network": "youtube",
+                    "label": "YouTube",
+                    "href": "https://www.youtube.com/@inkpavo"
                 }
             ],
             "legal_bar": {
@@ -886,33 +916,117 @@
     "design_service_page": {
         "_source_file": "resources/js/pages/business-card-design-service.tsx",
         "seo": {
-            "title": "Business Card Design Service",
-            "description": "Professional business card design services from InkPavo. Our designers create custom artwork based on your brand, logo, and style preferences."
+            "title": "Business Card Design Services",
+            "description": "Professional business card design from InkPavo — free Canva & vector typesetting, $5 template layout, or $10 custom original design. Print-ready files included."
         },
-        "heading": "Business Card Design Service",
-        "intro": "Our talented design team is here to help with professional design services. If you would like a business logo on your cards, you must provide the original logo file in an editable vector format (AI, EPS, PDF, SVG). If your logo is not in the correct format, our designers can redraw it for an additional fee based on its complexity. Before discussing your card design with our team, we strongly recommend browsing our range of print products to get familiar with the card stocks and print features you may want in your design. Please note: if you are printing elsewhere, our business card design service will incur an additional charge.",
+        "heading": "Business Card Design Services",
+        "intro": "From free self-serve tools to full custom design — pick the path that fits your brand, then print with us.",
+        "hero": {
+            "eyebrow": "Design Services",
+            "heading": "Business Card Design Services",
+            "body": "Submit your file, pick a template, or let our designers create something original. Four clear paths — from free self-serve to premium custom — so every brand gets print-ready cards.",
+            "cta": "Start your design request",
+            "image_url": "/images/home/product-design-service.png",
+            "image_alt": "Designer working on business card artwork"
+        },
+        "tiers_eyebrow": "Service plans",
+        "tiers_heading": "Choose your design path",
+        "tiers_subtitle": "Transparent USD pricing. Free options for print customers; premium paths when you want more polish.",
+        "pricing_tiers": [
+            {
+                "name": "Canva Self-Serve",
+                "price": "Free",
+                "badge": null,
+                "audience": "Comfortable with design tools and want full control over style.",
+                "flow": [
+                    "Design in Canva",
+                    "Export PDF or SVG to us",
+                    "Pick stock & place your print order"
+                ],
+                "cta": "Start with Canva",
+                "cta_href": "#design-form",
+                "note": null
+            },
+            {
+                "name": "Vector File Typesetting",
+                "price": "Free",
+                "price_detail": "For print customers",
+                "badge": null,
+                "audience": "You already have vector source files and only need name or contact updates.",
+                "flow": [
+                    "Provide AI / EPS / PDF / SVG",
+                    "We update name & contact details",
+                    "Confirm stock & place your order"
+                ],
+                "cta": "Submit your file",
+                "cta_href": "#design-form",
+                "note": "Non-print customers: $9 per person typesetting fee."
+            },
+            {
+                "name": "Template Layout",
+                "price": "$5",
+                "price_unit": "per design",
+                "badge": "Best value",
+                "audience": "Want a fast turnaround with a proven layout or Pinterest-style reference.",
+                "flow": [
+                    "Pick a layout or share a reference",
+                    "We apply your logo & info",
+                    "Revise until you're happy",
+                    "Receive print-ready vector source files"
+                ],
+                "cta": "Choose a template",
+                "cta_href": "#design-form",
+                "note": null
+            },
+            {
+                "name": "Custom Original Design",
+                "price": "$10",
+                "price_unit": "per project",
+                "badge": "Premium",
+                "audience": "Brands seeking a unique visual identity, not a template.",
+                "flow": [
+                    "Designer delivers 2 distinct style concepts",
+                    "You pick 1 to refine",
+                    "Final high-resolution vector source files"
+                ],
+                "cta": "Start custom design",
+                "cta_href": "#design-form",
+                "note": null
+            }
+        ],
+        "supplemental_heading": "Additional services",
+        "supplemental_services": [
+            {
+                "title": "Logo vector redraw",
+                "body": "If your logo is not an editable vector (AI, EPS, PDF, SVG), our designers can redraw it. Pricing depends on complexity and the quality of the source file — we'll quote before work begins."
+            },
+            {
+                "title": "Non-print buyout fee",
+                "body": "Design services are priced for customers who print with us. If you need the final files without a print order, a buyout fee applies (typesetting $9/person; full design buyout quoted separately)."
+            }
+        ],
         "process_heading": "Design Process",
         "process_steps": [
-            "Once we receive your payment, our service team will contact you by email during regular business hours (Monday–Friday, 9:00 AM–5:00 PM PST).",
-            "Our service team will review your design questionnaire to confirm or collect any remaining details — including your print budget, card stock and print feature preferences, and creative or style references — before passing them to our design team.",
-            "Once your preferences are confirmed, our design team will create your initial business card design within 1–3 business days. Our service team will then email you the design as a PDF for review.",
-            "To keep revisions within the project scope, please be as detailed as possible about style. The most effective approach is to send us examples of styles you like — written instructions, photos of other designs, drawings, screenshots, or anything that conveys your ideas are all welcome by email. Revision requests beyond the project scope may require purchasing additional design services.",
-            "With every design concept and subsequent revision, please proofread all information carefully and check spelling.",
-            "After the design is finalized, confirm your stock, finish, size, order quantity, and shipping address. You will receive a shipping quote and be asked to choose your preferred shipping method. Once paid, we will start producing your cards."
+            "Submit the design questionnaire (brand details, product preferences, style references). Our service team contacts you by email during business hours (Monday–Friday, 9:00 AM–5:00 PM PST).",
+            "We review your brief — budget, stock, finishes, and creative references — and confirm any missing details before handoff to design.",
+            "Initial concepts are delivered as PDF within 1–3 business days (custom path: two style options).",
+            "Revisions typically take up to 1 business day per round. Share clear feedback and visual references so changes stay in scope.",
+            "Proofread every concept carefully. Once you approve the final proof, spelling and content become your responsibility.",
+            "Confirm stock, finish, size, quantity, and shipping. After payment, production begins."
         ],
-        "notes_heading": "Business Card Design Notes",
+        "notes_heading": "Terms & notes",
         "notes": [
-            "Please be sure to provide your logo in an editable vector format (AI or EPS).",
-            "If you don't have access to a vector version of your logo, we can help redraw it for an additional fee; the cost depends on the complexity of the logo and the quality of the original file.",
-            "The initial design will be emailed to you within 1–3 business days. Subsequent refinements and revisions may each take up to 1 additional business day. The total duration depends on timely communication and the number and complexity of revision requests.",
-            "Please note: our design service develops an initial design concept based on the preferences and examples you provide. If you are not satisfied with the result, we will do our best to work with you on revisions to find a direction that better suits your style; work beyond the project scope may incur additional design fees.",
-            "Design service fees are non-refundable once work on the initial concept has begun.",
-            "Our design services are reserved for customers who print with us. Any files requested by customers who have not purchased our printing services will incur an additional charge.",
-            "Customers who do not print with us will be charged an additional USD $100 per design.",
-            "Customers are responsible for confirming that spelling and information on the proof are correct. Even if corrections were previously made or a correct version was provided, errors can still occur. Once the final proof is approved, we accept no liability for any spelling mistakes or inaccuracies."
+            "Provide your logo in an editable vector format (AI, EPS, PDF, or SVG) whenever possible.",
+            "Logo redraw is available for an additional fee based on complexity and source quality.",
+            "Initial design: 1–3 business days. Each revision round: up to 1 business day. Timelines depend on response speed and revision complexity.",
+            "Revision scope: we refine the agreed concept (layout, colors, typography, info updates). New concepts, full redesigns, or major direction changes after concept approval may require an additional design fee.",
+            "Design service fees are non-refundable once work on the initial concept has begun. If we have not started work, unused prepaid design fees may be refunded on request.",
+            "Our design services are reserved primarily for customers who print with us. Files requested without a print order incur an additional charge.",
+            "Non-print typesetting: $9 per person. Full design buyout without print is quoted separately.",
+            "You are responsible for confirming spelling and information on the proof. Once the final proof is approved, we accept no liability for spelling mistakes or inaccuracies."
         ],
         "form_heading": "Start your design request",
-        "form_description": "Tell us about your business and what you're looking for. Our team will review your request and get back to you by email.",
+        "form_description": "Tell us about your business and which design path you prefer. Our team will review your request and get back to you by email.",
         "form_submit_label": "Submit",
         "form_product_options": [
             "Standard Classic Business card",
@@ -1928,5 +2042,412 @@
         "section_heading": "Appearance settings",
         "section_description": "Update the appearance settings for your account",
         "breadcrumb": "Appearance settings"
+    },
+
+    "postcards_page": {
+        "_source_file": "resources/js/pages/postcards.tsx",
+        "active_category": "Postcards",
+        "accent_color": "#800020",
+        "warm_bg": "#FAF7F2",
+        "gold": "#C9A96A",
+        "seo": {
+            "title": "Custom Postcards",
+            "description": "Custom postcards that get kept, not tossed. Standard, square, medium, large, and rack card sizes — premium paper, sharp print, and optional design service from InkPavo."
+        },
+        "hero": {
+            "eyebrow": "Postcards",
+            "heading": "Custom Postcards that get kept, not tossed.",
+            "body": "From classic 4×6 mailers to large show cards — rich paper stocks, vivid color, and finishes that make your message feel worth holding onto.",
+            "cta": "Browse postcard sizes",
+            "cta_href": "#series",
+            "image_url": "/images/home/product-postcards.png",
+            "image_alt": "Stack of custom printed postcards"
+        },
+        "series": {
+            "eyebrow": "By size",
+            "heading": "Find your postcard format",
+            "subtitle": "Every size ships with the same premium print quality. Design service available if you need artwork help.",
+            "items": [
+                {
+                    "name": "Standard 4\"×6\"",
+                    "blurb": "The classic mailer size — perfect for promotions, thank-yous, and event invites.",
+                    "price_from": "from $29",
+                    "image_url": "/images/home/product-postcards.png",
+                    "href": "/shop?cat=postcards"
+                },
+                {
+                    "name": "Square 4.72\"",
+                    "blurb": "A modern square that stands out in the mail and on display.",
+                    "price_from": "from $32",
+                    "image_url": "/images/home/card-die-cut.png",
+                    "href": "/shop?cat=postcards"
+                },
+                {
+                    "name": "Medium 5\"×7\"",
+                    "blurb": "More room for photography and copy — ideal for portfolios and announcements.",
+                    "price_from": "from $36",
+                    "image_url": "/images/home/hero-marketing-materials.png",
+                    "href": "/shop?cat=postcards"
+                },
+                {
+                    "name": "Large 6\"×9\"",
+                    "blurb": "Maximum impact for menus, real estate, and campaign pieces.",
+                    "price_from": "from $42",
+                    "image_url": "/images/home/product-premium-cards.png",
+                    "href": "/shop?cat=postcards"
+                },
+                {
+                    "name": "Rack Cards",
+                    "blurb": "Tall display cards for counters, booths, and brochure racks.",
+                    "price_from": "from $34",
+                    "image_url": "/images/home/product-flyers.png",
+                    "href": "/shop?cat=postcards"
+                }
+            ]
+        },
+        "design_cta": {
+            "eyebrow": "Need design help?",
+            "heading": "Three ways to get print-ready art",
+            "subtitle": "Upload a finished file, start from a template, or let us design for you — then print with confidence.",
+            "paths": [
+                {
+                    "name": "Upload a full design",
+                    "blurb": "Already have print-ready artwork? Send PDF or vector files and we'll prep for production.",
+                    "cta": "Upload your design",
+                    "href": "/business-card-design-service"
+                },
+                {
+                    "name": "Template layout",
+                    "blurb": "Pick a proven layout. We apply your logo and copy for a fast, polished result — from $5.",
+                    "cta": "Choose a template",
+                    "href": "/business-card-design-service"
+                },
+                {
+                    "name": "Design for you",
+                    "blurb": "Our designers create original concepts tailored to your brand — from $10 per project.",
+                    "cta": "Start custom design",
+                    "href": "/business-card-design-service"
+                }
+            ]
+        },
+        "perks": {
+            "heading": "Why print postcards with us",
+            "items": [
+                {
+                    "title": "Premium paper",
+                    "description": "Thick, smooth stocks that feel substantial in hand and in the mailbox."
+                },
+                {
+                    "title": "Sharp color",
+                    "description": "Color-managed print so photos and brand hues stay true."
+                },
+                {
+                    "title": "Proof before press",
+                    "description": "Digital proof options so you approve every detail first."
+                },
+                {
+                    "title": "Reliable delivery",
+                    "description": "Clear turnaround estimates and tracked shipping."
+                }
+            ]
+        },
+        "faq": [
+            {
+                "question": "What postcard sizes do you offer?",
+                "answer": "Standard 4×6, square ~4.72\", medium 5×7, large 6×9, and rack cards. Custom sizes may be available on request."
+            },
+            {
+                "question": "What is the minimum order quantity?",
+                "answer": "Most postcard products start at 50–100 pieces depending on size and stock. Exact MOQs are shown on each product page."
+            },
+            {
+                "question": "Which file formats do you accept?",
+                "answer": "Print-ready PDF is preferred (with bleed). We also accept AI, EPS, and SVG for design service. High-resolution PNG/JPG may work for simpler jobs after review."
+            },
+            {
+                "question": "How long does production take?",
+                "answer": "Typical production is a few business days after proof approval, plus shipping. Rush options may be available — ask when you order."
+            },
+            {
+                "question": "Can you design my postcard for me?",
+                "answer": "Yes. Use our design service for free typesetting (print customers), $5 template layout, or $10 custom original design."
+            }
+        ]
+    },
+
+    "stickers_page": {
+        "_source_file": "resources/js/pages/stickers-and-labels.tsx",
+        "active_category": "Stickers & Labels",
+        "accent_color": "#800020",
+        "warm_bg": "#FAF7F2",
+        "gold": "#C9A96A",
+        "seo": {
+            "title": "Stickers & Labels",
+            "description": "Make your brand stick. Die-cut, circle, rectangle, square, vinyl, and matte paper stickers & labels — custom print from InkPavo."
+        },
+        "hero": {
+            "eyebrow": "Stickers & Labels",
+            "heading": "Make your brand stick.",
+            "body": "Die-cut shapes, durable vinyl, and clean paper labels — built for packaging, events, and everyday brand moments.",
+            "cta": "Browse sticker styles",
+            "cta_href": "#series",
+            "image_url": "/images/home/product-stickers-labels.png",
+            "image_alt": "Custom die-cut stickers and labels"
+        },
+        "series": {
+            "eyebrow": "By shape & material",
+            "heading": "Sticker & label styles",
+            "subtitle": "Choose the shape and material that fits your use case. Design help available if you need it.",
+            "items": [
+                {
+                    "name": "Die-Cut Stickers",
+                    "blurb": "Cut to your artwork outline for a custom silhouette that pops.",
+                    "price_from": "from $24",
+                    "image_url": "/images/home/product-stickers-labels.png",
+                    "href": "/shop?cat=stickers-labels"
+                },
+                {
+                    "name": "Circle Stickers",
+                    "blurb": "Classic rounds for seals, packaging, and event favors.",
+                    "price_from": "from $18",
+                    "image_url": "/images/home/card-foil-stamped.png",
+                    "href": "/shop?cat=stickers-labels"
+                },
+                {
+                    "name": "Rectangle Labels",
+                    "blurb": "Clean rectangles for product labels, address, and branding.",
+                    "price_from": "from $18",
+                    "image_url": "/images/home/product-classic-cards.png",
+                    "href": "/shop?cat=stickers-labels"
+                },
+                {
+                    "name": "Square Stickers",
+                    "blurb": "Balanced squares for logos, QR codes, and social stickers.",
+                    "price_from": "from $18",
+                    "image_url": "/images/home/card-debossed.png",
+                    "href": "/shop?cat=stickers-labels"
+                },
+                {
+                    "name": "Vinyl Stickers",
+                    "blurb": "Durable vinyl for outdoor use, water bottles, and high-wear spots.",
+                    "price_from": "from $28",
+                    "image_url": "/images/home/product-pvc-cards.png",
+                    "href": "/shop?cat=stickers-labels"
+                },
+                {
+                    "name": "Matte Paper Labels",
+                    "blurb": "Soft matte paper for elegant packaging and stationery accents.",
+                    "price_from": "from $16",
+                    "image_url": "/images/home/product-cotton-cards.png",
+                    "href": "/shop?cat=stickers-labels"
+                }
+            ]
+        },
+        "design_cta": {
+            "eyebrow": "Need design help?",
+            "heading": "Three ways to get print-ready art",
+            "subtitle": "Upload finished artwork, use a template layout, or commission a custom design.",
+            "paths": [
+                {
+                    "name": "Upload a full design",
+                    "blurb": "Send vector or high-res files with cut lines if needed — we'll prepare for print.",
+                    "cta": "Upload your design",
+                    "href": "/business-card-design-service"
+                },
+                {
+                    "name": "Template layout",
+                    "blurb": "Fast layout from a reference or template — logo and copy applied for you from $5.",
+                    "cta": "Choose a template",
+                    "href": "/business-card-design-service"
+                },
+                {
+                    "name": "Design for you",
+                    "blurb": "Original sticker concepts from our design team — from $10 per project.",
+                    "cta": "Start custom design",
+                    "href": "/business-card-design-service"
+                }
+            ]
+        },
+        "perks": {
+            "heading": "Quality you can stick with",
+            "items": [
+                {
+                    "title": "Crisp edges",
+                    "description": "Clean die-cuts and kiss-cuts so shapes look intentional, not rough."
+                },
+                {
+                    "title": "Material options",
+                    "description": "Paper and vinyl choices for indoor packaging or tougher use."
+                },
+                {
+                    "title": "Color fidelity",
+                    "description": "Brand colors and fine detail reproduced with care."
+                },
+                {
+                    "title": "Flexible quantities",
+                    "description": "Order what you need for launches, kits, or bulk campaigns."
+                }
+            ]
+        },
+        "faq": [
+            {
+                "question": "Do you offer custom die-cut shapes?",
+                "answer": "Yes. Die-cut stickers can follow your artwork outline. Provide a clear vector path when possible for the best cut."
+            },
+            {
+                "question": "What's the difference between paper and vinyl?",
+                "answer": "Matte paper is great for packaging and short-term indoor use. Vinyl is more durable for moisture, outdoor, or high-touch applications."
+            },
+            {
+                "question": "What file formats work best?",
+                "answer": "Vector (AI, EPS, PDF, SVG) is ideal for sharp edges and die-cuts. High-resolution PNG with transparent background also works for many designs."
+            },
+            {
+                "question": "Is there a minimum order?",
+                "answer": "Minimums vary by shape and material — typically from small starter packs up to bulk runs. See product pages for current MOQs."
+            },
+            {
+                "question": "Can you design stickers for my brand?",
+                "answer": "Absolutely. Use our design service for template layout ($5) or custom original design ($10), or upload finished files for free prep when printing with us."
+            }
+        ]
+    },
+
+    "flyers_page": {
+        "_source_file": "resources/js/pages/flyers-and-brochures.tsx",
+        "active_category": "Flyers & Brochures",
+        "accent_color": "#800020",
+        "warm_bg": "#FAF7F2",
+        "gold": "#C9A96A",
+        "seo": {
+            "title": "Flyers & Brochures",
+            "description": "Make your ideas fly. US Letter flyers, half-page, long, square, tri-fold and bi-fold brochures — sharp print and optional design from InkPavo."
+        },
+        "hero": {
+            "eyebrow": "Flyers & Brochures",
+            "heading": "Make your ideas fly.",
+            "body": "High-impact flyers and fold-out brochures for events, menus, and brand stories — vivid color on stocks that feel professional.",
+            "cta": "Browse formats",
+            "cta_href": "#series",
+            "image_url": "/images/home/product-flyers.png",
+            "image_alt": "Printed flyers and tri-fold brochures"
+        },
+        "series": {
+            "eyebrow": "By format",
+            "heading": "Flyers & brochure formats",
+            "subtitle": "Pick a flat flyer or a folded brochure. Design service available for layout and artwork.",
+            "items": [
+                {
+                    "name": "US Letter Flyers",
+                    "blurb": "8.5\"×11\" workhorses for handouts, posters, and storefronts.",
+                    "price_from": "from $39",
+                    "image_url": "/images/home/product-flyers.png",
+                    "href": "/flyer-printing-1000"
+                },
+                {
+                    "name": "Half Page Flyers",
+                    "blurb": "Compact handouts that still leave room for a strong headline.",
+                    "price_from": "from $29",
+                    "image_url": "/images/home/hero-marketing-materials.png",
+                    "href": "/shop?cat=flyers"
+                },
+                {
+                    "name": "Long Flyers",
+                    "blurb": "Tall, narrow formats for menus, programs, and rack displays.",
+                    "price_from": "from $32",
+                    "image_url": "/images/home/product-postcards.png",
+                    "href": "/shop?cat=flyers"
+                },
+                {
+                    "name": "Square Flyers",
+                    "blurb": "Eye-catching square layouts for invites and modern brand pieces.",
+                    "price_from": "from $34",
+                    "image_url": "/images/home/card-letterpress.png",
+                    "href": "/shop?cat=flyers"
+                },
+                {
+                    "name": "Tri-Fold Brochures",
+                    "blurb": "Classic three-panel storytelling for services, tours, and menus.",
+                    "price_from": "from $49",
+                    "image_url": "/images/home/product-premium-cards.png",
+                    "href": "/tri-fold-brochure-500"
+                },
+                {
+                    "name": "Bi-Fold Brochures",
+                    "blurb": "Simple four-panel fold for clean product or program overviews.",
+                    "price_from": "from $45",
+                    "image_url": "/images/home/product-business-cards.png",
+                    "href": "/shop?cat=flyers"
+                }
+            ]
+        },
+        "design_cta": {
+            "eyebrow": "Need design help?",
+            "heading": "Three ways to get print-ready art",
+            "subtitle": "Bring finished files, start from a template, or let us design your flyer or brochure.",
+            "paths": [
+                {
+                    "name": "Upload a full design",
+                    "blurb": "Supply print-ready PDF with bleed and safe margins — we take it to press.",
+                    "cta": "Upload your design",
+                    "href": "/business-card-design-service"
+                },
+                {
+                    "name": "Template layout",
+                    "blurb": "We place your content into a proven flyer or brochure structure from $5.",
+                    "cta": "Choose a template",
+                    "href": "/business-card-design-service"
+                },
+                {
+                    "name": "Design for you",
+                    "blurb": "Original multi-panel concepts from our team — from $10 per project.",
+                    "cta": "Start custom design",
+                    "href": "/business-card-design-service"
+                }
+            ]
+        },
+        "perks": {
+            "heading": "Print that represents you well",
+            "items": [
+                {
+                    "title": "Vivid color",
+                    "description": "Photos and brand palettes reproduced with professional color management."
+                },
+                {
+                    "title": "Stock choices",
+                    "description": "From economical handouts to thicker brochure stocks."
+                },
+                {
+                    "title": "Fold accuracy",
+                    "description": "Clean folds and panels so multi-page stories read naturally."
+                },
+                {
+                    "title": "Design support",
+                    "description": "Optional layout and custom design so files arrive press-ready."
+                }
+            ]
+        },
+        "faq": [
+            {
+                "question": "What flyer and brochure sizes do you offer?",
+                "answer": "US Letter, half-page, long, and square flyers, plus tri-fold and bi-fold brochures. Product pages list exact dimensions and paper options."
+            },
+            {
+                "question": "Do you have ready-to-order flyer packs?",
+                "answer": "Yes — for example Flyer Printing (1000 pack) and Tri-Fold Brochure Printing (500 pack). More formats are listed under shop filters as inventory expands."
+            },
+            {
+                "question": "What file setup do you need?",
+                "answer": "Print-ready PDF with 0.125\" bleed and critical content inside safe margins. For folds, keep important elements away from fold lines."
+            },
+            {
+                "question": "Can you design multi-panel brochures?",
+                "answer": "Yes. Template layout and custom design paths cover multi-panel work — start from our design service page and describe your panels and goals."
+            },
+            {
+                "question": "How fast can I get flyers?",
+                "answer": "Production typically takes several business days after proof approval, plus shipping. Ask about rush if you have a hard event date."
+            }
+        ]
     }
 }

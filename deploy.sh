@@ -20,15 +20,30 @@ echo "[$(date '+%F %T')] 开始部署..."
 echo "==> 1/6 拉取最新代码"
 # 若以 root 执行 WebHook，需先全局信任该目录（一次性）:
 #   git config --global --add safe.directory "$PROJECT_DIR"
-git pull origin master
+#
+# 使用 fetch + reset --hard（而非 git pull）：
+# 服务器被视为仓库的镜像，任何服务器本地的未提交改动都会被丢弃，
+# 避免 "Please commit your changes or stash them before you merge"
+# 这类错误卡住持续部署。注意：请勿在服务器上直接改文件！
+BEFORE=$(git rev-parse HEAD)
+git fetch origin master
+git reset --hard origin/master
 
-echo "==> 2/6 安装 PHP 依赖（生产模式）"
-$COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction
+echo "==> 2/6 PHP 依赖（composer.lock 变化或 vendor 缺失时才安装）"
+if [ ! -d vendor ] || ! git diff --quiet "$BEFORE" HEAD -- composer.lock; then
+    $COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction
+else
+    echo "    composer.lock 无变化，跳过"
+fi
 
-echo "==> 3/6 安装前端依赖"
-$NPM_BIN ci --no-audit --no-fund
+echo "==> 3/6 前端依赖（package-lock.json 变化或 node_modules 缺失时才安装）"
+if [ ! -d node_modules ] || ! git diff --quiet "$BEFORE" HEAD -- package-lock.json; then
+    $NPM_BIN ci --no-audit --no-fund
+else
+    echo "    package-lock.json 无变化，跳过"
+fi
 
-echo "==> 4/6 构建前端资源"
+echo "==> 4/6 构建前端资源（始终执行——源码变了就要重新构建）"
 # 小内存服务器（<=2G）如构建失败，先加 swap 或改用:
 #   NODE_OPTIONS=--max-old-space-size=1024 $NPM_BIN run build
 $NPM_BIN run build

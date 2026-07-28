@@ -21,6 +21,9 @@ createInertiaApp({
             case name === 'contact':
             case name === 'sample-packs':
             case name === 'business-card-design-service':
+            case name === 'postcards':
+            case name === 'stickers-and-labels':
+            case name === 'flyers-and-brochures':
                 return null;
             case name === 'dashboard':
                 return null;

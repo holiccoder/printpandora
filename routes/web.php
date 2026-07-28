@@ -24,6 +24,9 @@ Route::inertia('/shipping', 'shipping')->name('shipping');
 Route::inertia('/shipping-calculator', 'shipping-calculator')->name('shipping.calculator');
 Route::inertia('/sample-packs', 'sample-packs')->name('shop.sample-packs');
 Route::inertia('/business-card-design-service', 'business-card-design-service')->name('business-card-design-service');
+Route::inertia('/postcards', 'postcards')->name('postcards');
+Route::inertia('/stickers-and-labels', 'stickers-and-labels')->name('stickers-and-labels');
+Route::inertia('/flyers-and-brochures', 'flyers-and-brochures')->name('flyers-and-brochures');
 
 // Contact
 Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');

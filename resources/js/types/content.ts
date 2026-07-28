@@ -99,6 +99,12 @@ export interface FooterLegalBar {
     legal_links: FooterLegalLink[];
 }
 
+export interface FooterSocialLink {
+    network: 'facebook' | 'pinterest' | 'instagram' | 'x' | 'youtube' | string;
+    label: string;
+    href: string;
+}
+
 export interface FooterContent {
     column_headings: {
         products: string;
@@ -111,6 +117,7 @@ export interface FooterContent {
     paper_stocks: NavLink[];
     about_us: NavLink[];
     help_links: NavLink[];
+    social_links?: FooterSocialLink[];
     legal_bar: FooterLegalBar;
 }
 
@@ -199,10 +206,42 @@ export interface AboutPageContent {
     closing_link_href: string;
 }
 
+export interface DesignServicePricingTier {
+    name: string;
+    price: string;
+    price_unit?: string | null;
+    price_detail?: string | null;
+    badge?: string | null;
+    audience: string;
+    flow: string[];
+    cta: string;
+    cta_href?: string;
+    note?: string | null;
+}
+
+export interface DesignServiceSupplemental {
+    title: string;
+    body: string;
+}
+
 export interface DesignServicePageContent {
     seo: SeoMeta;
     heading: string;
     intro: string;
+    hero?: {
+        eyebrow?: string;
+        heading: string;
+        body: string;
+        cta?: string;
+        image_url?: string;
+        image_alt?: string;
+    };
+    tiers_eyebrow?: string;
+    tiers_heading?: string;
+    tiers_subtitle?: string;
+    pricing_tiers?: DesignServicePricingTier[];
+    supplemental_heading?: string;
+    supplemental_services?: DesignServiceSupplemental[];
     process_heading: string;
     process_steps: string[];
     notes_heading: string;

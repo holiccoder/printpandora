@@ -135,7 +135,7 @@ cd /www/wwwroot/printpandora && php artisan schedule:run >> /dev/null 2>&1
 | 操作     | 命令 / 位置                                                                          |
 | ------ | -------------------------------------------------------------------------------- |
 | 手动部署   | `bash /www/wwwroot/printpandora/deploy.sh`                                       |
-| 回滚     | `cd /www/wwwroot/printpandora && git reset --hard <上一个commit> && bash deploy.sh` |
+| 回滚     | `cd /www/wwwroot/printpandora && git fetch origin && git reset --hard <上一个commit>`，然后**手动执行 deploy.sh 的第 2–6 步**（不要直接跑 deploy.sh——它第 1 步会把代码重置回最新 master，回滚会被抵消） |
 | 查看部署日志 | 宝塔 WebHook 插件日志面板                                                                |
 | 查看应用日志 | `storage/logs/laravel.log`                                                       |
 
