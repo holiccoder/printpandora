@@ -6,7 +6,7 @@
 set -e
 
 # ---------- 按服务器实际情况调整（仅需改这里） ----------
-PROJECT_DIR="/www/wwwroot/printpandora"
+PROJECT_DIR="/www/wwwroot/www.inkpavo.com"
 PHP_BIN="php"                                   # 宝塔多版本 PHP 时写绝对路径: /www/server/php/84/bin/php
 COMPOSER_BIN="composer"
 NPM_BIN="npm"
