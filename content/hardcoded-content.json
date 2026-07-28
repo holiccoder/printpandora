@@ -434,14 +434,6 @@
                     "cta_href": "/shop?cat=business-cards",
                     "image_url": "/images/home/hero-original-business-cards.png",
                     "alt": "Two minimalist business cards laid on textured brown packing paper"
-                },
-                {
-                    "headline": "FSC® certified products that are kinder to the planet",
-                    "subheadline": "Bring your brand to life on certified papers — Business Cards, Postcards, Flyers and Brochures.",
-                    "cta_text": "Discover the range",
-                    "cta_href": "/shop/fsc-certified",
-                    "image_url": "/images/home/hero-fsc-eco-paper.png",
-                    "alt": "Aerial view of a dense, vibrant green pine forest"
                 }
             ]
         },

@@ -118,7 +118,12 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
                 style={{ transform: `translateX(-${index * 100}%)` }}
             >
                 {items.map((slide, i) => (
-                    <Slide key={i} slide={slide} hidden={i !== index} />
+                    <Slide
+                        key={i}
+                        slide={slide}
+                        hidden={i !== index}
+                        active={i === index}
+                    />
                 ))}
             </div>
 
@@ -168,19 +173,38 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
     );
 }
 
-function Slide({ slide, hidden }: { slide: HeroSlide; hidden: boolean }) {
+/** Fade + slide-up; pair with inline transitionDelay for staggered enter. */
+function enterClass(active: boolean) {
+    return cn(
+        'transition-all duration-700 ease-out will-change-transform',
+        active ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
+    );
+}
+
+function Slide({
+    slide,
+    hidden,
+    active,
+}: {
+    slide: HeroSlide;
+    hidden: boolean;
+    active: boolean;
+}) {
     const hasFeatures = slide.features && slide.features.length > 0;
 
     return (
         <div
-            className="relative h-[1152px] w-full shrink-0 overflow-hidden md:h-[1152px]"
+            className="relative h-[710px] w-full shrink-0 overflow-hidden md:h-[710px]"
             aria-hidden={hidden}
         >
-            {/* Full-width photo */}
+            {/* Full-width photo — subtle scale-in when active */}
             <img
                 src={slide.image}
                 alt={slide.imageAlt}
-                className="absolute inset-0 h-full w-full object-cover"
+                className={cn(
+                    'absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out',
+                    active ? 'scale-100' : 'scale-105',
+                )}
                 loading="eager"
             />
 
@@ -192,35 +216,96 @@ function Slide({ slide, hidden }: { slide: HeroSlide; hidden: boolean }) {
                 <div className="flex flex-1 flex-col justify-end px-6 md:justify-center md:px-12 lg:px-20">
                     <div className="max-w-md pb-6 md:pb-0">
                         {slide.eyebrow && (
-                            <div className="mb-4 flex items-center gap-3">
+                            <div
+                                className={cn(
+                                    'mb-4 flex items-center gap-3',
+                                    enterClass(active),
+                                )}
+                                style={{
+                                    transitionDelay: active ? '80ms' : '0ms',
+                                }}
+                            >
                                 <p className="text-xs font-semibold tracking-[0.15em] text-[#C9A96A] uppercase">
                                     {slide.eyebrow}
                                 </p>
-                                <span className="h-px flex-1 bg-[#C9A96A]/40" />
+                                <span
+                                    className={cn(
+                                        'h-px origin-left bg-[#C9A96A]/40 transition-transform duration-700 ease-out',
+                                        active ? 'scale-x-100' : 'scale-x-0',
+                                    )}
+                                    style={{
+                                        transitionDelay: active
+                                            ? '200ms'
+                                            : '0ms',
+                                    }}
+                                />
                             </div>
                         )}
-                        <h2 className="font-serif text-4xl leading-tight font-bold whitespace-pre-line text-[#800020] md:text-5xl lg:text-[3.25rem]">
+                        <h2
+                            className={cn(
+                                'font-serif text-4xl leading-tight font-bold whitespace-pre-line text-[#800020] md:text-5xl lg:text-[3.25rem]',
+                                enterClass(active),
+                            )}
+                            style={{
+                                transitionDelay: active ? '180ms' : '0ms',
+                            }}
+                        >
                             {slide.headline}
                         </h2>
-                        <p className="mt-4 text-base leading-relaxed text-[#2A2A28]/80 md:text-lg">
+                        <p
+                            className={cn(
+                                'mt-4 text-base leading-relaxed text-[#2A2A28]/80 md:text-lg',
+                                enterClass(active),
+                            )}
+                            style={{
+                                transitionDelay: active ? '320ms' : '0ms',
+                            }}
+                        >
                             {slide.subheadline}
                         </p>
-                        <Link
-                            href={slide.ctaHref}
-                            className="mt-8 inline-flex items-center justify-center gap-2 rounded-sm bg-[#800020] px-6 py-3 text-sm font-semibold tracking-wider text-white shadow-sm transition hover:bg-[#800020]/90 focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none uppercase"
+                        <div
+                            className={cn(enterClass(active))}
+                            style={{
+                                transitionDelay: active ? '460ms' : '0ms',
+                            }}
                         >
-                            {slide.ctaLabel}
-                            <ArrowRight className="size-4" />
-                        </Link>
+                            <Link
+                                href={slide.ctaHref}
+                                tabIndex={hidden ? -1 : undefined}
+                                className="mt-8 inline-flex items-center justify-center gap-2 rounded-sm bg-[#800020] px-6 py-3 text-sm font-semibold tracking-wider text-white uppercase shadow-sm transition hover:bg-[#800020]/90 focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none"
+                            >
+                                {slide.ctaLabel}
+                                <ArrowRight className="size-4" />
+                            </Link>
+                        </div>
                     </div>
                 </div>
 
                 {/* Features strip */}
                 {hasFeatures && (
-                    <div className="hidden border-t border-[#800020]/10 md:block">
+                    <div
+                        className={cn(
+                            'hidden border-t border-[#800020]/10 md:block',
+                            enterClass(active),
+                        )}
+                        style={{
+                            transitionDelay: active ? '580ms' : '0ms',
+                        }}
+                    >
                         <div className="grid max-w-3xl grid-cols-3 divide-x divide-[#800020]/10">
-                            {slide.features!.map((f) => (
-                                <div key={f.title} className="flex items-center gap-3 px-6 py-4 lg:px-8">
+                            {slide.features!.map((f, fi) => (
+                                <div
+                                    key={f.title}
+                                    className={cn(
+                                        'flex items-center gap-3 px-6 py-4 lg:px-8',
+                                        enterClass(active),
+                                    )}
+                                    style={{
+                                        transitionDelay: active
+                                            ? `${620 + fi * 90}ms`
+                                            : '0ms',
+                                    }}
+                                >
                                     <span className="shrink-0 text-[#800020]">
                                         <FeatureIcon icon={f.icon} />
                                     </span>
