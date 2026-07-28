@@ -173,7 +173,7 @@ function Slide({ slide, hidden }: { slide: HeroSlide; hidden: boolean }) {
 
     return (
         <div
-            className="relative h-[560px] w-full shrink-0 overflow-hidden md:h-[550px]"
+            className="relative h-[1152px] w-full shrink-0 overflow-hidden md:h-[1152px]"
             aria-hidden={hidden}
         >
             {/* Full-width photo */}
