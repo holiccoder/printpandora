@@ -842,7 +842,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                                 <img
                                                     src={f.thumb}
                                                     alt=""
-                                                    className="aspect-[3/2] w-full rounded-sm object-cover"
+                                                    className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
                                                 />
                                                 <p className="mt-2 text-sm font-semibold">
                                                     {f.label}

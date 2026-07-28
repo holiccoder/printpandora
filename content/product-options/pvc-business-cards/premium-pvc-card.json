@@ -250,10 +250,10 @@
             ]
         },
         {
-            "name": "gold foil",
-            "code": "gold_foil",
-            "description": "Even the simplest designs dazzle with this extra-special gilded finish.",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/gold_foil-526x251.jpg",
+            "name": "SC-M11",
+            "code": "sc_m11",
+            "description": "SC-M11",
+            "swatch_image": "/images/product-options/business-cards/swatches/sc-m11.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -298,10 +298,298 @@
             ]
         },
         {
-            "name": "silver foil",
-            "code": "silver_foil",
-            "description": "Add dazzling, shimmering silver foil accents to any part of your design.",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/silver_foil-526x251.jpg",
+            "name": "SC-M14",
+            "code": "sc_m14",
+            "description": "SC-M14",
+            "swatch_image": "/images/product-options/business-cards/swatches/sc-m14.png",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 500,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 10000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "SC-M16",
+            "code": "sc_m16",
+            "description": "SC-M16",
+            "swatch_image": "/images/product-options/business-cards/swatches/SC-M16.png",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 500,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 10000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "SC-M17",
+            "code": "sc_m17",
+            "description": "SC-M17",
+            "swatch_image": "/images/product-options/business-cards/swatches/SC-M17.png",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 500,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 10000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "SC-M18",
+            "code": "sc_m18",
+            "description": "SC-M18",
+            "swatch_image": "/images/product-options/business-cards/swatches/sc-m18.png",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 500,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 10000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "SC-M21",
+            "code": "sc_m21",
+            "description": "SC-M21",
+            "swatch_image": "/images/product-options/business-cards/swatches/sc-m21.png",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 500,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 10000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "SC-M30",
+            "code": "sc_m30",
+            "description": "SC-M30",
+            "swatch_image": "/images/product-options/business-cards/swatches/sc-m30.png",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 500,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 10000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "SC-M32",
+            "code": "sc_m32",
+            "description": "SC-M32",
+            "swatch_image": "/images/product-options/business-cards/swatches/sc-m32.png",
             "added_price": [
                 {
                     "pack_size": 50,
