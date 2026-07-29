@@ -93,7 +93,7 @@ class ProductController extends Controller
         // storage/from-tool/数据文档/<dir>. Products with no UV finish
         // only provide the rectangle/square scenarios.
         $configs = [
-            'standard-classic-business-card' => [
+            'classic-standard-business-cards' => [
                 'dir' => '300g铜版纸',
                 'files' => [
                     'rectangle' => '300g铜版纸 长方形.json',
@@ -116,7 +116,7 @@ class ProductController extends Controller
                     'square' => '320g铜版纸-正方形.json',
                 ],
             ],
-            'classic-lush-business-cards' => [
+            'classic-solid-business-cards' => [
                 'dir' => '350g白卡',
                 'files' => [
                     'rectangle' => '350g白卡.json',

@@ -1,5 +1,5 @@
 {
-    "subtitle": "700 gsm premium paper — our thickest, most luxurious card with an ultra-premium feel",
+    "subtitle": "700 gsm premium paper \u2014 our thickest, most luxurious card with an ultra-premium feel",
     "starting_price_text": "50 cards from $35",
     "sizes": [
         {
@@ -459,10 +459,10 @@
             ]
         },
         {
-            "name": "SC-M11",
-            "code": "sc_m11",
-            "description": "SC-M11",
-            "swatch_image": "/images/product-options/business-cards/swatches/sc-m11.png",
+            "name": "Black gold",
+            "code": "black_gold",
+            "description": "Black gold",
+            "swatch_image": "/images/product-options/business-cards/swatches/black-gold.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -523,10 +523,10 @@
             ]
         },
         {
-            "name": "SC-M14",
-            "code": "sc_m14",
-            "description": "SC-M14",
-            "swatch_image": "/images/product-options/business-cards/swatches/sc-m14.png",
+            "name": "Blue gold",
+            "code": "blue_gold",
+            "description": "Blue gold",
+            "swatch_image": "/images/product-options/business-cards/swatches/blue-gold.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -587,10 +587,10 @@
             ]
         },
         {
-            "name": "SC-M16",
-            "code": "sc_m16",
-            "description": "SC-M16",
-            "swatch_image": "/images/product-options/business-cards/swatches/SC-M16.png",
+            "name": "Bright gold",
+            "code": "bright_gold",
+            "description": "Bright gold",
+            "swatch_image": "/images/product-options/business-cards/swatches/bright-gold.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -651,10 +651,10 @@
             ]
         },
         {
-            "name": "SC-M17",
-            "code": "sc_m17",
-            "description": "SC-M17",
-            "swatch_image": "/images/product-options/business-cards/swatches/SC-M17.png",
+            "name": "Bright silver",
+            "code": "bright_silver",
+            "description": "Bright silver",
+            "swatch_image": "/images/product-options/business-cards/swatches/bright-silver.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -715,10 +715,10 @@
             ]
         },
         {
-            "name": "SC-M18",
-            "code": "sc_m18",
-            "description": "SC-M18",
-            "swatch_image": "/images/product-options/business-cards/swatches/sc-m18.png",
+            "name": "Green gold",
+            "code": "green_gold",
+            "description": "Green gold",
+            "swatch_image": "/images/product-options/business-cards/swatches/green-gold.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -779,10 +779,10 @@
             ]
         },
         {
-            "name": "SC-M21",
-            "code": "sc_m21",
-            "description": "SC-M21",
-            "swatch_image": "/images/product-options/business-cards/swatches/sc-m21.png",
+            "name": "Matte gold",
+            "code": "matte_gold",
+            "description": "Matte gold",
+            "swatch_image": "/images/product-options/business-cards/swatches/matte-gold.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -843,10 +843,10 @@
             ]
         },
         {
-            "name": "SC-M30",
-            "code": "sc_m30",
-            "description": "SC-M30",
-            "swatch_image": "/images/product-options/business-cards/swatches/sc-m30.png",
+            "name": "Matte silver",
+            "code": "matte_silver",
+            "description": "Matte silver",
+            "swatch_image": "/images/product-options/business-cards/swatches/matte-silver.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -907,10 +907,74 @@
             ]
         },
         {
-            "name": "SC-M32",
-            "code": "sc_m32",
-            "description": "SC-M32",
-            "swatch_image": "/images/product-options/business-cards/swatches/sc-m32.png",
+            "name": "Red gold",
+            "code": "red_gold",
+            "description": "Red gold",
+            "swatch_image": "/images/product-options/business-cards/swatches/red-gold.png",
+            "added_price": [
+                {
+                    "pack_size": 50,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 100,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 800,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1200,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1400,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 1600,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 2000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 3000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 4000,
+                    "price_per_card": 0
+                },
+                {
+                    "pack_size": 5000,
+                    "price_per_card": 0
+                }
+            ]
+        },
+        {
+            "name": "Rose gold",
+            "code": "rose_gold",
+            "description": "Rose gold",
+            "swatch_image": "/images/product-options/business-cards/swatches/rose-gold.png",
             "added_price": [
                 {
                     "pack_size": 50,

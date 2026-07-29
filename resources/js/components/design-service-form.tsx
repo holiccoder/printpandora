@@ -1,7 +1,8 @@
-import { Link } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { Image } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
+import type { FormEventHandler } from 'react';
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -21,32 +22,63 @@ interface DesignServiceFormProps {
     className?: string;
 }
 
+type DesignServiceFormData = {
+    email: string;
+    business_name: string;
+    card_info: string;
+    business_card_type: string;
+    terms_accepted: boolean;
+};
+
 export default function DesignServiceForm({
     productOptions,
     onSuccess,
     submitLabel = 'Submit',
     className = '',
 }: DesignServiceFormProps) {
-    const [agreed, setAgreed] = useState(false);
+    const flashSuccess = (
+        usePage().props.flash as { success?: string } | undefined
+    )?.success;
+
+    const { data, setData, post, processing, errors, reset } =
+        useForm<DesignServiceFormData>({
+            email: '',
+            business_name: '',
+            card_info: '',
+            business_card_type: '',
+            terms_accepted: false,
+        });
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+        post('/business-card-design-service', {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+                onSuccess?.();
+            },
+        });
+    };
 
     return (
-        <form
-            className={`space-y-5 ${className}`}
-            onSubmit={(e) => {
-                e.preventDefault();
-                toast.success(
-                    'Thanks — our design team will contact you by email shortly.',
-                );
-                onSuccess?.();
-            }}
-        >
-            <FormRow label="Your primary contact email">
+        <form className={`space-y-5 ${className}`} onSubmit={submit} noValidate>
+            {flashSuccess && (
+                <div
+                    role="status"
+                    className="rounded-md border border-[#800020]/20 bg-[#eaf3ec] px-4 py-3 text-sm text-[#800020]"
+                >
+                    {flashSuccess}
+                </div>
+            )}
+
+            <FormRow label="Your primary contact email" error={errors.email}>
                 <Input
                     id="ds-email"
-                    name="email"
                     type="email"
                     placeholder="you@example.com"
                     required
+                    value={data.email}
+                    onChange={(e) => setData('email', e.target.value)}
                 />
             </FormRow>
 
@@ -59,23 +91,28 @@ export default function DesignServiceForm({
                 </div>
             </FormRow>
 
-            <FormRow label="Name of your business">
+            <FormRow
+                label="Name of your business"
+                error={errors.business_name}
+            >
                 <Input
                     id="ds-business"
-                    name="business_name"
                     placeholder="Your business name"
                     required
+                    value={data.business_name}
+                    onChange={(e) => setData('business_name', e.target.value)}
                 />
             </FormRow>
 
-            <FormRow label="Information on the card">
+            <FormRow label="Information on the card" error={errors.card_info}>
                 <div className="space-y-2">
                     <textarea
                         id="ds-info"
-                        name="card_info"
                         rows={4}
                         placeholder="Name, title, contact information, address, website etc."
                         className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        value={data.card_info}
+                        onChange={(e) => setData('card_info', e.target.value)}
                     />
                     <p className="text-xs text-neutral-500">
                         Name, title, contact information, address, website etc
@@ -84,8 +121,17 @@ export default function DesignServiceForm({
                 </div>
             </FormRow>
 
-            <FormRow label="Business card type">
-                <Select name="business_card_type" required>
+            <FormRow
+                label="Business card type"
+                error={errors.business_card_type}
+            >
+                <Select
+                    required
+                    value={data.business_card_type}
+                    onValueChange={(value) =>
+                        setData('business_card_type', value)
+                    }
+                >
                     <SelectTrigger className="w-full">
                         <SelectValue placeholder="Please select product" />
                     </SelectTrigger>
@@ -106,8 +152,10 @@ export default function DesignServiceForm({
             <div className="flex items-start gap-3 rounded-md border border-neutral-200 bg-neutral-50 p-4">
                 <Checkbox
                     id="ds-terms"
-                    checked={agreed}
-                    onCheckedChange={(checked) => setAgreed(checked === true)}
+                    checked={data.terms_accepted}
+                    onCheckedChange={(checked) =>
+                        setData('terms_accepted', checked === true)
+                    }
                     className="mt-0.5"
                 />
                 <Label
@@ -115,17 +163,24 @@ export default function DesignServiceForm({
                     className="text-sm leading-relaxed text-neutral-700"
                 >
                     I agree with{' '}
-                    <Link
+                    <a
                         href="/terms"
                         className="text-primary hover:underline"
                         onClick={(e) => e.stopPropagation()}
                     >
                         InkPavo's terms and conditions
-                    </Link>
+                    </a>
                 </Label>
             </div>
+            {errors.terms_accepted && (
+                <InputError message={errors.terms_accepted} />
+            )}
 
-            <Button type="submit" className="w-full" disabled={!agreed}>
+            <Button
+                type="submit"
+                className="w-full"
+                disabled={!data.terms_accepted || processing}
+            >
                 {submitLabel}
             </Button>
         </form>
@@ -134,9 +189,11 @@ export default function DesignServiceForm({
 
 function FormRow({
     label,
+    error,
     children,
 }: {
     label: string;
+    error?: string;
     children: React.ReactNode;
 }) {
     return (
@@ -144,7 +201,10 @@ function FormRow({
             <Label className="pt-2 text-sm font-medium text-neutral-900">
                 {label}
             </Label>
-            <div className="w-full">{children}</div>
+            <div className="w-full">
+                {children}
+                {error && <InputError message={error} className="mt-1" />}
+            </div>
         </div>
     );
 }

@@ -2,7 +2,7 @@
 // via useContent('product_detail_page'). Configurator state and price math stay
 // local to the page; JSON drives the labels and option metadata.
 import { Link, router } from '@inertiajs/react';
-import { ChevronRight, Package } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import DesignServiceForm from '@/components/design-service-form';
@@ -16,6 +16,12 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { computeDynamicTiers } from '@/lib/pricing';
@@ -28,6 +34,8 @@ interface Product {
     name: string;
     slug: string;
     description: string | null;
+    description_title: string | null;
+    bullet_points: string[] | null;
     price: string;
     featured_image: string | null;
     category: { id: number; name: string; slug: string };
@@ -260,19 +268,19 @@ export default function ShopShow({ product, related, productOptions }: Props) {
     );
 
     const [selectedSize, setSelectedSize] = useState<string | null>(
-        hasDynamicPricing ? null : sizes[0].id,
+        sizes[0].id,
     );
     const [selectedFinish, setSelectedFinish] = useState<string | null>(
-        hasDynamicPricing ? null : finishes[0].id,
+        finishes[0].id,
     );
     const [selectedCorners, setSelectedCorners] = useState<string | null>(
-        hasDynamicPricing ? null : cornersList[0].id,
+        cornersList[0].id,
     );
     const [selectedSpecialFinish, setSelectedSpecialFinish] = useState<
         string | null
-    >(hasDynamicPricing ? null : (specialFinishes[0]?.id ?? 'none'));
+    >(specialFinishes[0]?.id ?? 'none');
     const [selectedQty, setSelectedQty] = useState<number | null>(
-        hasDynamicPricing ? null : RECOMMENDED_QTY,
+        RECOMMENDED_QTY,
     );
     const [selectedThumbnail, setSelectedThumbnail] = useState<string | null>(
         null,
@@ -464,6 +472,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                 break;
             case 'paper_finish':
                 setSelectedFinish(value);
+
                 // Gloss only allows "no special finish" — reset if needed
                 if (
                     value === 'gloss' &&
@@ -472,6 +481,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                 ) {
                     setSelectedSpecialFinish('no-special-finish');
                 }
+
                 break;
             case 'corners':
                 setSelectedCorners(value);
@@ -510,6 +520,8 @@ export default function ShopShow({ product, related, productOptions }: Props) {
 
     const breadcrumbs: string[] = c.breadcrumbs;
     const featureChips: string[] = c.feature_chips;
+    const featureChipDescriptions: string[] = c.feature_chip_descriptions;
+    const gangRunTooltip: any = c.gang_run_printing_tooltip;
     const summaryLabels: string[] = c.order_summary.labels;
 
     return (
@@ -523,10 +535,7 @@ export default function ShopShow({ product, related, productOptions }: Props) {
             />
 
             {/* breadcrumbs */}
-            <nav
-                aria-label="Breadcrumb"
-                className="border-b border-neutral-100 bg-white"
-            >
+            <nav aria-label="Breadcrumb" className="bg-white">
                 <ol className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-xs text-neutral-500">
                     <li>
                         <Link href="/" className="hover:text-neutral-900">
@@ -586,69 +595,101 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                                     <svg
                                         viewBox="0 0 24 24"
                                         fill="none"
-                                        className="size-10"
+                                        stroke="currentColor"
+                                        strokeWidth="1.6"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="size-10 text-[#800020]"
                                     >
-                                        <circle
-                                            cx="12"
-                                            cy="12"
-                                            r="11"
-                                            fill="#22c55e"
-                                        />
-                                        <rect
-                                            x="5"
-                                            y="7"
-                                            width="14"
-                                            height="10"
-                                            rx="1"
-                                            fill="white"
-                                        />
-                                        <g fill="#ef4444">
-                                            <rect
-                                                x="5"
-                                                y="7"
-                                                width="14"
-                                                height="2"
-                                            />
-                                            <rect
-                                                x="5"
-                                                y="11"
-                                                width="14"
-                                                height="2"
-                                            />
-                                            <rect
-                                                x="5"
-                                                y="15"
-                                                width="14"
-                                                height="2"
-                                            />
-                                        </g>
-                                        <rect
-                                            x="5"
-                                            y="7"
-                                            width="6"
-                                            height="6"
-                                            fill="#2563eb"
-                                        />
-                                        <g fill="white">
-                                            <circle cx="6.5" cy="8.5" r="0.5" />
-                                            <circle cx="8" cy="8.5" r="0.5" />
-                                            <circle cx="9.5" cy="8.5" r="0.5" />
-                                            <circle cx="7.25" cy="10" r="0.5" />
-                                            <circle cx="8.75" cy="10" r="0.5" />
-                                        </g>
+                                        <circle cx="12" cy="12" r="10" />
+                                        <polyline points="12 6 12 12 16 14" />
                                     </svg>
                                 }
                                 label={featureChips[0]}
-                                description="Designed by you and InkPavo, printed in the USA"
+                                description={featureChipDescriptions[0]}
                             />
-                            <FeatureChip
-                                accent={ACCENT}
-                                icon={
-                                    <Package className="size-10 stroke-[#22c55e]" />
-                                }
-                                label={featureChips[1]}
-                                description="On matte finish &amp; square corners. / Order before 2pm (EST) Mon-Fri."
-                            />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div>
+                                            <FeatureChip
+                                                accent={ACCENT}
+                                                icon={
+                                                    <svg
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.6"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="size-10 text-[#800020]"
+                                                    >
+                                                        <rect
+                                                            x="3"
+                                                            y="6"
+                                                            width="18"
+                                                            height="14"
+                                                            rx="2"
+                                                        />
+                                                        <path d="M3 10h18" />
+                                                        <path d="M7 6V4h10v2" />
+                                                        <circle
+                                                            cx="7"
+                                                            cy="14"
+                                                            r="1"
+                                                        />
+                                                        <circle
+                                                            cx="11"
+                                                            cy="14"
+                                                            r="1"
+                                                        />
+                                                        <circle
+                                                            cx="15"
+                                                            cy="14"
+                                                            r="1"
+                                                        />
+                                                    </svg>
+                                                }
+                                                label={featureChips[1]}
+                                                description={
+                                                    featureChipDescriptions[1]
+                                                }
+                                            />
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                        side="top"
+                                        className="max-w-xs bg-neutral-900 text-white"
+                                    >
+                                        <div className="space-y-2 p-1">
+                                            <p className="font-semibold">
+                                                {gangRunTooltip.title}
+                                            </p>
+                                            <p>{gangRunTooltip.intro}</p>
+                                            <p className="font-semibold">
+                                                {gangRunTooltip.pros_title}
+                                            </p>
+                                            <ul className="list-disc space-y-1 pl-4">
+                                                {gangRunTooltip.pros.map(
+                                                    (pro: string) => (
+                                                        <li key={pro}>{pro}</li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                            <p className="font-semibold">
+                                                {gangRunTooltip.cons_title}
+                                            </p>
+                                            <ul className="list-disc space-y-1 pl-4">
+                                                {gangRunTooltip.cons.map(
+                                                    (con: string) => (
+                                                        <li key={con}>{con}</li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        </div>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         </div>
                     </div>
 
@@ -667,6 +708,44 @@ export default function ShopShow({ product, related, productOptions }: Props) {
                             <p className="mt-2 text-sm font-semibold text-neutral-900">
                                 {startingPriceText}
                             </p>
+                        )}
+
+                        {(product.description_title ||
+                            product.description ||
+                            product.bullet_points?.length) && (
+                            <div className="mt-6">
+                                {product.description_title && (
+                                    <h2 className="text-lg font-bold text-neutral-900">
+                                        {product.description_title}
+                                    </h2>
+                                )}
+                                {product.description && (
+                                    <div
+                                        className="mt-2 text-sm leading-relaxed text-neutral-700"
+                                        dangerouslySetInnerHTML={{
+                                            __html: product.description,
+                                        }}
+                                    />
+                                )}
+                                {product.bullet_points &&
+                                    product.bullet_points.length > 0 && (
+                                        <ul className="mt-3 space-y-1.5 text-sm text-neutral-700">
+                                            {product.bullet_points.map(
+                                                (bullet: string) => (
+                                                    <li
+                                                        key={bullet}
+                                                        className="flex gap-2"
+                                                    >
+                                                        <Bullet
+                                                            accent={ACCENT}
+                                                        />{' '}
+                                                        {bullet}
+                                                    </li>
+                                                ),
+                                            )}
+                                        </ul>
+                                    )}
+                            </div>
                         )}
 
                         {c.description_block && (
@@ -1518,12 +1597,10 @@ function FeatureChip({
     icon,
     label,
     description,
-    accent,
 }: {
     icon: React.ReactNode;
     label: string;
     description?: string;
-    accent: string;
 }) {
     return (
         <div className="flex gap-3 rounded-lg border border-neutral-200 bg-white p-4">
@@ -1680,19 +1757,49 @@ function DesignServiceFormModal({
     description: string;
     productOptions?: string[];
 }) {
+    const ds = useContent('design_service_page') as {
+        notes_heading?: string;
+        notes?: string[];
+    };
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-2xl">
+            <DialogContent className="sm:max-w-6xl">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
 
-                <DesignServiceForm
-                    productOptions={productOptions}
-                    onSuccess={() => onOpenChange(false)}
-                    className="mt-4"
-                />
+                <div className="mt-4 grid gap-8 md:grid-cols-2">
+                    {/* Left: Terms & Notes */}
+                    <div className="order-2 md:order-1">
+                        <h3 className="font-serif text-xl font-bold text-[#800020]">
+                            {ds.notes_heading ?? 'Terms & notes'}
+                        </h3>
+                        <ol className="mt-4 space-y-3">
+                            {(ds.notes ?? []).map((note, i) => (
+                                <li key={i} className="flex gap-3">
+                                    <span
+                                        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                                        style={{ backgroundColor: '#800020' }}
+                                    >
+                                        {i + 1}
+                                    </span>
+                                    <p className="text-sm leading-relaxed text-neutral-700">
+                                        {note}
+                                    </p>
+                                </li>
+                            ))}
+                        </ol>
+                    </div>
+
+                    {/* Right: Form */}
+                    <DesignServiceForm
+                        productOptions={productOptions}
+                        onSuccess={() => onOpenChange(false)}
+                        className="order-1 md:order-2"
+                    />
+                </div>
             </DialogContent>
         </Dialog>
     );

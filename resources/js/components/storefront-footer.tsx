@@ -117,35 +117,44 @@ export function StorefrontFooter() {
         <footer className="border-t border-neutral-100 bg-white">
             <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6 lg:py-16">
                 {/* Main columns */}
-                <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
-                    {/* Products — spans two of the five columns and renders two side-by-side lists */}
-                    <div className="lg:col-span-2">
+                <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
+                    {/* Brand column */}
+                    <div className="md:col-span-2 lg:col-span-1">
+                        <Link
+                            href="/"
+                            className="flex min-h-[100px] items-center justify-center"
+                        >
+                            <img
+                                src={f.brand.logo_url}
+                                alt="InkPavo"
+                                className="h-auto max-h-[100px] w-auto object-contain"
+                            />
+                        </Link>
+                        <p className="mt-4 text-sm leading-relaxed text-neutral-600">
+                            {f.brand.intro}
+                        </p>
+                    </div>
+
+                    {/* Products */}
+                    <div>
                         <ColumnHeading>
                             {f.column_headings.products}
                         </ColumnHeading>
-                        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-                            <LinkList links={f.products_left_column} />
-                            <LinkList links={f.products_right_column} />
-                        </div>
+                        <LinkList links={f.products} />
                     </div>
 
+                    {/* Essential Links */}
                     <div>
                         <ColumnHeading>
-                            {f.column_headings.paper_stocks}
+                            {f.column_headings.essential_links}
                         </ColumnHeading>
-                        <LinkList links={f.paper_stocks} />
+                        <LinkList links={f.essential_links} />
                     </div>
 
-                    <div>
-                        <ColumnHeading>
-                            {f.column_headings.about_us}
-                        </ColumnHeading>
-                        <LinkList links={f.about_us} />
-                    </div>
-
-                    <div>
-                        <ColumnHeading>{f.column_headings.help}</ColumnHeading>
-                        <LinkList links={f.help_links} />
+                    {/* Social / Other */}
+                    <div className="flex flex-col items-start">
+                        <ColumnHeading>Follow us</ColumnHeading>
+                        <SocialLinks links={socialLinks} />
                     </div>
                 </div>
 
@@ -155,7 +164,7 @@ export function StorefrontFooter() {
                     aria-hidden
                 />
 
-                {/* Legal links (left) + social icons (right) */}
+                {/* Legal links (left) + copyright hint (right) */}
                 <div className="flex flex-col items-center gap-4 pt-8 sm:flex-row sm:justify-between">
                     <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs sm:justify-start">
                         {f.legal_bar.legal_links.map((link) => (
@@ -166,7 +175,9 @@ export function StorefrontFooter() {
                             </li>
                         ))}
                     </ul>
-                    <SocialLinks links={socialLinks} />
+                    <p className="text-xs text-neutral-500">
+                        {f.legal_bar.copyright_text}
+                    </p>
                 </div>
             </div>
         </footer>

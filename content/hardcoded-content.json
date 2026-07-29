@@ -87,20 +87,20 @@
                                 "href": "/classic-business-cards",
                                 "children": [
                                     {
-                                        "label": "Standard Classic Business card",
-                                        "href": "/standard-classic-business-card"
+                                        "label": "Classic Standard Business Cards",
+                                        "href": "/classic-standard-business-cards"
                                     },
                                     {
-                                        "label": "Classic special business cards",
+                                        "label": "Classic Special Business Cards",
                                         "href": "/classic-special-business-cards"
                                     },
                                     {
-                                        "label": "Classic quality business cards",
+                                        "label": "Classic Quality Business Cards",
                                         "href": "/classic-quality-business-cards"
                                     },
                                     {
-                                        "label": "Classic lush business cards",
-                                        "href": "/classic-lush-business-cards"
+                                        "label": "Classic Solid Business Cards",
+                                        "href": "/classic-solid-business-cards"
                                     }
                                 ]
                             },
@@ -117,23 +117,23 @@
                                 "href": "/cotton-business-cards",
                                 "children": [
                                     {
-                                        "label": "Basic cotton business card",
+                                        "label": "Basic Cotton Business Card",
                                         "href": "/basic-cotton-business-card"
                                     },
                                     {
-                                        "label": "Classic cotton business card",
+                                        "label": "Classic Cotton Business Card",
                                         "href": "/classic-cotton-business-card"
                                     },
                                     {
-                                        "label": "Premium cotton business card",
+                                        "label": "Premium Cotton Business Card",
                                         "href": "/premium-cotton-business-card"
                                     },
                                     {
-                                        "label": "Luxe cotton business card",
+                                        "label": "Luxe Cotton Business Card",
                                         "href": "/luxe-cotton-business-card"
                                     },
                                     {
-                                        "label": "Grand cotton business card",
+                                        "label": "Grand Cotton Business Card",
                                         "href": "/grand-cotton-business-card"
                                     }
                                 ]
@@ -143,11 +143,11 @@
                                 "href": "/pvc-business-cards",
                                 "children": [
                                     {
-                                        "label": "Standard PVC card",
+                                        "label": "Standard PVC Card",
                                         "href": "/standard-pvc-card"
                                     },
                                     {
-                                        "label": "Premium PVC card",
+                                        "label": "Premium PVC Card",
                                         "href": "/premium-pvc-card"
                                     }
                                 ]
@@ -162,7 +162,7 @@
                         "links": [
                             {
                                 "label": "Business Card Sample Pack",
-                                "href": "/shop/business-card-sample-pack"
+                                "href": "/business-card-sample-pack"
                             },
                             {
                                 "label": "Business Card Design Service",
@@ -179,14 +179,6 @@
                         "description": "Thicker than your average card, Original Business Cards set a new standard for 'standard' business cards.",
                         "cta_label": "Shop Original Business Cards",
                         "cta_href": "/shop/original-business-cards"
-                    },
-                    {
-                        "image_url": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=70",
-                        "image_alt": "Aerial view of a dense green pine forest",
-                        "title": "Choose from a range of FSC® certified products",
-                        "description": "Bring your brand to life with FSC® certified Business Cards, Postcards, Flyers and Brochures.",
-                        "cta_label": "Discover the range",
-                        "cta_href": "/shop/fsc-certified"
                     }
                 ]
             }
@@ -195,115 +187,37 @@
         "footer": {
             "column_headings": {
                 "products": "Products",
-                "paper_stocks": "Paper Stocks",
-                "about_us": "About us",
-                "help": "Help/Useful links"
+                "essential_links": "Essential Links"
             },
-            "products_left_column": [
+            "brand": {
+                "logo_url": "/images/footer-logo.png",
+                "intro": "Since establishing our presence in Shanghai, China in 2003, we have been a pioneer in China's printing industry for 23 years, building deep technical expertise and industry insight. With over 20 years of offline printing experience and 15 years of online printing services, we have developed a precise understanding of the core needs of individual consumers, corporate clients, advertising agencies, and designers — and we provide tailored solutions for each group."
+            },
+            "products": [
                 { "label": "All Products", "href": "/shop" },
                 {
                     "label": "Business Cards",
                     "href": "/shop?cat=business-cards"
-                },
-                { "label": "MiniCards", "href": "/shop/minicards" },
-                {
-                    "label": "Letterpress Business Cards",
-                    "href": "/shop/letterpress-business-cards"
                 },
                 { "label": "Postcards", "href": "/postcards" },
                 {
                     "label": "Stickers and Labels",
                     "href": "/stickers-and-labels"
                 },
+                { "label": "Brochures", "href": "/flyers-and-brochures" },
                 { "label": "Flyers", "href": "/flyers-and-brochures" }
             ],
-            "products_right_column": [
-                { "label": "Letterhead", "href": "/shop/letterhead" },
-                { "label": "Greeting Cards", "href": "/shop/greeting-cards" },
-                { "label": "Luxe Notecards", "href": "/shop/luxe-notecards" },
-                { "label": "Envelopes", "href": "/shop/envelopes" },
-                { "label": "Display Boxes", "href": "/shop/display-boxes" },
-                {
-                    "label": "Business Card Holders",
-                    "href": "/shop/business-card-holders"
-                },
-                {
-                    "label": "Notebooks & Journals",
-                    "href": "/shop/notebooks-journals"
-                },
-                { "label": "Planners", "href": "/shop/planners" }
-            ],
-            "paper_stocks": [
-                { "label": "Paper Stocks", "href": "/paper-stocks" },
-                { "label": "InkPavo Luxe", "href": "/paper-stocks/luxe" },
-                {
-                    "label": "InkPavo Super",
-                    "href": "/paper-stocks/super"
-                },
-                {
-                    "label": "InkPavo Cotton",
-                    "href": "/paper-stocks/cotton"
-                },
-                {
-                    "label": "InkPavo Original",
-                    "href": "/paper-stocks/original"
-                },
-                {
-                    "label": "InkPavo Letterpress",
-                    "href": "/paper-stocks/letterpress"
-                },
-                {
-                    "label": "Sample Packs",
-                    "href": "/paper-stocks/sample-packs"
-                },
-                {
-                    "label": "FSC® Certified Paper",
-                    "href": "/paper-stocks/fsc-certified"
-                },
-                {
-                    "label": "Luxe Collection",
-                    "href": "/paper-stocks/luxe-collection"
-                }
-            ],
-            "about_us": [
-                { "label": "About InkPavo", "href": "/about" },
-                { "label": "Media resources", "href": "/about/media" },
-                {
-                    "label": "People, products and the planet",
-                    "href": "/about/sustainability"
-                },
-                { "label": "Who we are", "href": "/about" },
-                { "label": "Careers", "href": "/careers" },
-                { "label": "The Drop", "href": "/the-drop" },
-                {
-                    "label": "Business Services",
-                    "href": "/shop?cat=business-services"
-                },
-                { "label": "Reseller", "href": "/reseller" },
-                { "label": "Printfinity", "href": "/printfinity" },
-                { "label": "The InkPavo Promise", "href": "/promise" },
-                { "label": "Packaging", "href": "/packaging" },
-                { "label": "Partner with InkPavo", "href": "/partner" }
-            ],
-            "help_links": [
+            "essential_links": [
                 { "label": "Contact us", "href": "/contact" },
-                { "label": "Pricing", "href": "/pricing" },
-                {
-                    "label": "Shipping Calculator",
-                    "href": "/shipping-calculator"
-                },
-                { "label": "Next Day Delivery", "href": "/next-day-delivery" },
+                { "label": "Refer and earn", "href": "/refer" },
+                { "label": "Shipping policy", "href": "/shipping-calculator" },
+                { "label": "About InkPavo", "href": "/about" },
                 { "label": "FAQs", "href": "/help" },
                 {
-                    "label": "Artwork guidelines",
-                    "href": "/help/artwork-guidelines"
+                    "label": "Shipping and cost calculator",
+                    "href": "/shipping-calculator"
                 },
-                { "label": "Affiliates", "href": "/affiliates" },
-                { "label": "Refer and Earn", "href": "/refer" },
-                {
-                    "label": "Vulnerability Disclosure",
-                    "href": "/vulnerability-disclosure"
-                }
+                { "label": "Blog", "href": "/blog" }
             ],
             "social_links": [
                 {
@@ -338,12 +252,7 @@
                 "legal_links": [
                     { "label": "Terms & Conditions", "href": "/terms" },
                     { "label": "Privacy Policy", "href": "/privacy" },
-                    { "label": "Fonts", "href": "/fonts" },
-                    { "label": "Sitemap", "href": "/sitemap" },
-                    {
-                        "label": "Company information",
-                        "href": "/company-information"
-                    }
+                    { "label": "Sitemap", "href": "/sitemap" }
                 ]
             }
         },
@@ -419,12 +328,24 @@
                     "subheadline": "Exquisite letterpress craftsmanship that turns every connection into a lasting impression.",
                     "cta_text": "EXPLORE COLLECTION",
                     "cta_href": "/shop",
-                    "image_url": "/images/home/hero-letterpress.png",
-                    "alt": "Letterpress business cards on a stone slab with eucalyptus",
+                    "image_url": "/images/home/home-banner1.png",
+                    "alt": "Embossed white business cards with clean typography on a light textured surface",
                     "features": [
-                        { "icon": "card", "title": "BUSINESS CARDS", "description": "Premium & Professional" },
-                        { "icon": "press", "title": "FINE PRINT CRAFT", "description": "Quality in Every Detail" },
-                        { "icon": "pencil", "title": "CUSTOM DESIGN", "description": "Tailored for You" }
+                        {
+                            "icon": "card",
+                            "title": "BUSINESS CARDS",
+                            "description": "Premium & Professional"
+                        },
+                        {
+                            "icon": "press",
+                            "title": "FINE PRINT CRAFT",
+                            "description": "Quality in Every Detail"
+                        },
+                        {
+                            "icon": "pencil",
+                            "title": "CUSTOM DESIGN",
+                            "description": "Tailored for You"
+                        }
                     ]
                 },
                 {
@@ -432,8 +353,8 @@
                     "subheadline": "Thicker than your average card, with finishes that turn first impressions into lasting ones.",
                     "cta_text": "Shop business cards",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/hero-original-business-cards.png",
-                    "alt": "Two minimalist business cards laid on textured brown packing paper"
+                    "image_url": "/images/home/home-banner2.png",
+                    "alt": "Premium business cards with metallic foil edges on a modern desk"
                 }
             ]
         },
@@ -444,10 +365,30 @@
             "cta_text": "VIEW ALL PRODUCTS",
             "cta_href": "/shop",
             "cards": [
-                { "title": "Letterpress Business Cards", "description": "Timeless impression, touch that lasts.", "image_url": "/images/home/card-letterpress.png", "href": "/luxe-business-cards" },
-                { "title": "Foil Stamped Cards",         "description": "Shine with metallic foil finishes.",  "image_url": "/images/home/card-foil-stamped.png",  "href": "/super-business-cards" },
-                { "title": "Debossed Business Cards",    "description": "Subtle depth that speaks elegance.",  "image_url": "/images/home/card-debossed.png",     "href": "/standard-classic-business-card" },
-                { "title": "Die-cut Business Cards",     "description": "Unique shapes for bold brands.",      "image_url": "/images/home/card-die-cut.png",      "href": "/shop?cat=business-cards" }
+                {
+                    "title": "Letterpress Business Cards",
+                    "description": "Timeless impression, touch that lasts.",
+                    "image_url": "/images/home/card-letterpress.png",
+                    "href": "/luxe-business-cards"
+                },
+                {
+                    "title": "Foil Stamped Cards",
+                    "description": "Shine with metallic foil finishes.",
+                    "image_url": "/images/home/card-foil-stamped.png",
+                    "href": "/super-business-cards"
+                },
+                {
+                    "title": "Debossed Business Cards",
+                    "description": "Subtle depth that speaks elegance.",
+                    "image_url": "/images/home/card-debossed.png",
+                    "href": "/classic-standard-business-cards"
+                },
+                {
+                    "title": "Die-cut Business Cards",
+                    "description": "Unique shapes for bold brands.",
+                    "image_url": "/images/home/card-die-cut.png",
+                    "href": "/shop?cat=business-cards"
+                }
             ]
         },
         "perks": {
@@ -683,22 +624,31 @@
         "_source_file": "resources/js/pages/shop/show.tsx",
         "accent_color": "#800020",
         "breadcrumbs": ["Home"],
-        "feature_chips": ["Printed in the USA", "Next Day Delivery"],
-        "product_subtitle": "Thicker than your average card. Printed on 350 gsm uncoated paper — substantial in the hand without bulking up your wallet.",
-        "description_block": {
-            "title": "Get Business Cards online that set the standard for 'standard'",
-            "description": "Thicker than your average card, with a quality feel that sets a new standard for 'standard'. If you want Business Cards that look and feel as good as the impression they make, this is the way to go.",
-            "bullets": [
-                "Choose Square, Standard, or InkPavo size",
-                "130lb weight, 16pt thickness",
-                "Available in Matte or Gloss finishes at no extra charge"
+        "feature_chips": ["1 - 2 days Turn Around Time", "Gang Run Printing"],
+        "feature_chip_descriptions": [
+            "We will deliver your design after 1 - 2 work days",
+            "Not recommended for clients with high color accuracy requirements"
+        ],
+        "gang_run_printing_tooltip": {
+            "title": "Gang run printing",
+            "intro": "Gang run printing is a process where artwork from multiple clients is combined onto a single printing plate and printed using the same paper type.",
+            "pros_title": "Pros:",
+            "pros": [
+                "Low Cost: Plate-making and printing costs are shared among multiple clients.",
+                "Ideal for Small Batches: Perfect for clients with smaller print orders, with a minimum order quantity (MOQ) starting at 200 copies per design."
+            ],
+            "cons_title": "Cons:",
+            "cons": [
+                "Low Flexibility: Color variations during printing and MOQs are subject to standard limitations.",
+                "Color Differences Between Batches: Color variations may occur across different print runs, and overall color accuracy is relatively lower compared to custom runs."
             ]
         },
+        "product_subtitle": "Thicker than your average card. Printed on 350 gsm uncoated paper — substantial in the hand without bulking up your wallet.",
         "design_form_product_options": [
-            "Standard Classic Business card",
-            "Classic special business cards",
-            "Classic quality business cards",
-            "Classic lush business cards",
+            "Classic Standard Business Cards",
+            "Classic Special Business Cards",
+            "Classic Quality Business Cards",
+            "Classic Solid Business Cards",
             "Basic cotton business card",
             "Classic cotton business card",
             "Premium cotton business card",
@@ -998,6 +948,7 @@
             }
         ],
         "process_heading": "Design Process",
+        "process_image_url": "/images/home/product-design-service.png",
         "process_steps": [
             "Submit the design questionnaire (brand details, product preferences, style references). Our service team contacts you by email during business hours (Monday–Friday, 9:00 AM–5:00 PM PST).",
             "We review your brief — budget, stock, finishes, and creative references — and confirm any missing details before handoff to design.",
@@ -1021,10 +972,10 @@
         "form_description": "Tell us about your business and which design path you prefer. Our team will review your request and get back to you by email.",
         "form_submit_label": "Submit",
         "form_product_options": [
-            "Standard Classic Business card",
-            "Classic special business cards",
-            "Classic quality business cards",
-            "Classic lush business cards",
+            "Classic Standard Business Cards",
+            "Classic Special Business Cards",
+            "Classic Quality Business Cards",
+            "Classic Solid Business Cards",
             "Basic cotton business card",
             "Classic cotton business card",
             "Premium cotton business card",
@@ -1438,6 +1389,82 @@
         "closing_paragraph": "Have an idea, a question, or a story to share? Get in touch — we'd love to hear from you.",
         "closing_link_text": "Get in touch",
         "closing_link_href": "/contact"
+    },
+
+    "help_center_page": {
+        "_source_file": "resources/js/pages/help.tsx",
+        "seo": {
+            "title": "Help Center — InkPavo",
+            "description": "Find answers to common questions about ordering, shipping, design files, and print finishes at InkPavo."
+        },
+        "hero": {
+            "eyebrow": "Help Center",
+            "heading": "How can we help?",
+            "description": "Search our knowledge base or browse topics to find answers about orders, shipping, artwork, and more.",
+            "search_placeholder": "Search for answers...",
+            "search_button_label": "Search"
+        },
+        "categories": [
+            {
+                "id": "ordering",
+                "title": "Ordering",
+                "description": "Product options, quantities, pricing, and checkout.",
+                "icon": "shopping-bag"
+            },
+            {
+                "id": "shipping",
+                "title": "Shipping & Delivery",
+                "description": "Turnaround times, tracking, and delivery options.",
+                "icon": "truck"
+            },
+            {
+                "id": "artwork",
+                "title": "Artwork & Design",
+                "description": "File formats, bleed, templates, and design services.",
+                "icon": "palette"
+            },
+            {
+                "id": "account",
+                "title": "Account",
+                "description": "Profile, orders, passwords, and billing.",
+                "icon": "user"
+            }
+        ],
+        "popular_questions": {
+            "heading": "Popular questions",
+            "questions": [
+                {
+                    "question": "What file formats do you accept?",
+                    "answer": "We recommend print-ready PDFs with bleed. We also accept AI, EPS, SVG, and high-resolution PNG/JPG files."
+                },
+                {
+                    "question": "How long does production take?",
+                    "answer": "Most orders are produced within 1–2 business days after artwork approval. Shipping time depends on your selected delivery method."
+                },
+                {
+                    "question": "What is your minimum order quantity?",
+                    "answer": "Minimum order quantities vary by product. Many business card products start at 50 pieces; gang-run products typically start at 200 copies per design."
+                },
+                {
+                    "question": "Do you offer design services?",
+                    "answer": "Yes. We offer free vector typesetting for print customers, template layouts, and custom original design. Visit our Business Card Design Service page to get started."
+                },
+                {
+                    "question": "Can I track my order?",
+                    "answer": "Once your order ships, you will receive a tracking link by email. You can also view order status in your dashboard."
+                },
+                {
+                    "question": "What is your refund policy?",
+                    "answer": "If you're not satisfied with the print quality due to a production error, contact us within 14 days. We'll reprint or refund eligible orders."
+                }
+            ]
+        },
+        "contact_cta": {
+            "heading": "Still need help?",
+            "description": "Our support team is available Monday–Friday, 9 AM–5 PM PST.",
+            "button_label": "Contact us",
+            "button_href": "/contact"
+        }
     },
 
     "privacy_page": {

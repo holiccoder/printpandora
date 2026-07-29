@@ -10,6 +10,7 @@ import {
     UserCog,
 } from 'lucide-react';
 import { useState } from 'react';
+import AnnouncementBar from '@/components/announcement-bar';
 import { CartDrawer } from '@/components/cart-drawer';
 import { Button } from '@/components/ui/button';
 import {
@@ -58,7 +59,7 @@ type PromoBlock = PromoCard;
 
 type MegaMenu = {
     groups: MegaGroup[];
-    promos: [PromoBlock, PromoBlock];
+    promos: PromoBlock[];
 };
 
 type NavCategory = {
@@ -76,10 +77,15 @@ export function StorefrontHeader({
 }: { activeCategory?: string } = {}) {
     const chrome = useContent('global_chrome');
     const h = chrome.header;
-    const { auth } = usePage().props as unknown as {
+    const page = usePage();
+    const { auth } = page.props as unknown as {
         auth?: { user?: { name?: string } | null };
     };
     const user = auth?.user;
+
+    // Product detail pages have their own sticky gallery; keep the header
+    // static there so the two sticky elements don't overlap.
+    const isProductPage = page.component === 'shop/show';
 
     // Build nav categories from JSON content
     const navCategories: NavCategory[] = h.top_navigation.map(
@@ -107,9 +113,17 @@ export function StorefrontHeader({
     );
 
     return (
-        <header className="[--popover:#ffffff] relative z-40 w-full border-b border-neutral-200 bg-white">
-            {/* top row — mobile menu / logo / search / cart */}
-            <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4">
+        <div
+            className={cn(
+                'z-40 w-full',
+                !isProductPage && 'sticky top-0',
+                isProductPage && 'relative',
+            )}
+        >
+            <AnnouncementBar />
+            <header className="w-full border-b border-neutral-200 bg-white [--popover:#ffffff]">
+                {/* top row — mobile menu / logo / search / cart */}
+                <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4">
                 {/* mobile menu */}
                 <div className="lg:hidden">
                     <MobileNav
@@ -342,6 +356,7 @@ export function StorefrontHeader({
                 </div>
             </div>
         </header>
+        </div>
     );
 }
 
@@ -355,16 +370,22 @@ function ActiveUnderline() {
 }
 
 function MegaPanel({ mega }: { mega: MegaMenu }) {
-    // Which chevron link (if any) is currently being hovered. The
-    // third-level flyout occupies the centre column whenever this is set.
-    const [activeSub, setActiveSub] = useState<MegaLink | null>(null);
+    // Which link (if any) is currently being hovered. Drives both the
+    // third-level flyout and the right-hand promo card swap.
+    const [hoveredLink, setHoveredLink] = useState<MegaLink | null>(null);
+
+    const activeSub = hoveredLink?.children?.length ? hoveredLink : null;
+
+    const visiblePromos = hoveredLink?.promo
+        ? [hoveredLink.promo]
+        : mega.promos;
 
     return (
         <div
             className="mx-auto grid max-w-7xl grid-cols-12 gap-6 px-6 py-6"
             // Closing the sub-flyout when the cursor leaves the whole panel
             // gives a much smoother feel than relying on per-row leave events.
-            onMouseLeave={() => setActiveSub(null)}
+            onMouseLeave={() => setHoveredLink(null)}
         >
             {/* Left: link groups */}
             <ul className="col-span-12 space-y-2 md:col-span-3">
@@ -374,15 +395,13 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                             {group.links.map((link) => {
                                 const hasChildren = !!link.children?.length;
                                 const isActive =
-                                    activeSub?.label === link.label;
+                                    hoveredLink?.label === link.label;
 
                                 return (
                                     <li
                                         key={link.label}
                                         onMouseEnter={() =>
-                                            setActiveSub(
-                                                hasChildren ? link : null,
-                                            )
+                                            setHoveredLink(link)
                                         }
                                     >
                                         <Link
@@ -441,17 +460,30 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                 )}
             </div>
 
-            {/* Right: two compact promo cards side by side */}
-            <div className="col-span-12 grid grid-cols-1 gap-4 md:col-span-6 md:grid-cols-2">
-                {mega.promos.map((promo) => (
-                    <PromoCard key={promo.title} promo={promo} />
-                ))}
+            {/* Right: compact promo cards */}
+            <div className="col-span-12 md:col-span-6">
+                <div className="flex h-full items-start justify-end">
+                    {visiblePromos.map((promo) => (
+                        <div
+                            key={promo.title}
+                            className="w-full max-w-[280px] transition-opacity duration-200 ease-in"
+                        >
+                            <PromoCard promo={promo} compact />
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );
 }
 
-function PromoCard({ promo }: { promo: PromoBlock }) {
+function PromoCard({
+    promo,
+    compact = false,
+}: {
+    promo: PromoBlock;
+    compact?: boolean;
+}) {
     return (
         <div className="flex flex-col">
             <Link
@@ -461,22 +493,40 @@ function PromoCard({ promo }: { promo: PromoBlock }) {
                 <img
                     src={promo.image_url}
                     alt={promo.image_alt}
-                    className="aspect-[4/3] h-full w-full object-cover"
+                    className={cn(
+                        'w-full object-cover',
+                        compact
+                            ? 'aspect-[16/10] max-h-[140px]'
+                            : 'aspect-[4/3] h-full',
+                    )}
                     loading="lazy"
                 />
             </Link>
-            <h3 className="mt-2 text-sm leading-snug font-bold text-neutral-900">
+            <h3
+                className={cn(
+                    'leading-snug font-bold text-neutral-900',
+                    compact ? 'mt-2 text-xs' : 'mt-2 text-sm',
+                )}
+            >
                 {promo.title}
             </h3>
-            <p className="mt-1 line-clamp-2 text-xs leading-snug text-neutral-600">
+            <p
+                className={cn(
+                    'line-clamp-2 leading-snug text-neutral-600',
+                    compact ? 'mt-1 text-[10px]' : 'mt-1 text-xs',
+                )}
+            >
                 {promo.description}
             </p>
-            <Link
-                href={promo.cta_href}
-                className="mt-2 inline-flex items-center gap-0.5 text-xs font-semibold text-[#800020] hover:underline"
-            >
-                {promo.cta_label} <ChevronRight className="size-3.5" />
-            </Link>
+            {!compact && (
+                <Link
+                    href={promo.cta_href}
+                    className="mt-2 inline-flex items-center gap-0.5 text-xs font-semibold text-[#800020] hover:underline"
+                >
+                    {promo.cta_label}{' '}
+                    <ChevronRight className="size-3.5" />
+                </Link>
+            )}
         </div>
     );
 }

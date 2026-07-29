@@ -29,7 +29,7 @@ type Props = {
     className?: string;
 };
 
-function mapSlide(s: ContentSlide, i: number): HeroSlide {
+function mapSlide(s: ContentSlide): HeroSlide {
     return {
         eyebrow: s.eyebrow,
         headline: s.headline,
@@ -44,17 +44,36 @@ function mapSlide(s: ContentSlide, i: number): HeroSlide {
 
 function FeatureIcon({ icon }: { icon: string }) {
     const cls = 'size-6';
+
     switch (icon) {
         case 'card':
             return (
-                <svg className={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <svg
+                    className={cls}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                >
                     <rect x="2" y="4" width="20" height="16" rx="2" />
                     <path d="M2 10h20" />
                 </svg>
             );
         case 'press':
             return (
-                <svg className={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <svg
+                    className={cls}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                >
                     <path d="M4 7V4h16v3" />
                     <path d="M2 7h20v13H2z" />
                     <path d="M12 7v13" />
@@ -64,7 +83,16 @@ function FeatureIcon({ icon }: { icon: string }) {
             );
         case 'pencil':
             return (
-                <svg className={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <svg
+                    className={cls}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                >
                     <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                     <path d="m15 5 4 4" />
                 </svg>
@@ -76,9 +104,7 @@ function FeatureIcon({ icon }: { icon: string }) {
 
 export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
     const home = useContent('home_page');
-    const defaultSlides = home.hero_carousel.slides.map((s, i) =>
-        mapSlide(s, i),
-    );
+    const defaultSlides = home.hero_carousel.slides.map((s) => mapSlide(s));
     const items = slides ?? defaultSlides;
 
     const [index, setIndex] = useState(0);
@@ -208,10 +234,7 @@ function Slide({
                 loading="eager"
             />
 
-            {/* White gradient scrim: solid on the copy side, fading out */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#F5F0E8] via-[#F5F0E8]/80 to-transparent md:bg-gradient-to-r md:from-[#F5F0E8] md:via-[#F5F0E8]/60 md:to-transparent" />
-
-            {/* Copy on the gradient */}
+            {/* Copy on the photo */}
             <div className="relative z-10 flex h-full flex-col">
                 <div className="flex flex-1 flex-col justify-end px-6 md:justify-center md:px-12 lg:px-20">
                     <div className="max-w-md pb-6 md:pb-0">

@@ -7,7 +7,10 @@ use Illuminate\Session\SessionManager;
 
 class Cart
 {
-    public function __construct(protected SessionManager $session) {}
+    public function __construct(
+        protected SessionManager $session,
+        protected PricingService $pricing,
+    ) {}
 
     public function all(): array
     {
@@ -32,7 +35,7 @@ class Cart
                 'key' => $itemKey,
                 'product_id' => $product->id,
                 'name' => $product->name,
-                'price' => 100.00,
+                'price' => $this->pricing->calculate($productId, $options),
                 'quantity' => 1,
                 'image' => $product->featured_image,
                 'slug' => $product->slug,

@@ -27,6 +27,7 @@ export interface NestedLink {
     label: string;
     href: string;
     children?: NestedLink[];
+    promo?: PromoCard;
 }
 
 export interface LinkGroup {
@@ -49,7 +50,7 @@ export interface NavLink {
 
 export interface BusinessCardsMegaMenu {
     link_groups: LinkGroup[];
-    promo_cards: [PromoCard, PromoCard];
+    promo_cards: PromoCard[];
 }
 
 export interface HeaderContent {
@@ -108,15 +109,14 @@ export interface FooterSocialLink {
 export interface FooterContent {
     column_headings: {
         products: string;
-        paper_stocks: string;
-        about_us: string;
-        help: string;
+        essential_links: string;
     };
-    products_left_column: NavLink[];
-    products_right_column: NavLink[];
-    paper_stocks: NavLink[];
-    about_us: NavLink[];
-    help_links: NavLink[];
+    brand: {
+        logo_url: string;
+        intro: string;
+    };
+    products: NavLink[];
+    essential_links: NavLink[];
     social_links?: FooterSocialLink[];
     legal_bar: FooterLegalBar;
 }
@@ -163,6 +163,36 @@ export interface LegalSection {
     email_link?: string;
     contact_link_text?: string;
     contact_link_href?: string;
+}
+
+export interface HelpCenterPageContent {
+    seo: SeoMeta;
+    hero: {
+        eyebrow: string;
+        heading: string;
+        description: string;
+        search_placeholder: string;
+        search_button_label: string;
+    };
+    categories: Array<{
+        id: string;
+        title: string;
+        description: string;
+        icon: string;
+    }>;
+    popular_questions: {
+        heading: string;
+        questions: Array<{
+            question: string;
+            answer: string;
+        }>;
+    };
+    contact_cta: {
+        heading: string;
+        description: string;
+        button_label: string;
+        button_href: string;
+    };
 }
 
 export interface PrivacyPageContent {
@@ -453,6 +483,7 @@ export interface ContentSections {
     terms_page: TermsPageContent;
     not_found_page: NotFoundPageContent;
     about_page: AboutPageContent;
+    help_center_page: HelpCenterPageContent;
     design_service_page: DesignServicePageContent;
     // untuned sections fall through to unknown
 }
