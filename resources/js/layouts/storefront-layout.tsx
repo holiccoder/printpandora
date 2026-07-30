@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import IntercomMessenger from '@/components/intercom-messenger';
 import StorefrontFooter from '@/components/storefront-footer';
 import StorefrontHeader from '@/components/storefront-header';
 
@@ -24,6 +25,7 @@ export default function StorefrontLayout({ children, activeCategory }: Props) {
             <StorefrontHeader activeCategory={activeCategory} />
             <main className="flex-1">{children}</main>
             <StorefrontFooter />
+            <IntercomMessenger />
         </div>
     );
 }

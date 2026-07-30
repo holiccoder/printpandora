@@ -51,6 +51,9 @@ class HandleInertiaRequests extends Middleware
             // Closure so the JSON parse only runs when Inertia actually merges
             // shared props — and the service memoises within the request.
             'content' => fn () => app(HardcodedContent::class)->all(),
+            'intercom' => [
+                'app_id' => config('intercom.app_id'),
+            ],
         ];
     }
 }

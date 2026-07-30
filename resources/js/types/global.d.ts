@@ -19,6 +19,9 @@ declare module '@inertiajs/core' {
             };
             sidebarOpen: boolean;
             content: Content;
+            intercom: {
+                app_id?: string;
+            };
             [key: string]: unknown;
         };
     }

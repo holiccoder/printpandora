@@ -18,8 +18,11 @@ createInertiaApp({
             case name === 'terms':
             case name === 'privacy':
             case name === 'shipping':
+            case name === 'shipping-calculator':
             case name === 'contact':
+            case name === 'help':
             case name === 'sample-packs':
+            case name === 'business-card-sample-pack':
             case name === 'business-card-design-service':
             case name === 'postcards':
             case name === 'stickers-and-labels':
