@@ -21,6 +21,12 @@ declare module '@inertiajs/core' {
             content: Content;
             intercom: {
                 app_id?: string;
+                user?: {
+                    id: string | number;
+                    name: string;
+                    email: string;
+                    created_at: number | null;
+                } | null;
             };
             [key: string]: unknown;
         };

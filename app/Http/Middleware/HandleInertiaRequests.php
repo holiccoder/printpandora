@@ -53,6 +53,12 @@ class HandleInertiaRequests extends Middleware
             'content' => fn () => app(HardcodedContent::class)->all(),
             'intercom' => [
                 'app_id' => config('intercom.app_id'),
+                'user' => $request->user() ? [
+                    'id' => $request->user()->getAuthIdentifier(),
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'created_at' => optional($request->user()->created_at)?->getTimestamp(),
+                ] : null,
             ],
         ];
     }

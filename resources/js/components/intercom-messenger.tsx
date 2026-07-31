@@ -1,25 +1,10 @@
 import { usePage } from '@inertiajs/react';
+import Intercom, { shutdown, update } from '@intercom/messenger-js-sdk';
 import { useEffect, useRef } from 'react';
 
-declare global {
-    interface Window {
-        Intercom?: IntercomApi;
-        intercomSettings?: {
-            app_id: string;
-            api_base?: string;
-        };
-    }
-}
-
-type IntercomApi = (...args: unknown[]) => void;
-
-type IntercomStub = IntercomApi & {
-    c: (args: unknown[]) => void;
-    q: unknown[];
-};
-
 /**
- * Loads the Intercom messenger widget on storefront pages.
+ * Loads the Intercom messenger widget on storefront pages using the official
+ * `@intercom/messenger-js-sdk`.
  *
  * The widget is only initialised when:
  *   - an INTERCOM_APP_ID is configured, and
@@ -27,14 +12,21 @@ type IntercomStub = IntercomApi & {
  *     StorefrontLayout, but Intercom should be limited to public storefront
  *     pages).
  *
- * The script is injected once and `Intercom('update')` is called on every
- * Inertia navigation finish so the messenger persists across SPA page swaps.
+ * For authenticated users, identity (id, name, email, created_at) is forwarded
+ * to Intercom so conversations are linked to the user record. For guests, only
+ * `app_id` is sent (anonymous visitor session).
+ *
+ * `update` is called on every Inertia navigation finish so the messenger
+ * records the latest URL and persists across SPA page swaps. On unmount the
+ * widget is shut down so leaving the storefront (e.g. to the admin dashboard)
+ * cleanly tears down the messenger.
  */
 export default function IntercomMessenger() {
     const page = usePage();
     const appId = page.props.intercom?.app_id;
+    const user = page.props.intercom?.user;
     const pageComponent = page.component;
-    const loadedRef = useRef(false);
+    const bootedRef = useRef(false);
 
     const isDashboardPage =
         pageComponent === 'dashboard' || pageComponent.startsWith('dashboard/');
@@ -44,61 +36,46 @@ export default function IntercomMessenger() {
             return;
         }
 
-        if (loadedRef.current) {
-            return;
-        }
-
-        window.intercomSettings = {
+        Intercom({
             app_id: appId,
-            api_base: 'https://api-iam.intercom.io',
-        };
-
-        const loadIntercom = () => {
-            const w = window;
-            const ic = w.Intercom;
-
-            if (typeof ic === 'function') {
-                ic('reattach_activator');
-                ic('update', w.intercomSettings);
-            } else {
-                const d = document;
-                const i = function (...args: unknown[]) {
-                    i.c(args);
-                } as IntercomStub;
-                i.c = (args) => i.q.push(args);
-                i.q = [];
-                w.Intercom = i;
-
-                const s = d.createElement('script');
-                s.type = 'text/javascript';
-                s.async = true;
-                s.src = `https://widget.intercom.io/widget/${appId}`;
-                const x = d.getElementsByTagName('script')[0];
-                x?.parentNode?.insertBefore(s, x);
-            }
-        };
-
-        const runWhenReady = () => {
-            if (document.readyState === 'complete') {
-                loadIntercom();
-            } else {
-                window.addEventListener('load', loadIntercom);
-            }
-        };
-
-        runWhenReady();
-        loadedRef.current = true;
+            ...(user
+                ? {
+                      user_id: String(user.id),
+                      name: user.name,
+                      email: user.email,
+                      ...(user.created_at
+                          ? { created_at: user.created_at }
+                          : {}),
+                  }
+                : {}),
+        });
+        bootedRef.current = true;
 
         const handlePageVisit = () => {
-            window.Intercom?.('update');
+            update(
+                user
+                    ? {
+                          user_id: String(user.id),
+                          name: user.name,
+                          email: user.email,
+                          ...(user.created_at
+                              ? { created_at: user.created_at }
+                              : {}),
+                      }
+                    : {}
+            );
         };
-
         document.addEventListener('inertia:finish', handlePageVisit);
 
         return () => {
             document.removeEventListener('inertia:finish', handlePageVisit);
+
+            if (bootedRef.current) {
+                shutdown();
+                bootedRef.current = false;
+            }
         };
-    }, [appId, isDashboardPage]);
+    }, [appId, user, isDashboardPage]);
 
     return null;
 }
