@@ -1312,6 +1312,12 @@
                         "sandbox_badge": "Sandbox",
                         "description_configured": "Pay securely with PayPal or a credit card.",
                         "description_not_configured": "PayPal is not configured."
+                    },
+                    {
+                        "value": "cryptomus",
+                        "label": "Cryptocurrency",
+                        "test_badge": "Test",
+                        "description": "Pay with Bitcoin, Ethereum, USDT and other cryptocurrencies via Cryptomus."
                     }
                 ]
             }
@@ -1328,6 +1334,11 @@
             "finalizing": "Finalizing payment…",
             "disclaimer": "Make sure your contact & shipping details are filled in before paying."
         },
+        "cryptomus_section": {
+            "button_label": "Pay with Cryptocurrency",
+            "processing": "Creating invoice…",
+            "disclaimer": "You will be redirected to Cryptomus to complete your crypto payment."
+        },
         "error_messages": {
             "paypal_not_configured": "PayPal is not configured.",
             "sdk_load_failed": "Failed to load PayPal SDK.",
@@ -1335,7 +1346,8 @@
             "capture_failed": "Payment capture failed.",
             "generic_error": "PayPal encountered an error. Please try again.",
             "cancelled": "Payment was cancelled.",
-            "render_failed": "Failed to render PayPal buttons."
+            "render_failed": "Failed to render PayPal buttons.",
+            "cryptomus_create_failed": "Unable to create Cryptomus invoice. Please try again."
         }
     },
 

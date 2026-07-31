@@ -97,6 +97,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('checkout', [CheckoutController::class, 'store'])->name('shop.checkout.store');
     Route::post('checkout/paypal/create', [CheckoutController::class, 'paypalCreate'])->name('shop.checkout.paypal.create');
     Route::post('checkout/paypal/capture', [CheckoutController::class, 'paypalCapture'])->name('shop.checkout.paypal.capture');
+    Route::post('checkout/cryptomus/create', [CheckoutController::class, 'cryptomusCreate'])->name('shop.checkout.cryptomus.create');
 
     // Orders
     Route::get('orders', [OrderController::class, 'index'])->name('shop.orders.index');
@@ -109,6 +110,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('tickets/{id}', [TicketController::class, 'show'])->name('shop.tickets.show')->whereNumber('id');
     Route::post('tickets/{id}/reply', [TicketController::class, 'reply'])->name('shop.tickets.reply')->whereNumber('id');
 });
+
+// Cryptomus webhook (public — called by Cryptomus servers)
+Route::post('checkout/cryptomus/webhook', [CheckoutController::class, 'cryptomusWebhook'])
+    ->name('shop.checkout.cryptomus.webhook');
 
 require __DIR__.'/settings.php';
 

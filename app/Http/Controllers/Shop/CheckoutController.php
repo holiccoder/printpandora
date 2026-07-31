@@ -9,6 +9,7 @@ use App\Models\AffiliateReferral;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\Cart;
+use App\Services\CryptomusService;
 use App\Services\PayPalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +32,11 @@ class CheckoutController extends Controller
                 'client_id' => config('services.paypal.client_id'),
                 'mode' => config('services.paypal.mode', 'sandbox'),
                 'currency' => config('services.paypal.currency', 'USD'),
+            ],
+            'cryptomus' => [
+                'configured' => app(CryptomusService::class)->isConfigured(),
+                'currency' => app(CryptomusService::class)->currency(),
+                'test' => app(CryptomusService::class)->isTest(),
             ],
         ]);
     }
@@ -118,6 +124,126 @@ class CheckoutController extends Controller
         return response()->json([
             'redirect' => route('shop.orders.show', $order->id),
         ]);
+    }
+
+    /**
+     * Create a Cryptomus invoice for the current cart and redirect the user.
+     */
+    public function cryptomusCreate(Request $request, Cart $cart, CryptomusService $cryptomus)
+    {
+        if ($cart->count() === 0) {
+            return response()->json(['error' => 'Your cart is empty.'], 422);
+        }
+
+        if (! $cryptomus->isConfigured()) {
+            return response()->json(['error' => 'Cryptomus is not configured.'], 422);
+        }
+
+        $validated = $this->validateCheckout($request);
+
+        DB::beginTransaction();
+
+        try {
+            $order = $this->placeOrder(
+                $request,
+                $cart,
+                $validated,
+                'cryptomus',
+                'pending',
+                null,
+                'pending',
+            );
+
+            $invoice = $cryptomus->createInvoice((float) $order->total, $order->id);
+
+            $order->update(['payment_id' => $invoice['uuid'] ?? null]);
+
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Log::error('Cryptomus checkout failed', ['error' => $e->getMessage()]);
+
+            return response()->json(['error' => 'Unable to start Cryptomus payment.'], 500);
+        }
+
+        $cart->clear();
+
+        return response()->json([
+            'redirect' => $invoice['url'] ?? null,
+        ]);
+    }
+
+    /**
+     * Handle Cryptomus webhook notifications.
+     */
+    public function cryptomusWebhook(Request $request, CryptomusService $cryptomus)
+    {
+        $payload = $request->getContent();
+        $signature = $request->header('Sign') ?? '';
+
+        if (! $cryptomus->verifyWebhookSignature($payload, (string) $signature)) {
+            Log::warning('Cryptomus webhook signature mismatch', ['payload' => $payload]);
+
+            return response()->json(['error' => 'Invalid signature.'], 401);
+        }
+
+        $data = $request->all();
+        $orderId = $data['order_id'] ?? null;
+        $status = $data['payment_status'] ?? $data['status'] ?? null;
+        $uuid = $data['uuid'] ?? null;
+
+        if (empty($orderId) || empty($status)) {
+            return response()->json(['error' => 'Missing required fields.'], 422);
+        }
+
+        $order = Order::find($orderId);
+
+        if (! $order || $order->payment_method !== 'cryptomus') {
+            return response()->json(['error' => 'Order not found.'], 404);
+        }
+
+        if ($uuid && $order->payment_id && $uuid !== $order->payment_id) {
+            Log::warning('Cryptomus webhook UUID mismatch', [
+                'order_id' => $orderId,
+                'expected' => $order->payment_id,
+                'received' => $uuid,
+            ]);
+
+            return response()->json(['error' => 'Invoice mismatch.'], 409);
+        }
+
+        switch (strtolower((string) $status)) {
+            case 'paid':
+            case 'paid_over':
+            case 'confirm_check':
+                $order->update([
+                    'payment_status' => 'paid',
+                    'status' => 'processing',
+                ]);
+                break;
+
+            case 'fail':
+            case 'cancel':
+            case 'system_fail':
+                $order->update([
+                    'payment_status' => 'failed',
+                    'status' => 'cancelled',
+                ]);
+                break;
+
+            case 'wait':
+            case 'check':
+            default:
+                // Leave as pending.
+                break;
+        }
+
+        Log::info('Cryptomus webhook processed', [
+            'order_id' => $order->id,
+            'status' => $status,
+        ]);
+
+        return response()->json(['success' => true]);
     }
 
     protected function validateCheckout(Request $request): array

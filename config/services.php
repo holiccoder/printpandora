@@ -43,4 +43,12 @@ return [
         'currency' => env('PAYPAL_CURRENCY', 'USD'),
     ],
 
+    'cryptomus' => [
+        'merchant_uuid' => env('CRYPTOMUS_MERCHANT_UUID'),
+        'payment_key' => env('CRYPTOMUS_PAYMENT_KEY'),
+        'payout_key' => env('CRYPTOMUS_PAYOUT_KEY'),
+        'currency' => env('CRYPTOMUS_CURRENCY', 'USD'),
+        'test' => env('CRYPTOMUS_TEST', true),
+    ],
+
 ];

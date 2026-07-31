@@ -23,10 +23,17 @@ interface PaypalConfig {
     currency: string;
 }
 
+interface CryptomusConfig {
+    configured: boolean;
+    currency: string;
+    test: boolean;
+}
+
 interface Props {
     cart: Record<string, CartItem>;
     subtotal: number;
     paypal: PaypalConfig;
+    cryptomus: CryptomusConfig;
 }
 
 declare global {
@@ -35,9 +42,9 @@ declare global {
     }
 }
 
-type PaymentMethod = 'manual' | 'paypal';
+type PaymentMethod = 'manual' | 'paypal' | 'cryptomus';
 
-export default function Checkout({ cart, subtotal, paypal }: Props) {
+export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
     const c = useContent('checkout_page') as any;
     const { data, setData, post, processing, errors } = useForm({
         customer_name: '',
@@ -76,6 +83,9 @@ export default function Checkout({ cart, subtotal, paypal }: Props) {
     const paypalContainerRef = useRef<HTMLDivElement | null>(null);
     const paypalButtonsRef = useRef<any>(null);
     const dataRef = useRef(data);
+
+    const [cryptomusLoading, setCryptomusLoading] = useState(false);
+    const [cryptomusError, setCryptomusError] = useState<string | null>(null);
 
     // Keep latest form values available inside PayPal SDK callbacks.
     useEffect(() => {
@@ -244,6 +254,60 @@ export default function Checkout({ cart, subtotal, paypal }: Props) {
         router.post('/checkout', Object.fromEntries(fd));
     };
 
+    const handleCryptomusSubmit = async () => {
+        if (cryptomusLoading) {
+            return;
+        }
+
+        setCryptomusLoading(true);
+        setCryptomusError(null);
+
+        const csrfToken =
+            (
+                document.querySelector(
+                    'meta[name="csrf-token"]',
+                ) as HTMLMetaElement | null
+            )?.content ?? '';
+
+        try {
+            const res = await fetch('/checkout/cryptomus/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            const json = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                setCryptomusError(
+                    json.error ||
+                        (json.errors
+                            ? Object.values(json.errors).flat().join(' ')
+                            : null) ||
+                        c.error_messages.cryptomus_create_failed,
+                );
+
+                return;
+            }
+
+            if (json.redirect) {
+                window.location.href = json.redirect;
+            } else {
+                setCryptomusError(c.error_messages.cryptomus_create_failed);
+            }
+        } catch (err) {
+            setCryptomusError(
+                (err as Error).message ||
+                    c.error_messages.cryptomus_create_failed,
+            );
+        } finally {
+            setCryptomusLoading(false);
+        }
+    };
+
     const contact = c.form_sections.contact_information;
     const shipping = c.form_sections.shipping_address;
     const payment = c.form_sections.payment_method;
@@ -253,6 +317,7 @@ export default function Checkout({ cart, subtotal, paypal }: Props) {
         payment.options.find((o: any) => o.value === value) ?? {};
     const manualOpt = payOpt('manual');
     const paypalOpt = payOpt('paypal');
+    const cryptomusOpt = payOpt('cryptomus');
     const summary = c.order_summary_sidebar;
 
     return (
@@ -622,6 +687,38 @@ export default function Checkout({ cart, subtotal, paypal }: Props) {
                                             </div>
                                         </div>
                                     </label>
+                                    {cryptomus.configured && (
+                                        <label className="flex cursor-pointer items-start gap-3 rounded-md border border-[#e3e3e0] p-3 dark:border-[#3E3E3A]">
+                                            <input
+                                                type="radio"
+                                                name="payment_method"
+                                                value="cryptomus"
+                                                checked={
+                                                    paymentMethod ===
+                                                    'cryptomus'
+                                                }
+                                                onChange={() =>
+                                                    setPaymentMethod('cryptomus')
+                                                }
+                                                className="mt-1"
+                                            />
+                                            <div>
+                                                <div className="font-medium">
+                                                    {cryptomusOpt.label}
+                                                    {cryptomus.test && (
+                                                        <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-amber-800 uppercase dark:bg-amber-900/30 dark:text-amber-300">
+                                                            {
+                                                                cryptomusOpt.test_badge
+                                                            }
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="text-xs text-[#706f6c]">
+                                                    {cryptomusOpt.description}
+                                                </div>
+                                            </div>
+                                        </label>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -673,6 +770,29 @@ export default function Checkout({ cart, subtotal, paypal }: Props) {
                                         )}
                                         <p className="text-[10px] text-[#706f6c]">
                                             {c.paypal_section.disclaimer}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {paymentMethod === 'cryptomus' && (
+                                    <div className="mt-4 space-y-2">
+                                        <button
+                                            type="button"
+                                            onClick={handleCryptomusSubmit}
+                                            disabled={cryptomusLoading}
+                                            className="w-full rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                                        >
+                                            {cryptomusLoading
+                                                ? c.cryptomus_section.processing
+                                                : c.cryptomus_section.button_label}
+                                        </button>
+                                        {cryptomusError && (
+                                            <p className="text-xs text-red-500">
+                                                {cryptomusError}
+                                            </p>
+                                        )}
+                                        <p className="text-[10px] text-[#706f6c]">
+                                            {c.cryptomus_section.disclaimer}
                                         </p>
                                     </div>
                                 )}
