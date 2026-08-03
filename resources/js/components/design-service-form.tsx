@@ -15,11 +15,27 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
+export interface DesignServiceOption {
+    code: string;
+    title: string;
+    description?: string;
+}
+
 interface DesignServiceFormProps {
     productOptions?: string[];
     onSuccess?: () => void;
     submitLabel?: string;
     className?: string;
+    designServices?: DesignServiceOption[];
+    designServicesHeading?: string;
+    designServicesRequiredError?: string;
+    designServicesNote?: string;
+    returnTo?: string;
+    onDesignServiceSaved?: (code: string) => void;
+    designServiceCode?: string;
+    onDesignServiceCodeChange?: (code: string) => void;
+    onDesignServiceError?: (message: string | null) => void;
+    hideDesignServices?: boolean;
 }
 
 type DesignServiceFormData = {
@@ -27,6 +43,8 @@ type DesignServiceFormData = {
     business_name: string;
     card_info: string;
     business_card_type: string;
+    design_service_code: string;
+    return_to: string;
     terms_accepted: boolean;
 };
 
@@ -35,10 +53,25 @@ export default function DesignServiceForm({
     onSuccess,
     submitLabel = 'Submit',
     className = '',
+    designServices,
+    designServicesHeading,
+    designServicesRequiredError,
+    designServicesNote,
+    returnTo,
+    onDesignServiceSaved,
+    designServiceCode: controlledDesignServiceCode,
+    onDesignServiceCodeChange,
+    onDesignServiceError,
+    hideDesignServices = false,
 }: DesignServiceFormProps) {
     const flashSuccess = (
         usePage().props.flash as { success?: string } | undefined
     )?.success;
+
+    const hasDesignServices = (designServices?.length ?? 0) > 0;
+    const [designServiceError, setDesignServiceError] = useState<string | null>(
+        null,
+    );
 
     const { data, setData, post, processing, errors, reset } =
         useForm<DesignServiceFormData>({
@@ -46,14 +79,52 @@ export default function DesignServiceForm({
             business_name: '',
             card_info: '',
             business_card_type: '',
+            design_service_code: '',
+            return_to: returnTo ?? '',
             terms_accepted: false,
         });
 
+    const designServiceCode =
+        controlledDesignServiceCode ?? data.design_service_code;
+
+    const setDesignServiceCode = (code: string) => {
+        if (onDesignServiceCodeChange) {
+            onDesignServiceCodeChange(code);
+        } else {
+            setData('design_service_code', code);
+        }
+        setDesignServiceError(null);
+        onDesignServiceError?.(null);
+    };
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+
+        if (hasDesignServices && !designServiceCode) {
+            const message =
+                designServicesRequiredError ??
+                'Please select a design service.';
+            setDesignServiceError(message);
+            onDesignServiceError?.(message);
+
+            return;
+        }
+
+        setDesignServiceError(null);
+        onDesignServiceError?.(null);
+        const savedCode = designServiceCode;
+        setData('design_service_code', designServiceCode);
+
         post('/business-card-design-service', {
             preserveScroll: true,
+            // Keep product-page state (incl. the saved design service)
+            // alive across the redirect back to the product page.
+            preserveState: true,
             onSuccess: () => {
+                if (savedCode) {
+                    onDesignServiceSaved?.(savedCode);
+                }
+
                 reset();
                 onSuccess?.();
             },
@@ -69,6 +140,61 @@ export default function DesignServiceForm({
                 >
                     {flashSuccess}
                 </div>
+            )}
+
+            {hasDesignServices && !hideDesignServices && (
+                <FormRow
+                    label={designServicesHeading ?? 'Design service'}
+                    error={designServiceError ?? undefined}
+                >
+                    <div
+                        role="radiogroup"
+                        aria-label={designServicesHeading ?? 'Design service'}
+                        className="grid grid-cols-1 gap-3"
+                    >
+                        {designServices!.map((option) => {
+                            const active =
+                                designServiceCode === option.code;
+
+                            return (
+                                <label
+                                    key={option.code}
+                                    className={`flex cursor-pointer items-start gap-3 rounded-md border-2 p-4 transition-colors ${
+                                        active
+                                            ? 'border-[#800020] bg-[#800020]/5'
+                                            : 'border-neutral-200 hover:border-neutral-300'
+                                    }`}
+                                >
+                                    <input
+                                        type="radio"
+                                        name="design_service_code"
+                                        value={option.code}
+                                        checked={active}
+                                        onChange={() =>
+                                            setDesignServiceCode(option.code)
+                                        }
+                                        className="mt-0.5 size-4 accent-[#800020]"
+                                    />
+                                    <span>
+                                        <span className="block text-sm font-bold text-neutral-900">
+                                            {option.title}
+                                        </span>
+                                        {option.description && (
+                                            <span className="mt-1 block text-xs leading-relaxed text-neutral-600">
+                                                {option.description}
+                                            </span>
+                                        )}
+                                    </span>
+                                </label>
+                            );
+                        })}
+                    </div>
+                    {designServicesNote && (
+                        <p className="mt-3 rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs leading-relaxed text-neutral-600">
+                            {designServicesNote}
+                        </p>
+                    )}
+                </FormRow>
             )}
 
             <FormRow label="Your primary contact email" error={errors.email}>
@@ -91,10 +217,7 @@ export default function DesignServiceForm({
                 </div>
             </FormRow>
 
-            <FormRow
-                label="Name of your business"
-                error={errors.business_name}
-            >
+            <FormRow label="Name of your business" error={errors.business_name}>
                 <Input
                     id="ds-business"
                     placeholder="Your business name"

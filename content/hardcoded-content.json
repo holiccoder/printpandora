@@ -6,7 +6,6 @@
         "stack": "Laravel + Inertia.js + React/TypeScript",
         "source_root": "resources/js/"
     },
-
     "global_chrome": {
         "_source_files": [
             "resources/js/components/storefront-header.tsx",
@@ -15,7 +14,6 @@
             "resources/js/components/cart-drawer.tsx",
             "resources/js/layouts/storefront-layout.tsx"
         ],
-
         "header": {
             "logo": {
                 "image_url": "/images/logo-wordmark-sm.png",
@@ -26,7 +24,7 @@
                 "form_action": "/search",
                 "input_name": "q",
                 "label_sr_only": "Search InkPavo",
-                "placeholder": "Search for products, paper stocks, ideas…",
+                "placeholder": "Search for business cards, stickers, flyers and other custom print goods.",
                 "mobile_icon_aria_label": "Search",
                 "mobile_icon_href": "/search"
             },
@@ -54,7 +52,10 @@
                     "label": "Business Cards",
                     "href": "/shop?cat=business-cards"
                 },
-                { "label": "Postcards", "href": "/postcards" },
+                {
+                    "label": "Postcards",
+                    "href": "/postcards"
+                },
                 {
                     "label": "Stickers & Labels",
                     "href": "/stickers-and-labels"
@@ -67,8 +68,14 @@
                     "label": "Design Service",
                     "href": "/business-card-design-service"
                 },
-                { "label": "Blog", "href": "/blog" },
-                { "label": "Help & FAQs", "href": "/help" }
+                {
+                    "label": "Blog",
+                    "href": "/blog"
+                },
+                {
+                    "label": "Help & FAQs",
+                    "href": "/help"
+                }
             ],
             "business_cards_mega_menu": {
                 "link_groups": [
@@ -82,36 +89,6 @@
                     },
                     {
                         "links": [
-                            {
-                                "label": "Classic Business Cards",
-                                "href": "/classic-business-cards",
-                                "children": [
-                                    {
-                                        "label": "Classic Standard Business Cards",
-                                        "href": "/classic-standard-business-cards"
-                                    },
-                                    {
-                                        "label": "Classic Special Business Cards",
-                                        "href": "/classic-special-business-cards"
-                                    },
-                                    {
-                                        "label": "Classic Quality Business Cards",
-                                        "href": "/classic-quality-business-cards"
-                                    },
-                                    {
-                                        "label": "Classic Solid Business Cards",
-                                        "href": "/classic-solid-business-cards"
-                                    }
-                                ]
-                            },
-                            {
-                                "label": "Super Business Cards",
-                                "href": "/super-business-cards"
-                            },
-                            {
-                                "label": "Luxe Business Cards",
-                                "href": "/luxe-business-cards"
-                            },
                             {
                                 "label": "Cotton Business Cards",
                                 "href": "/cotton-business-cards",
@@ -139,6 +116,14 @@
                                 ]
                             },
                             {
+                                "label": "Super Business Cards",
+                                "href": "/super-business-cards"
+                            },
+                            {
+                                "label": "Luxe Business Cards",
+                                "href": "/luxe-business-cards"
+                            },
+                            {
                                 "label": "PVC Business Cards",
                                 "href": "/pvc-business-cards",
                                 "children": [
@@ -155,6 +140,28 @@
                             {
                                 "label": "Metal Business Cards",
                                 "href": "/metal-business-cards"
+                            },
+                            {
+                                "label": "Classic Business Cards",
+                                "href": "/classic-business-cards",
+                                "children": [
+                                    {
+                                        "label": "Classic Standard Business Cards",
+                                        "href": "/classic-standard-business-cards"
+                                    },
+                                    {
+                                        "label": "Classic Special Business Cards",
+                                        "href": "/classic-special-business-cards"
+                                    },
+                                    {
+                                        "label": "Classic Quality Business Cards",
+                                        "href": "/classic-quality-business-cards"
+                                    },
+                                    {
+                                        "label": "Classic Solid Business Cards",
+                                        "href": "/classic-solid-business-cards"
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -183,7 +190,6 @@
                 ]
             }
         },
-
         "footer": {
             "column_headings": {
                 "products": "Products",
@@ -194,30 +200,60 @@
                 "intro": "Since establishing our presence in Shanghai, China in 2003, we have been a pioneer in China's printing industry for 23 years, building deep technical expertise and industry insight. With over 20 years of offline printing experience and 15 years of online printing services, we have developed a precise understanding of the core needs of individual consumers, corporate clients, advertising agencies, and designers — and we provide tailored solutions for each group."
             },
             "products": [
-                { "label": "All Products", "href": "/shop" },
+                {
+                    "label": "All Products",
+                    "href": "/shop"
+                },
                 {
                     "label": "Business Cards",
                     "href": "/shop?cat=business-cards"
                 },
-                { "label": "Postcards", "href": "/postcards" },
+                {
+                    "label": "Postcards",
+                    "href": "/postcards"
+                },
                 {
                     "label": "Stickers and Labels",
                     "href": "/stickers-and-labels"
                 },
-                { "label": "Brochures", "href": "/flyers-and-brochures" },
-                { "label": "Flyers", "href": "/flyers-and-brochures" }
+                {
+                    "label": "Brochures",
+                    "href": "/flyers-and-brochures"
+                },
+                {
+                    "label": "Flyers",
+                    "href": "/flyers-and-brochures"
+                }
             ],
             "essential_links": [
-                { "label": "Contact us", "href": "/contact" },
-                { "label": "Refer and earn", "href": "/refer" },
-                { "label": "Shipping policy", "href": "/shipping-calculator" },
-                { "label": "About InkPavo", "href": "/about" },
-                { "label": "FAQs", "href": "/help" },
+                {
+                    "label": "Contact us",
+                    "href": "/contact"
+                },
+                {
+                    "label": "Refer and earn",
+                    "href": "/refer"
+                },
+                {
+                    "label": "Shipping policy",
+                    "href": "/shipping-calculator"
+                },
+                {
+                    "label": "About InkPavo",
+                    "href": "/about"
+                },
+                {
+                    "label": "FAQs",
+                    "href": "/help"
+                },
                 {
                     "label": "Shipping and cost calculator",
                     "href": "/shipping-calculator"
                 },
-                { "label": "Blog", "href": "/blog" }
+                {
+                    "label": "Blog",
+                    "href": "/blog"
+                }
             ],
             "social_links": [
                 {
@@ -250,13 +286,21 @@
                 "copyright_text": "© {YEAR} InkPavo — print-on-demand for the small businesses, designers, and creators we love.",
                 "_note": "{YEAR} is replaced at runtime",
                 "legal_links": [
-                    { "label": "Terms & Conditions", "href": "/terms" },
-                    { "label": "Privacy Policy", "href": "/privacy" },
-                    { "label": "Sitemap", "href": "/sitemap" }
+                    {
+                        "label": "Terms & Conditions",
+                        "href": "/terms"
+                    },
+                    {
+                        "label": "Privacy Policy",
+                        "href": "/privacy"
+                    },
+                    {
+                        "label": "Sitemap",
+                        "href": "/sitemap"
+                    }
                 ]
             }
         },
-
         "announcement_bar": {
             "region_aria_label": "Announcements",
             "default_interval_ms": 4000,
@@ -279,7 +323,6 @@
                 }
             ]
         },
-
         "cart_drawer": {
             "trigger_aria_label": "Open cart",
             "header_title": "Your cart",
@@ -303,7 +346,6 @@
             }
         }
     },
-
     "home_page": {
         "_source_files": [
             "resources/js/pages/home.tsx",
@@ -360,34 +402,40 @@
         },
         "popular_products": {
             "eyebrow": "EXPLORE OUR PRODUCTS",
-            "headline": "Original Business Cards, Designed to Be Remembered",
-            "description": "Discover our range of premium business cards, crafted with exceptional materials and finishes.",
+            "headline": "Exquisite Cotton Business Cards,\nDesigned to Be Remembered",
+            "description": "Discover our range of premium cotton business cards, crafted with exceptional materials and finishes.",
             "cta_text": "VIEW ALL PRODUCTS",
             "cta_href": "/shop",
             "cards": [
                 {
-                    "title": "Letterpress Business Cards",
-                    "description": "Timeless impression, touch that lasts.",
-                    "image_url": "/images/home/card-letterpress.png",
-                    "href": "/luxe-business-cards"
+                    "title": "Basic Cotton Business Cards",
+                    "description": "Soft, natural texture for everyday elegance.",
+                    "image_url": "/images/home/product-cotton-cards.png",
+                    "href": "/basic-cotton-business-card"
                 },
                 {
-                    "title": "Foil Stamped Cards",
-                    "description": "Shine with metallic foil finishes.",
-                    "image_url": "/images/home/card-foil-stamped.png",
-                    "href": "/super-business-cards"
+                    "title": "Classic Cotton Business Cards",
+                    "description": "Timeless feel with refined cotton stock.",
+                    "image_url": "/images/home/product-classic-cards.png",
+                    "href": "/classic-cotton-business-card"
                 },
                 {
-                    "title": "Debossed Business Cards",
-                    "description": "Subtle depth that speaks elegance.",
-                    "image_url": "/images/home/card-debossed.png",
-                    "href": "/classic-standard-business-cards"
+                    "title": "Premium Cotton Business Cards",
+                    "description": "Substantial weight and rich texture.",
+                    "image_url": "/images/home/product-premium-cards.png",
+                    "href": "/premium-cotton-business-card"
                 },
                 {
                     "title": "Die-cut Business Cards",
                     "description": "Unique shapes for bold brands.",
                     "image_url": "/images/home/card-die-cut.png",
                     "href": "/shop?cat=business-cards"
+                },
+                {
+                    "title": "Grand Cotton Business Cards",
+                    "description": "Luxurious cotton stock that makes a statement.",
+                    "image_url": "/images/home/product-cotton-cards.png",
+                    "href": "/grand-cotton-business-card"
                 }
             ]
         },
@@ -437,16 +485,33 @@
         "logo_wall": {
             "heading": "Great businesses print with InkPavo.",
             "logos": [
-                { "text": "BRANDONE", "font": "bold-sans" },
-                { "text": "mellow", "font": "script" },
-                { "text": "Atelier.", "font": "serif" },
-                { "text": "Northwind", "font": "serif-bold" },
-                { "text": "bluehill", "font": "sans" },
-                { "text": "SUMMIT", "font": "black-sans" }
+                {
+                    "text": "BRANDONE",
+                    "font": "bold-sans"
+                },
+                {
+                    "text": "mellow",
+                    "font": "script"
+                },
+                {
+                    "text": "Atelier.",
+                    "font": "serif"
+                },
+                {
+                    "text": "Northwind",
+                    "font": "serif-bold"
+                },
+                {
+                    "text": "bluehill",
+                    "font": "sans"
+                },
+                {
+                    "text": "SUMMIT",
+                    "font": "black-sans"
+                }
             ]
         }
     },
-
     "blog_index_page": {
         "_source_files": [
             "resources/js/pages/blog/index.tsx",
@@ -477,8 +542,15 @@
             "go_to_article_template": "Go to article {n}",
             "read_time_template": "{date} · {minutes} min read",
             "default_categories": [
-                { "label": "Blog Home", "href": "/blog", "active": true },
-                { "label": "Branding", "href": "/blog?category=branding" },
+                {
+                    "label": "Blog Home",
+                    "href": "/blog",
+                    "active": true
+                },
+                {
+                    "label": "Branding",
+                    "href": "/blog?category=branding"
+                },
                 {
                     "label": "Inside InkPavo",
                     "href": "/blog?category=inside-InkPavo"
@@ -487,7 +559,10 @@
                     "label": "Case Studies",
                     "href": "/blog?category=case-studies"
                 },
-                { "label": "Inspiration", "href": "/blog?category=inspiration" }
+                {
+                    "label": "Inspiration",
+                    "href": "/blog?category=inspiration"
+                }
             ],
             "default_slides": [
                 {
@@ -564,7 +639,6 @@
             ]
         }
     },
-
     "blog_show_page": {
         "_source_file": "resources/js/pages/blog/show.tsx",
         "active_category": "Blog",
@@ -587,9 +661,21 @@
             "heading": "Find the card that gets you",
             "description": "Not sure which card suits your personality? Our print experts are on hand to help — drop your details below and we'll point you in the right direction.",
             "fields": [
-                { "id": "first_name", "label": "First name", "required": true },
-                { "id": "last_name", "label": "Last name", "required": true },
-                { "id": "email", "label": "Email address", "required": true }
+                {
+                    "id": "first_name",
+                    "label": "First name",
+                    "required": true
+                },
+                {
+                    "id": "last_name",
+                    "label": "Last name",
+                    "required": true
+                },
+                {
+                    "id": "email",
+                    "label": "Email address",
+                    "required": true
+                }
             ],
             "legal_text": "By submitting, unless you tell us otherwise, you'll receive marketing emails from us. You can opt out at any time — see our privacy policy for details.",
             "legal_link_text": "privacy policy",
@@ -608,7 +694,6 @@
             "heading": "May also interest you"
         }
     },
-
     "shop_index_page": {
         "_source_file": "resources/js/pages/shop/index.tsx",
         "seo": {
@@ -619,16 +704,41 @@
         "all_button_label": "All ({count})",
         "empty_state": "No products found."
     },
-
     "product_detail_page": {
         "_source_file": "resources/js/pages/shop/show.tsx",
         "accent_color": "#800020",
-        "breadcrumbs": ["Home"],
-        "feature_chips": ["1 - 2 days Turn Around Time", "Gang Run Printing"],
+        "breadcrumbs": [
+            "Home"
+        ],
+        "feature_chips": [
+            "1 - 2 days Turn Around Time",
+            "Gang Run Printing"
+        ],
         "feature_chip_descriptions": [
             "We will deliver your design after 1 - 2 work days",
             "Not recommended for clients with high color accuracy requirements"
         ],
+        "turnaround_tooltip": {
+            "title": "Turnaround & delivery",
+            "sections": [
+                {
+                    "heading": "Design",
+                    "body": "We take 1–2 business days to design your card."
+                },
+                {
+                    "heading": "Printing",
+                    "body": "Allow 1 additional business day for printing and dispatch."
+                },
+                {
+                    "heading": "Shipping",
+                    "body": "Choose standard or expedited shipping at checkout."
+                },
+                {
+                    "heading": "U.S. delivery",
+                    "body": "Delivery to U.S. addresses typically takes 3–7 business days."
+                }
+            ]
+        },
         "gang_run_printing_tooltip": {
             "title": "Gang run printing",
             "intro": "Gang run printing is a process where artwork from multiple clients is combined onto a single printing plate and printed using the same paper type.",
@@ -665,20 +775,48 @@
         },
         "configurator_options": {
             "sizes": [
-                { "id": "standard", "label": "Standard", "dims": "85 x 55 mm" },
-                { "id": "square", "label": "Square", "dims": "65 x 65 mm" }
+                {
+                    "id": "standard",
+                    "label": "Standard",
+                    "dims": "85 x 55 mm"
+                },
+                {
+                    "id": "square",
+                    "label": "Square",
+                    "dims": "65 x 65 mm"
+                }
             ],
             "finishes": [
-                { "id": "matte", "label": "Matte" },
-                { "id": "gloss", "label": "Gloss" }
+                {
+                    "id": "matte",
+                    "label": "Matte"
+                },
+                {
+                    "id": "gloss",
+                    "label": "Gloss"
+                }
             ],
             "corners": [
-                { "id": "standard", "label": "Standard" },
-                { "id": "rounded", "label": "Rounded" }
+                {
+                    "id": "standard",
+                    "label": "Standard"
+                },
+                {
+                    "id": "rounded",
+                    "label": "Rounded"
+                }
             ],
             "quantity_tiers": [
-                { "qty": 50, "multiplier": 1, "save": 0 },
-                { "qty": 100, "multiplier": 1.6, "save": 0.1 },
+                {
+                    "qty": 50,
+                    "multiplier": 1,
+                    "save": 0
+                },
+                {
+                    "qty": 100,
+                    "multiplier": 1.6,
+                    "save": 0.1
+                },
                 {
                     "qty": 200,
                     "multiplier": 2.4,
@@ -686,10 +824,19 @@
                     "recommended": true,
                     "badge": "Best value"
                 },
-                { "qty": 400, "multiplier": 4, "save": 0.3 }
+                {
+                    "qty": 400,
+                    "multiplier": 4,
+                    "save": 0.3
+                }
             ]
         },
-        "quantity_table_headers": ["Quantity", "Per card", "Was", "Now"],
+        "quantity_table_headers": [
+            "Quantity",
+            "Per card",
+            "Was",
+            "Now"
+        ],
         "save_percentage_label": "Save {n}%",
         "delivery_callout": {
             "title": "Get it by Tue, 16 Jun",
@@ -697,9 +844,32 @@
         },
         "order_summary": {
             "heading": "Your selection",
-            "labels": ["Paper", "Size", "Quantity", "Corners"],
+            "labels": [
+                "Paper",
+                "Size",
+                "Quantity",
+                "Corners"
+            ],
             "total_label": "Total"
         },
+        "design_services": {
+            "heading": "Choose a design service",
+            "required_error": "Please select a design service before submitting.",
+            "options": [
+                {
+                    "code": "card_layout",
+                    "title": "Card Layout $29",
+                    "description": "We arrange your provided content, align elements, and check bleed before outputting print-ready files.*"
+                },
+                {
+                    "code": "card_design",
+                    "title": "Card Design $79",
+                    "description": "Original layout created by our designers, including color palette, graphics, and two rounds of revisions, delivered as print-ready files.*"
+                }
+            ],
+            "note": "* Design fee is a one-time charge and does not increase with print quantity. Printing starts after you approve the final artwork."
+        },
+        "design_fee_label": "Custom Design Fee",
         "design_cta": {
             "heading": "How would you like to design?",
             "options": [
@@ -719,130 +889,6 @@
         },
         "add_to_cart_button_template": "Add to cart · ${price}",
         "added_to_cart_button": "Added to cart",
-        "design_guidelines": {
-            "heading": "Designing your card?",
-            "description": "Set up your file with a 2 mm bleed, keep important text and logos inside the safe area, and export at 300 dpi in CMYK. The pink stripe shows where we trim — anything inside the dashed line will print.",
-            "bullets": [
-                "2 mm bleed on every edge",
-                "300 dpi minimum image resolution",
-                "CMYK colour space (RGB will auto-convert)",
-                "Embedded fonts or outlined text"
-            ],
-            "safe_area_label": "Safe area",
-            "bleed_area_label": "Bleed area"
-        },
-        "lifestyle_banner": {
-            "eyebrow": "Make a first impression",
-            "heading": "Premium cards for the moments that matter.",
-            "body": "From boardroom intros to coffee-shop hand-offs, our Original Business Cards land right every time.",
-            "image_url": "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1600&q=70"
-        },
-        "paper_stocks_section": {
-            "heading": "Discover our other paper stocks",
-            "subtitle": "Every paper has its own personality. Order a free sample pack to feel them all.",
-            "cta": "Learn more",
-            "stocks": [
-                {
-                    "id": "matte",
-                    "name": "Matte",
-                    "blurb": "Smooth, modern, and versatile. Our most popular choice for everyday print.",
-                    "image_url": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=600&q=70"
-                },
-                {
-                    "id": "soft-touch",
-                    "name": "Soft Touch",
-                    "blurb": "A velvety, tactile finish that feels as good as it looks.",
-                    "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=600&q=70"
-                },
-                {
-                    "id": "cotton",
-                    "name": "Cotton",
-                    "blurb": "100% cotton — eco-friendly, surprisingly soft, and tree-free.",
-                    "image_url": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=600&q=70"
-                },
-                {
-                    "id": "luxe",
-                    "name": "Luxe",
-                    "blurb": "Triple layered with a coloured seam — the ultimate first impression.",
-                    "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=600&q=70"
-                }
-            ]
-        },
-        "printfinity_banner": {
-            "eyebrow": "Printfinity",
-            "heading": "A different design on every card. For free.",
-            "body": "Showcase your full portfolio, your team, or every product you make — print a unique design on the back of every card in the pack at no extra cost.",
-            "cta": "Discover Printfinity",
-            "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1600&q=70"
-        },
-        "business_solutions_section": {
-            "heading": "Built for teams and businesses",
-            "subtitle": "Whether you're kitting out two staff or two thousand, we've got the tools to make it painless.",
-            "blocks": [
-                {
-                    "title": "Order for the whole team",
-                    "body": "Need cards for multiple employees? Manage everyone's details and order in one go.",
-                    "cta": "Learn more",
-                    "image_url": "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=600&q=70"
-                },
-                {
-                    "title": "Manage brand templates",
-                    "body": "Lock down your brand fonts, colours and logos so every order stays on-brand.",
-                    "cta": "Discover Brand Manager",
-                    "image_url": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=600&q=70"
-                },
-                {
-                    "title": "Dedicated account manager",
-                    "body": "Larger orders get a dedicated rep to handle quoting, proofing and shipping.",
-                    "cta": "Talk to an expert",
-                    "image_url": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=600&q=70"
-                }
-            ]
-        },
-        "cross_sell_section": {
-            "heading": "Even more good stuff",
-            "subtitle": "Round out your kit with these customer favourites.",
-            "empty_state": "More products coming soon.",
-            "shop_label_template": "Shop {name}"
-        },
-        "faq": [
-            {
-                "question": "What are the exact dimensions?",
-                "answer": "Standard: 85 × 55 mm. Square: 65 × 65 mm. MiniCard: 70 × 28 mm."
-            },
-            {
-                "question": "How thick is the paper?",
-                "answer": "Original Business Cards are printed on 350 gsm uncoated stock — substantial without being bulky."
-            },
-            {
-                "question": "Can I print on both sides?",
-                "answer": "Yes. All Original Business Cards are printed full-colour on both sides at no extra cost."
-            },
-            {
-                "question": "Will my colours print accurately?",
-                "answer": "We print in CMYK. Designs created in RGB will be auto-converted, which can shift bright tones slightly."
-            },
-            {
-                "question": "What file format should I upload?",
-                "answer": "PDF (preferred), PNG, or JPG at 300 dpi or higher. Include a 2 mm bleed on every edge."
-            },
-            {
-                "question": "How long does delivery take?",
-                "answer": "Standard: 3–5 working days. Next Day Delivery is available on selected products before 12pm."
-            },
-            {
-                "question": "Can I order a sample first?",
-                "answer": "Yes — order a free Business Card Sample Pack to feel every paper stock before you buy."
-            },
-            {
-                "question": "Do you offer Printfinity?",
-                "answer": "Yes. Print a different design on the back of every card in your pack at no extra cost."
-            },
-            {
-                "question": "Is there a money-back guarantee?",
-                "answer": "The InkPavo Promise — if you're not 100% happy with your order, we'll reprint it or refund you."
-            }
-        ],
         "gallery_thumb_image_urls": [
             "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=400&q=70",
             "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=400&q=70",
@@ -854,7 +900,6 @@
             "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=200&q=70"
         ]
     },
-
     "design_service_page": {
         "_source_file": "resources/js/pages/business-card-design-service.tsx",
         "seo": {
@@ -985,7 +1030,6 @@
             "Premium PVC card"
         ]
     },
-
     "business_cards_landing_page": {
         "_source_file": "resources/js/pages/shop/business-cards.tsx",
         "accent_color": "#800020",
@@ -1252,7 +1296,6 @@
             }
         ]
     },
-
     "cart_page": {
         "_source_file": "resources/js/pages/shop/cart.tsx",
         "seo_title": "Cart",
@@ -1267,7 +1310,6 @@
         "subtotal_label": "Subtotal",
         "checkout_cta": "Proceed to Checkout"
     },
-
     "checkout_page": {
         "_source_file": "resources/js/pages/shop/checkout.tsx",
         "seo_title": "Checkout",
@@ -1278,24 +1320,48 @@
             "contact_information": {
                 "heading": "Contact Information",
                 "fields": {
-                    "name": { "label": "Name *", "type": "text" },
-                    "email": { "label": "Email *", "type": "email" },
-                    "phone": { "label": "Phone", "type": "text" }
+                    "name": {
+                        "label": "Name *",
+                        "type": "text"
+                    },
+                    "email": {
+                        "label": "Email *",
+                        "type": "email"
+                    },
+                    "phone": {
+                        "label": "Phone",
+                        "type": "text"
+                    }
                 }
             },
             "shipping_address": {
                 "heading": "Shipping Address",
                 "fields": {
-                    "address": { "label": "Address *", "type": "text" },
-                    "city": { "label": "City *", "type": "text" },
-                    "state": { "label": "State", "type": "text" },
-                    "zip": { "label": "ZIP Code *", "type": "text" },
+                    "address": {
+                        "label": "Address *",
+                        "type": "text"
+                    },
+                    "city": {
+                        "label": "City *",
+                        "type": "text"
+                    },
+                    "state": {
+                        "label": "State",
+                        "type": "text"
+                    },
+                    "zip": {
+                        "label": "ZIP Code *",
+                        "type": "text"
+                    },
                     "country": {
                         "label": "Country",
                         "type": "text",
                         "default_value": "US"
                     },
-                    "notes": { "label": "Order Notes", "type": "textarea" }
+                    "notes": {
+                        "label": "Order Notes",
+                        "type": "textarea"
+                    }
                 }
             },
             "payment_method": {
@@ -1350,7 +1416,6 @@
             "cryptomus_create_failed": "Unable to create Cryptomus invoice. Please try again."
         }
     },
-
     "about_page": {
         "_source_file": "resources/js/pages/about.tsx",
         "eyebrow": "Who we are",
@@ -1402,7 +1467,6 @@
         "closing_link_text": "Get in touch",
         "closing_link_href": "/contact"
     },
-
     "help_center_page": {
         "_source_file": "resources/js/pages/help.tsx",
         "seo": {
@@ -1478,7 +1542,6 @@
             "button_href": "/contact"
         }
     },
-
     "privacy_page": {
         "_source_file": "resources/js/pages/privacy.tsx",
         "eyebrow": "Last updated June 2026",
@@ -1552,7 +1615,6 @@
             }
         ]
     },
-
     "terms_page": {
         "_source_file": "resources/js/pages/terms.tsx",
         "eyebrow": "Last updated June 2026",
@@ -1601,7 +1663,6 @@
             }
         ]
     },
-
     "not_found_page": {
         "_source_file": "resources/js/pages/errors/not-found.tsx",
         "seo": {
@@ -1613,9 +1674,18 @@
         "heading": "Page not found",
         "description": "The page you were looking for doesn't exist, may have been moved, or is temporarily unavailable. Let's get you back on track.",
         "action_links": [
-            { "label": "Go Home", "href": "/" },
-            { "label": "Browse Shop", "href": "/shop" },
-            { "label": "Contact Support", "href": "/contact" }
+            {
+                "label": "Go Home",
+                "href": "/"
+            },
+            {
+                "label": "Browse Shop",
+                "href": "/shop"
+            },
+            {
+                "label": "Contact Support",
+                "href": "/contact"
+            }
         ],
         "quick_links_heading": "Popular pages",
         "quick_links": [
@@ -1623,12 +1693,20 @@
                 "label": "Shop Business Cards",
                 "href": "/shop?cat=business-cards"
             },
-            { "label": "Shop Postcards", "href": "/shop?cat=postcards" },
-            { "label": "View All Products", "href": "/shop" },
-            { "label": "Help & FAQs", "href": "/help" }
+            {
+                "label": "Shop Postcards",
+                "href": "/shop?cat=postcards"
+            },
+            {
+                "label": "View All Products",
+                "href": "/shop"
+            },
+            {
+                "label": "Help & FAQs",
+                "href": "/help"
+            }
         ]
     },
-
     "dashboard_index_page": {
         "_source_file": "resources/js/pages/dashboard.tsx",
         "seo": {
@@ -1683,7 +1761,6 @@
             }
         }
     },
-
     "dashboard_orders_page": {
         "_source_file": "resources/js/pages/dashboard/orders.tsx",
         "seo": {
@@ -1714,7 +1791,6 @@
             "next": "Next"
         }
     },
-
     "dashboard_profile_page": {
         "_source_file": "resources/js/pages/dashboard/profile.tsx",
         "seo": {
@@ -1744,7 +1820,6 @@
         },
         "success_inline": "Saved."
     },
-
     "shop_orders_index_page": {
         "_source_file": "resources/js/pages/shop/orders/index.tsx",
         "seo_title": "My Orders",
@@ -1755,7 +1830,6 @@
         "order_label_prefix": "Order #",
         "items_suffix": "item(s)"
     },
-
     "shop_orders_show_page": {
         "_source_file": "resources/js/pages/shop/orders/show.tsx",
         "seo_title_prefix": "Order #",
@@ -1772,7 +1846,6 @@
         "qty_label": "Qty:",
         "total_label": "Total:"
     },
-
     "shop_tickets_index_page": {
         "_source_file": "resources/js/pages/shop/tickets/index.tsx",
         "seo_title": "Support Tickets",
@@ -1793,7 +1866,6 @@
             "page_label_separator": "of"
         }
     },
-
     "shop_tickets_show_page": {
         "_source_file": "resources/js/pages/shop/tickets/show.tsx",
         "seo_title_prefix": "Ticket #",
@@ -1810,7 +1882,6 @@
             "sending": "Sending..."
         }
     },
-
     "shop_tickets_create_page": {
         "_source_file": "resources/js/pages/shop/tickets/create.tsx",
         "seo_title": "Create Ticket",
@@ -1839,7 +1910,6 @@
             "submitting": "Submitting..."
         }
     },
-
     "auth_login_page": {
         "_source_file": "resources/js/pages/auth/login.tsx",
         "seo": {
@@ -1866,7 +1936,6 @@
         },
         "footer_text": "Don't have an account?"
     },
-
     "auth_register_page": {
         "_source_file": "resources/js/pages/auth/register.tsx",
         "seo": {
@@ -1895,7 +1964,6 @@
             "log_in": "Log in"
         }
     },
-
     "auth_forgot_password_page": {
         "_source_file": "resources/js/pages/auth/forgot-password.tsx",
         "seo": {
@@ -1918,7 +1986,6 @@
             "log_in": "log in"
         }
     },
-
     "auth_reset_password_page": {
         "_source_file": "resources/js/pages/auth/reset-password.tsx",
         "seo": {
@@ -1940,7 +2007,6 @@
             "submit": "Reset password"
         }
     },
-
     "auth_confirm_password_page": {
         "_source_file": "resources/js/pages/auth/confirm-password.tsx",
         "seo": {
@@ -1959,7 +2025,6 @@
             "submit": "Confirm password"
         }
     },
-
     "auth_verify_email_page": {
         "_source_file": "resources/js/pages/auth/verify-email.tsx",
         "seo": {
@@ -1976,7 +2041,6 @@
             "log_out": "Log out"
         }
     },
-
     "auth_two_factor_page": {
         "_source_file": "resources/js/pages/auth/two-factor-challenge.tsx",
         "seo": {
@@ -2001,7 +2065,6 @@
         },
         "toggle_prefix": "or you can "
     },
-
     "settings_profile_page": {
         "_source_file": "resources/js/pages/settings/profile.tsx",
         "seo": {
@@ -2027,7 +2090,6 @@
             "save": "Save"
         }
     },
-
     "settings_security_page": {
         "_source_file": "resources/js/pages/settings/security.tsx",
         "seo": {
@@ -2052,7 +2114,6 @@
             "save": "Save"
         }
     },
-
     "settings_affiliate_page": {
         "_source_file": "resources/js/pages/settings/affiliate.tsx",
         "seo": {
@@ -2062,7 +2123,6 @@
         "sr_heading": "Affiliate settings",
         "breadcrumb": "Affiliate settings"
     },
-
     "settings_appearance_page": {
         "_source_file": "resources/js/pages/settings/appearance.tsx",
         "seo": {
@@ -2074,7 +2134,6 @@
         "section_description": "Update the appearance settings for your account",
         "breadcrumb": "Appearance settings"
     },
-
     "postcards_page": {
         "_source_file": "resources/js/pages/postcards.tsx",
         "active_category": "Postcards",
@@ -2205,7 +2264,6 @@
             }
         ]
     },
-
     "stickers_page": {
         "_source_file": "resources/js/pages/stickers-and-labels.tsx",
         "active_category": "Stickers & Labels",
@@ -2343,7 +2401,6 @@
             }
         ]
     },
-
     "flyers_page": {
         "_source_file": "resources/js/pages/flyers-and-brochures.tsx",
         "active_category": "Flyers & Brochures",

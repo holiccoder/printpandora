@@ -330,6 +330,9 @@ export function StorefrontHeader({
                                                 // Override the shadcn pill background — the storefront
                                                 // header uses an underline indicator instead.
                                                 'rounded-none bg-transparent hover:bg-transparent focus:bg-transparent data-[active=true]:bg-transparent data-[state=open]:bg-transparent',
+                                                // Force text colour in active/open states so it
+                                                // doesn't flip to white in dark mode.
+                                                'data-[active=true]:text-[#800020] data-[state=open]:text-[#800020]',
                                                 // Hide the chevron icon on this header
                                                 '[&>svg]:hidden',
                                             )}
@@ -344,7 +347,7 @@ export function StorefrontHeader({
                                             // intentionally covered while the dropdown is open. z-50 keeps
                                             // it above sibling sections (hero carousel, banners) that open
                                             // their own stacking context with `position: relative`.
-                                            className="!fixed !inset-x-0 !top-[164px] !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 !bg-white p-0 shadow-lg"
+                                            className="!fixed !inset-x-0 !top-[164px] !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 !bg-white p-0 shadow-lg data-[state=open]:visible data-[state=closed]:hidden"
                                         >
                                             <MegaPanel mega={cat.mega} />
                                         </NavigationMenuContent>

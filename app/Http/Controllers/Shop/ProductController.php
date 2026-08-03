@@ -41,17 +41,8 @@ class ProductController extends Controller
                 ->setStatusCode(404);
         }
 
-        $related = Product::with('category')
-            ->where('is_active', true)
-            ->where('product_category_id', $product->product_category_id)
-            ->where('id', '!=', $product->id)
-            ->latest()
-            ->limit(4)
-            ->get();
-
         return Inertia::render('shop/show', [
             'product' => $product,
-            'related' => $related,
             'productOptions' => $this->loadProductOptions($product),
         ]);
     }
