@@ -1419,48 +1419,17 @@
     "about_page": {
         "_source_file": "resources/js/pages/about.tsx",
         "eyebrow": "Who we are",
-        "title": "About InkPavo",
-        "description": "InkPavo is a print-on-demand studio helping small businesses and creators bring their brands to life on premium paper.",
+        "title": "About PrintPandora",
+        "description": "PrintPandora is a pioneer in the printing industry, delivering high-fidelity global customization and premium quality with over 20 years of craftsmanship.",
         "body_paragraphs": [
-            "InkPavo was founded with one belief: print is personal. From the weight of a business card to the texture of a postcard, the way your brand feels in someone's hands says as much about you as the design itself. We exist to make that experience effortless — beautifully designed, reliably produced, and shipped to your door."
+            "Since rooting ourselves in Shanghai, China in 2003, we have stood as pioneers in the Chinese printing industry. Over the past 23 years, we have deepened our industry insight and amassed profound technical expertise. With over 20 years of offline and 15 years of online printing experience, we precisely understand the core needs of every client—from individual consumers and corporate partners to advertising agencies and creative designers—delivering highly tailored solutions for each group.",
+            "Today, we are bringing this long-standing heritage of professional service, exquisite craftsmanship, and flexible customization to the global stage. Through PrintPandora, we are dedicated to making premium-quality printing services accessible to clients worldwide. Our vision is to redefine the industry benchmark for online printing by delivering superior quality at highly competitive prices."
         ],
         "sections": [
             {
-                "heading": "Our story",
+                "heading": "Our Vision & Global Capabilities",
                 "level": "h2",
-                "body": "We started in a small studio with a single press and a stack of paper samples. A decade later we've grown into a print-on-demand platform that serves tens of thousands of independent businesses across the world, but our obsession with craft hasn't budged. Every order — one card or ten thousand — runs through the same quality checks."
-            },
-            {
-                "heading": "What we believe",
-                "level": "h2",
-                "body": "Great print should not be a luxury, and it should never come at the expense of the planet. That's why we offer FSC® certified papers, soy-based inks, and a recyclable packaging programme on every order. When you choose InkPavo, you're choosing print that's kinder by design."
-            },
-            {
-                "heading": "Our values",
-                "level": "h3",
-                "list_items": [
-                    {
-                        "strong": "Craft over compromise.",
-                        "text": "If a card isn't right, it doesn't ship. Period."
-                    },
-                    {
-                        "strong": "People-first service.",
-                        "text": "Real humans answer your questions, every day of the week."
-                    },
-                    {
-                        "strong": "Sustainability as standard.",
-                        "text": "Certified papers and responsible logistics on every order."
-                    },
-                    {
-                        "strong": "Always learning.",
-                        "text": "New finishes, new stocks, new products — your feedback shapes everything we build."
-                    }
-                ]
-            },
-            {
-                "heading": "Where we're going",
-                "level": "h2",
-                "body": "Our roadmap is built around the small businesses, designers, and creators who put their trust in us. Whether you're printing your very first business card or rebranding for the third time, we want InkPavo to be the easiest, most rewarding part of the process."
+                "body": "In response to the global wave of small-batch, highly diverse customization, PrintPandora has reconstructed the entire supply chain—from design and production to logistics. Leveraging our specialized production facilities across China, we deliver highly diverse printing solutions. On our continuous path of growth, we remain steadfastly focused on two core pillars: transforming your creative designs into physical products that achieve the ultimate balance of exquisite quality and exceptional cost-effectiveness. This is the fundamental difference that sets PrintPandora apart from ordinary printing providers. As a fast-growing industry leader, we continue to explore cutting-edge technologies, driving the innovation and upgrading of printing services with a truly global vision."
             }
         ],
         "closing_paragraph": "Have an idea, a question, or a story to share? Get in touch — we'd love to hear from you.",
