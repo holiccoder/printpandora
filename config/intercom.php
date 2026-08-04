@@ -13,4 +13,6 @@ return [
     */
 
     'app_id' => env('INTERCOM_APP_ID'),
+
+    'enabled' => env('INTERCOM_ENABLED', true),
 ];

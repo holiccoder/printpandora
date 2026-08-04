@@ -52,7 +52,7 @@ class HandleInertiaRequests extends Middleware
             // shared props — and the service memoises within the request.
             'content' => fn () => app(HardcodedContent::class)->all(),
             'intercom' => [
-                'app_id' => config('intercom.app_id'),
+                'app_id' => config('intercom.enabled', true) ? config('intercom.app_id') : null,
                 'user' => $request->user() ? [
                     'id' => $request->user()->getAuthIdentifier(),
                     'name' => $request->user()->name,
