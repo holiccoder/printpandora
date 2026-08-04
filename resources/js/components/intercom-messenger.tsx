@@ -1,5 +1,5 @@
 import { usePage } from '@inertiajs/react';
-import Intercom, { shutdown, update } from '@intercom/messenger-js-sdk';
+import { Intercom, shutdown, update } from '@intercom/messenger-js-sdk';
 import { useEffect, useRef } from 'react';
 
 /**
@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
  * `@intercom/messenger-js-sdk`.
  *
  * The widget is only initialised when:
+ *   - the build is not a development build,
  *   - an INTERCOM_APP_ID is configured, and
  *   - the current page is not a dashboard page (dashboard/* also uses
  *     StorefrontLayout, but Intercom should be limited to public storefront
@@ -62,7 +63,7 @@ export default function IntercomMessenger() {
                               ? { created_at: user.created_at }
                               : {}),
                       }
-                    : {}
+                    : {},
             );
         };
         document.addEventListener('inertia:finish', handlePageVisit);
