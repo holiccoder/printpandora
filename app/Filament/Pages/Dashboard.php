@@ -21,12 +21,12 @@ class Dashboard extends BaseDashboard
             \App\Filament\Widgets\StatsOverview::class,
             \App\Filament\Widgets\TrafficOverview::class,
             \App\Filament\Widgets\OrdersRevenueChart::class,
+            \App\Filament\Widgets\UserRegistrationsChart::class,
+            \App\Filament\Widgets\TopProductsChart::class,
             \App\Filament\Widgets\OrderStatusChart::class,
             \App\Filament\Widgets\PaymentHealthChart::class,
-            \App\Filament\Widgets\TopProductsChart::class,
             \App\Filament\Widgets\DiscountPerformanceChart::class,
             \App\Filament\Widgets\AffiliatePerformanceChart::class,
-            \App\Filament\Widgets\UserRegistrationsChart::class,
             \App\Filament\Widgets\SupportWorkloadChart::class,
         ];
     }

@@ -9,7 +9,7 @@ class DiscountPerformanceChart extends ChartWidget
 {
     protected ?string $heading = '折扣码使用效果分析';
 
-    protected static ?int $sort = 7;
+    protected static ?int $sort = 8;
 
     protected int|string|array $columnSpan = 1;
 

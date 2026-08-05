@@ -9,7 +9,7 @@ class TopProductsChart extends ChartWidget
 {
     protected ?string $heading = '畅销产品与分类排行';
 
-    protected static ?int $sort = 6;
+    protected static ?int $sort = 5;
 
     protected int|string|array $columnSpan = 1;
 

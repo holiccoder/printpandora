@@ -10,7 +10,7 @@ class PaymentHealthChart extends ChartWidget
 {
     protected ?string $heading = '支付健康度与渠道分布';
 
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 7;
 
     protected int|string|array $columnSpan = 1;
 
