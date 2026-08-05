@@ -26,8 +26,8 @@ export default function Home({ recentPosts }: Props) {
             <PopularProducts />
             <HomeLogoWall />
             <HomePerks />
-            <SamplePackBanner />
             <RecentPosts posts={recentPosts} />
+            <SamplePackBanner />
         </StorefrontLayout>
     );
 }
