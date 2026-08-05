@@ -64,20 +64,20 @@ class TrafficOverview extends BaseWidget
         $mockSuffix = $isMock ? ' (演示数据)' : '';
 
         return [
-            Stat::make('今日网站流量' . $mockSuffix, number_format($todayUsers) . ' 访客 / ' . number_format($todayViews) . ' 浏览')
-                ->description($isMock ? '请在 .env 中配置 Google Analytics 凭证' : '今日网站实时访客与页面浏览量')
+            Stat::make('今日访客' . $mockSuffix, number_format($todayUsers))
+                ->description($isMock ? '请配置 Google Analytics 凭证' : '今日页面浏览量 (PV): ' . number_format($todayViews))
                 ->descriptionIcon('heroicon-m-bolt')
                 ->color('success'),
-            Stat::make('昨日网站流量' . $mockSuffix, number_format($yesterdayUsers) . ' 访客 / ' . number_format($yesterdayViews) . ' 浏览')
-                ->description($isMock ? '请在 .env 中配置 Google Analytics 凭证' : '昨日全天总访客与页面浏览量')
+            Stat::make('昨日访客' . $mockSuffix, number_format($yesterdayUsers))
+                ->description($isMock ? '请配置 Google Analytics 凭证' : '昨日页面浏览量 (PV): ' . number_format($yesterdayViews))
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('info'),
-            Stat::make('本月网站总流量' . $mockSuffix, number_format($thisMonthUsers) . ' 访客 / ' . number_format($thisMonthViews) . ' 浏览')
-                ->description($isMock ? '请在 .env 中配置 Google Analytics 凭证' : Carbon::now()->translatedFormat('Y年n月') . ' 全月累计流量统计')
+            Stat::make('本月访客' . $mockSuffix, number_format($thisMonthUsers))
+                ->description($isMock ? '请配置 Google Analytics 凭证' : Carbon::now()->translatedFormat('n月') . '累计浏览量: ' . number_format($thisMonthViews))
                 ->descriptionIcon('heroicon-m-chart-bar')
                 ->color('warning'),
-            Stat::make('上月网站总流量' . $mockSuffix, number_format($previousMonthUsers) . ' 访客 / ' . number_format($previousMonthViews) . ' 浏览')
-                ->description($isMock ? '请在 .env 中配置 Google Analytics 凭证' : Carbon::now()->subMonth()->translatedFormat('Y年n月') . ' 全月总流量统计')
+            Stat::make('上月访客' . $mockSuffix, number_format($previousMonthUsers))
+                ->description($isMock ? '请配置 Google Analytics 凭证' : Carbon::now()->subMonth()->translatedFormat('n月') . '全月浏览量: ' . number_format($previousMonthViews))
                 ->descriptionIcon('heroicon-m-calendar')
                 ->color('primary'),
         ];
