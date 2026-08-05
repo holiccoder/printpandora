@@ -13,7 +13,7 @@ class OrdersRevenueChart extends ChartWidget
 
     protected ?string $description = '订单数量与销售额趋势';
 
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 3;
 
     protected int|string|array $columnSpan = 1;
 

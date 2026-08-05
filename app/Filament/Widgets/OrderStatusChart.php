@@ -10,7 +10,7 @@ class OrderStatusChart extends ChartWidget
 {
     protected ?string $heading = '订单状态分布';
 
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 4;
 
     protected int|string|array $columnSpan = 1;
 

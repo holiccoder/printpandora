@@ -9,7 +9,7 @@ class AffiliatePerformanceChart extends ChartWidget
 {
     protected ?string $heading = '分销商推广业绩排行';
 
-    protected static ?int $sort = 7;
+    protected static ?int $sort = 8;
 
     protected int|string|array $columnSpan = 1;
 

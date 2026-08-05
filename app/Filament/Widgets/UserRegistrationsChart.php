@@ -13,7 +13,7 @@ class UserRegistrationsChart extends ChartWidget
 
     protected ?string $description = '新增注册用户趋势';
 
-    protected static ?int $sort = 8;
+    protected static ?int $sort = 9;
 
     protected int|string|array $columnSpan = 1;
 

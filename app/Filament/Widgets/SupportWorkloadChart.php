@@ -9,7 +9,7 @@ class SupportWorkloadChart extends ChartWidget
 {
     protected ?string $heading = '待处理工单负载 (按优先级)';
 
-    protected static ?int $sort = 9;
+    protected static ?int $sort = 10;
 
     protected int|string|array $columnSpan = 1;
 

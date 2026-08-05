@@ -10,10 +10,16 @@ class Dashboard extends BaseDashboard
 
     protected static ?string $navigationLabel = '数据总览';
 
+    public function getMaxContentWidth(): string | \Filament\Support\Enums\Width | null
+    {
+        return 'full';
+    }
+
     public function getWidgets(): array
     {
         return [
             \App\Filament\Widgets\StatsOverview::class,
+            \App\Filament\Widgets\TrafficOverview::class,
             \App\Filament\Widgets\OrdersRevenueChart::class,
             \App\Filament\Widgets\OrderStatusChart::class,
             \App\Filament\Widgets\PaymentHealthChart::class,
