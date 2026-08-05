@@ -1091,7 +1091,7 @@
             "name": "One side",
             "code": "one_side",
             "description": "Special finish applied to one side only",
-            "swatch_image": "",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-one-side.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -1139,7 +1139,7 @@
             "name": "Both sides",
             "code": "both_sides",
             "description": "Special finish applied to both sides",
-            "swatch_image": "",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-both-sides.png",
             "added_price": [
                 {
                     "pack_size": 50,
