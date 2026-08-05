@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
 use App\Services\Cart;
+use App\Services\DiscountException;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,9 +12,14 @@ class CartController extends Controller
 {
     public function index(Cart $cart)
     {
+        $quote = $cart->quote();
+
         return Inertia::render('shop/cart', [
             'cart' => $cart->all(),
-            'subtotal' => $cart->subtotal(),
+            'subtotal' => $quote['subtotal'],
+            'discount' => $quote['code'],
+            'discountAmount' => $quote['discount'],
+            'total' => $quote['total'],
             'count' => $cart->count(),
         ]);
     }
@@ -51,5 +57,31 @@ class CartController extends Controller
         }
 
         return back();
+    }
+
+    public function applyDiscount(Request $request, Cart $cart)
+    {
+        $data = $request->validate([
+            'code' => 'required|string|max:50',
+        ]);
+
+        $cart->applyDiscountCode($data['code']);
+
+        try {
+            $cart->quote(null, true);
+        } catch (DiscountException $exception) {
+            $cart->removeDiscountCode();
+
+            return back()->withErrors(['discount_code' => $exception->getMessage()]);
+        }
+
+        return back()->with('success', 'Discount code applied.');
+    }
+
+    public function removeDiscount(Cart $cart)
+    {
+        $cart->removeDiscountCode();
+
+        return back()->with('success', 'Discount code removed.');
     }
 }

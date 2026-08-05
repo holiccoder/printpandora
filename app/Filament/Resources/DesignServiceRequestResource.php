@@ -18,60 +18,77 @@ class DesignServiceRequestResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-paint-brush';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+    protected static ?string $modelLabel = '设计服务申请';
 
-    protected static ?string $label = 'Design Service Requests';
+    protected static ?string $pluralModelLabel = '设计服务申请';
 
-    protected static ?string $navigationLabel = 'Design Requests';
+    protected static ?string $navigationLabel = '设计服务申请';
+
+    protected static string|\UnitEnum|null $navigationGroup = '商城管理';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make('Request Details')
+                Section::make('申请详情')
                     ->schema([
                         Forms\Components\TextInput::make('email')
+                            ->label('电子邮箱')
                             ->email()
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('business_name')
+                            ->label('公司/商家名称')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('business_card_type')
-                            ->label('Business Card Type')
+                            ->label('名片类型')
                             ->required()
                             ->maxLength(255),
+                        Forms\Components\Select::make('design_service_code')
+                            ->label('设计服务')
+                            ->options([
+                                'card_layout' => '名片版面排版 ($29)',
+                                'card_design' => '名片深度设计 ($79)',
+                            ])
+                            ->nullable(),
+                        Forms\Components\TextInput::make('design_service_fee')
+                            ->label('设计服务费 (USD)')
+                            ->numeric()
+                            ->step('0.01')
+                            ->nullable(),
                         Forms\Components\Toggle::make('terms_accepted')
-                            ->label('Terms Accepted')
+                            ->label('同意服务条款')
                             ->required(),
                         Forms\Components\DateTimePicker::make('handled_at')
-                            ->label('Handled At')
+                            ->label('处理时间')
                             ->nullable(),
                     ]),
-                Section::make('Card Information')
+                Section::make('名片排版信息')
                     ->schema([
                         Forms\Components\Textarea::make('card_info')
-                            ->label('Card Info')
+                            ->label('排版内容与要求')
                             ->rows(5)
                             ->columnSpanFull(),
                     ]),
-                Section::make('Admin Notes')
+                Section::make('管理员备注')
                     ->schema([
                         Forms\Components\Textarea::make('notes')
+                            ->label('备注')
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
-                Section::make('Metadata')
+                Section::make('元数据')
                     ->schema([
                         Forms\Components\TextInput::make('ip_address')
-                            ->label('IP Address')
+                            ->label('IP 地址')
                             ->disabled(),
                         Forms\Components\TextInput::make('user_agent')
-                            ->label('User Agent')
+                            ->label('浏览器 User Agent')
                             ->disabled()
                             ->columnSpanFull(),
                         Forms\Components\DateTimePicker::make('created_at')
-                            ->label('Submitted At')
+                            ->label('提交时间')
                             ->disabled(),
                     ])
                     ->columns(2),
@@ -86,34 +103,48 @@ class DesignServiceRequestResource extends Resource
                     ->label('ID')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label('电子邮箱')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('business_name')
+                    ->label('公司/商家名称')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('business_card_type')
-                    ->label('Card Type')
+                    ->label('名片类型')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('design_service_code')
+                    ->label('设计服务')
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'card_layout' => '名片版面排版 ($29)',
+                        'card_design' => '名片深度设计 ($79)',
+                        default => '—',
+                    })
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('design_service_fee')
+                    ->label('费用')
+                    ->money('USD')
+                    ->toggleable(),
                 Tables\Columns\IconColumn::make('terms_accepted')
-                    ->label('Terms')
+                    ->label('同意条款')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Submitted'),
+                    ->label('提交时间'),
                 Tables\Columns\TextColumn::make('handled_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Handled')
+                    ->label('处理时间')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('terms_accepted')
-                    ->label('Terms Accepted'),
+                    ->label('同意服务条款'),
                 Tables\Filters\Filter::make('handled_at')
                     ->query(fn ($query) => $query->whereNull('handled_at'))
-                    ->label('Pending')
+                    ->label('待处理')
                     ->toggle(),
             ])
             ->actions([

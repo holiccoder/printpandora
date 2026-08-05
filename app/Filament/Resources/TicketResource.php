@@ -18,44 +18,51 @@ class TicketResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-ticket';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+    protected static ?string $modelLabel = '工单';
 
-    protected static ?string $label = 'Support Tickets';
+    protected static ?string $pluralModelLabel = '工单';
+
+    protected static ?string $navigationLabel = '工单管理';
+
+    protected static string|\UnitEnum|null $navigationGroup = '商城管理';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make('Ticket Details')
+                Section::make('工单详情')
                     ->schema([
                         Forms\Components\Select::make('status')
+                            ->label('状态')
                             ->required()
                             ->options([
-                                'open' => 'Open',
-                                'in_progress' => 'In Progress',
-                                'closed' => 'Closed',
+                                'open' => '开启',
+                                'in_progress' => '处理中',
+                                'closed' => '关闭',
                             ]),
                         Forms\Components\Select::make('priority')
+                            ->label('优先级')
                             ->required()
                             ->options([
-                                'low' => 'Low',
-                                'medium' => 'Medium',
-                                'high' => 'High',
+                                'low' => '低',
+                                'medium' => '中',
+                                'high' => '高',
                             ]),
                     ]),
-                Section::make('Information')
+                Section::make('详细信息')
                     ->schema([
                         Forms\Components\TextInput::make('subject')
+                            ->label('主题')
                             ->disabled()
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('user.name')
-                            ->label('User')
+                            ->label('用户名')
                             ->disabled(),
                         Forms\Components\TextInput::make('user.email')
-                            ->label('Email')
+                            ->label('电子邮箱')
                             ->disabled(),
                         Forms\Components\Textarea::make('reply_message')
-                            ->label('Add Reply')
+                            ->label('追加回复内容')
                             ->columnSpanFull(),
                     ]),
             ]);
@@ -65,37 +72,43 @@ class TicketResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label('Ticket #')->sortable(),
-                Tables\Columns\TextColumn::make('subject')->searchable()->limit(50),
-                Tables\Columns\TextColumn::make('user.name')->label('User')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('工单号')->sortable(),
+                Tables\Columns\TextColumn::make('subject')->label('主题')->searchable()->limit(50),
+                Tables\Columns\TextColumn::make('user.name')->label('用户名')->searchable()->sortable(),
                 Tables\Columns\SelectColumn::make('status')
+                    ->label('状态')
                     ->options([
-                        'open' => 'Open',
-                        'in_progress' => 'In Progress',
-                        'closed' => 'Closed',
+                        'open' => '开启',
+                        'in_progress' => '处理中',
+                        'closed' => '关闭',
                     ])
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('priority')
+                    ->label('优先级')
                     ->options([
-                        'low' => 'Low',
-                        'medium' => 'Medium',
-                        'high' => 'High',
+                        'low' => '低',
+                        'medium' => '中',
+                        'high' => '高',
                     ])
                     ->sortable(),
-                Tables\Columns\TextColumn::make('replies_count')->counts('replies')->label('Replies'),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->label('Created'),
+                Tables\Columns\TextColumn::make('replies_count')->counts('replies')->label('回复数'),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->label('创建时间'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')->options([
-                    'open' => 'Open',
-                    'in_progress' => 'In Progress',
-                    'closed' => 'Closed',
-                ]),
-                Tables\Filters\SelectFilter::make('priority')->options([
-                    'low' => 'Low',
-                    'medium' => 'Medium',
-                    'high' => 'High',
-                ]),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('状态')
+                    ->options([
+                        'open' => '开启',
+                        'in_progress' => '处理中',
+                        'closed' => '关闭',
+                    ]),
+                Tables\Filters\SelectFilter::make('priority')
+                    ->label('优先级')
+                    ->options([
+                        'low' => '低',
+                        'medium' => '中',
+                        'high' => '高',
+                    ]),
             ])
             ->actions([
                 Actions\EditAction::make(),

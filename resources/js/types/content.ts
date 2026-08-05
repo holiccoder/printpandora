@@ -440,7 +440,6 @@ export interface HomePageContent {
     perks: {
         section_aria_label: string;
         items: PerkItem[];
-
     };
     sample_pack_banner: {
         title: string;

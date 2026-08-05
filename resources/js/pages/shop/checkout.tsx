@@ -1,10 +1,10 @@
 // Content sourced from `content/hardcoded-content.json` via useContent('checkout_page').
 import { Link, router, useForm } from '@inertiajs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { countries, countriesByCode } from '@/data/countries';
 import SEO from '@/components/seo';
-import StorefrontLayout from '@/layouts/storefront-layout';
+import { countries, countriesByCode } from '@/data/countries';
 import { useContent } from '@/hooks/use-content';
+import StorefrontLayout from '@/layouts/storefront-layout';
 
 interface CartItem {
     key: string;
@@ -32,6 +32,9 @@ interface CryptomusConfig {
 interface Props {
     cart: Record<string, CartItem>;
     subtotal: number;
+    discountAmount: number;
+    total: number;
+    discountCode: string | null;
     paypal: PaypalConfig;
     cryptomus: CryptomusConfig;
 }
@@ -44,9 +47,17 @@ declare global {
 
 type PaymentMethod = 'manual' | 'paypal' | 'cryptomus';
 
-export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
+export default function Checkout({
+    cart,
+    subtotal,
+    discountAmount,
+    total,
+    discountCode,
+    paypal,
+    cryptomus,
+}: Props) {
     const c = useContent('checkout_page') as any;
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, processing, errors } = useForm({
         customer_name: '',
         customer_email: '',
         customer_phone: '',
@@ -61,6 +72,35 @@ export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
     });
 
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('manual');
+    const [discountInput, setDiscountInput] = useState(discountCode ?? '');
+    const [discountError, setDiscountError] = useState<string | null>(null);
+
+    const applyDiscount = (e: React.FormEvent) => {
+        e.preventDefault();
+        setDiscountError(null);
+        router.post(
+            '/cart/discount',
+            { code: discountInput },
+            {
+                preserveScroll: true,
+                preserveState: true,
+                onError: (errors) =>
+                    setDiscountError(
+                        (errors as Record<string, string>).discount_code ??
+                            'Unable to apply that discount code.',
+                    ),
+            },
+        );
+    };
+
+    const removeDiscount = () => {
+        setDiscountError(null);
+        setDiscountInput('');
+        router.delete('/cart/discount', {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
 
     const availableStates = useMemo(
         () => countriesByCode[data.shipping_country]?.states ?? [],
@@ -77,8 +117,19 @@ export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
         setData({ shipping_country: countryCode, shipping_state: newState });
     };
 
-    const [paypalReady, setPaypalReady] = useState(false);
+    const [paypalSdkLoaded, setPaypalSdkLoaded] = useState(false);
+    // The SDK may already be on the page from a prior visit; deriving
+    // readiness avoids setState inside the loading effect.
+    const paypalReady =
+        paypalSdkLoaded ||
+        (typeof window !== 'undefined' && Boolean(window.paypal));
     const [paypalError, setPaypalError] = useState<string | null>(null);
+
+    // Missing PayPal config is derived at render time instead of via
+    // setState inside the SDK-loading effect.
+    const paypalDisplayError =
+        paypalError ??
+        (paypal.client_id ? null : c.error_messages.paypal_not_configured);
     const [paypalProcessing, setPaypalProcessing] = useState(false);
     const paypalContainerRef = useRef<HTMLDivElement | null>(null);
     const paypalButtonsRef = useRef<any>(null);
@@ -99,14 +150,10 @@ export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
         }
 
         if (!paypal.client_id) {
-            setPaypalError(c.error_messages.paypal_not_configured);
-
             return;
         }
 
         if (window.paypal) {
-            setPaypalReady(true);
-
             return;
         }
 
@@ -120,7 +167,7 @@ export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
         script.id = scriptId;
         script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(paypal.client_id)}&currency=${encodeURIComponent(paypal.currency)}&intent=capture`;
         script.async = true;
-        script.onload = () => setPaypalReady(true);
+        script.onload = () => setPaypalSdkLoaded(true);
         script.onerror = () => setPaypalError(c.error_messages.sdk_load_failed);
         document.body.appendChild(script);
     }, [paymentMethod, paypal.client_id, paypal.currency, c.error_messages]);
@@ -162,6 +209,9 @@ export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
                         'X-CSRF-TOKEN': csrfToken,
                         Accept: 'application/json',
                     },
+                    body: JSON.stringify({
+                        customer_email: dataRef.current.customer_email,
+                    }),
                 });
                 const json = await res.json().catch(() => ({}));
 
@@ -698,7 +748,9 @@ export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
                                                     'cryptomus'
                                                 }
                                                 onChange={() =>
-                                                    setPaymentMethod('cryptomus')
+                                                    setPaymentMethod(
+                                                        'cryptomus',
+                                                    )
                                                 }
                                                 className="mt-1"
                                             />
@@ -729,13 +781,67 @@ export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
                                     {summary.heading}
                                 </h2>
 
+                                <form onSubmit={applyDiscount} className="mb-5">
+                                    <label className="mb-2 block text-sm font-medium">
+                                        Discount code
+                                    </label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            value={discountInput}
+                                            onChange={(e) =>
+                                                setDiscountInput(e.target.value)
+                                            }
+                                            placeholder="Enter code"
+                                            className="min-w-0 flex-1 rounded-md border border-[#d8d8d5] px-3 py-2 text-sm dark:border-[#3E3E3A] dark:bg-[#0f0f0e]"
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900"
+                                        >
+                                            Apply
+                                        </button>
+                                    </div>
+                                    {(discountError ||
+                                        (errors as Record<string, string>)
+                                            .discount_code) && (
+                                        <p className="mt-2 text-sm text-red-500">
+                                            {discountError ??
+                                                (
+                                                    errors as Record<
+                                                        string,
+                                                        string
+                                                    >
+                                                ).discount_code}
+                                        </p>
+                                    )}
+                                </form>
+
                                 <div className="flex justify-between text-sm">
                                     <span>{summary.subtotal_label}</span>
                                     <span>${subtotal.toFixed(2)}</span>
                                 </div>
+                                {discountCode && discountAmount > 0 && (
+                                    <>
+                                        <div className="mt-2 flex justify-between text-sm text-green-700 dark:text-green-400">
+                                            <span>
+                                                Discount ({discountCode})
+                                            </span>
+                                            <span>
+                                                -${discountAmount.toFixed(2)}
+                                            </span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={removeDiscount}
+                                            className="mt-2 text-sm text-neutral-500 underline hover:text-neutral-800"
+                                        >
+                                            Remove discount
+                                        </button>
+                                    </>
+                                )}
                                 <div className="mt-2 flex justify-between text-lg font-semibold">
                                     <span>{summary.total_label}</span>
-                                    <span>${subtotal.toFixed(2)}</span>
+                                    <span>${total.toFixed(2)}</span>
                                 </div>
 
                                 {paymentMethod === 'manual' && (
@@ -752,20 +858,21 @@ export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
 
                                 {paymentMethod === 'paypal' && (
                                     <div className="mt-4 space-y-2">
-                                        {!paypalReady && !paypalError && (
-                                            <div className="text-center text-xs text-[#706f6c]">
-                                                {c.paypal_section.loading}
-                                            </div>
-                                        )}
+                                        {!paypalReady &&
+                                            !paypalDisplayError && (
+                                                <div className="text-center text-xs text-[#706f6c]">
+                                                    {c.paypal_section.loading}
+                                                </div>
+                                            )}
                                         <div ref={paypalContainerRef} />
                                         {paypalProcessing && (
                                             <div className="text-center text-xs text-[#706f6c]">
                                                 {c.paypal_section.finalizing}
                                             </div>
                                         )}
-                                        {paypalError && (
+                                        {paypalDisplayError && (
                                             <p className="text-xs text-red-500">
-                                                {paypalError}
+                                                {paypalDisplayError}
                                             </p>
                                         )}
                                         <p className="text-[10px] text-[#706f6c]">
@@ -784,7 +891,8 @@ export default function Checkout({ cart, subtotal, paypal, cryptomus }: Props) {
                                         >
                                             {cryptomusLoading
                                                 ? c.cryptomus_section.processing
-                                                : c.cryptomus_section.button_label}
+                                                : c.cryptomus_section
+                                                      .button_label}
                                         </button>
                                         {cryptomusError && (
                                             <p className="text-xs text-red-500">

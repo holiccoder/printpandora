@@ -18,16 +18,24 @@ class CategoryResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-folder';
 
+    protected static ?string $modelLabel = '文章分类';
+
+    protected static ?string $pluralModelLabel = '文章分类';
+
+    protected static string|\UnitEnum|null $navigationGroup = '博客管理';
+
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('名称')
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
                 Forms\Components\TextInput::make('slug')
+                    ->label('别名')
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
@@ -39,13 +47,16 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('名称')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
+                    ->label('别名')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('posts_count')
                     ->counts('posts')
-                    ->label('Posts'),
+                    ->label('文章数'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('创建时间')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

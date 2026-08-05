@@ -148,7 +148,12 @@ export function StorefrontFooter() {
                         <ColumnHeading>
                             {f.column_headings.essential_links}
                         </ColumnHeading>
-                        <LinkList links={f.essential_links} />
+                        <LinkList
+                            links={[
+                                ...f.essential_links,
+                                ...f.legal_bar.legal_links,
+                            ]}
+                        />
                     </div>
 
                     {/* Social / Other */}
@@ -164,19 +169,13 @@ export function StorefrontFooter() {
                     aria-hidden
                 />
 
-                {/* Legal links (left) + copyright hint (right) */}
-                <div className="flex flex-col items-center gap-4 pt-8 sm:flex-row sm:justify-between">
-                    <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs sm:justify-start">
-                        {f.legal_bar.legal_links.map((link) => (
-                            <li key={link.label}>
-                                <Link href={link.href} className={TEAL}>
-                                    {link.label}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
+                {/* Copyright (left) */}
+                <div className="flex flex-col items-center gap-4 pt-8 sm:flex-row sm:justify-start">
                     <p className="text-xs text-neutral-500">
-                        {f.legal_bar.copyright_text}
+                        {f.legal_bar.copyright_text.replace(
+                            '{YEAR}',
+                            String(new Date().getFullYear()),
+                        )}
                     </p>
                 </div>
             </div>

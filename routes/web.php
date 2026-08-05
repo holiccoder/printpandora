@@ -90,6 +90,8 @@ Route::get('ref/{code}', [ReferralController::class, 'show'])->name('referral.sh
 Route::get('cart', [CartController::class, 'index'])->name('shop.cart');
 Route::post('cart/add', [CartController::class, 'add'])->name('shop.cart.add');
 Route::delete('cart/remove', [CartController::class, 'remove'])->name('shop.cart.remove');
+Route::post('cart/discount', [CartController::class, 'applyDiscount'])->name('shop.cart.discount.apply');
+Route::delete('cart/discount', [CartController::class, 'removeDiscount'])->name('shop.cart.discount.remove');
 
 // Checkout (requires auth)
 Route::middleware(['auth'])->group(function () {

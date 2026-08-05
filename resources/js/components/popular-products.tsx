@@ -20,14 +20,19 @@ export function PopularProducts() {
                         id="popular-products-heading"
                         className="mt-4 font-serif text-3xl leading-tight font-bold text-[#800020] md:text-4xl"
                     >
-                        {pp.headline}
+                        {pp.headline.split('\n').map((line, i, arr) => (
+                            <span key={i}>
+                                {line}
+                                {i < arr.length - 1 && <br />}
+                            </span>
+                        ))}
                     </h2>
                     <p className="mt-4 text-sm leading-relaxed text-[#2A2A28]/70">
                         {pp.description}
                     </p>
                 </header>
 
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
                     {pp.cards.map((card) => (
                         <Link
                             key={card.title}
@@ -62,7 +67,7 @@ export function PopularProducts() {
                 <div className="mt-10 flex justify-center">
                     <Link
                         href={pp.cta_href}
-                        className="inline-flex items-center gap-2 text-sm font-bold tracking-wider text-[#800020] transition hover:text-[#800020]/70 uppercase"
+                        className="inline-flex items-center gap-2 text-sm font-bold tracking-wider text-[#800020] uppercase transition hover:text-[#800020]/70"
                     >
                         {pp.cta_text}
                         <ArrowRight className="size-4" />

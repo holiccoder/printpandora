@@ -1,6 +1,7 @@
 import { createInertiaApp } from '@inertiajs/react';
 import createServer from '@inertiajs/react/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import type { ComponentType } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -49,11 +50,13 @@ createServer((page) =>
                     return AppLayout;
             }
         },
+        // laravel-vite-plugin's inferred union is wider than the resolver
+        // signature accepted by @inertiajs/react 3.x.
         resolve: (name) =>
             resolvePageComponent(
                 `./pages/${name}.tsx`,
                 import.meta.glob('./pages/**/*.tsx'),
-            ),
+            ) as Promise<ComponentType>,
         setup: ({ App, props }) => (
             <TooltipProvider delayDuration={0}>
                 <App {...props} />

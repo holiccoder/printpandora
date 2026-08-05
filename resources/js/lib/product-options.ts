@@ -15,7 +15,7 @@ export interface ProductGallery {
 export function normalizeOptionValue(group: string, value: string): string {
     const lower = value.toLowerCase();
 
-    if (group === 'special_finish') {
+    if (group === 'special_finish' || group === 'texture') {
         return lower.replace(/\s+/g, '-');
     }
 
@@ -28,9 +28,11 @@ function matches(
 ): boolean {
     return Object.entries(match).every(([key, matchValue]) => {
         const selectedValue = selected[key];
+
         if (selectedValue === undefined) {
             return false;
         }
+
         return selectedValue === normalizeOptionValue(key, matchValue);
     });
 }
@@ -47,11 +49,9 @@ function matches(
 export function findMatchingGallery(
     galleries: ProductGallery[],
     selected: Record<string, string>,
-    _defaults?: Record<string, string>,
 ): ProductGallery | undefined {
     const specific = galleries.find(
-        (gallery) =>
-            !gallery.is_default && matches(gallery.match, selected),
+        (gallery) => !gallery.is_default && matches(gallery.match, selected),
     );
 
     if (specific) {

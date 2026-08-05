@@ -8,8 +8,8 @@ export default function Shipping() {
             description="Production times, shipping methods, carriers, costs, and what to do if something goes wrong."
         >
             <p>
-                Every InkPavo order is printed to order — so the total time
-                from checkout to doorstep is made up of two parts:{' '}
+                Every InkPavo order is printed to order — so the total time from
+                checkout to doorstep is made up of two parts:{' '}
                 <strong>production</strong> (the time it takes us to print,
                 finish, and pack your order) and <strong>shipping</strong> (the
                 time the carrier takes to deliver it). Below is everything you
@@ -211,10 +211,7 @@ export default function Shipping() {
                 the latest expected delivery date for non-arrivals) by{' '}
                 <a href="/tickets/create">opening a support ticket</a> or
                 emailing{' '}
-                <a href="mailto:support@inkpavo.com">
-                    support@inkpavo.com
-                </a>
-                .
+                <a href="mailto:support@inkpavo.com">support@inkpavo.com</a>.
             </p>
 
             <h2>8. Cut-off times</h2>
@@ -267,9 +264,7 @@ export default function Shipping() {
             <ul>
                 <li>
                     Email:{' '}
-                    <a href="mailto:support@inkpavo.com">
-                        support@inkpavo.com
-                    </a>
+                    <a href="mailto:support@inkpavo.com">support@inkpavo.com</a>
                 </li>
                 <li>
                     Open a ticket:{' '}

@@ -37,8 +37,7 @@ export default function SEO({
     author,
 }: SEOProps) {
     const { url, props } = usePage<{ appName?: string }>();
-    const appName =
-        props.appName || import.meta.env.VITE_APP_NAME || 'InkPavo';
+    const appName = props.appName || import.meta.env.VITE_APP_NAME || 'InkPavo';
     const fullTitle = title ? `${title} - ${appName}` : appName;
 
     // Build absolute URL for canonical

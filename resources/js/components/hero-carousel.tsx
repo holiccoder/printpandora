@@ -175,7 +175,7 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
             )}
 
             {total > 1 && (
-                <div className="pointer-events-none absolute bottom-6 right-0 z-10 flex w-full justify-end md:w-1/2">
+                <div className="pointer-events-none absolute right-0 bottom-6 z-10 flex w-full justify-end md:w-1/2">
                     <div className="pointer-events-auto flex items-center gap-3 px-6 md:pr-12 lg:pr-20">
                         {items.map((_, i) => (
                             <button

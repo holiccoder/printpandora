@@ -18,56 +18,83 @@ class OrderResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+    protected static ?string $modelLabel = '订单';
+
+    protected static ?string $pluralModelLabel = '订单';
+
+    protected static string|\UnitEnum|null $navigationGroup = '商城管理';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make('Order Status')
+                Section::make('订单状态')
                     ->schema([
                         Forms\Components\Select::make('status')
+                            ->label('状态')
                             ->required()
                             ->options([
-                                'pending' => 'Pending',
-                                'confirmed' => 'Confirmed',
-                                'processing' => 'Processing',
-                                'shipped' => 'Shipped',
-                                'delivered' => 'Delivered',
-                                'cancelled' => 'Cancelled',
+                                'pending' => '待付款',
+                                'confirmed' => '已确认',
+                                'processing' => '处理中',
+                                'shipped' => '已发货',
+                                'delivered' => '已送达',
+                                'cancelled' => '已取消',
                             ]),
                         Forms\Components\Textarea::make('notes')
+                            ->label('备注')
                             ->columnSpanFull(),
                     ]),
-                Section::make('Customer Info')
+                Section::make('客户信息')
                     ->schema([
-                        Forms\Components\TextInput::make('customer_name')->required(),
-                        Forms\Components\TextInput::make('customer_email')->required()->email(),
-                        Forms\Components\TextInput::make('customer_phone'),
-                        Forms\Components\TextInput::make('shipping_address')->required()->columnSpanFull(),
-                        Forms\Components\TextInput::make('shipping_city')->required(),
-                        Forms\Components\TextInput::make('shipping_state'),
-                        Forms\Components\TextInput::make('shipping_zip')->required(),
-                        Forms\Components\TextInput::make('shipping_country')->default('US'),
+                        Forms\Components\TextInput::make('customer_name')
+                            ->label('客户姓名')
+                            ->required(),
+                        Forms\Components\TextInput::make('customer_email')
+                            ->label('电子邮箱')
+                            ->required()
+                            ->email(),
+                        Forms\Components\TextInput::make('customer_phone')
+                            ->label('联系电话'),
+                        Forms\Components\TextInput::make('shipping_address')
+                            ->label('收件地址')
+                            ->required()
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('shipping_city')
+                            ->label('城市')
+                            ->required(),
+                        Forms\Components\TextInput::make('shipping_state')
+                            ->label('州/省'),
+                        Forms\Components\TextInput::make('shipping_zip')
+                            ->label('邮政编码')
+                            ->required(),
+                        Forms\Components\TextInput::make('shipping_country')
+                            ->label('国家')
+                            ->default('US'),
                     ])->columns(2),
-                Section::make('Order Items')
+                Section::make('订单商品')
                     ->schema([
                         Forms\Components\Repeater::make('items')
+                            ->label('商品明细')
                             ->relationship()
                             ->schema([
                                 Forms\Components\Select::make('product_id')
                                     ->relationship('product', 'name')
                                     ->disabled()
-                                    ->label('Product'),
+                                    ->label('产品'),
                                 Forms\Components\TextInput::make('quantity')
+                                    ->label('数量')
                                     ->disabled(),
                                 Forms\Components\TextInput::make('unit_price')
+                                    ->label('单价')
                                     ->disabled()
                                     ->prefix('$'),
                                 Forms\Components\TextInput::make('subtotal')
+                                    ->label('小计')
                                     ->disabled()
                                     ->prefix('$'),
                                 Forms\Components\KeyValue::make('options')
+                                    ->label('选项')
                                     ->disabled()
                                     ->columnSpanFull(),
                             ])
@@ -83,32 +110,35 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label('Order #')->sortable(),
-                Tables\Columns\TextColumn::make('customer_name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('customer_email')->searchable(),
-                Tables\Columns\TextColumn::make('total')->money('USD')->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('订单号')->sortable(),
+                Tables\Columns\TextColumn::make('customer_name')->label('客户姓名')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('customer_email')->label('电子邮箱')->searchable(),
+                Tables\Columns\TextColumn::make('total')->label('订单总计')->money('USD')->sortable(),
                 Tables\Columns\SelectColumn::make('status')
+                    ->label('状态')
                     ->options([
-                        'pending' => 'Pending',
-                        'confirmed' => 'Confirmed',
-                        'processing' => 'Processing',
-                        'shipped' => 'Shipped',
-                        'delivered' => 'Delivered',
-                        'cancelled' => 'Cancelled',
+                        'pending' => '待付款',
+                        'confirmed' => '已确认',
+                        'processing' => '处理中',
+                        'shipped' => '已发货',
+                        'delivered' => '已送达',
+                        'cancelled' => '已取消',
                     ])
                     ->sortable(),
-                Tables\Columns\TextColumn::make('items_count')->counts('items')->label('Items'),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->label('Date'),
+                Tables\Columns\TextColumn::make('items_count')->counts('items')->label('商品件数'),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->label('下单时间'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')->options([
-                    'pending' => 'Pending',
-                    'confirmed' => 'Confirmed',
-                    'processing' => 'Processing',
-                    'shipped' => 'Shipped',
-                    'delivered' => 'Delivered',
-                    'cancelled' => 'Cancelled',
-                ]),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('订单状态')
+                    ->options([
+                        'pending' => '待付款',
+                        'confirmed' => '已确认',
+                        'processing' => '处理中',
+                        'shipped' => '已发货',
+                        'delivered' => '已送达',
+                        'cancelled' => '已取消',
+                    ]),
             ])
             ->actions([
                 Actions\EditAction::make(),

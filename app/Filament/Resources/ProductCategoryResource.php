@@ -20,18 +20,24 @@ class ProductCategoryResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Shop';
+    protected static ?string $modelLabel = '产品分类';
+
+    protected static ?string $pluralModelLabel = '产品分类';
+
+    protected static string|\UnitEnum|null $navigationGroup = '商城管理';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('分类名称')
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
                 Forms\Components\TextInput::make('slug')
+                    ->label('分类别名')
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
@@ -42,10 +48,20 @@ class ProductCategoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('slug')->searchable(),
-                Tables\Columns\TextColumn::make('products_count')->counts('products')->label('Products'),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('分类名称')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('slug')
+                    ->label('分类别名')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('products_count')
+                    ->counts('products')
+                    ->label('产品数量'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('创建时间')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 EditAction::make(),

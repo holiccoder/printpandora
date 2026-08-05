@@ -256,7 +256,9 @@ export default function Contact() {
                                             setData('message', e.target.value)
                                         }
                                         className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                                        placeholder={'Tell us what\'s on your mind\u2026'}
+                                        placeholder={
+                                            "Tell us what's on your mind\u2026"
+                                        }
                                     />
                                 </Field>
 
@@ -277,7 +279,9 @@ export default function Contact() {
                                     disabled={processing}
                                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-primary/40 sm:w-auto"
                                 >
-                                    {processing ? 'Sending\u2026' : 'Send message'}
+                                    {processing
+                                        ? 'Sending\u2026'
+                                        : 'Send message'}
                                 </Button>
                             </form>
                         </div>

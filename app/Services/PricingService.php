@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\DesignServiceRequest;
 use App\Models\Product;
 
 class PricingService
@@ -23,14 +24,27 @@ class PricingService
             return 0.0;
         }
 
-        $price = $this->calculateDynamicPrice($product, $options);
+        $base = $this->calculateDynamicPrice($product, $options)
+            ?? (float) $product->price;
 
-        if ($price !== null) {
-            return $price;
+        return $base + $this->designServiceFee($options);
+    }
+
+    /**
+     * One-time design service fee, resolved server-side from a valid
+     * service code in the options. Unknown or missing codes add nothing.
+     *
+     * @param  array<string, string>  $options
+     */
+    private function designServiceFee(array $options): float
+    {
+        $code = $options['design_service'] ?? null;
+
+        if (! is_string($code)) {
+            return 0.0;
         }
 
-        // Static fallback.
-        return (float) $product->price;
+        return (float) (DesignServiceRequest::DESIGN_SERVICE_FEES[$code] ?? 0.0);
     }
 
     /**

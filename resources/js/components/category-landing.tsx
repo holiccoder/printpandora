@@ -98,7 +98,10 @@ export default function CategoryLanding({
 
     return (
         <StorefrontLayout activeCategory={content.active_category}>
-            <SEO title={content.seo.title} description={content.seo.description} />
+            <SEO
+                title={content.seo.title}
+                description={content.seo.description}
+            />
 
             {/* ① Hero ------------------------------------------------------- */}
             <section style={{ backgroundColor: WARM_BG }}>

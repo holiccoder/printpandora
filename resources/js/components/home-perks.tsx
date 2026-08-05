@@ -8,8 +8,6 @@ import { useContent } from '@/hooks/use-content';
  * When a perk has no href, it renders as a plain <div> (non-clickable).
  */
 
-const ACCENT = '#800020';
-
 const ICONS: Array<() => React.ReactElement> = [
     ProductVarietyIcon,
     CraftsmanshipVarietyIcon,

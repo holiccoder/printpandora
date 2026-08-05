@@ -63,7 +63,7 @@ export default function Help() {
     const filteredQuestions = useMemo(() => {
         const q = query.trim().toLowerCase();
 
-        if (! q) {
+        if (!q) {
             return c.popular_questions.questions;
         }
 
@@ -76,10 +76,7 @@ export default function Help() {
 
     return (
         <StorefrontLayout>
-            <SEO
-                title={c.seo.title}
-                description={c.seo.description}
-            />
+            <SEO title={c.seo.title} description={c.seo.description} />
 
             {/* Hero */}
             <section className="border-b border-neutral-100 bg-white">
@@ -130,7 +127,10 @@ export default function Help() {
                             >
                                 <div
                                     className="mb-4 inline-flex rounded-lg p-3"
-                                    style={{ color: ACCENT, backgroundColor: `${ACCENT}10` }}
+                                    style={{
+                                        color: ACCENT,
+                                        backgroundColor: `${ACCENT}10`,
+                                    }}
                                 >
                                     <CategoryIcon name={category.icon} />
                                 </div>

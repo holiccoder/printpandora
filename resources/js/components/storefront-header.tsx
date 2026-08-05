@@ -122,243 +122,253 @@ export function StorefrontHeader({
         >
             <AnnouncementBar />
             <header className="w-full border-b border-neutral-200 bg-white [--popover:#ffffff]">
-                {/* top row — mobile menu / logo / search / cart */}
-                <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4">
-                {/* mobile menu */}
-                <div className="lg:hidden">
-                    <MobileNav
-                        activeCategory={activeCategory}
-                        navCategories={navCategories}
-                    />
-                </div>
-
-                {/* logo */}
-                <Link
-                    href={home()}
-                    className="flex items-center gap-2"
-                    aria-label={h.logo.home_link_aria_label}
-                >
-                    <img
-                        src={h.logo.image_url}
-                        alt={h.logo.alt}
-                        className="h-12 w-auto"
-                    />
-                </Link>
-
-                {/* center search */}
-                <form
-                    role="search"
-                    action={h.search.form_action}
-                    method="get"
-                    className="mx-auto hidden w-full max-w-xl flex-1 lg:block"
-                >
-                    <label htmlFor="storefront-search" className="sr-only">
-                        {h.search.label_sr_only}
-                    </label>
-                    <div className="relative">
-                        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-neutral-400" />
-                        <input
-                            id="storefront-search"
-                            name={h.search.input_name}
-                            type="search"
-                            placeholder={h.search.placeholder}
-                            className="h-10 w-full rounded-full border border-neutral-200 bg-neutral-50 pr-4 pl-10 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-[#800020] focus:bg-white focus:ring-2 focus:ring-[#800020]/20 focus:outline-none"
-                        />
-                    </div>
-                </form>
-
-                {/* right side actions */}
-                <div className="ml-auto flex items-center gap-1">
-                    {/* mobile-only icon search — opens the same /search page */}
-                    <Link
-                        href={h.search.mobile_icon_href}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-100 lg:hidden"
-                        aria-label={h.search.mobile_icon_aria_label}
-                    >
-                        <Search className="size-5 opacity-80" />
-                    </Link>
-
-                    {/* auth buttons — desktop */}
-                    {user ? (
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    className="hidden h-9 gap-2 px-3 text-sm font-medium text-neutral-700 hover:text-[#800020] lg:inline-flex"
-                                >
-                                    <User className="size-4" />
-                                    <span>{h.auth.dashboard_button_label}</span>
-                                    <ChevronDown className="size-3.5 opacity-70" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                align="end"
-                                sideOffset={8}
-                                className="w-56"
-                            >
-                                {user.name && (
-                                    <DropdownMenuLabel className="font-normal">
-                                        <p className="text-xs text-neutral-500">
-                                            {h.auth.signed_in_as_label}
-                                        </p>
-                                        <p className="truncate text-sm font-semibold text-neutral-900">
-                                            {user.name}
-                                        </p>
-                                    </DropdownMenuLabel>
-                                )}
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem asChild>
-                                    <Link
-                                        href={dashboard()}
-                                        className="cursor-pointer"
-                                    >
-                                        <User className="mr-2 size-4" />
-                                        {h.auth.dropdown_dashboard_label}
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                    <Link
-                                        href={h.auth.dropdown_profile_href}
-                                        className="cursor-pointer"
-                                    >
-                                        <UserCog className="mr-2 size-4" />
-                                        {h.auth.dropdown_profile_label}
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                    <Link
-                                        href={h.auth.dropdown_orders_href}
-                                        className="cursor-pointer"
-                                    >
-                                        <Package className="mr-2 size-4" />
-                                        {h.auth.dropdown_orders_label}
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem asChild>
-                                    <Link
-                                        href={logout()}
-                                        as="button"
-                                        onClick={() => router.flushAll()}
-                                        className="w-full cursor-pointer"
-                                        data-test="logout-button"
-                                    >
-                                        <LogOut className="mr-2 size-4" />
-                                        {h.auth.dropdown_logout_label}
-                                    </Link>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    ) : (
-                        <div className="hidden items-center gap-2 lg:flex">
-                            <Button
-                                asChild
-                                variant="ghost"
-                                className="h-9 px-3 text-sm font-medium text-neutral-700 hover:text-[#800020]"
-                            >
-                                <Link href={login()}>
-                                    {h.auth.logged_out_login_label}
-                                </Link>
-                            </Button>
-                            <Button
-                                asChild
-                                className="h-9 bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-                            >
-                                <Link href={register()}>
-                                    {h.auth.logged_out_register_label}
-                                </Link>
-                            </Button>
+                {/* top row — mobile menu / logo / search / cart.
+                    Desktop uses equal-width side tracks so the search box is
+                    geometrically centered against the whole header. */}
+                <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-center lg:gap-6">
+                    {/* left track: mobile menu + logo */}
+                    <div className="flex min-w-0 items-center gap-4 lg:justify-self-start">
+                        {/* mobile menu */}
+                        <div className="lg:hidden">
+                            <MobileNav
+                                activeCategory={activeCategory}
+                                navCategories={navCategories}
+                            />
                         </div>
-                    )}
 
-                    {/* compact account icon on mobile */}
-                    <Link
-                        href={user ? dashboard() : login()}
-                        aria-label={
-                            user
-                                ? h.auth.mobile_account_aria_label_logged_in
-                                : h.auth.mobile_account_aria_label_logged_out
-                        }
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-100 lg:hidden"
+                        {/* logo */}
+                        <Link
+                            href={home()}
+                            className="flex items-center gap-2"
+                            aria-label={h.logo.home_link_aria_label}
+                        >
+                            <img
+                                src={h.logo.image_url}
+                                alt={h.logo.alt}
+                                className="h-12 w-auto"
+                            />
+                        </Link>
+                    </div>
+
+                    {/* center search */}
+                    <form
+                        role="search"
+                        action={h.search.form_action}
+                        method="get"
+                        className="hidden w-[min(28rem,100%)] lg:block lg:justify-self-center xl:w-[36rem]"
                     >
-                        <User className="size-5 opacity-80" />
-                    </Link>
+                        <label htmlFor="storefront-search" className="sr-only">
+                            {h.search.label_sr_only}
+                        </label>
+                        <div className="relative">
+                            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-neutral-400" />
+                            <input
+                                id="storefront-search"
+                                name={h.search.input_name}
+                                type="search"
+                                placeholder={h.search.placeholder}
+                                className="h-10 w-full rounded-full border border-neutral-200 bg-neutral-50 pr-4 pl-10 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-[#800020] focus:bg-white focus:ring-2 focus:ring-[#800020]/20 focus:outline-none"
+                            />
+                        </div>
+                    </form>
 
-                    <CartDrawer />
+                    {/* right side actions */}
+                    <div className="ml-auto flex items-center gap-1 lg:ml-0 lg:justify-self-end">
+                        {/* mobile-only icon search — opens the same /search page */}
+                        <Link
+                            href={h.search.mobile_icon_href}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-100 lg:hidden"
+                            aria-label={h.search.mobile_icon_aria_label}
+                        >
+                            <Search className="size-5 opacity-80" />
+                        </Link>
+
+                        {/* auth buttons — desktop */}
+                        {user ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        className="hidden h-9 gap-2 px-3 text-sm font-medium text-neutral-700 hover:text-[#800020] lg:inline-flex"
+                                    >
+                                        <User className="size-4" />
+                                        <span>
+                                            {h.auth.dashboard_button_label}
+                                        </span>
+                                        <ChevronDown className="size-3.5 opacity-70" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    align="end"
+                                    sideOffset={8}
+                                    className="w-56"
+                                >
+                                    {user.name && (
+                                        <DropdownMenuLabel className="font-normal">
+                                            <p className="text-xs text-neutral-500">
+                                                {h.auth.signed_in_as_label}
+                                            </p>
+                                            <p className="truncate text-sm font-semibold text-neutral-900">
+                                                {user.name}
+                                            </p>
+                                        </DropdownMenuLabel>
+                                    )}
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href={dashboard()}
+                                            className="cursor-pointer"
+                                        >
+                                            <User className="mr-2 size-4" />
+                                            {h.auth.dropdown_dashboard_label}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href={h.auth.dropdown_profile_href}
+                                            className="cursor-pointer"
+                                        >
+                                            <UserCog className="mr-2 size-4" />
+                                            {h.auth.dropdown_profile_label}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href={h.auth.dropdown_orders_href}
+                                            className="cursor-pointer"
+                                        >
+                                            <Package className="mr-2 size-4" />
+                                            {h.auth.dropdown_orders_label}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href={logout()}
+                                            as="button"
+                                            onClick={() => router.flushAll()}
+                                            className="w-full cursor-pointer"
+                                            data-test="logout-button"
+                                        >
+                                            <LogOut className="mr-2 size-4" />
+                                            {h.auth.dropdown_logout_label}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <div className="hidden items-center gap-2 lg:flex">
+                                <Button
+                                    asChild
+                                    variant="ghost"
+                                    className="h-9 px-3 text-sm font-medium text-neutral-700 hover:text-[#800020]"
+                                >
+                                    <Link href={login()}>
+                                        {h.auth.logged_out_login_label}
+                                    </Link>
+                                </Button>
+                                <Button
+                                    asChild
+                                    className="h-9 bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                                >
+                                    <Link href={register()}>
+                                        {h.auth.logged_out_register_label}
+                                    </Link>
+                                </Button>
+                            </div>
+                        )}
+
+                        {/* compact account icon on mobile */}
+                        <Link
+                            href={user ? dashboard() : login()}
+                            aria-label={
+                                user
+                                    ? h.auth.mobile_account_aria_label_logged_in
+                                    : h.auth
+                                          .mobile_account_aria_label_logged_out
+                            }
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-100 lg:hidden"
+                        >
+                            <User className="size-5 opacity-80" />
+                        </Link>
+
+                        <CartDrawer />
+                    </div>
                 </div>
-            </div>
 
-            {/* nav row — desktop categories sit below the logo */}
-            <div className="hidden border-t border-neutral-100 lg:block">
-                <div className="mx-auto max-w-7xl px-4">
-                    <NavigationMenu
-                        viewport={false}
-                        className="h-12 max-w-none justify-start"
-                        delayDuration={100}
-                    >
-                        <NavigationMenuList className="flex h-12 items-stretch justify-start gap-0">
-                            {navCategories.map((cat) => {
-                                const isActive =
-                                    activeCategory != null &&
-                                    cat.label === activeCategory;
-                                const triggerCls = cn(
-                                    'relative flex h-12 items-center px-4 text-base font-medium transition-colors',
-                                    isActive ? ACTIVE_GREEN : INACTIVE_GREY,
-                                );
+                {/* nav row — desktop categories sit below the logo */}
+                <div className="hidden border-t border-neutral-100 lg:block">
+                    <div className="mx-auto max-w-7xl px-4">
+                        <NavigationMenu
+                            viewport={false}
+                            className="h-12 max-w-none justify-start"
+                            delayDuration={100}
+                        >
+                            <NavigationMenuList className="flex h-12 items-stretch justify-start gap-0">
+                                {navCategories.map((cat) => {
+                                    const isActive =
+                                        activeCategory != null &&
+                                        cat.label === activeCategory;
+                                    const triggerCls = cn(
+                                        'relative flex h-12 items-center px-4 text-base font-medium transition-colors',
+                                        isActive ? ACTIVE_GREEN : INACTIVE_GREY,
+                                    );
 
-                                if (!cat.mega) {
+                                    if (!cat.mega) {
+                                        return (
+                                            <NavigationMenuItem key={cat.label}>
+                                                <Link
+                                                    href={cat.href}
+                                                    className={triggerCls}
+                                                >
+                                                    <span>{cat.label}</span>
+                                                    {isActive && (
+                                                        <ActiveUnderline />
+                                                    )}
+                                                </Link>
+                                            </NavigationMenuItem>
+                                        );
+                                    }
+
                                     return (
                                         <NavigationMenuItem key={cat.label}>
-                                            <Link
-                                                href={cat.href}
-                                                className={triggerCls}
+                                            <NavigationMenuTrigger
+                                                className={cn(
+                                                    triggerCls,
+                                                    // Override the shadcn pill background — the storefront
+                                                    // header uses an underline indicator instead.
+                                                    'rounded-none bg-transparent hover:bg-transparent focus:bg-transparent data-[active=true]:bg-transparent data-[state=open]:bg-transparent',
+                                                    // Force text colour in active/open states so it
+                                                    // doesn't flip to white in dark mode.
+                                                    'data-[active=true]:text-[#800020] data-[state=open]:text-[#800020]',
+                                                    // Hide the chevron icon on this header
+                                                    '[&>svg]:hidden',
+                                                )}
                                             >
                                                 <span>{cat.label}</span>
                                                 {isActive && (
                                                     <ActiveUnderline />
                                                 )}
-                                            </Link>
+                                            </NavigationMenuTrigger>
+                                            <NavigationMenuContent
+                                                // Pinned to the viewport. Offset = announcement bar (h-9 = 36px)
+                                                // + top row (h-20 = 80px) + nav row (h-12 = 48px) so the panel
+                                                // sits flush under the nav. The trust bar below the nav is
+                                                // intentionally covered while the dropdown is open. z-50 keeps
+                                                // it above sibling sections (hero carousel, banners) that open
+                                                // their own stacking context with `position: relative`.
+                                                className="!fixed !inset-x-0 !top-[164px] !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 !bg-white p-0 shadow-lg data-[state=closed]:hidden data-[state=open]:visible"
+                                            >
+                                                <MegaPanel mega={cat.mega} />
+                                            </NavigationMenuContent>
                                         </NavigationMenuItem>
                                     );
-                                }
-
-                                return (
-                                    <NavigationMenuItem key={cat.label}>
-                                        <NavigationMenuTrigger
-                                            className={cn(
-                                                triggerCls,
-                                                // Override the shadcn pill background — the storefront
-                                                // header uses an underline indicator instead.
-                                                'rounded-none bg-transparent hover:bg-transparent focus:bg-transparent data-[active=true]:bg-transparent data-[state=open]:bg-transparent',
-                                                // Force text colour in active/open states so it
-                                                // doesn't flip to white in dark mode.
-                                                'data-[active=true]:text-[#800020] data-[state=open]:text-[#800020]',
-                                                // Hide the chevron icon on this header
-                                                '[&>svg]:hidden',
-                                            )}
-                                        >
-                                            <span>{cat.label}</span>
-                                            {isActive && <ActiveUnderline />}
-                                        </NavigationMenuTrigger>
-                                        <NavigationMenuContent
-                                            // Pinned to the viewport. Offset = announcement bar (h-9 = 36px)
-                                            // + top row (h-20 = 80px) + nav row (h-12 = 48px) so the panel
-                                            // sits flush under the nav. The trust bar below the nav is
-                                            // intentionally covered while the dropdown is open. z-50 keeps
-                                            // it above sibling sections (hero carousel, banners) that open
-                                            // their own stacking context with `position: relative`.
-                                            className="!fixed !inset-x-0 !top-[164px] !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 !bg-white p-0 shadow-lg data-[state=open]:visible data-[state=closed]:hidden"
-                                        >
-                                            <MegaPanel mega={cat.mega} />
-                                        </NavigationMenuContent>
-                                    </NavigationMenuItem>
-                                );
-                            })}
-                        </NavigationMenuList>
-                    </NavigationMenu>
+                                })}
+                            </NavigationMenuList>
+                        </NavigationMenu>
+                    </div>
                 </div>
-            </div>
-        </header>
+            </header>
         </div>
     );
 }
@@ -526,8 +536,7 @@ function PromoCard({
                     href={promo.cta_href}
                     className="mt-2 inline-flex items-center gap-0.5 text-xs font-semibold text-[#800020] hover:underline"
                 >
-                    {promo.cta_label}{' '}
-                    <ChevronRight className="size-3.5" />
+                    {promo.cta_label} <ChevronRight className="size-3.5" />
                 </Link>
             )}
         </div>

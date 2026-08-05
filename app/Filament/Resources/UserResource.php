@@ -19,31 +19,37 @@ class UserResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Users';
+    protected static ?string $modelLabel = '用户';
+
+    protected static ?string $pluralModelLabel = '用户';
+
+    protected static string|\UnitEnum|null $navigationGroup = '用户管理';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make()
+                Section::make('用户信息')
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label('姓名')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('email')
+                            ->label('电子邮箱')
                             ->required()
                             ->email()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
                         Forms\Components\DateTimePicker::make('email_verified_at')
-                            ->label('Email verified at'),
+                            ->label('邮箱验证时间'),
                         Forms\Components\TextInput::make('password')
                             ->password()
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->dehydrated(fn (?string $state): bool => filled($state))
                             ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                             ->maxLength(255)
-                            ->label('Password'),
+                            ->label('密码'),
                     ]),
             ]);
     }
@@ -52,21 +58,21 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->sortable(),
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('email')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('name')->label('姓名')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('email')->label('电子邮箱')->searchable()->sortable(),
                 Tables\Columns\IconColumn::make('email_verified_at')
                     ->boolean()
-                    ->label('Verified')
+                    ->label('已验证邮箱')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('orders_count')
                     ->counts('orders')
-                    ->label('Orders')
+                    ->label('订单数')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Registered'),
+                    ->label('注册时间'),
             ])
             ->filters([
                 //

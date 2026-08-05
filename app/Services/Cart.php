@@ -58,6 +58,7 @@ class Cart
     public function clear(): void
     {
         $this->session->forget('cart');
+        $this->removeDiscountCode();
     }
 
     public function count(): int
@@ -77,7 +78,54 @@ class Cart
 
     public function total(): float
     {
-        return $this->subtotal();
+        return $this->quote()['total'];
+    }
+
+    public function discountCode(): ?string
+    {
+        return $this->session->get('discount_code');
+    }
+
+    public function applyDiscountCode(string $code): void
+    {
+        $this->session->put('discount_code', trim($code));
+    }
+
+    public function removeDiscountCode(): void
+    {
+        $this->session->forget('discount_code');
+    }
+
+    /**
+     * @return array{code: ?string, subtotal: float, discount: float, total: float}
+     */
+    public function quote(?string $customerEmail = null, bool $strict = false): array
+    {
+        $subtotal = $this->subtotal();
+        $code = $this->discountCode();
+
+        if (! $code) {
+            return ['code' => null, 'subtotal' => $subtotal, 'discount' => 0.0, 'total' => $subtotal];
+        }
+
+        try {
+            $quote = app(DiscountService::class)->quote($code, $subtotal, $customerEmail);
+
+            return [
+                'code' => $quote['code_value'],
+                'subtotal' => $quote['subtotal'],
+                'discount' => $quote['discount'],
+                'total' => $quote['total'],
+            ];
+        } catch (DiscountException $exception) {
+            if ($strict) {
+                throw $exception;
+            }
+
+            $this->removeDiscountCode();
+
+            return ['code' => null, 'subtotal' => $subtotal, 'discount' => 0.0, 'total' => $subtotal];
+        }
     }
 
     /**

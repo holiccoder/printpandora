@@ -189,8 +189,8 @@ export default function SamplePacks() {
                             We&apos;ll let the paper do the talking
                         </h1>
                         <p className="mt-5 text-lg text-neutral-700 sm:text-xl">
-                            Get a feel for the full InkPavo range, with a
-                            free sample pack.
+                            Get a feel for the full InkPavo range, with a free
+                            sample pack.
                         </p>
                     </div>
                 </div>

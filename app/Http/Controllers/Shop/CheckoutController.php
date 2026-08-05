@@ -10,6 +10,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\Cart;
 use App\Services\CryptomusService;
+use App\Services\DiscountException;
+use App\Services\DiscountService;
 use App\Services\PayPalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,9 +27,14 @@ class CheckoutController extends Controller
             return redirect()->route('shop.cart');
         }
 
+        $quote = $cart->quote();
+
         return Inertia::render('shop/checkout', [
             'cart' => $cart->all(),
-            'subtotal' => $cart->subtotal(),
+            'subtotal' => $quote['subtotal'],
+            'discountAmount' => $quote['discount'],
+            'total' => $quote['total'],
+            'discountCode' => $quote['code'],
             'paypal' => [
                 'client_id' => config('services.paypal.client_id'),
                 'mode' => config('services.paypal.mode', 'sandbox'),
@@ -49,7 +56,11 @@ class CheckoutController extends Controller
 
         $validated = $this->validateCheckout($request);
 
-        $order = $this->placeOrder($request, $cart, $validated, 'manual', 'pending', null);
+        try {
+            $order = $this->placeOrder($request, $cart, $validated, 'manual', 'pending', null);
+        } catch (DiscountException $exception) {
+            return back()->withErrors(['discount_code' => $exception->getMessage()])->withInput();
+        }
 
         $cart->clear();
 
@@ -68,9 +79,12 @@ class CheckoutController extends Controller
 
         try {
             $reference = 'cart-'.($request->user()?->id ?? 'guest').'-'.now()->timestamp;
-            $result = $paypal->createOrder($cart->subtotal(), $reference);
+            $quote = $cart->quote($request->input('customer_email'), true);
+            $result = $paypal->createOrder($quote['total'], $reference);
 
             return response()->json(['id' => $result['id'] ?? null]);
+        } catch (DiscountException $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
         } catch (Throwable $e) {
             Log::error('PayPal create order failed', ['error' => $e->getMessage()]);
 
@@ -109,15 +123,19 @@ class CheckoutController extends Controller
             ], 422);
         }
 
-        $order = $this->placeOrder(
-            $request,
-            $cart,
-            $validated,
-            'paypal',
-            'paid',
-            $capture['id'] ?? null,
-            'processing',
-        );
+        try {
+            $order = $this->placeOrder(
+                $request,
+                $cart,
+                $validated,
+                'paypal',
+                'paid',
+                $capture['id'] ?? null,
+                'processing',
+            );
+        } catch (DiscountException $exception) {
+            return response()->json(['error' => $exception->getMessage()], 422);
+        }
 
         $cart->clear();
 
@@ -159,6 +177,10 @@ class CheckoutController extends Controller
             $order->update(['payment_id' => $invoice['uuid'] ?? null]);
 
             DB::commit();
+        } catch (DiscountException $e) {
+            DB::rollBack();
+
+            return response()->json(['error' => $e->getMessage()], 422);
         } catch (Throwable $e) {
             DB::rollBack();
             Log::error('Cryptomus checkout failed', ['error' => $e->getMessage()]);
@@ -274,15 +296,28 @@ class CheckoutController extends Controller
         string $orderStatus = 'pending',
     ): Order {
         return DB::transaction(function () use ($validated, $cart, $request, $paymentMethod, $paymentStatus, $paymentId, $orderStatus) {
+            $quote = $cart->quote($validated['customer_email'], true);
+
             $order = Order::create([
                 'user_id' => $request->user()?->id ?? 1,
                 'status' => $orderStatus,
                 'payment_method' => $paymentMethod,
                 'payment_status' => $paymentStatus,
                 'payment_id' => $paymentId,
-                'total' => $cart->subtotal(),
+                'total' => $quote['total'],
                 ...$validated,
             ]);
+
+            if ($quote['code']) {
+                app(DiscountService::class)->redeem(
+                    $quote['code'],
+                    $order,
+                    $validated['customer_email'],
+                    $quote['subtotal'],
+                    $quote['discount'],
+                    $quote['total'],
+                );
+            }
 
             foreach ($cart->all() as $item) {
                 OrderItem::create([
@@ -301,7 +336,7 @@ class CheckoutController extends Controller
                     $affiliate = Affiliate::find($referral->affiliate_id);
                     if ($affiliate && $affiliate->status === 'active') {
                         $rate = (float) $affiliate->commission_rate;
-                        $amount = round($cart->subtotal() * $rate / 100, 2);
+                        $amount = round($quote['total'] * $rate / 100, 2);
 
                         AffiliateCommission::create([
                             'affiliate_id' => $affiliate->id,
