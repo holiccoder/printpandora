@@ -20,11 +20,6 @@ class StatsOverview extends BaseWidget
         $aov = $paidOrdersCount > 0 ? ($totalRevenue / $paidOrdersCount) : 0;
 
         $pendingOrdersCount = Order::where('status', 'pending')->count();
-        $openTicketsCount = SupportTicket::where('status', '!=', 'closed')->count();
-        
-        $activeDiscountCodesCount = DiscountCode::where('is_active', true)
-            ->where(fn ($query) => $query->whereNull('ends_at')->orWhere('ends_at', '>', now()))
-            ->count();
 
         return [
             Stat::make('总收益', '$' . number_format($totalRevenue, 2))
@@ -43,14 +38,6 @@ class StatsOverview extends BaseWidget
                 ->description('当前状态为待付款的订单')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning'),
-            Stat::make('待解决工单', number_format($openTicketsCount))
-                ->description('处于开启或处理中状态的工单')
-                ->descriptionIcon('heroicon-m-ticket')
-                ->color('danger'),
-            Stat::make('活动折扣码', number_format($activeDiscountCodesCount))
-                ->description('当前可用且有效的折扣码数量')
-                ->descriptionIcon('heroicon-m-gift')
-                ->color('primary'),
         ];
     }
 }

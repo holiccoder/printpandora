@@ -27,6 +27,14 @@ class TrafficOverview extends BaseWidget
             $yesterdayUsers = (int) $yesterdayData->sum('activeUsers');
             $yesterdayViews = (int) $yesterdayData->sum('screenPageViews');
 
+            // Query this month's traffic
+            $thisMonthStart = Carbon::now()->startOfMonth();
+            $thisMonthEnd = Carbon::now();
+            $thisMonthPeriod = Period::create($thisMonthStart, $thisMonthEnd);
+            $thisMonthData = Analytics::fetchVisitorsAndPageViews($thisMonthPeriod);
+            $thisMonthUsers = (int) $thisMonthData->sum('activeUsers');
+            $thisMonthViews = (int) $thisMonthData->sum('screenPageViews');
+
             // Query previous month's traffic
             $prevMonthStart = Carbon::now()->subMonth()->startOfMonth();
             $prevMonthEnd = Carbon::now()->subMonth()->endOfMonth();
@@ -43,6 +51,9 @@ class TrafficOverview extends BaseWidget
 
             $yesterdayUsers = 295;
             $yesterdayViews = 980;
+
+            $thisMonthUsers = 5230;
+            $thisMonthViews = 17400;
 
             $previousMonthUsers = 8450;
             $previousMonthViews = 27800;
@@ -61,6 +72,10 @@ class TrafficOverview extends BaseWidget
                 ->description($isMock ? '请在 .env 中配置 Google Analytics 凭证' : '昨日全天总访客与页面浏览量')
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('info'),
+            Stat::make('本月网站总流量' . $mockSuffix, number_format($thisMonthUsers) . ' 访客 / ' . number_format($thisMonthViews) . ' 浏览')
+                ->description($isMock ? '请在 .env 中配置 Google Analytics 凭证' : Carbon::now()->translatedFormat('Y年n月') . ' 全月累计流量统计')
+                ->descriptionIcon('heroicon-m-chart-bar')
+                ->color('warning'),
             Stat::make('上月网站总流量' . $mockSuffix, number_format($previousMonthUsers) . ' 访客 / ' . number_format($previousMonthViews) . ' 浏览')
                 ->description($isMock ? '请在 .env 中配置 Google Analytics 凭证' : Carbon::now()->subMonth()->translatedFormat('Y年n月') . ' 全月总流量统计')
                 ->descriptionIcon('heroicon-m-calendar')
