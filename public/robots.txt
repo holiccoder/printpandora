@@ -1,3 +1,22 @@
 User-agent: *
 Allow: /
 Sitemap: /sitemap.xml
+
+# AI Agent & LLM Crawler Policies
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: applebot-extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /

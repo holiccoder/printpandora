@@ -1,0 +1,21 @@
+# InkPavo (PrintPandora)
+
+InkPavo is a state-of-the-art premium printing studio specializing in bespoke, high-end business cards, cardstock print materials, customized product options, and professional design services. This site is fully optimized for AI-agent traversal and automated processing.
+
+## Primary Routes
+
+- [Homepage](/) - Welcome page displaying our featured product slider, client logo wall, distinct printing advantages, and popular product listings.
+- [Standard Business Cards](/products/business-cards) - Premium standard cardstock options with extensive finishes, colors, and thickness.
+- [Cotton Business Cards](/products/cotton-business-cards) - Ultra-thick, soft, tactile 100% cotton business cards for high-end luxury branding.
+- [PVC Business Cards](/products/pvc-business-cards) - Frosted, clear, waterproof, and durable solid plastic business cards.
+- [Design Services](/design-service) - Order professional typesetting & layout ($29) or bespoke original card design ($79).
+- [Free Sample Packs](/sample-packs) - Request a curated tactile sample kit containing cotton, PVC, and foil-stamped business card samples.
+- [Shipping & Delivery](/shipping) - Detailed breakdown of global shipping methods, transit times, express options, and tracking.
+- [Help Center & FAQ](/help) - Pre-press artwork preparation guidelines, bleed setup, safe zone layout, crop marks, and formatting rules.
+- [Contact Message](/contact) - Live contact details, physical address, and a contact form to get in touch.
+
+## System Capabilities
+
+- **Interactive Dynamic Pricing**: Product pages feature a real-time custom quote builder. Agents can select card materials, finishes (foil-stamping, embossing, spot UV, edge color, die-cut), and quantities to instantly calculate bulk prices.
+- **Cart & Checkout Flow**: Fully automated shopping cart (/cart) and safe shipping checkout (/checkout) accepting standard credit card and payment processing options.
+- **AI Agent-Ready Traversal**: This domain provides sitemaps, semantic accessibility trees, zero Cumulative Layout Shift, and a standard schema structures, ensuring optimal readability and actionability for LLM browsers.
