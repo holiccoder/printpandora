@@ -24,8 +24,8 @@ export default function Home({ recentPosts }: Props) {
             />
             <HeroCarousel />
             <PopularProducts />
-            <HomeLogoWall />
             <HomePerks />
+            <HomeLogoWall />
             <RecentPosts posts={recentPosts} />
             <SamplePackBanner />
         </StorefrontLayout>
