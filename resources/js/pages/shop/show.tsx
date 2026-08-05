@@ -29,6 +29,51 @@ import { computeDynamicTiers } from '@/lib/pricing';
 import type { DynamicPricingData } from '@/lib/pricing';
 import { findMatchingGallery } from '@/lib/product-options';
 import type { ProductGallery } from '@/lib/product-options';
+
+const COLD_FOIL_OPTIONS = [
+    {
+        id: 'cold_red_gold',
+        label: 'Cold Red Gold',
+        thumb: '/images/product-options/business-cards/swatches/cold/red-gold.png',
+        description: 'Vibrant cold red foil',
+    },
+    {
+        id: 'cold_blue_gold',
+        label: 'Cold Blue Gold',
+        thumb: '/images/product-options/business-cards/swatches/cold/blue-gold.png',
+        description: 'Elegant cold blue foil',
+    },
+    {
+        id: 'cold_bright_gold',
+        label: 'Cold Bright Gold',
+        thumb: '/images/product-options/business-cards/swatches/cold/bright-gold.png',
+        description: 'Glistening cold gold foil',
+    },
+    {
+        id: 'cold_bright_silver',
+        label: 'Cold Bright Silver',
+        thumb: '/images/product-options/business-cards/swatches/cold/bright-silver.png',
+        description: 'Shining cold silver foil',
+    },
+    {
+        id: 'cold_green_gold',
+        label: 'Cold Green Gold',
+        thumb: '/images/product-options/business-cards/swatches/cold/green-gold.png',
+        description: 'Rich cold green gold foil',
+    },
+    {
+        id: 'cold_matte_gold',
+        label: 'Cold Matte Gold',
+        thumb: '/images/product-options/business-cards/swatches/cold/matte-gold.png',
+        description: 'Sophisticated matte gold foil',
+    },
+    {
+        id: 'cold_matte_silver',
+        label: 'Cold Matte Silver',
+        thumb: '/images/product-options/business-cards/swatches/cold/matte-silver.png',
+        description: 'Elegant matte silver foil',
+    },
+];
 import DesignSpecificationsSection from '@/components/product-detail/design-specifications-section';
 import DesignServiceBanner from '@/components/product-detail/design-service-banner';
 import PaperStockComparisonSection from '@/components/product-detail/paper-stock-comparison-section';
@@ -366,6 +411,27 @@ export default function ShopShow({ product, productOptions }: Props) {
     const [selectedSpecialFinish, setSelectedSpecialFinish] = useState<
         string | null
     >(specialFinishes.length > 0 ? null : 'none');
+
+    const [foilTab, setFoilTab] = useState<'hot' | 'cold'>(() => {
+        if (selectedSpecialFinish && selectedSpecialFinish.startsWith('cold_')) {
+            return 'cold';
+        }
+        return 'hot';
+    });
+
+    const handleFoilTabChange = (tab: 'hot' | 'cold') => {
+        setFoilTab(tab);
+        if (tab === 'hot') {
+            if (selectedSpecialFinish && selectedSpecialFinish.startsWith('cold_')) {
+                const firstHot = specialFinishes[0]?.id ?? 'no-special-finish';
+                setSelectedSpecialFinish(firstHot);
+            }
+        } else {
+            if (!selectedSpecialFinish || !selectedSpecialFinish.startsWith('cold_')) {
+                setSelectedSpecialFinish('cold_bright_gold');
+            }
+        }
+    };
     const [selectedSpecialFinishOnSides, setSelectedSpecialFinishOnSides] = useState<
         string | null
     >(specialFinishOnSidesList.length > 0 ? null : 'none');
@@ -633,8 +699,9 @@ export default function ShopShow({ product, productOptions }: Props) {
     const cornersLabel =
         cornersList.find((cn: any) => cn.id === selectedCorners)?.label ?? '';
     const specialFinishLabel =
-        specialFinishes.find((f: any) => f.id === selectedSpecialFinish)
-            ?.label ?? '';
+        specialFinishes.find((f: any) => f.id === selectedSpecialFinish)?.label ??
+        COLD_FOIL_OPTIONS.find((f: any) => f.id === selectedSpecialFinish)?.label ??
+        '';
     const textureLabel =
         textures.find((t: any) => t.id === selectedTexture)?.label ?? '';
     const showSpecialFinishInSummary = specialFinishes.length > 0;
@@ -1138,21 +1205,85 @@ export default function ShopShow({ product, productOptions }: Props) {
                         )}
 
                         {specialFinishes.length > 0 && (
-                            <OptionGroup label="Special finish">
-                                <div className="grid grid-cols-3 gap-3">
-                                    {specialFinishes.map((f: any) => {
-                                        const glossLimited =
-                                            selectedFinish === 'gloss' &&
-                                            f.id !== 'no-special-finish';
+                            <div className="mt-6">
+                                <div className="mb-3 flex items-center justify-between border-b border-neutral-100 pb-2">
+                                    <span className="text-sm font-bold text-neutral-900">
+                                        Special Finish
+                                    </span>
+                                    <div className="flex rounded-md bg-neutral-100 p-0.5">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleFoilTabChange('hot')}
+                                            className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
+                                                foilTab === 'hot'
+                                                    ? 'bg-white text-[#800020] shadow-sm'
+                                                    : 'text-neutral-500 hover:text-neutral-800'
+                                            }`}
+                                        >
+                                            Hot Foil
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleFoilTabChange('cold')}
+                                            className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
+                                                foilTab === 'cold'
+                                                    ? 'bg-white text-[#800020] shadow-sm'
+                                                    : 'text-neutral-500 hover:text-neutral-800'
+                                            }`}
+                                        >
+                                            Cold Foil
+                                        </button>
+                                    </div>
+                                </div>
 
-                                        return (
+                                {foilTab === 'hot' ? (
+                                    <div className="grid grid-cols-3 gap-3">
+                                        {specialFinishes.map((f: any) => {
+                                            const glossLimited =
+                                                selectedFinish === 'gloss' &&
+                                                f.id !== 'no-special-finish';
+
+                                            return (
+                                                <ChoiceTile
+                                                    key={f.id}
+                                                    active={
+                                                        selectedSpecialFinish ===
+                                                        f.id
+                                                    }
+                                                    disabled={glossLimited}
+                                                    onClick={() =>
+                                                        selectOption(
+                                                            'special_finish',
+                                                            f.id,
+                                                        )
+                                                    }
+                                                >
+                                                    <img
+                                                        src={f.thumb}
+                                                        alt=""
+                                                        className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
+                                                    />
+                                                    <p className="mt-2 text-sm font-semibold">
+                                                        {f.label}
+                                                    </p>
+                                                    {f.description && (
+                                                        <p className="text-xs text-neutral-500">
+                                                            {f.description}
+                                                        </p>
+                                                    )}
+                                                </ChoiceTile>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-3 gap-3">
+                                        {COLD_FOIL_OPTIONS.map((f: any) => (
                                             <ChoiceTile
                                                 key={f.id}
                                                 active={
                                                     selectedSpecialFinish ===
                                                     f.id
                                                 }
-                                                disabled={glossLimited}
                                                 onClick={() =>
                                                     selectOption(
                                                         'special_finish',
@@ -1174,10 +1305,10 @@ export default function ShopShow({ product, productOptions }: Props) {
                                                     </p>
                                                 )}
                                             </ChoiceTile>
-                                        );
-                                    })}
-                                </div>
-                            </OptionGroup>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         )}
 
                         {specialFinishOnSidesList.length > 0 && (
