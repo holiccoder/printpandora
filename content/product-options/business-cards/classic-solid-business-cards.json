@@ -1726,10 +1726,74 @@
             "is_default": true,
             "match": {},
             "images": [
-                "/images/product-options/business-cards/galleries/classic-default-3.jpg",
-                "/images/product-options/business-cards/galleries/classic-default-2.jpg",
-                "/images/product-options/business-cards/galleries/classic-default-1.jpg",
-                "/images/product-options/business-cards/galleries/classic-default-4.jpg"
+                "/images/products/classic-solid/matte-default-01.jpg",
+                "/images/products/classic-solid/matte-default-02.png",
+                "/images/products/classic-solid/matte-default-03.png",
+                "/images/products/classic-solid/matte-default-04.png"
+            ]
+        },
+        {
+            "id": "matte_square_dutch",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Matte",
+                "corners": "Square",
+                "texture": "Dutch White Cardstock",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/products/classic-solid/matte-square.png",
+                "/images/products/classic-solid/matte-default-02.png",
+                "/images/products/classic-solid/matte-default-03.png",
+                "/images/products/classic-solid/matte-default-04.png"
+            ]
+        },
+        {
+            "id": "matte_rounded_dutch",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Matte",
+                "corners": "Rounded",
+                "texture": "Dutch White Cardstock",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/products/classic-solid/matte-rounded.png",
+                "/images/products/classic-solid/matte-default-02.png",
+                "/images/products/classic-solid/matte-default-03.png",
+                "/images/products/classic-solid/matte-default-04.png"
+            ]
+        },
+        {
+            "id": "gloss_rounded_dutch",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Gloss",
+                "corners": "Rounded",
+                "texture": "Dutch White Cardstock",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/products/classic-solid/gloss-rounded.png",
+                "/images/products/classic-solid/matte-default-02.png",
+                "/images/products/classic-solid/matte-default-03.png",
+                "/images/products/classic-solid/matte-default-04.png"
+            ]
+        },
+        {
+            "id": "gloss_square_dutch",
+            "match": {
+                "sizes": "Standard",
+                "paper_finish": "Gloss",
+                "corners": "Square",
+                "texture": "Dutch White Cardstock",
+                "special_finish": "no special finish"
+            },
+            "images": [
+                "/images/products/classic-solid/gloss-square.png",
+                "/images/products/classic-solid/matte-default-02.png",
+                "/images/products/classic-solid/matte-default-03.png",
+                "/images/products/classic-solid/matte-default-04.png"
             ]
         },
         {
@@ -2046,7 +2110,7 @@
             "name": "One side",
             "code": "one_side",
             "description": "Special finish applied to one side only",
-            "swatch_image": "",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-one-side.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -2110,7 +2174,7 @@
             "name": "Both sides",
             "code": "both_sides",
             "description": "Special finish applied to both sides",
-            "swatch_image": "",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-both-sides.png",
             "added_price": [
                 {
                     "pack_size": 50,

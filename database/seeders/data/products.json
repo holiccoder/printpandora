@@ -242,7 +242,7 @@
         "name": "Classic Solid Business Cards",
         "slug": "classic-solid-business-cards",
         "description": "<p>Our thickest classic card. 350 gsm white board delivers a crisp, clean canvas with a substantial weight that feels as professional as it looks.</p>",
-        "featured_image": "https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&w=1200&q=70",
+        "featured_image": "/images/products/classic-solid/matte-default-01.jpg",
         "product_category_id": 1,
         "is_active": 1,
         "created_at": "2026-07-15 09:39:00",
