@@ -458,8 +458,8 @@ export interface HomePageContent {
     logo_wall: {
         heading: string;
         logos: Array<{
-            text: string;
-            font: string;
+            alt: string;
+            src: string;
         }>;
     };
 }

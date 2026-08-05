@@ -1,14 +1,5 @@
 import { useContent } from '@/hooks/use-content';
 
-const FONT_CLASSES: Record<string, string> = {
-    'bold-sans': 'font-sans font-bold tracking-tight',
-    script: 'font-serif italic',
-    serif: 'font-serif',
-    'serif-bold': 'font-serif font-bold',
-    sans: 'font-sans font-medium',
-    'black-sans': 'font-sans font-black tracking-tight',
-};
-
 export function HomeLogoWall() {
     const home = useContent('home_page');
     const lw = home.logo_wall;
@@ -19,14 +10,14 @@ export function HomeLogoWall() {
                 <h2 className="mx-auto max-w-2xl text-center text-lg font-medium text-[#2A2A28] md:text-xl">
                     {lw.heading}
                 </h2>
-                <div className="mt-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-6 md:gap-x-16">
+                <div className="mt-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-8 md:gap-x-16">
                     {lw.logos.map((logo) => (
-                        <span
-                            key={logo.text}
-                            className={`text-xl text-[#2A2A28]/70 transition-colors hover:text-[#800020] md:text-2xl ${FONT_CLASSES[logo.font] ?? 'font-sans'}`}
-                        >
-                            {logo.text}
-                        </span>
+                        <img
+                            key={logo.alt}
+                            src={logo.src}
+                            alt={logo.alt}
+                            className="h-6 w-auto object-contain opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 md:h-8"
+                        />
                     ))}
                 </div>
             </div>

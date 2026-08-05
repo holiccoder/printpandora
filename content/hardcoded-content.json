@@ -486,28 +486,36 @@
             "heading": "Great businesses print with InkPavo.",
             "logos": [
                 {
-                    "text": "BRANDONE",
-                    "font": "bold-sans"
+                    "alt": "AIA",
+                    "src": "/images/logos/aia.svg"
                 },
                 {
-                    "text": "mellow",
-                    "font": "script"
+                    "alt": "Bank of China",
+                    "src": "/images/logos/bank-of-china.svg"
                 },
                 {
-                    "text": "Atelier.",
-                    "font": "serif"
+                    "alt": "Fendi",
+                    "src": "/images/logos/fendi.svg"
                 },
                 {
-                    "text": "Northwind",
-                    "font": "serif-bold"
+                    "alt": "Hertz",
+                    "src": "/images/logos/hertz.svg"
                 },
                 {
-                    "text": "bluehill",
-                    "font": "sans"
+                    "alt": "ICBC",
+                    "src": "/images/logos/icbc.svg"
                 },
                 {
-                    "text": "SUMMIT",
-                    "font": "black-sans"
+                    "alt": "Rolex",
+                    "src": "/images/logos/rolex.svg"
+                },
+                {
+                    "alt": "WD-40",
+                    "src": "/images/logos/wd-40.svg"
+                },
+                {
+                    "alt": "Yamaha",
+                    "src": "/images/logos/yamaha.svg"
                 }
             ]
         }
