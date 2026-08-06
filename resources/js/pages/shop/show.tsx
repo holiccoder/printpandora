@@ -225,7 +225,7 @@ export default function ShopShow({
 
     const sizes = useMemo(
         () =>
-            hasProductOptions
+            hasProductOptions && Array.isArray(productOptions.sizes)
                 ? productOptions.sizes.map((s) => ({
                       id: s.name.toLowerCase(),
                       label: s.name.charAt(0).toUpperCase() + s.name.slice(1),
@@ -244,7 +244,7 @@ export default function ShopShow({
 
     const finishes = useMemo(
         () =>
-            hasProductOptions
+            hasProductOptions && Array.isArray(productOptions.paper_finish)
                 ? productOptions.paper_finish.map((f) => ({
                       id: f.name.toLowerCase(),
                       label: f.name,
@@ -270,7 +270,7 @@ export default function ShopShow({
 
     const cornersList = useMemo(
         () =>
-            hasProductOptions
+            hasProductOptions && Array.isArray(productOptions.corners)
                 ? productOptions.corners.map((cn) => ({
                       id: cn.name.toLowerCase(),
                       label: cn.name,
@@ -289,7 +289,7 @@ export default function ShopShow({
 
     const textures = useMemo(
         () =>
-            hasProductOptions && productOptions.texture
+            hasProductOptions && Array.isArray(productOptions.texture)
                 ? productOptions.texture.map((t) => ({
                       id: t.name.toLowerCase().replace(/\s+/g, '-'),
                       label: t.name,
@@ -302,7 +302,7 @@ export default function ShopShow({
 
     const specialFinishes = useMemo(
         () =>
-            hasProductOptions
+            hasProductOptions && Array.isArray(productOptions.special_finish)
                 ? productOptions.special_finish
                       .filter((f) => f.name.toLowerCase() !== 'none')
                       .map((f) => ({
