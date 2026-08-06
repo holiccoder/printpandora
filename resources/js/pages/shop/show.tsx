@@ -211,6 +211,10 @@ export default function ShopShow({ product, productOptions }: Props) {
     const finishThumbs: string[] = c.finish_thumb_image_urls;
 
     const hasProductOptions = productOptions != null;
+    const supportsColdFoil = ![
+        'classic-standard-business-cards',
+        'classic-special-business-cards',
+    ].includes(product.slug);
 
     const sizes = useMemo(
         () =>
@@ -413,13 +417,21 @@ export default function ShopShow({ product, productOptions }: Props) {
     >(specialFinishes.length > 0 ? null : 'none');
 
     const [foilTab, setFoilTab] = useState<'hot' | 'cold'>(() => {
-        if (selectedSpecialFinish && selectedSpecialFinish.startsWith('cold_')) {
+        if (
+            supportsColdFoil &&
+            selectedSpecialFinish &&
+            selectedSpecialFinish.startsWith('cold_')
+        ) {
             return 'cold';
         }
         return 'hot';
     });
 
     const handleFoilTabChange = (tab: 'hot' | 'cold') => {
+        if (tab === 'cold' && !supportsColdFoil) {
+            return;
+        }
+
         setFoilTab(tab);
         if (tab === 'hot') {
             if (selectedSpecialFinish && selectedSpecialFinish.startsWith('cold_')) {
@@ -700,7 +712,10 @@ export default function ShopShow({ product, productOptions }: Props) {
         cornersList.find((cn: any) => cn.id === selectedCorners)?.label ?? '';
     const specialFinishLabel =
         specialFinishes.find((f: any) => f.id === selectedSpecialFinish)?.label ??
-        COLD_FOIL_OPTIONS.find((f: any) => f.id === selectedSpecialFinish)?.label ??
+        (supportsColdFoil
+            ? COLD_FOIL_OPTIONS.find((f: any) => f.id === selectedSpecialFinish)
+                  ?.label
+            : undefined) ??
         '';
     const textureLabel =
         textures.find((t: any) => t.id === selectedTexture)?.label ?? '';
@@ -1206,63 +1221,22 @@ export default function ShopShow({ product, productOptions }: Props) {
 
                         {specialFinishes.length > 0 && (
                             <div className="mt-6">
-                                <div className="mb-3 flex items-center justify-between border-b border-neutral-100 pb-2">
-                                    <span className="text-sm font-bold text-neutral-900">
-                                        Special Finish
-                                    </span>
-                                    <div className="flex rounded-md bg-neutral-100 p-0.5">
-                                        <button
-                                            type="button"
-                                            onClick={() => handleFoilTabChange('hot')}
-                                            className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
-                                                foilTab === 'hot'
-                                                    ? 'bg-white text-[#800020] shadow-sm'
-                                                    : 'text-neutral-500 hover:text-neutral-800'
-                                            }`}
-                                        >
-                                            Hot Foil
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleFoilTabChange('cold')}
-                                            className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
-                                                foilTab === 'cold'
-                                                    ? 'bg-white text-[#800020] shadow-sm'
-                                                    : 'text-neutral-500 hover:text-neutral-800'
-                                            }`}
-                                        >
-                                            Cold Foil
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {foilTab === 'hot' ? (
-                                    <div className="grid grid-cols-3 gap-3">
-                                        {specialFinishes.map((f: any) => {
-                                            const glossLimited =
-                                                selectedFinish === 'gloss' &&
-                                                f.id !== 'no-special-finish';
-
-                                            return (
+                                {product.category?.slug === 'cotton-business-cards' ? (
+                                    <OptionGroup label="With NFC">
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {specialFinishes.map((f: any) => (
                                                 <ChoiceTile
                                                     key={f.id}
-                                                    active={
-                                                        selectedSpecialFinish ===
-                                                        f.id
-                                                    }
-                                                    disabled={glossLimited}
-                                                    onClick={() =>
-                                                        selectOption(
-                                                            'special_finish',
-                                                            f.id,
-                                                        )
-                                                    }
+                                                    active={selectedSpecialFinish === f.id}
+                                                    onClick={() => selectOption('special_finish', f.id)}
                                                 >
-                                                    <img
-                                                        src={f.thumb}
-                                                        alt=""
-                                                        className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
-                                                    />
+                                                    <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-4">
+                                                        {f.id === 'nfc_card' ? (
+                                                            <span className="text-xs font-bold text-[#800020]">NFC CHIP</span>
+                                                        ) : (
+                                                            <span className="text-xs text-neutral-400">NO CHIP</span>
+                                                        )}
+                                                    </div>
                                                     <p className="mt-2 text-sm font-semibold">
                                                         {f.label}
                                                     </p>
@@ -1272,41 +1246,120 @@ export default function ShopShow({ product, productOptions }: Props) {
                                                         </p>
                                                     )}
                                                 </ChoiceTile>
-                                            );
-                                        })}
-                                    </div>
+                                            ))}
+                                        </div>
+                                    </OptionGroup>
                                 ) : (
-                                    <div className="grid grid-cols-3 gap-3">
-                                        {COLD_FOIL_OPTIONS.map((f: any) => (
-                                            <ChoiceTile
-                                                key={f.id}
-                                                active={
-                                                    selectedSpecialFinish ===
-                                                    f.id
-                                                }
-                                                onClick={() =>
-                                                    selectOption(
-                                                        'special_finish',
-                                                        f.id,
-                                                    )
-                                                }
-                                            >
-                                                <img
-                                                    src={f.thumb}
-                                                    alt=""
-                                                    className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
-                                                />
-                                                <p className="mt-2 text-sm font-semibold">
-                                                    {f.label}
-                                                </p>
-                                                {f.description && (
-                                                    <p className="text-xs text-neutral-500">
-                                                        {f.description}
-                                                    </p>
+                                    <>
+                                        <div className="mb-3 flex items-center justify-between border-b border-neutral-100 pb-2">
+                                            <span className="text-sm font-bold text-neutral-900">
+                                                Special Finish
+                                            </span>
+                                            <div className="flex rounded-md bg-neutral-100 p-0.5">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleFoilTabChange('hot')}
+                                                    className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
+                                                        foilTab === 'hot'
+                                                            ? 'bg-white text-[#800020] shadow-sm'
+                                                            : 'text-neutral-500 hover:text-neutral-800'
+                                                    }`}
+                                                >
+                                                    Hot Foil
+                                                </button>
+                                                {supportsColdFoil && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            handleFoilTabChange(
+                                                                'cold',
+                                                            )
+                                                        }
+                                                        className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
+                                                            foilTab === 'cold'
+                                                                ? 'bg-white text-[#800020] shadow-sm'
+                                                                : 'text-neutral-500 hover:text-neutral-800'
+                                                        }`}
+                                                    >
+                                                        Cold Foil
+                                                    </button>
                                                 )}
-                                            </ChoiceTile>
-                                        ))}
-                                    </div>
+                                            </div>
+                                        </div>
+
+                                        {foilTab === 'hot' || !supportsColdFoil ? (
+                                            <div className="grid grid-cols-3 gap-3">
+                                                {specialFinishes.map((f: any) => {
+                                                    const glossLimited =
+                                                        selectedFinish === 'gloss' &&
+                                                        f.id !== 'no-special-finish';
+
+                                                    return (
+                                                        <ChoiceTile
+                                                            key={f.id}
+                                                            active={
+                                                                selectedSpecialFinish ===
+                                                                f.id
+                                                            }
+                                                            disabled={glossLimited}
+                                                            onClick={() =>
+                                                                selectOption(
+                                                                    'special_finish',
+                                                                    f.id,
+                                                                )
+                                                            }
+                                                        >
+                                                            <img
+                                                                src={f.thumb}
+                                                                alt=""
+                                                                className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
+                                                            />
+                                                            <p className="mt-2 text-sm font-semibold">
+                                                                {f.label}
+                                                            </p>
+                                                            {f.description && (
+                                                                <p className="text-xs text-neutral-500">
+                                                                    {f.description}
+                                                                </p>
+                                                            )}
+                                                        </ChoiceTile>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-3 gap-3">
+                                                {COLD_FOIL_OPTIONS.map((f: any) => (
+                                                    <ChoiceTile
+                                                        key={f.id}
+                                                        active={
+                                                            selectedSpecialFinish ===
+                                                            f.id
+                                                        }
+                                                        onClick={() =>
+                                                            selectOption(
+                                                                'special_finish',
+                                                                f.id,
+                                                            )
+                                                        }
+                                                    >
+                                                        <img
+                                                            src={f.thumb}
+                                                            alt=""
+                                                            className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
+                                                        />
+                                                        <p className="mt-2 text-sm font-semibold">
+                                                            {f.label}
+                                                        </p>
+                                                        {f.description && (
+                                                            <p className="text-xs text-neutral-500">
+                                                                {f.description}
+                                                            </p>
+                                                        )}
+                                                    </ChoiceTile>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         )}

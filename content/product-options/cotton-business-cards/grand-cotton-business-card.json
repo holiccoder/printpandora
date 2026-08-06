@@ -202,10 +202,10 @@
     ],
     "special_finish": [
         {
-            "name": "NO NFC",
-            "code": "no_nfc",
-            "description": "Standard cotton business card without NFC.",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/no-special-finish-526x251.jpg",
+            "name": "Non NFC Card",
+            "code": "non_nfc_card",
+            "description": "Standard cotton card without NFC chip.",
+            "swatch_image": "/images/product-options/no-foil.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -250,106 +250,10 @@
             ]
         },
         {
-            "name": "WITH NFC",
-            "code": "with_nfc",
-            "description": "Embedded NFC chip for instant digital sharing.",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/gold_foil-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Aged gold",
-            "code": "aged_gold",
-            "description": "Aged gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/aged-gold.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Muted purple gold",
-            "code": "muted_purple_gold",
-            "description": "Muted purple gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/muted-purple-gold.png",
+            "name": "NFC Card",
+            "code": "nfc_card",
+            "description": "Embedded modern NFC chip for digital sharing.",
+            "swatch_image": "/images/product-options/no-foil.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -507,8 +411,22 @@
             "is_default": true,
             "match": {},
             "images": [
-                "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=1200&q=70",
-                "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=1200&q=70"
+                "/images/products/cotton/grand/grand-01.png",
+                "/images/products/cotton/grand/grand-02.png",
+                "/images/products/cotton/grand/grand-03.png",
+                "/images/products/cotton/grand/grand-04.png"
+            ]
+        },
+        {
+            "id": "rounded_corners",
+            "match": {
+                "corners": "rounded"
+            },
+            "images": [
+                "/images/products/cotton/grand/grand-rounded.png",
+                "/images/products/cotton/grand/grand-02.png",
+                "/images/products/cotton/grand/grand-03.png",
+                "/images/products/cotton/grand/grand-04.png"
             ]
         }
     ],
@@ -700,102 +618,5 @@
             ]
         }
     },
-    "special_finish_on_sides": [
-        {
-            "name": "One side",
-            "code": "one_side",
-            "description": "Special finish applied to one side only",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-one-side.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Both sides",
-            "code": "both_sides",
-            "description": "Special finish applied to both sides",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-both-sides.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ]
+    "special_finish_on_sides": []
 }
