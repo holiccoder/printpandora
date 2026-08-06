@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
+use App\Services\ProductImageService;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\CodeEditor\Enums\Language;
@@ -155,6 +156,11 @@ class ProductResource extends Resource
                     ->label('启用状态'),
             ])
             ->actions([
+                Actions\Action::make('images')
+                    ->label('Images')
+                    ->icon('heroicon-o-photo')
+                    ->url(fn (Product $record): string => static::getUrl('images', ['record' => $record]))
+                    ->visible(fn (Product $record): bool => app(ProductImageService::class)->supportsBusinessCard($record)),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])
@@ -169,6 +175,7 @@ class ProductResource extends Resource
             'index' => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'images' => Pages\ManageProductImages::route('/{record}/images'),
         ];
     }
 }

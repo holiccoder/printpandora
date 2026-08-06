@@ -5,16 +5,27 @@ namespace App\Http\Controllers\Shop;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Services\ProductImageService;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(ProductImageService $imageService): InertiaResponse
     {
         $products = Product::with('category')
             ->where('is_active', true)
             ->latest()
             ->simplePaginate(12);
+
+        $products->getCollection()->transform(function (Product $product) use ($imageService): Product {
+            if ($image = $imageService->featuredImageUrl($product)) {
+                $product->setAttribute('featured_image', $image);
+            }
+
+            return $product;
+        });
 
         $categories = ProductCategory::withCount('products')->get();
 
@@ -24,7 +35,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function show(string $slug)
+    public function show(string $slug, ProductImageService $imageService): InertiaResponse|SymfonyResponse
     {
         $product = Product::with('category')
             ->where('is_active', true)
@@ -41,16 +52,24 @@ class ProductController extends Controller
                 ->setStatusCode(404);
         }
 
+        if ($image = $imageService->featuredImageUrl($product)) {
+            $product->setAttribute('featured_image', $image);
+        }
+
         return Inertia::render('shop/show', [
             'product' => $product,
             'productOptions' => $this->loadProductOptions($product),
+            'fallbackGalleryImages' => $imageService->fallbackGalleryImages($product),
         ]);
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     private function loadProductOptions(Product $product): ?array
     {
-        if (is_array($product->product_options) && !empty($product->product_options)) {
-            return $product->product_options;
+        if (is_array($product->product_options) && ! empty($product->product_options)) {
+            return app(ProductImageService::class)->applyGalleryOverrides($product, $product->product_options);
         }
 
         $categorySlug = $product->category?->slug;
@@ -79,9 +98,12 @@ class ProductController extends Controller
 
         $decoded['pricing_data'] = $this->loadDynamicPricingData($product->slug);
 
-        return $decoded;
+        return app(ProductImageService::class)->applyGalleryOverrides($product, $decoded);
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     private function loadDynamicPricingData(string $slug): ?array
     {
         // Per-product pricing data: scenario key => JSON file in

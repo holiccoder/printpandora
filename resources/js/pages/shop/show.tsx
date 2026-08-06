@@ -154,6 +154,7 @@ interface ProductOptions {
 interface Props {
     product: Product;
     productOptions?: ProductOptions;
+    fallbackGalleryImages?: string[];
 }
 
 /* -------------------------------------------------------------------------- */
@@ -203,7 +204,11 @@ const businessBlockHrefs = [
 /* Page                                                                       */
 /* -------------------------------------------------------------------------- */
 
-export default function ShopShow({ product, productOptions }: Props) {
+export default function ShopShow({
+    product,
+    productOptions,
+    fallbackGalleryImages,
+}: Props) {
     const c = useContent('product_detail_page') as any;
     const ACCENT = c.accent_color;
 
@@ -211,6 +216,8 @@ export default function ShopShow({ product, productOptions }: Props) {
     const finishThumbs: string[] = c.finish_thumb_image_urls;
 
     const hasProductOptions = productOptions != null;
+    const isCottonBusinessCards =
+        product.category?.slug === 'cotton-business-cards';
     const supportsColdFoil = ![
         'classic-standard-business-cards',
         'classic-special-business-cards',
@@ -401,9 +408,12 @@ export default function ShopShow({ product, productOptions }: Props) {
             id: 'fallback',
             is_default: true,
             match: {},
-            images: galleryThumbs,
+            images:
+                fallbackGalleryImages && fallbackGalleryImages.length > 0
+                    ? fallbackGalleryImages
+                    : galleryThumbs,
         }),
-        [galleryThumbs],
+        [fallbackGalleryImages, galleryThumbs],
     );
 
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -444,6 +454,36 @@ export default function ShopShow({ product, productOptions }: Props) {
             }
         }
     };
+    const embossingList = useMemo(() => {
+        if (!hasProductOptions || !(productOptions as any).embossing) {
+            return [];
+        }
+        return (productOptions as any).embossing.map((item: any) => ({
+            id: item.code,
+            label: item.name,
+            description: item.description,
+        }));
+    }, [hasProductOptions, productOptions]);
+
+    const embossingOrSignaturePanelList = useMemo(() => {
+        if (!hasProductOptions || !(productOptions as any).embossing_or_signature_panel) {
+            return [];
+        }
+        return (productOptions as any).embossing_or_signature_panel.map((item: any) => ({
+            id: item.code,
+            label: item.name,
+            description: item.description,
+        }));
+    }, [hasProductOptions, productOptions]);
+
+    const [selectedEmbossing, setSelectedEmbossing] = useState<string | null>(() => {
+        return embossingList.length > 0 ? embossingList[0].id : 'none';
+    });
+
+    const [selectedEmbossingOrSignaturePanel, setSelectedEmbossingOrSignaturePanel] = useState<string | null>(() => {
+        return embossingOrSignaturePanelList.length > 0 ? embossingOrSignaturePanelList[0].id : 'none';
+    });
+
     const [selectedSpecialFinishOnSides, setSelectedSpecialFinishOnSides] = useState<
         string | null
     >(specialFinishOnSidesList.length > 0 ? null : 'none');
@@ -466,23 +506,30 @@ export default function ShopShow({ product, productOptions }: Props) {
     const hasInteractedRef = useRef(false);
 
     const hasSelection =
-        selectedSize != null &&
-        selectedFinish != null &&
-        selectedCorners != null &&
-        selectedTexture != null &&
-        selectedSpecialFinish != null &&
-        (specialFinishOnSidesList.length === 0 || selectedSpecialFinishOnSides != null);
+        (sizes.length === 0 || selectedSize != null) &&
+        (finishes.length === 0 || selectedFinish != null) &&
+        (cornersList.length === 0 || selectedCorners != null) &&
+        (textures.length === 0 || selectedTexture != null) &&
+        (specialFinishes.length === 0 || selectedSpecialFinish != null) &&
+        (specialFinishOnSidesList.length === 0 || selectedSpecialFinishOnSides != null) &&
+        (embossingList.length === 0 || selectedEmbossing != null) &&
+        (embossingOrSignaturePanelList.length === 0 || selectedEmbossingOrSignaturePanel != null);
 
     const defaultOptions = useMemo<Record<string, string>>(
-        () => ({
-            sizes: sizes[0].id,
-            paper_finish: finishes[0].id,
-            corners: cornersList[0].id,
-            texture: textures[0]?.id ?? 'none',
-            special_finish: specialFinishes[0]?.id ?? 'none',
-            special_finish_on_sides: specialFinishOnSidesList[0]?.id ?? 'none',
-            quantity: String(RECOMMENDED_QTY ?? ''),
-        }),
+        () => {
+            const opts: Record<string, string> = {
+                quantity: String(RECOMMENDED_QTY ?? ''),
+            };
+            if (sizes.length > 0) opts['sizes'] = sizes[0]?.id;
+            if (finishes.length > 0) opts['paper_finish'] = finishes[0]?.id;
+            if (cornersList.length > 0) opts['corners'] = cornersList[0]?.id;
+            if (textures.length > 0) opts['texture'] = textures[0]?.id ?? 'none';
+            if (specialFinishes.length > 0) opts['special_finish'] = specialFinishes[0]?.id ?? 'none';
+            if (specialFinishOnSidesList.length > 0) opts['special_finish_on_sides'] = specialFinishOnSidesList[0]?.id ?? 'none';
+            if (embossingList.length > 0) opts['embossing'] = embossingList[0]?.id ?? 'none';
+            if (embossingOrSignaturePanelList.length > 0) opts['embossing_or_signature_panel'] = embossingOrSignaturePanelList[0]?.id ?? 'none';
+            return opts;
+        },
         [
             sizes,
             finishes,
@@ -490,6 +537,8 @@ export default function ShopShow({ product, productOptions }: Props) {
             textures,
             specialFinishes,
             specialFinishOnSidesList,
+            embossingList,
+            embossingOrSignaturePanelList,
             RECOMMENDED_QTY,
         ],
     );
@@ -499,15 +548,18 @@ export default function ShopShow({ product, productOptions }: Props) {
             return defaultOptions;
         }
 
-        return {
-            sizes: selectedSize,
-            paper_finish: selectedFinish,
-            corners: selectedCorners,
-            texture: selectedTexture ?? 'none',
-            special_finish: selectedSpecialFinish ?? 'none',
-            special_finish_on_sides: selectedSpecialFinishOnSides ?? 'none',
+        const opts: Record<string, string> = {
             quantity: String(selectedQty ?? RECOMMENDED_QTY),
         };
+        if (sizes.length > 0 && selectedSize) opts['sizes'] = selectedSize;
+        if (finishes.length > 0 && selectedFinish) opts['paper_finish'] = selectedFinish;
+        if (cornersList.length > 0 && selectedCorners) opts['corners'] = selectedCorners;
+        if (textures.length > 0 && selectedTexture) opts['texture'] = selectedTexture;
+        if (specialFinishes.length > 0 && selectedSpecialFinish) opts['special_finish'] = selectedSpecialFinish;
+        if (specialFinishOnSidesList.length > 0 && selectedSpecialFinishOnSides) opts['special_finish_on_sides'] = selectedSpecialFinishOnSides;
+        if (embossingList.length > 0 && selectedEmbossing) opts['embossing'] = selectedEmbossing;
+        if (embossingOrSignaturePanelList.length > 0 && selectedEmbossingOrSignaturePanel) opts['embossing_or_signature_panel'] = selectedEmbossingOrSignaturePanel;
+        return opts;
     }, [
         hasSelection,
         defaultOptions,
@@ -517,8 +569,18 @@ export default function ShopShow({ product, productOptions }: Props) {
         selectedTexture,
         selectedSpecialFinish,
         selectedSpecialFinishOnSides,
+        selectedEmbossing,
+        selectedEmbossingOrSignaturePanel,
         selectedQty,
         RECOMMENDED_QTY,
+        sizes,
+        finishes,
+        cornersList,
+        textures,
+        specialFinishes,
+        specialFinishOnSidesList,
+        embossingList,
+        embossingOrSignaturePanelList,
     ]);
 
     const activeGallery = useMemo(() => {
@@ -659,7 +721,9 @@ export default function ShopShow({ product, productOptions }: Props) {
             | 'corners'
             | 'texture'
             | 'special_finish'
-            | 'special_finish_on_sides',
+            | 'special_finish_on_sides'
+            | 'embossing'
+            | 'embossing_or_signature_panel',
         value: string,
     ) {
         if (!hasInteractedRef.current) {
@@ -670,6 +734,8 @@ export default function ShopShow({ product, productOptions }: Props) {
             setSelectedTexture(textures[0]?.id ?? 'none');
             setSelectedSpecialFinish(specialFinishes[0]?.id ?? 'none');
             setSelectedSpecialFinishOnSides(specialFinishOnSidesList[0]?.id ?? 'none');
+            setSelectedEmbossing(embossingList[0]?.id ?? 'none');
+            setSelectedEmbossingOrSignaturePanel(embossingOrSignaturePanelList[0]?.id ?? 'none');
         }
 
         switch (group) {
@@ -701,6 +767,12 @@ export default function ShopShow({ product, productOptions }: Props) {
             case 'special_finish_on_sides':
                 setSelectedSpecialFinishOnSides(value);
                 break;
+            case 'embossing':
+                setSelectedEmbossing(value);
+                break;
+            case 'embossing_or_signature_panel':
+                setSelectedEmbossingOrSignaturePanel(value);
+                break;
         }
     }
 
@@ -719,8 +791,15 @@ export default function ShopShow({ product, productOptions }: Props) {
         '';
     const textureLabel =
         textures.find((t: any) => t.id === selectedTexture)?.label ?? '';
+    const embossingLabel =
+        embossingList.find((e: any) => e.id === selectedEmbossing)?.label ?? '';
+    const embossingOrSignaturePanelLabel =
+        embossingOrSignaturePanelList.find((e: any) => e.id === selectedEmbossingOrSignaturePanel)?.label ?? '';
+
     const showSpecialFinishInSummary = specialFinishes.length > 0;
     const showTextureInSummary = textures.length > 0;
+    const showEmbossingInSummary = embossingList.length > 0;
+    const showEmbossingOrSignaturePanelInSummary = embossingOrSignaturePanelList.length > 0;
 
     const addToCart = () => {
         setAdded(true);
@@ -1045,7 +1124,8 @@ export default function ShopShow({ product, productOptions }: Props) {
                             </div>
                         )}
 
-                        <OptionGroup label={c.configurator_labels.size}>
+                        {!isCottonBusinessCards && (
+                            <OptionGroup label={c.configurator_labels.size}>
                             <div className="grid grid-cols-2 gap-3">
                                 {sizes.map((s: any) => {
                                     const shape = sizeShapes[s.id] ?? 'rect';
@@ -1087,9 +1167,13 @@ export default function ShopShow({ product, productOptions }: Props) {
                                     );
                                 })}
                             </div>
-                        </OptionGroup>
+                            </OptionGroup>
+                        )}
 
-                        <OptionGroup label={c.configurator_labels.paper_finish}>
+                        {!isCottonBusinessCards && (
+                            <OptionGroup
+                                label={c.configurator_labels.paper_finish}
+                            >
                             <div
                                 className={`grid gap-3 ${
                                     finishes.length % 3 === 0 || finishes.length > 2
@@ -1121,7 +1205,8 @@ export default function ShopShow({ product, productOptions }: Props) {
                                     </ChoiceTile>
                                 ))}
                             </div>
-                        </OptionGroup>
+                            </OptionGroup>
+                        )}
 
                         <OptionGroup label={c.configurator_labels.corners}>
                             <div className="grid grid-cols-2 gap-3">
@@ -1221,7 +1306,7 @@ export default function ShopShow({ product, productOptions }: Props) {
 
                         {specialFinishes.length > 0 && (
                             <div className="mt-6">
-                                {product.category?.slug === 'cotton-business-cards' ? (
+                                {isCottonBusinessCards ? (
                                     <OptionGroup label="With NFC">
                                         <div className="grid grid-cols-2 gap-3">
                                             {specialFinishes.map((f: any) => (
@@ -1230,11 +1315,19 @@ export default function ShopShow({ product, productOptions }: Props) {
                                                     active={selectedSpecialFinish === f.id}
                                                     onClick={() => selectOption('special_finish', f.id)}
                                                 >
-                                                    <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-4">
-                                                        {f.id === 'nfc_card' ? (
-                                                            <span className="text-xs font-bold text-[#800020]">NFC CHIP</span>
+                                                    <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-2">
+                                                        {f.thumb ? (
+                                                            <img
+                                                                src={f.thumb}
+                                                                alt=""
+                                                                className="h-full w-full rounded-sm object-contain"
+                                                            />
                                                         ) : (
-                                                            <span className="text-xs text-neutral-400">NO CHIP</span>
+                                                            <span className="text-xs text-neutral-400">
+                                                                {f.id === 'nfc_card'
+                                                                    ? 'NFC CHIP'
+                                                                    : 'NO CHIP'}
+                                                            </span>
                                                         )}
                                                     </div>
                                                     <p className="mt-2 text-sm font-semibold">
@@ -1402,6 +1495,68 @@ export default function ShopShow({ product, productOptions }: Props) {
                             </OptionGroup>
                         )}
 
+                        {embossingList.length > 0 && (
+                            <OptionGroup label="Embossing">
+                                <div className="grid grid-cols-2 gap-3">
+                                    {embossingList.map((e: any) => (
+                                        <ChoiceTile
+                                            key={e.id}
+                                            active={selectedEmbossing === e.id}
+                                            onClick={() => selectOption('embossing', e.id)}
+                                        >
+                                            <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-4">
+                                                {e.id === 'embossing' ? (
+                                                    <span className="text-xs font-bold text-[#800020]">EMBOSSED TEXT</span>
+                                                ) : (
+                                                    <span className="text-xs text-neutral-400">FLAT TEXT</span>
+                                                )}
+                                            </div>
+                                            <p className="mt-2 text-sm font-semibold">
+                                                {e.label}
+                                            </p>
+                                            {e.description && (
+                                                <p className="text-xs text-neutral-500">
+                                                    {e.description}
+                                                </p>
+                                            )}
+                                        </ChoiceTile>
+                                    ))}
+                                </div>
+                            </OptionGroup>
+                        )}
+
+                        {embossingOrSignaturePanelList.length > 0 && (
+                            <OptionGroup label="Embossing or Signature Panel">
+                                <div className="grid grid-cols-3 gap-3">
+                                    {embossingOrSignaturePanelList.map((e: any) => (
+                                        <ChoiceTile
+                                            key={e.id}
+                                            active={selectedEmbossingOrSignaturePanel === e.id}
+                                            onClick={() => selectOption('embossing_or_signature_panel', e.id)}
+                                        >
+                                            <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-4">
+                                                {e.id === 'embossing' ? (
+                                                    <span className="text-xs font-bold text-[#800020]">EMBOSSING</span>
+                                                ) : e.id === 'signature_panel' ? (
+                                                    <span className="text-xs font-bold text-[#800020]">SIGNATURE</span>
+                                                ) : (
+                                                    <span className="text-xs text-neutral-400">NONE</span>
+                                                )}
+                                            </div>
+                                            <p className="mt-2 text-sm font-semibold">
+                                                {e.label}
+                                            </p>
+                                            {e.description && (
+                                                <p className="text-xs text-neutral-500">
+                                                    {e.description}
+                                                </p>
+                                            )}
+                                        </ChoiceTile>
+                                    ))}
+                                </div>
+                            </OptionGroup>
+                        )}
+
                         <OptionGroup label={c.configurator_labels.quantity}>
                             <div className="overflow-hidden rounded-md border border-neutral-200">
                                 <table className="w-full text-sm">
@@ -1547,24 +1702,32 @@ export default function ShopShow({ product, productOptions }: Props) {
                                     <dd className="text-right font-medium">
                                         {finishLabel}
                                     </dd>
-                                    <dt className="text-neutral-500">
-                                        {summaryLabels[1]}
-                                    </dt>
-                                    <dd className="text-right font-medium">
-                                        {sizeLabel}
-                                    </dd>
+                                    {sizes.length > 0 && (
+                                        <>
+                                            <dt className="text-neutral-500">
+                                                {summaryLabels[1]}
+                                            </dt>
+                                            <dd className="text-right font-medium">
+                                                {sizeLabel}
+                                            </dd>
+                                        </>
+                                    )}
                                     <dt className="text-neutral-500">
                                         {summaryLabels[2]}
                                     </dt>
                                     <dd className="text-right font-medium">
                                         {selectedQty}
                                     </dd>
-                                    <dt className="text-neutral-500">
-                                        {summaryLabels[3]}
-                                    </dt>
-                                    <dd className="text-right font-medium capitalize">
-                                        {cornersLabel}
-                                    </dd>
+                                    {cornersList.length > 0 && (
+                                        <>
+                                            <dt className="text-neutral-500">
+                                                {summaryLabels[3]}
+                                            </dt>
+                                            <dd className="text-right font-medium capitalize">
+                                                {cornersLabel}
+                                            </dd>
+                                        </>
+                                    )}
                                     {showTextureInSummary && (
                                         <>
                                             <dt className="text-neutral-500">
@@ -1582,6 +1745,26 @@ export default function ShopShow({ product, productOptions }: Props) {
                                             </dt>
                                             <dd className="text-right font-medium">
                                                 {specialFinishLabel}
+                                            </dd>
+                                        </>
+                                    )}
+                                    {showEmbossingInSummary && (
+                                        <>
+                                            <dt className="text-neutral-500">
+                                                Embossing
+                                            </dt>
+                                            <dd className="text-right font-medium">
+                                                {embossingLabel}
+                                            </dd>
+                                        </>
+                                    )}
+                                    {showEmbossingOrSignaturePanelInSummary && (
+                                        <>
+                                            <dt className="text-neutral-500">
+                                                Embossing / Signature
+                                            </dt>
+                                            <dd className="text-right font-medium">
+                                                {embossingOrSignaturePanelLabel}
                                             </dd>
                                         </>
                                     )}
