@@ -9,7 +9,7 @@
                     </p>
                 </div>
                 <div class="text-sm text-neutral-500 dark:text-neutral-400">
-                    {{ count($slots) }} configurable gallery {{ count($slots) === 1 ? 'image' : 'images' }}
+                    {{ count($this->slots) }} configurable gallery {{ count($this->slots) === 1 ? 'image' : 'images' }}
                 </div>
             </div>
         </div>

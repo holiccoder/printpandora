@@ -1124,7 +1124,7 @@ export default function ShopShow({
                             </div>
                         )}
 
-                        {!isCottonBusinessCards && (
+                        {sizes.length > 0 && !isCottonBusinessCards && (
                             <OptionGroup label={c.configurator_labels.size}>
                             <div className="grid grid-cols-2 gap-3">
                                 {sizes.map((s: any) => {
@@ -1208,63 +1208,65 @@ export default function ShopShow({
                             </OptionGroup>
                         )}
 
-                        <OptionGroup label={c.configurator_labels.corners}>
-                            <div className="grid grid-cols-2 gap-3">
-                                {cornersList.map((cn: any) => {
-                                    const isImageSwatch =
-                                        typeof cn.swatch === 'string' &&
-                                        /^(https?:)?\//.test(cn.swatch);
-                                    const isSvgSwatch =
-                                        typeof cn.swatch === 'string' &&
-                                        cn.swatch
-                                            .trimStart()
-                                            .startsWith('<svg');
+                        {cornersList.length > 0 && (
+                            <OptionGroup label={c.configurator_labels.corners}>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {cornersList.map((cn: any) => {
+                                        const isImageSwatch =
+                                            typeof cn.swatch === 'string' &&
+                                            /^(https?:)?\//.test(cn.swatch);
+                                        const isSvgSwatch =
+                                            typeof cn.swatch === 'string' &&
+                                            cn.swatch
+                                                .trimStart()
+                                                .startsWith('<svg');
 
-                                    return (
-                                        <ChoiceTile
-                                            key={cn.id}
-                                            active={selectedCorners === cn.id}
-                                            onClick={() =>
-                                                selectOption('corners', cn.id)
-                                            }
-                                        >
-                                            <div className="flex h-16 items-center justify-center">
-                                                {isImageSwatch ? (
-                                                    <img
-                                                        src={cn.swatch}
-                                                        alt=""
-                                                        className="h-full max-h-16 w-full rounded-sm object-contain"
-                                                    />
-                                                ) : isSvgSwatch ? (
-                                                    <div
-                                                        className="h-12 w-12 text-neutral-700"
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: cn.swatch,
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <span
-                                                        className={`block h-8 w-14 border-2 ${
-                                                            cn.id === 'rounded'
-                                                                ? 'rounded-lg'
-                                                                : 'rounded-sm'
-                                                        } ${
-                                                            selectedCorners ===
-                                                            cn.id
-                                                                ? 'border-[#800020] bg-[#800020]/5'
-                                                                : 'border-neutral-300 bg-neutral-50'
-                                                        }`}
-                                                    />
-                                                )}
-                                            </div>
-                                            <p className="mt-2 text-sm font-semibold">
-                                                {cn.label}
-                                            </p>
-                                        </ChoiceTile>
-                                    );
-                                })}
-                            </div>
-                        </OptionGroup>
+                                        return (
+                                            <ChoiceTile
+                                                key={cn.id}
+                                                active={selectedCorners === cn.id}
+                                                onClick={() =>
+                                                    selectOption('corners', cn.id)
+                                                }
+                                            >
+                                                <div className="flex h-16 items-center justify-center">
+                                                    {isImageSwatch ? (
+                                                        <img
+                                                            src={cn.swatch}
+                                                            alt=""
+                                                            className="h-full max-h-16 w-full rounded-sm object-contain"
+                                                        />
+                                                    ) : isSvgSwatch ? (
+                                                        <div
+                                                            className="h-12 w-12 text-neutral-700"
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: cn.swatch,
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <span
+                                                            className={`block h-8 w-14 border-2 ${
+                                                                cn.id === 'rounded'
+                                                                    ? 'rounded-lg'
+                                                                    : 'rounded-sm'
+                                                            } ${
+                                                                selectedCorners ===
+                                                                cn.id
+                                                                    ? 'border-[#800020] bg-[#800020]/5'
+                                                                    : 'border-neutral-300 bg-neutral-50'
+                                                            }`}
+                                                        />
+                                                    )}
+                                                </div>
+                                                <p className="mt-2 text-sm font-semibold">
+                                                    {cn.label}
+                                                </p>
+                                            </ChoiceTile>
+                                        );
+                                    })}
+                                </div>
+                            </OptionGroup>
+                        )}
 
                         {textures.length > 0 && (
                             <OptionGroup label="Texture">

@@ -253,7 +253,7 @@
             "name": "NFC Card",
             "code": "nfc_card",
             "description": "Embedded modern NFC chip for digital sharing.",
-            "swatch_image": "/images/product-options/no-foil.png",
+            "swatch_image": "/images/product-options/business-cards/swatches/nfc-card.png",
             "added_price": [
                 {
                     "pack_size": 50,
