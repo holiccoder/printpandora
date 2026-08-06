@@ -51,9 +51,8 @@ $NPM_BIN run build
 echo "==> 5/6 执行数据库迁移（不重置数据）"
 $PHP_BIN artisan migrate --force
 
-echo "==> 6/6 重建配置 / 路由 / 视图缓存"
-$PHP_BIN artisan config:cache
-$PHP_BIN artisan route:cache
+echo "==> 6/6 重建配置 / 路由 / 视图与优化缓存"
+$PHP_BIN artisan optimize
 $PHP_BIN artisan view:cache
 
 # 若启用队列工作进程，取消下一行注释:
