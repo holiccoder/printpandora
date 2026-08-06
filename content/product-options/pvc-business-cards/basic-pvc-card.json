@@ -1,0 +1,176 @@
+{
+    "subtitle": "Basic PVC Card — 0.38mm lightweight, durable, and waterproof",
+    "starting_price_text": "50 cards from $25",
+    "paper_finish": [
+        {
+            "name": "Matte",
+            "code": "matte",
+            "description": "Smooth, non-reflective matte finish.",
+            "swatch_image": "/images/products/pvc/matte-pvc.png",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        },
+        {
+            "name": "Gloss",
+            "code": "gloss",
+            "description": "Shiny and highly reflective gloss finish.",
+            "swatch_image": "/images/products/pvc/gloss-pvc.png",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        },
+        {
+            "name": "Frosted",
+            "code": "frosted",
+            "description": "Semi-transparent elegant frosted texture.",
+            "swatch_image": "/images/products/pvc/frosted-pvc.png",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        }
+    ],
+    "embossing": [
+        {
+            "name": "No Embossing",
+            "code": "no_embossing",
+            "description": "Standard flat printed text",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        },
+        {
+            "name": "Embossing",
+            "code": "embossing",
+            "description": "Raised elegant embossing texture",
+            "added_price": [
+                { "pack_size": 50, "price_per_card": 0 },
+                { "pack_size": 100, "price_per_card": 0 },
+                { "pack_size": 200, "price_per_card": 0 },
+                { "pack_size": 500, "price_per_card": 0 },
+                { "pack_size": 1000, "price_per_card": 0 },
+                { "pack_size": 2000, "price_per_card": 0 },
+                { "pack_size": 3000, "price_per_card": 0 },
+                { "pack_size": 4000, "price_per_card": 0 },
+                { "pack_size": 5000, "price_per_card": 0 },
+                { "pack_size": 10000, "price_per_card": 0 }
+            ]
+        }
+    ],
+    "quantity_price_table": [
+        {
+            "quantity": "50",
+            "price_per_card": "0.50",
+            "pack_price": "25",
+            "pack_original_price": "",
+            "is_recommended": true
+        }
+    ],
+    "galleries": [
+        {
+            "id": "default",
+            "is_default": true,
+            "match": {},
+            "images": [
+                "/images/products/pvc/pvc-01.jpg",
+                "/images/products/pvc/pvc-02.jpg",
+                "/images/products/pvc/pvc-03.jpg",
+                "/images/products/pvc/pvc-04.jpg"
+            ]
+        },
+        {
+            "id": "matte_gallery",
+            "match": {
+                "paper_finish": "matte"
+            },
+            "images": [
+                "/images/products/pvc/matte-pvc.png",
+                "/images/products/pvc/pvc-02.jpg",
+                "/images/products/pvc/pvc-03.jpg",
+                "/images/products/pvc/pvc-04.jpg"
+            ]
+        },
+        {
+            "id": "gloss_gallery",
+            "match": {
+                "paper_finish": "gloss"
+            },
+            "images": [
+                "/images/products/pvc/gloss-pvc.png",
+                "/images/products/pvc/pvc-02.jpg",
+                "/images/products/pvc/pvc-03.jpg",
+                "/images/products/pvc/pvc-04.jpg"
+            ]
+        },
+        {
+            "id": "frosted_gallery",
+            "match": {
+                "paper_finish": "frosted"
+            },
+            "images": [
+                "/images/products/pvc/frosted-pvc.png",
+                "/images/products/pvc/pvc-02.jpg",
+                "/images/products/pvc/pvc-03.jpg",
+                "/images/products/pvc/pvc-04.jpg"
+            ]
+        }
+    ],
+    "detail_sections": {
+        "design_specifications": {
+            "heading": "Design Specifications",
+            "diagram": {
+                "bleed": {
+                    "label": "Bleed Area",
+                    "dimensions": "3.66\" x 2.16\"",
+                    "description": "Make sure that your background extends to fill the bleed to avoid your Business Cards having white edges when trimmed."
+                },
+                "trim": {
+                    "label": "Trim",
+                    "dimensions": "3.50\" x 2.0\"",
+                    "description": "This is where we aim to cut your cards."
+                },
+                "safe_area": {
+                    "label": "Safe Area",
+                    "dimensions": "3.38\" x 1.88\"",
+                    "description": "Keep text and important design elements inside the safe zone."
+                }
+            }
+        }
+    }
+}

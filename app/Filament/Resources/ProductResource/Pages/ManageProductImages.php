@@ -34,7 +34,7 @@ class ManageProductImages extends Page
      *     is_overridden: bool
      * }>
      */
-    public array $slots = [];
+    public array $imageSlots = [];
 
     /** @var array<int, array<string, mixed>> */
     public array $galleryGroups = [];
@@ -166,12 +166,12 @@ class ManageProductImages extends Page
         $service = app(ProductImageService::class);
         $product = $this->getProduct();
 
-        $this->slots = $service->gallerySlots($product);
+        $this->imageSlots = $service->gallerySlots($product);
         $this->featuredImage = $service->featuredImageUrl($product);
 
         $groups = [];
 
-        foreach ($this->slots as $slot) {
+        foreach ($this->imageSlots as $slot) {
             $groupKey = (string) $slot['gallery_index'];
 
             $groups[$groupKey] ??= [
@@ -201,7 +201,7 @@ class ManageProductImages extends Page
      */
     protected function findSlot(string $key): ?array
     {
-        foreach ($this->slots as $slot) {
+        foreach ($this->imageSlots as $slot) {
             if ($slot['key'] === $key) {
                 return $slot;
             }
