@@ -49,6 +49,10 @@ class ProductController extends Controller
 
     private function loadProductOptions(Product $product): ?array
     {
+        if (is_array($product->product_options) && !empty($product->product_options)) {
+            return $product->product_options;
+        }
+
         $categorySlug = $product->category?->slug;
 
         if (! $categorySlug) {
