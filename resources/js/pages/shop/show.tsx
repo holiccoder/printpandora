@@ -1961,25 +1961,35 @@ export default function ShopShow({
             {/* 2. design guidelines */}
             {productOptions?.detail_sections && (
                 <>
-                    <DesignSpecificationsSection
-                        content={
-                            productOptions.detail_sections.design_specifications
-                        }
-                    />
-                    <DesignServiceBanner
-                        content={
-                            productOptions.detail_sections.design_service_banner
-                        }
-                    />
-                    <PaperStockComparisonSection
-                        content={productOptions.detail_sections.paper_stocks}
-                    />
-                    <MoreGoodStuffSection
-                        content={productOptions.detail_sections.more_good_stuff}
-                    />
-                    <ProductFaqSection
-                        content={productOptions.detail_sections.faq}
-                    />
+                    {productOptions.detail_sections.design_specifications && (
+                        <DesignSpecificationsSection
+                            content={
+                                productOptions.detail_sections.design_specifications
+                            }
+                        />
+                    )}
+                    {productOptions.detail_sections.design_service_banner && (
+                        <DesignServiceBanner
+                            content={
+                                productOptions.detail_sections.design_service_banner
+                            }
+                        />
+                    )}
+                    {productOptions.detail_sections.paper_stocks && (
+                        <PaperStockComparisonSection
+                            content={productOptions.detail_sections.paper_stocks}
+                        />
+                    )}
+                    {productOptions.detail_sections.more_good_stuff && (
+                        <MoreGoodStuffSection
+                            content={productOptions.detail_sections.more_good_stuff}
+                        />
+                    )}
+                    {productOptions.detail_sections.faq && (
+                        <ProductFaqSection
+                            content={productOptions.detail_sections.faq}
+                        />
+                    )}
                 </>
             )}
             
