@@ -377,7 +377,9 @@ export default function ShopShow({
                 ? productOptions.special_finish
                       .filter((f) => f.name.toLowerCase() !== 'none')
                       .map((f) => ({
-                          id: f.code ?? f.name.toLowerCase().replace(/\s+/g, '-'),
+                          id:
+                              f.code ??
+                              f.name.toLowerCase().replace(/\s+/g, '-'),
                           label:
                               f.name.charAt(0).toUpperCase() + f.name.slice(1),
                           description: f.description,
@@ -390,12 +392,16 @@ export default function ShopShow({
     const specialFinishOnSidesList = useMemo(
         () =>
             hasProductOptions && (productOptions as any).special_finish_on_sides
-                ? (productOptions as any).special_finish_on_sides.map((s: any) => ({
-                      id: s.code ?? s.name.toLowerCase().replace(/\s+/g, '-'),
-                      label: s.name,
-                      description: s.description,
-                      thumb: s.swatch_image,
-                  }))
+                ? (productOptions as any).special_finish_on_sides.map(
+                      (s: any) => ({
+                          id:
+                              s.code ??
+                              s.name.toLowerCase().replace(/\s+/g, '-'),
+                          label: s.name,
+                          description: s.description,
+                          thumb: s.swatch_image,
+                      }),
+                  )
                 : [],
         [hasProductOptions, productOptions],
     );
@@ -437,9 +443,7 @@ export default function ShopShow({
 
         if (hasDynamicPricing && productOptions.pricing_rules?.[0]?.pricing) {
             const pricing = productOptions.pricing_rules[0].pricing;
-            const total = Math.round(
-                pricing.startQuantity * pricing.basePrice,
-            );
+            const total = Math.round(pricing.startQuantity * pricing.basePrice);
 
             return `${pricing.startQuantity} cards from $${total}`;
         }
@@ -504,18 +508,30 @@ export default function ShopShow({
         [fallbackGalleryImages, galleryThumbs],
     );
 
-    const [selectedSize, setSelectedSize] = useState<string | null>(null);
-    const [selectedFinish, setSelectedFinish] = useState<string | null>(null);
-    const [selectedCorners, setSelectedCorners] = useState<string | null>(null);
+    const [selectedSize, setSelectedSize] = useState<string | null>(() => {
+        return sizes.length > 0 ? sizes[0].id : null;
+    });
+    const [selectedFinish, setSelectedFinish] = useState<string | null>(() => {
+        return finishes.length > 0 ? finishes[0].id : null;
+    });
+    const [selectedCorners, setSelectedCorners] = useState<string | null>(
+        () => {
+            return cornersList.length > 0 ? cornersList[0].id : null;
+        },
+    );
     const [selectedDynamicOptions, setSelectedDynamicOptions] = useState<
         Record<string, string | string[]>
     >(dynamicOptionDefaults);
     const [selectedTexture, setSelectedTexture] = useState<string | null>(
-        textures.length > 0 ? null : 'none',
+        () => {
+            return textures.length > 0 ? textures[0].id : 'none';
+        },
     );
     const [selectedSpecialFinish, setSelectedSpecialFinish] = useState<
         string | null
-    >(specialFinishes.length > 0 ? null : 'none');
+    >(() => {
+        return specialFinishes.length > 0 ? specialFinishes[0].id : 'none';
+    });
 
     const [foilTab, setFoilTab] = useState<'hot' | 'cold'>(() => {
         if (
@@ -535,12 +551,18 @@ export default function ShopShow({
 
         setFoilTab(tab);
         if (tab === 'hot') {
-            if (selectedSpecialFinish && selectedSpecialFinish.startsWith('cold_')) {
+            if (
+                selectedSpecialFinish &&
+                selectedSpecialFinish.startsWith('cold_')
+            ) {
                 const firstHot = specialFinishes[0]?.id ?? 'no-special-finish';
                 setSelectedSpecialFinish(firstHot);
             }
         } else {
-            if (!selectedSpecialFinish || !selectedSpecialFinish.startsWith('cold_')) {
+            if (
+                !selectedSpecialFinish ||
+                !selectedSpecialFinish.startsWith('cold_')
+            ) {
                 setSelectedSpecialFinish('cold_bright_gold');
             }
         }
@@ -557,27 +579,42 @@ export default function ShopShow({
     }, [hasProductOptions, productOptions]);
 
     const embossingOrSignaturePanelList = useMemo(() => {
-        if (!hasProductOptions || !(productOptions as any).embossing_or_signature_panel) {
+        if (
+            !hasProductOptions ||
+            !(productOptions as any).embossing_or_signature_panel
+        ) {
             return [];
         }
-        return (productOptions as any).embossing_or_signature_panel.map((item: any) => ({
-            id: item.code,
-            label: item.name,
-            description: item.description,
-        }));
+        return (productOptions as any).embossing_or_signature_panel.map(
+            (item: any) => ({
+                id: item.code,
+                label: item.name,
+                description: item.description,
+            }),
+        );
     }, [hasProductOptions, productOptions]);
 
-    const [selectedEmbossing, setSelectedEmbossing] = useState<string | null>(() => {
-        return embossingList.length > 0 ? embossingList[0].id : 'none';
+    const [selectedEmbossing, setSelectedEmbossing] = useState<string | null>(
+        () => {
+            return embossingList.length > 0 ? embossingList[0].id : 'none';
+        },
+    );
+
+    const [
+        selectedEmbossingOrSignaturePanel,
+        setSelectedEmbossingOrSignaturePanel,
+    ] = useState<string | null>(() => {
+        return embossingOrSignaturePanelList.length > 0
+            ? embossingOrSignaturePanelList[0].id
+            : 'none';
     });
 
-    const [selectedEmbossingOrSignaturePanel, setSelectedEmbossingOrSignaturePanel] = useState<string | null>(() => {
-        return embossingOrSignaturePanelList.length > 0 ? embossingOrSignaturePanelList[0].id : 'none';
-    });
-
-    const [selectedSpecialFinishOnSides, setSelectedSpecialFinishOnSides] = useState<
-        string | null
-    >(specialFinishOnSidesList.length > 0 ? null : 'none');
+    const [selectedSpecialFinishOnSides, setSelectedSpecialFinishOnSides] =
+        useState<string | null>(() => {
+            return specialFinishOnSidesList.length > 0
+                ? specialFinishOnSidesList[0].id
+                : 'none';
+        });
     const [selectedQty, setSelectedQty] = useState<number | null>(
         RECOMMENDED_QTY,
     );
@@ -594,8 +631,6 @@ export default function ShopShow({
         string | null
     >(null);
 
-    const hasInteractedRef = useRef(false);
-
     const hasSelection = usesDynamicOptions
         ? dynamicOptionGroups.every((group) => {
               const selected = selectedDynamicOptions[group.key];
@@ -609,55 +644,60 @@ export default function ShopShow({
           (cornersList.length === 0 || selectedCorners != null) &&
           (textures.length === 0 || selectedTexture != null) &&
           (specialFinishes.length === 0 || selectedSpecialFinish != null) &&
-          (specialFinishOnSidesList.length === 0 || selectedSpecialFinishOnSides != null) &&
+          (specialFinishOnSidesList.length === 0 ||
+              selectedSpecialFinishOnSides != null) &&
           (embossingList.length === 0 || selectedEmbossing != null) &&
-          (embossingOrSignaturePanelList.length === 0 || selectedEmbossingOrSignaturePanel != null);
+          (embossingOrSignaturePanelList.length === 0 ||
+              selectedEmbossingOrSignaturePanel != null);
 
-    const defaultOptions = useMemo<Record<string, string | string[]>>(
-        () => {
-            const opts: Record<string, string | string[]> = {
-                quantity: String(RECOMMENDED_QTY ?? ''),
-            };
+    const defaultOptions = useMemo<Record<string, string | string[]>>(() => {
+        const opts: Record<string, string | string[]> = {
+            quantity: String(RECOMMENDED_QTY ?? ''),
+        };
 
-            if (usesDynamicOptions) {
-                for (const group of dynamicOptionGroups) {
-                    const value = dynamicOptionDefaults[group.key];
+        if (usesDynamicOptions) {
+            for (const group of dynamicOptionGroups) {
+                const value = dynamicOptionDefaults[group.key];
 
-                    if (typeof value === 'string' && value !== '') {
-                        opts[group.key] = value;
-                    } else if (Array.isArray(value) && value.length > 0) {
-                        opts[group.key] = value;
-                    }
+                if (typeof value === 'string' && value !== '') {
+                    opts[group.key] = value;
+                } else if (Array.isArray(value) && value.length > 0) {
+                    opts[group.key] = value;
                 }
-
-                return opts;
             }
 
-            if (sizes.length > 0) opts['sizes'] = sizes[0]?.id;
-            if (finishes.length > 0) opts['paper_finish'] = finishes[0]?.id;
-            if (cornersList.length > 0) opts['corners'] = cornersList[0]?.id;
-            if (textures.length > 0) opts['texture'] = textures[0]?.id ?? 'none';
-            if (specialFinishes.length > 0) opts['special_finish'] = specialFinishes[0]?.id ?? 'none';
-            if (specialFinishOnSidesList.length > 0) opts['special_finish_on_sides'] = specialFinishOnSidesList[0]?.id ?? 'none';
-            if (embossingList.length > 0) opts['embossing'] = embossingList[0]?.id ?? 'none';
-            if (embossingOrSignaturePanelList.length > 0) opts['embossing_or_signature_panel'] = embossingOrSignaturePanelList[0]?.id ?? 'none';
             return opts;
-        },
-        [
-            sizes,
-            finishes,
-            cornersList,
-            textures,
-            specialFinishes,
-            specialFinishOnSidesList,
-            embossingList,
-            embossingOrSignaturePanelList,
-            RECOMMENDED_QTY,
-            usesDynamicOptions,
-            dynamicOptionGroups,
-            dynamicOptionDefaults,
-        ],
-    );
+        }
+
+        if (sizes.length > 0) opts['sizes'] = sizes[0]?.id;
+        if (finishes.length > 0) opts['paper_finish'] = finishes[0]?.id;
+        if (cornersList.length > 0) opts['corners'] = cornersList[0]?.id;
+        if (textures.length > 0) opts['texture'] = textures[0]?.id ?? 'none';
+        if (specialFinishes.length > 0)
+            opts['special_finish'] = specialFinishes[0]?.id ?? 'none';
+        if (specialFinishOnSidesList.length > 0)
+            opts['special_finish_on_sides'] =
+                specialFinishOnSidesList[0]?.id ?? 'none';
+        if (embossingList.length > 0)
+            opts['embossing'] = embossingList[0]?.id ?? 'none';
+        if (embossingOrSignaturePanelList.length > 0)
+            opts['embossing_or_signature_panel'] =
+                embossingOrSignaturePanelList[0]?.id ?? 'none';
+        return opts;
+    }, [
+        sizes,
+        finishes,
+        cornersList,
+        textures,
+        specialFinishes,
+        specialFinishOnSidesList,
+        embossingList,
+        embossingOrSignaturePanelList,
+        RECOMMENDED_QTY,
+        usesDynamicOptions,
+        dynamicOptionGroups,
+        dynamicOptionDefaults,
+    ]);
 
     const selectedOptions = useMemo<Record<string, string | string[]>>(() => {
         if (usesDynamicOptions) {
@@ -674,7 +714,7 @@ export default function ShopShow({
                     opts[group.key] =
                         typeof selected === 'string' && selected !== ''
                             ? selected
-                            : dynamicOptionDefaults[group.key] ?? '';
+                            : (dynamicOptionDefaults[group.key] ?? '');
                 }
             }
 
@@ -689,13 +729,24 @@ export default function ShopShow({
             quantity: String(selectedQty ?? RECOMMENDED_QTY),
         };
         if (sizes.length > 0 && selectedSize) opts['sizes'] = selectedSize;
-        if (finishes.length > 0 && selectedFinish) opts['paper_finish'] = selectedFinish;
-        if (cornersList.length > 0 && selectedCorners) opts['corners'] = selectedCorners;
-        if (textures.length > 0 && selectedTexture) opts['texture'] = selectedTexture;
-        if (specialFinishes.length > 0 && selectedSpecialFinish) opts['special_finish'] = selectedSpecialFinish;
-        if (specialFinishOnSidesList.length > 0 && selectedSpecialFinishOnSides) opts['special_finish_on_sides'] = selectedSpecialFinishOnSides;
-        if (embossingList.length > 0 && selectedEmbossing) opts['embossing'] = selectedEmbossing;
-        if (embossingOrSignaturePanelList.length > 0 && selectedEmbossingOrSignaturePanel) opts['embossing_or_signature_panel'] = selectedEmbossingOrSignaturePanel;
+        if (finishes.length > 0 && selectedFinish)
+            opts['paper_finish'] = selectedFinish;
+        if (cornersList.length > 0 && selectedCorners)
+            opts['corners'] = selectedCorners;
+        if (textures.length > 0 && selectedTexture)
+            opts['texture'] = selectedTexture;
+        if (specialFinishes.length > 0 && selectedSpecialFinish)
+            opts['special_finish'] = selectedSpecialFinish;
+        if (specialFinishOnSidesList.length > 0 && selectedSpecialFinishOnSides)
+            opts['special_finish_on_sides'] = selectedSpecialFinishOnSides;
+        if (embossingList.length > 0 && selectedEmbossing)
+            opts['embossing'] = selectedEmbossing;
+        if (
+            embossingOrSignaturePanelList.length > 0 &&
+            selectedEmbossingOrSignaturePanel
+        )
+            opts['embossing_or_signature_panel'] =
+                selectedEmbossingOrSignaturePanel;
         return opts;
     }, [
         hasSelection,
@@ -897,18 +948,6 @@ export default function ShopShow({
             | 'embossing_or_signature_panel',
         value: string,
     ) {
-        if (!hasInteractedRef.current) {
-            hasInteractedRef.current = true;
-            setSelectedSize(sizes[0]?.id ?? null);
-            setSelectedFinish(finishes[0]?.id ?? null);
-            setSelectedCorners(cornersList[0]?.id ?? null);
-            setSelectedTexture(textures[0]?.id ?? 'none');
-            setSelectedSpecialFinish(specialFinishes[0]?.id ?? 'none');
-            setSelectedSpecialFinishOnSides(specialFinishOnSidesList[0]?.id ?? 'none');
-            setSelectedEmbossing(embossingList[0]?.id ?? 'none');
-            setSelectedEmbossingOrSignaturePanel(embossingOrSignaturePanelList[0]?.id ?? 'none');
-        }
-
         switch (group) {
             case 'sizes':
                 setSelectedSize(value);
@@ -954,7 +993,8 @@ export default function ShopShow({
     const cornersLabel =
         cornersList.find((cn: any) => cn.id === selectedCorners)?.label ?? '';
     const specialFinishLabel =
-        specialFinishes.find((f: any) => f.id === selectedSpecialFinish)?.label ??
+        specialFinishes.find((f: any) => f.id === selectedSpecialFinish)
+            ?.label ??
         (supportsColdFoil
             ? COLD_FOIL_OPTIONS.find((f: any) => f.id === selectedSpecialFinish)
                   ?.label
@@ -965,12 +1005,15 @@ export default function ShopShow({
     const embossingLabel =
         embossingList.find((e: any) => e.id === selectedEmbossing)?.label ?? '';
     const embossingOrSignaturePanelLabel =
-        embossingOrSignaturePanelList.find((e: any) => e.id === selectedEmbossingOrSignaturePanel)?.label ?? '';
+        embossingOrSignaturePanelList.find(
+            (e: any) => e.id === selectedEmbossingOrSignaturePanel,
+        )?.label ?? '';
 
     const showSpecialFinishInSummary = specialFinishes.length > 0;
     const showTextureInSummary = textures.length > 0;
     const showEmbossingInSummary = embossingList.length > 0;
-    const showEmbossingOrSignaturePanelInSummary = embossingOrSignaturePanelList.length > 0;
+    const showEmbossingOrSignaturePanelInSummary =
+        embossingOrSignaturePanelList.length > 0;
 
     const addToCart = () => {
         setAdded(true);
@@ -1040,10 +1083,11 @@ export default function ShopShow({
                 <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 lg:grid-cols-2">
                     {/* gallery */}
                     <div className="lg:sticky lg:top-[10px] lg:self-start">
-                        <div 
-                            className="overflow-hidden rounded-lg bg-neutral-100 cursor-zoom-in hover:opacity-95 transition-all duration-300"
+                        <div
+                            className="cursor-zoom-in overflow-hidden rounded-lg bg-neutral-100 transition-all duration-300 hover:opacity-95"
                             onClick={() => {
-                                const index = displayImages.indexOf(activeImage);
+                                const index =
+                                    displayImages.indexOf(activeImage);
                                 setLightboxIndex(index !== -1 ? index : 0);
                                 setLightboxOpen(true);
                             }}
@@ -1052,7 +1096,7 @@ export default function ShopShow({
                             <img
                                 src={activeImage}
                                 alt={product.name}
-                                className="h-[420px] w-full object-cover sm:h-[540px] lg:h-[600px] transform hover:scale-[1.02] transition-transform duration-500"
+                                className="h-[420px] w-full transform object-cover transition-transform duration-500 hover:scale-[1.02] sm:h-[540px] lg:h-[600px]"
                             />
                         </div>
                         <div className="mt-3 grid grid-cols-4 gap-2">
@@ -1308,87 +1352,99 @@ export default function ShopShow({
                             />
                         )}
 
-                        {!usesDynamicOptions && sizes.length > 0 && !isCottonBusinessCards && (
-                            <OptionGroup label={c.configurator_labels.size}>
-                            <div className="grid grid-cols-2 gap-3">
-                                {sizes.map((s: any) => {
-                                    const shape = sizeShapes[s.id] ?? 'rect';
-                                    const hasSwatch = !!s.swatch;
+                        {!usesDynamicOptions &&
+                            sizes.length > 0 &&
+                            !isCottonBusinessCards && (
+                                <OptionGroup label={c.configurator_labels.size}>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {sizes.map((s: any) => {
+                                            const shape =
+                                                sizeShapes[s.id] ?? 'rect';
+                                            const hasSwatch = !!s.swatch;
 
-                                    return (
-                                        <ChoiceTile
-                                            key={s.id}
-                                            active={selectedSize === s.id}
-                                            onClick={() =>
-                                                selectOption('sizes', s.id)
-                                            }
-                                        >
-                                            <div className="flex h-16 items-center justify-center">
-                                                {hasSwatch ? (
-                                                    <img
-                                                        src={s.swatch}
-                                                        alt=""
-                                                        className="h-full max-h-16 rounded-sm object-contain"
-                                                    />
-                                                ) : (
-                                                    <span
-                                                        className={`block rounded-sm border-2 ${
-                                                            selectedSize ===
-                                                            s.id
-                                                                ? 'border-[#800020] bg-[#800020]/5'
-                                                                : 'border-neutral-300 bg-neutral-50'
-                                                        } ${shape === 'rect' ? 'h-8 w-14' : 'size-10'}`}
-                                                    />
-                                                )}
-                                            </div>
-                                            <p className="mt-2 text-sm font-semibold">
-                                                {s.label}
-                                            </p>
-                                            <p className="text-xs text-neutral-500">
-                                                {s.dims}
-                                            </p>
-                                        </ChoiceTile>
-                                    );
-                                })}
-                            </div>
-                            </OptionGroup>
-                        )}
+                                            return (
+                                                <ChoiceTile
+                                                    key={s.id}
+                                                    active={
+                                                        selectedSize === s.id
+                                                    }
+                                                    onClick={() =>
+                                                        selectOption(
+                                                            'sizes',
+                                                            s.id,
+                                                        )
+                                                    }
+                                                >
+                                                    <div className="flex h-16 items-center justify-center">
+                                                        {hasSwatch ? (
+                                                            <img
+                                                                src={s.swatch}
+                                                                alt=""
+                                                                className="h-full max-h-16 rounded-sm object-contain"
+                                                            />
+                                                        ) : (
+                                                            <span
+                                                                className={`block rounded-sm border-2 ${
+                                                                    selectedSize ===
+                                                                    s.id
+                                                                        ? 'border-[#800020] bg-[#800020]/5'
+                                                                        : 'border-neutral-300 bg-neutral-50'
+                                                                } ${shape === 'rect' ? 'h-8 w-14' : 'size-10'}`}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <p className="mt-2 text-sm font-semibold">
+                                                        {s.label}
+                                                    </p>
+                                                    <p className="text-xs text-neutral-500">
+                                                        {s.dims}
+                                                    </p>
+                                                </ChoiceTile>
+                                            );
+                                        })}
+                                    </div>
+                                </OptionGroup>
+                            )}
 
                         {!usesDynamicOptions && !isCottonBusinessCards && (
                             <OptionGroup
                                 label={c.configurator_labels.paper_finish}
                             >
-                            <div
-                                className={`grid gap-3 ${
-                                    finishes.length % 3 === 0 || finishes.length > 2
-                                        ? 'grid-cols-1 sm:grid-cols-3'
-                                        : 'grid-cols-2'
-                                }`}
-                            >
-                                {finishes.map((f: any) => (
-                                    <ChoiceTile
-                                        key={f.id}
-                                        active={selectedFinish === f.id}
-                                        onClick={() =>
-                                            selectOption('paper_finish', f.id)
-                                        }
-                                    >
-                                        <img
-                                            src={f.thumb}
-                                            alt=""
-                                            className="aspect-[3/2] w-full rounded-sm object-cover"
-                                        />
-                                        <p className="mt-2 text-sm font-semibold">
-                                            {f.label}
-                                        </p>
-                                        {f.description && (
-                                            <p className="text-xs text-neutral-500">
-                                                {f.description}
+                                <div
+                                    className={`grid gap-3 ${
+                                        finishes.length % 3 === 0 ||
+                                        finishes.length > 2
+                                            ? 'grid-cols-1 sm:grid-cols-3'
+                                            : 'grid-cols-2'
+                                    }`}
+                                >
+                                    {finishes.map((f: any) => (
+                                        <ChoiceTile
+                                            key={f.id}
+                                            active={selectedFinish === f.id}
+                                            onClick={() =>
+                                                selectOption(
+                                                    'paper_finish',
+                                                    f.id,
+                                                )
+                                            }
+                                        >
+                                            <img
+                                                src={f.thumb}
+                                                alt=""
+                                                className="aspect-[3/2] w-full rounded-sm object-cover"
+                                            />
+                                            <p className="mt-2 text-sm font-semibold">
+                                                {f.label}
                                             </p>
-                                        )}
-                                    </ChoiceTile>
-                                ))}
-                            </div>
+                                            {f.description && (
+                                                <p className="text-xs text-neutral-500">
+                                                    {f.description}
+                                                </p>
+                                            )}
+                                        </ChoiceTile>
+                                    ))}
+                                </div>
                             </OptionGroup>
                         )}
 
@@ -1408,9 +1464,14 @@ export default function ShopShow({
                                         return (
                                             <ChoiceTile
                                                 key={cn.id}
-                                                active={selectedCorners === cn.id}
+                                                active={
+                                                    selectedCorners === cn.id
+                                                }
                                                 onClick={() =>
-                                                    selectOption('corners', cn.id)
+                                                    selectOption(
+                                                        'corners',
+                                                        cn.id,
+                                                    )
                                                 }
                                             >
                                                 <div className="flex h-16 items-center justify-center">
@@ -1430,7 +1491,8 @@ export default function ShopShow({
                                                     ) : (
                                                         <span
                                                             className={`block h-8 w-14 border-2 ${
-                                                                cn.id === 'rounded'
+                                                                cn.id ===
+                                                                'rounded'
                                                                     ? 'rounded-lg'
                                                                     : 'rounded-sm'
                                                             } ${
@@ -1498,8 +1560,16 @@ export default function ShopShow({
                                             {specialFinishes.map((f: any) => (
                                                 <ChoiceTile
                                                     key={f.id}
-                                                    active={selectedSpecialFinish === f.id}
-                                                    onClick={() => selectOption('special_finish', f.id)}
+                                                    active={
+                                                        selectedSpecialFinish ===
+                                                        f.id
+                                                    }
+                                                    onClick={() =>
+                                                        selectOption(
+                                                            'special_finish',
+                                                            f.id,
+                                                        )
+                                                    }
                                                 >
                                                     <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-2">
                                                         {f.thumb ? (
@@ -1510,7 +1580,8 @@ export default function ShopShow({
                                                             />
                                                         ) : (
                                                             <span className="text-xs text-neutral-400">
-                                                                {f.id === 'nfc_card'
+                                                                {f.id ===
+                                                                'nfc_card'
                                                                     ? 'NFC CHIP'
                                                                     : 'NO CHIP'}
                                                             </span>
@@ -1537,7 +1608,11 @@ export default function ShopShow({
                                             <div className="flex rounded-md bg-neutral-100 p-0.5">
                                                 <button
                                                     type="button"
-                                                    onClick={() => handleFoilTabChange('hot')}
+                                                    onClick={() =>
+                                                        handleFoilTabChange(
+                                                            'hot',
+                                                        )
+                                                    }
                                                     className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
                                                         foilTab === 'hot'
                                                             ? 'bg-white text-[#800020] shadow-sm'
@@ -1566,21 +1641,66 @@ export default function ShopShow({
                                             </div>
                                         </div>
 
-                                        {foilTab === 'hot' || !supportsColdFoil ? (
+                                        {foilTab === 'hot' ||
+                                        !supportsColdFoil ? (
                                             <div className="grid grid-cols-3 gap-3">
-                                                {specialFinishes.map((f: any) => {
-                                                    const glossLimited =
-                                                        selectedFinish === 'gloss' &&
-                                                        f.id !== 'no-special-finish';
+                                                {specialFinishes.map(
+                                                    (f: any) => {
+                                                        const glossLimited =
+                                                            selectedFinish ===
+                                                                'gloss' &&
+                                                            f.id !==
+                                                                'no-special-finish';
 
-                                                    return (
+                                                        return (
+                                                            <ChoiceTile
+                                                                key={f.id}
+                                                                active={
+                                                                    selectedSpecialFinish ===
+                                                                    f.id
+                                                                }
+                                                                disabled={
+                                                                    glossLimited
+                                                                }
+                                                                onClick={() =>
+                                                                    selectOption(
+                                                                        'special_finish',
+                                                                        f.id,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <img
+                                                                    src={
+                                                                        f.thumb
+                                                                    }
+                                                                    alt=""
+                                                                    className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
+                                                                />
+                                                                <p className="mt-2 text-sm font-semibold">
+                                                                    {f.label}
+                                                                </p>
+                                                                {f.description && (
+                                                                    <p className="text-xs text-neutral-500">
+                                                                        {
+                                                                            f.description
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                            </ChoiceTile>
+                                                        );
+                                                    },
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-3 gap-3">
+                                                {COLD_FOIL_OPTIONS.map(
+                                                    (f: any) => (
                                                         <ChoiceTile
                                                             key={f.id}
                                                             active={
                                                                 selectedSpecialFinish ===
                                                                 f.id
                                                             }
-                                                            disabled={glossLimited}
                                                             onClick={() =>
                                                                 selectOption(
                                                                     'special_finish',
@@ -1598,44 +1718,14 @@ export default function ShopShow({
                                                             </p>
                                                             {f.description && (
                                                                 <p className="text-xs text-neutral-500">
-                                                                    {f.description}
+                                                                    {
+                                                                        f.description
+                                                                    }
                                                                 </p>
                                                             )}
                                                         </ChoiceTile>
-                                                    );
-                                                })}
-                                            </div>
-                                        ) : (
-                                            <div className="grid grid-cols-3 gap-3">
-                                                {COLD_FOIL_OPTIONS.map((f: any) => (
-                                                    <ChoiceTile
-                                                        key={f.id}
-                                                        active={
-                                                            selectedSpecialFinish ===
-                                                            f.id
-                                                        }
-                                                        onClick={() =>
-                                                            selectOption(
-                                                                'special_finish',
-                                                                f.id,
-                                                            )
-                                                        }
-                                                    >
-                                                        <img
-                                                            src={f.thumb}
-                                                            alt=""
-                                                            className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
-                                                        />
-                                                        <p className="mt-2 text-sm font-semibold">
-                                                            {f.label}
-                                                        </p>
-                                                        {f.description && (
-                                                            <p className="text-xs text-neutral-500">
-                                                                {f.description}
-                                                            </p>
-                                                        )}
-                                                    </ChoiceTile>
-                                                ))}
+                                                    ),
+                                                )}
                                             </div>
                                         )}
                                     </>
@@ -1643,43 +1733,52 @@ export default function ShopShow({
                             </div>
                         )}
 
-                        {!usesDynamicOptions && specialFinishOnSidesList.length > 0 && (
-                            <OptionGroup label="Special finish on sides">
-                                <div className="grid grid-cols-2 gap-3">
-                                    {specialFinishOnSidesList.map((s: any) => (
-                                        <ChoiceTile
-                                            key={s.id}
-                                            active={selectedSpecialFinishOnSides === s.id}
-                                            onClick={() =>
-                                                selectOption('special_finish_on_sides', s.id)
-                                            }
-                                        >
-                                            {s.thumb ? (
-                                                <img
-                                                    src={s.thumb}
-                                                    alt=""
-                                                    className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
-                                                />
-                                            ) : (
-                                                <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50">
-                                                    <span className="text-xs text-neutral-400">
-                                                        Finish on sides
-                                                    </span>
-                                                </div>
-                                            )}
-                                            <p className="mt-2 text-sm font-semibold">
-                                                {s.label}
-                                            </p>
-                                            {s.description && (
-                                                <p className="text-xs text-neutral-500">
-                                                    {s.description}
-                                                </p>
-                                            )}
-                                        </ChoiceTile>
-                                    ))}
-                                </div>
-                            </OptionGroup>
-                        )}
+                        {!usesDynamicOptions &&
+                            specialFinishOnSidesList.length > 0 && (
+                                <OptionGroup label="Special finish on sides">
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {specialFinishOnSidesList.map(
+                                            (s: any) => (
+                                                <ChoiceTile
+                                                    key={s.id}
+                                                    active={
+                                                        selectedSpecialFinishOnSides ===
+                                                        s.id
+                                                    }
+                                                    onClick={() =>
+                                                        selectOption(
+                                                            'special_finish_on_sides',
+                                                            s.id,
+                                                        )
+                                                    }
+                                                >
+                                                    {s.thumb ? (
+                                                        <img
+                                                            src={s.thumb}
+                                                            alt=""
+                                                            className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
+                                                        />
+                                                    ) : (
+                                                        <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50">
+                                                            <span className="text-xs text-neutral-400">
+                                                                Finish on sides
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    <p className="mt-2 text-sm font-semibold">
+                                                        {s.label}
+                                                    </p>
+                                                    {s.description && (
+                                                        <p className="text-xs text-neutral-500">
+                                                            {s.description}
+                                                        </p>
+                                                    )}
+                                                </ChoiceTile>
+                                            ),
+                                        )}
+                                    </div>
+                                </OptionGroup>
+                            )}
 
                         {!usesDynamicOptions && embossingList.length > 0 && (
                             <OptionGroup label="Embossing">
@@ -1688,13 +1787,19 @@ export default function ShopShow({
                                         <ChoiceTile
                                             key={e.id}
                                             active={selectedEmbossing === e.id}
-                                            onClick={() => selectOption('embossing', e.id)}
+                                            onClick={() =>
+                                                selectOption('embossing', e.id)
+                                            }
                                         >
                                             <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-4">
                                                 {e.id === 'embossing' ? (
-                                                    <span className="text-xs font-bold text-[#800020]">EMBOSSED TEXT</span>
+                                                    <span className="text-xs font-bold text-[#800020]">
+                                                        EMBOSSED TEXT
+                                                    </span>
                                                 ) : (
-                                                    <span className="text-xs text-neutral-400">FLAT TEXT</span>
+                                                    <span className="text-xs text-neutral-400">
+                                                        FLAT TEXT
+                                                    </span>
                                                 )}
                                             </div>
                                             <p className="mt-2 text-sm font-semibold">
@@ -1711,37 +1816,56 @@ export default function ShopShow({
                             </OptionGroup>
                         )}
 
-                        {!usesDynamicOptions && embossingOrSignaturePanelList.length > 0 && (
-                            <OptionGroup label="Embossing or Signature Panel">
-                                <div className="grid grid-cols-3 gap-3">
-                                    {embossingOrSignaturePanelList.map((e: any) => (
-                                        <ChoiceTile
-                                            key={e.id}
-                                            active={selectedEmbossingOrSignaturePanel === e.id}
-                                            onClick={() => selectOption('embossing_or_signature_panel', e.id)}
-                                        >
-                                            <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-4">
-                                                {e.id === 'embossing' ? (
-                                                    <span className="text-xs font-bold text-[#800020]">EMBOSSING</span>
-                                                ) : e.id === 'signature_panel' ? (
-                                                    <span className="text-xs font-bold text-[#800020]">SIGNATURE</span>
-                                                ) : (
-                                                    <span className="text-xs text-neutral-400">NONE</span>
-                                                )}
-                                            </div>
-                                            <p className="mt-2 text-sm font-semibold">
-                                                {e.label}
-                                            </p>
-                                            {e.description && (
-                                                <p className="text-xs text-neutral-500">
-                                                    {e.description}
-                                                </p>
-                                            )}
-                                        </ChoiceTile>
-                                    ))}
-                                </div>
-                            </OptionGroup>
-                        )}
+                        {!usesDynamicOptions &&
+                            embossingOrSignaturePanelList.length > 0 && (
+                                <OptionGroup label="Embossing or Signature Panel">
+                                    <div className="grid grid-cols-3 gap-3">
+                                        {embossingOrSignaturePanelList.map(
+                                            (e: any) => (
+                                                <ChoiceTile
+                                                    key={e.id}
+                                                    active={
+                                                        selectedEmbossingOrSignaturePanel ===
+                                                        e.id
+                                                    }
+                                                    onClick={() =>
+                                                        selectOption(
+                                                            'embossing_or_signature_panel',
+                                                            e.id,
+                                                        )
+                                                    }
+                                                >
+                                                    <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-4">
+                                                        {e.id ===
+                                                        'embossing' ? (
+                                                            <span className="text-xs font-bold text-[#800020]">
+                                                                EMBOSSING
+                                                            </span>
+                                                        ) : e.id ===
+                                                          'signature_panel' ? (
+                                                            <span className="text-xs font-bold text-[#800020]">
+                                                                SIGNATURE
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-xs text-neutral-400">
+                                                                NONE
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <p className="mt-2 text-sm font-semibold">
+                                                        {e.label}
+                                                    </p>
+                                                    {e.description && (
+                                                        <p className="text-xs text-neutral-500">
+                                                            {e.description}
+                                                        </p>
+                                                    )}
+                                                </ChoiceTile>
+                                            ),
+                                        )}
+                                    </div>
+                                </OptionGroup>
+                            )}
 
                         <OptionGroup label={c.configurator_labels.quantity}>
                             <div className="overflow-hidden rounded-md border border-neutral-200">
@@ -1884,32 +2008,47 @@ export default function ShopShow({
                                 <dl className="grid grid-cols-2 gap-y-1 text-sm">
                                     {usesDynamicOptions ? (
                                         <>
-                                            {dynamicOptionGroups.map((group) => {
-                                                const selected = selectedOptions[group.key];
-                                                const selectedCodes = Array.isArray(selected)
-                                                    ? selected
-                                                    : selected
-                                                      ? [selected]
-                                                      : [];
-                                                const labels = group.values
-                                                    .filter((value) =>
-                                                        selectedCodes.includes(
-                                                            optionValueCode(value),
-                                                        ),
-                                                    )
-                                                    .map((value) => value.name);
+                                            {dynamicOptionGroups.map(
+                                                (group) => {
+                                                    const selected =
+                                                        selectedOptions[
+                                                            group.key
+                                                        ];
+                                                    const selectedCodes =
+                                                        Array.isArray(selected)
+                                                            ? selected
+                                                            : selected
+                                                              ? [selected]
+                                                              : [];
+                                                    const labels = group.values
+                                                        .filter((value) =>
+                                                            selectedCodes.includes(
+                                                                optionValueCode(
+                                                                    value,
+                                                                ),
+                                                            ),
+                                                        )
+                                                        .map(
+                                                            (value) =>
+                                                                value.name,
+                                                        );
 
-                                                return (
-                                                    <Fragment key={group.key}>
-                                                        <dt className="text-neutral-500">
-                                                            {group.label}
-                                                        </dt>
-                                                        <dd className="text-right font-medium">
-                                                            {labels.join(', ')}
-                                                        </dd>
-                                                    </Fragment>
-                                                );
-                                            })}
+                                                    return (
+                                                        <Fragment
+                                                            key={group.key}
+                                                        >
+                                                            <dt className="text-neutral-500">
+                                                                {group.label}
+                                                            </dt>
+                                                            <dd className="text-right font-medium">
+                                                                {labels.join(
+                                                                    ', ',
+                                                                )}
+                                                            </dd>
+                                                        </Fragment>
+                                                    );
+                                                },
+                                            )}
                                             <dt className="text-neutral-500">
                                                 {summaryLabels[2]}
                                             </dt>
@@ -1929,88 +2068,90 @@ export default function ShopShow({
                                         </>
                                     ) : (
                                         <>
-                                    <dt className="text-neutral-500">
-                                        {summaryLabels[0]}
-                                    </dt>
-                                    <dd className="text-right font-medium">
-                                        {finishLabel}
-                                    </dd>
-                                    {sizes.length > 0 && (
-                                        <>
                                             <dt className="text-neutral-500">
-                                                {summaryLabels[1]}
+                                                {summaryLabels[0]}
                                             </dt>
                                             <dd className="text-right font-medium">
-                                                {sizeLabel}
+                                                {finishLabel}
                                             </dd>
-                                        </>
-                                    )}
-                                    <dt className="text-neutral-500">
-                                        {summaryLabels[2]}
-                                    </dt>
-                                    <dd className="text-right font-medium">
-                                        {selectedQty}
-                                    </dd>
-                                    {cornersList.length > 0 && (
-                                        <>
+                                            {sizes.length > 0 && (
+                                                <>
+                                                    <dt className="text-neutral-500">
+                                                        {summaryLabels[1]}
+                                                    </dt>
+                                                    <dd className="text-right font-medium">
+                                                        {sizeLabel}
+                                                    </dd>
+                                                </>
+                                            )}
                                             <dt className="text-neutral-500">
-                                                {summaryLabels[3]}
-                                            </dt>
-                                            <dd className="text-right font-medium capitalize">
-                                                {cornersLabel}
-                                            </dd>
-                                        </>
-                                    )}
-                                    {showTextureInSummary && (
-                                        <>
-                                            <dt className="text-neutral-500">
-                                                Texture
+                                                {summaryLabels[2]}
                                             </dt>
                                             <dd className="text-right font-medium">
-                                                {textureLabel}
+                                                {selectedQty}
                                             </dd>
-                                        </>
-                                    )}
-                                    {showSpecialFinishInSummary && (
-                                        <>
-                                            <dt className="text-neutral-500">
-                                                Special finish
-                                            </dt>
-                                            <dd className="text-right font-medium">
-                                                {specialFinishLabel}
-                                            </dd>
-                                        </>
-                                    )}
-                                    {showEmbossingInSummary && (
-                                        <>
-                                            <dt className="text-neutral-500">
-                                                Embossing
-                                            </dt>
-                                            <dd className="text-right font-medium">
-                                                {embossingLabel}
-                                            </dd>
-                                        </>
-                                    )}
-                                    {showEmbossingOrSignaturePanelInSummary && (
-                                        <>
-                                            <dt className="text-neutral-500">
-                                                Embossing / Signature
-                                            </dt>
-                                            <dd className="text-right font-medium">
-                                                {embossingOrSignaturePanelLabel}
-                                            </dd>
-                                        </>
-                                    )}
-                                    {selectedDesignService && (
-                                        <>
-                                            <dt className="text-neutral-500">
-                                                {designFeeLabel}
-                                            </dt>
-                                            <dd className="text-right font-medium">
-                                                ${designFee}
-                                            </dd>
-                                        </>
-                                    )}
+                                            {cornersList.length > 0 && (
+                                                <>
+                                                    <dt className="text-neutral-500">
+                                                        {summaryLabels[3]}
+                                                    </dt>
+                                                    <dd className="text-right font-medium capitalize">
+                                                        {cornersLabel}
+                                                    </dd>
+                                                </>
+                                            )}
+                                            {showTextureInSummary && (
+                                                <>
+                                                    <dt className="text-neutral-500">
+                                                        Texture
+                                                    </dt>
+                                                    <dd className="text-right font-medium">
+                                                        {textureLabel}
+                                                    </dd>
+                                                </>
+                                            )}
+                                            {showSpecialFinishInSummary && (
+                                                <>
+                                                    <dt className="text-neutral-500">
+                                                        Special finish
+                                                    </dt>
+                                                    <dd className="text-right font-medium">
+                                                        {specialFinishLabel}
+                                                    </dd>
+                                                </>
+                                            )}
+                                            {showEmbossingInSummary && (
+                                                <>
+                                                    <dt className="text-neutral-500">
+                                                        Embossing
+                                                    </dt>
+                                                    <dd className="text-right font-medium">
+                                                        {embossingLabel}
+                                                    </dd>
+                                                </>
+                                            )}
+                                            {showEmbossingOrSignaturePanelInSummary && (
+                                                <>
+                                                    <dt className="text-neutral-500">
+                                                        Embossing / Signature
+                                                    </dt>
+                                                    <dd className="text-right font-medium">
+                                                        {
+                                                            embossingOrSignaturePanelLabel
+                                                        }
+                                                    </dd>
+                                                </>
+                                            )}
+                                            {selectedDesignService && (
+                                                <>
+                                                    <dt className="text-neutral-500">
+                                                        {designFeeLabel}
+                                                    </dt>
+                                                    <dd className="text-right font-medium">
+                                                        ${designFee}
+                                                    </dd>
+                                                </>
+                                            )}
                                         </>
                                     )}
                                 </dl>
@@ -2197,25 +2338,31 @@ export default function ShopShow({
                     {productOptions.detail_sections.design_specifications && (
                         <DesignSpecificationsSection
                             content={
-                                productOptions.detail_sections.design_specifications
+                                productOptions.detail_sections
+                                    .design_specifications
                             }
                         />
                     )}
                     {productOptions.detail_sections.design_service_banner && (
                         <DesignServiceBanner
                             content={
-                                productOptions.detail_sections.design_service_banner
+                                productOptions.detail_sections
+                                    .design_service_banner
                             }
                         />
                     )}
                     {productOptions.detail_sections.paper_stocks && (
                         <PaperStockComparisonSection
-                            content={productOptions.detail_sections.paper_stocks}
+                            content={
+                                productOptions.detail_sections.paper_stocks
+                            }
                         />
                     )}
                     {productOptions.detail_sections.more_good_stuff && (
                         <MoreGoodStuffSection
-                            content={productOptions.detail_sections.more_good_stuff}
+                            content={
+                                productOptions.detail_sections.more_good_stuff
+                            }
                         />
                     )}
                     {productOptions.detail_sections.faq && (
@@ -2225,7 +2372,7 @@ export default function ShopShow({
                     )}
                 </>
             )}
-            
+
             {lightboxOpen && (
                 <LightboxGallery
                     open={lightboxOpen}
@@ -2512,7 +2659,7 @@ function DesignServiceFormModal({
                 <div className="mt-4">
                     <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
                         {/* Left: Terms & Notes + Design Service Selection */}
-                        <div className="md:col-span-7 space-y-8">
+                        <div className="space-y-8 md:col-span-7">
                             <div>
                                 <h3 className="font-serif text-xl font-bold text-[#800020]">
                                     {ds.notes_heading ?? 'Terms & notes'}
@@ -2522,7 +2669,9 @@ function DesignServiceFormModal({
                                         <li key={i} className="flex gap-3">
                                             <span
                                                 className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                                                style={{ backgroundColor: '#800020' }}
+                                                style={{
+                                                    backgroundColor: '#800020',
+                                                }}
                                             >
                                                 {i + 1}
                                             </span>
@@ -2537,12 +2686,14 @@ function DesignServiceFormModal({
                             {hasDesignServices && (
                                 <div className="border-t border-neutral-100 pt-6">
                                     <h3 className="text-base font-bold text-neutral-900">
-                                        {designServicesHeading ?? 'Choose a design service'}
+                                        {designServicesHeading ??
+                                            'Choose a design service'}
                                     </h3>
                                     <div className="mt-3 grid grid-cols-1 gap-3">
                                         {designServices!.map((option) => {
                                             const active =
-                                                designServiceCode === option.code;
+                                                designServiceCode ===
+                                                option.code;
 
                                             return (
                                                 <label
@@ -2561,8 +2712,10 @@ function DesignServiceFormModal({
                                                         onChange={() => {
                                                             setDesignServiceCode(
                                                                 option.code,
-                                                                );
-                                                            setDesignServiceError(null);
+                                                            );
+                                                            setDesignServiceError(
+                                                                null,
+                                                            );
                                                         }}
                                                         className="mt-0.5 size-4 accent-[#800020]"
                                                     />
@@ -2572,7 +2725,9 @@ function DesignServiceFormModal({
                                                         </span>
                                                         {option.description && (
                                                             <span className="mt-1 block text-xs leading-relaxed text-neutral-600">
-                                                                {option.description}
+                                                                {
+                                                                    option.description
+                                                                }
                                                             </span>
                                                         )}
                                                     </span>
