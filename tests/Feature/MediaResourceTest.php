@@ -71,19 +71,15 @@ class MediaResourceTest extends TestCase
             'product_category_id' => $category->id,
         ]);
 
-        $fakeFile = UploadedFile::fake()->image('new-image.png');
-
-        // We simulate the FileUpload by putting the file in the public storage disk
-        // and setting the value of 'file' in form data to its relative path.
-        $storedPath = $fakeFile->store('temp-uploads', 'public');
-
         Livewire::test(CreateMedia::class)
             ->fillForm([
                 'name' => 'Uploaded Image Name',
                 'collection_name' => 'product-galleries',
                 'model_type' => Product::class,
                 'model_id' => $product->id,
-                'file' => $storedPath,
+                'file' => [
+                    UploadedFile::fake()->image('new-image.png')
+                ],
                 'custom_properties' => ['foo' => 'bar'],
                 'order_column' => 5,
             ])
@@ -160,8 +156,7 @@ class MediaResourceTest extends TestCase
         Livewire::test(EditMedia::class, [
             'record' => $media->getKey(),
         ])
-            ->call('delete')
-            ->assertHasNoErrors();
+            ->callAction('delete');
 
         $this->assertDatabaseMissing('media', ['id' => $media->id]);
     }
