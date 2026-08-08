@@ -21,7 +21,7 @@ export interface DownloadLink {
 export interface DesignSpecificationContent {
     heading: string;
     diagram: DiagramData;
-    downloads: DownloadLink[];
+    downloads?: DownloadLink[];
 }
 
 export interface DesignServiceBannerContent {
@@ -73,9 +73,9 @@ export interface FaqContent {
 }
 
 export interface ProductDetailSections {
-    design_specifications: DesignSpecificationContent;
-    design_service_banner: DesignServiceBannerContent;
-    paper_stocks: PaperStockContent;
-    more_good_stuff: MoreGoodStuffContent;
-    faq: FaqContent;
+    design_specifications?: DesignSpecificationContent;
+    design_service_banner?: DesignServiceBannerContent;
+    paper_stocks?: PaperStockContent;
+    more_good_stuff?: MoreGoodStuffContent;
+    faq?: FaqContent;
 }

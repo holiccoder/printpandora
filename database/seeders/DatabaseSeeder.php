@@ -234,18 +234,30 @@ HTML,
 
         // Product categories
         $productCategories = [
-            ['name' => 'Business Cards', 'slug' => 'business-cards'],
-            ['name' => 'Flyers & Brochures', 'slug' => 'flyers-brochures'],
-            ['name' => 'Apparel', 'slug' => 'apparel'],
-            ['name' => 'Signage & Banners', 'slug' => 'signage-banners'],
-            ['name' => 'Stationery', 'slug' => 'stationery'],
+            ['name' => 'Business Cards', 'slug' => 'business-cards', 'parent_slug' => null],
+            ['name' => 'Postcards', 'slug' => 'postcards', 'parent_slug' => null],
+            ['name' => 'Stickers & Labels', 'slug' => 'stickers-and-labels', 'parent_slug' => null],
+            ['name' => 'Flyers & Brochures', 'slug' => 'flyers-brochures', 'parent_slug' => null],
+            ['name' => 'Cotton Business Cards', 'slug' => 'cotton-business-cards', 'parent_slug' => 'business-cards'],
+            ['name' => 'PVC Business Cards', 'slug' => 'pvc-business-cards', 'parent_slug' => 'business-cards'],
+            ['name' => 'Classic Business Cards', 'slug' => 'classic-business-cards', 'parent_slug' => 'business-cards'],
         ];
 
-        foreach ($productCategories as $cat) {
-            ProductCategory::firstOrCreate(['slug' => $cat['slug']], $cat);
-        }
+        $categoryMap = [];
 
-        $categoryMap = ProductCategory::pluck('id', 'slug')->toArray();
+        foreach ($productCategories as $cat) {
+            $category = ProductCategory::updateOrCreate(
+                ['slug' => $cat['slug']],
+                [
+                    'name' => $cat['name'],
+                    'parent_id' => $cat['parent_slug']
+                        ? ($categoryMap[$cat['parent_slug']] ?? null)
+                        : null,
+                ],
+            );
+
+            $categoryMap[$cat['slug']] = $category->id;
+        }
 
         $sampleProducts = [
             [
@@ -281,42 +293,42 @@ HTML,
                 'slug' => 'custom-t-shirt-printing',
                 'description' => '<p>Design your own t-shirt with our direct-to-garment printing. Premium quality, soft-feel prints that last wash after wash.</p><ul><li>100% ring-spun cotton</li><li>DTG full-color printing</li><li>Unisex sizing S-3XL</li><li>10 color options</li><li>5-7 business day turnaround</li></ul>',
                 'price' => 24.99,
-                'category' => 'apparel',
+                'category' => 'business-cards',
             ],
             [
                 'name' => 'Custom Hoodie Printing',
                 'slug' => 'custom-hoodie-printing',
                 'description' => '<p>Stay warm and stylish with our custom-printed hoodies. Perfect for teams, events, or your brand merch line.</p><ul><li>80% cotton, 20% polyester</li><li>DTG or screen printing available</li><li>Unisex sizing S-3XL</li><li>8 color options</li><li>7-10 business day turnaround</li></ul>',
                 'price' => 44.99,
-                'category' => 'apparel',
+                'category' => 'business-cards',
             ],
             [
                 'name' => 'Vinyl Banner (3ft &times; 6ft)',
                 'slug' => 'vinyl-banner-3x6',
                 'description' => '<p>Durable outdoor vinyl banners with vibrant, weather-resistant printing. Ideal for events, storefronts, and trade shows.</p><ul><li>Heavy-duty 13oz vinyl</li><li>Weather and UV resistant</li><li>Hemmed edges with grommets</li><li>Custom sizes available</li><li>2-3 business day turnaround</li></ul>',
                 'price' => 59.99,
-                'category' => 'signage-banners',
+                'category' => 'business-cards',
             ],
             [
                 'name' => 'Retractable Banner Stand (33" &times; 78")',
                 'slug' => 'retractable-banner-stand',
                 'description' => '<p>Portable, professional retractable banner stand with full-color graphic panel. Perfect for trade shows, lobbies, and presentations.</p><ul><li>Adjustable aluminum stand included</li><li>Premium matte laminate graphic</li><li>Carrying case included</li><li>33" x 78" display area</li><li>5-7 business day turnaround</li></ul>',
                 'price' => 149.99,
-                'category' => 'signage-banners',
+                'category' => 'business-cards',
             ],
             [
                 'name' => 'Custom Letterhead (500 sheets)',
                 'slug' => 'custom-letterhead-500',
                 'description' => '<p>Professional letterhead stationery that reinforces your brand with every correspondence. Printed on premium uncoated paper.</p><ul><li>120 GSM premium uncoated</li><li>Full color or single color</li><li>8.5" x 11" standard size</li><li>500 sheets per pack</li><li>3-4 business day turnaround</li></ul>',
                 'price' => 34.99,
-                'category' => 'stationery',
+                'category' => 'business-cards',
             ],
             [
                 'name' => 'Custom Notebooks (10 pack)',
                 'slug' => 'custom-notebooks-10',
                 'description' => '<p>Branded notebooks that make perfect corporate gifts or employee swag. Customize the cover with your logo and choose from lined or blank pages.</p><ul><li>A5 size (5.8" x 8.3")</li><li>80 lined or blank pages</li><li>Soft or hard cover options</li><li>Full-color cover printing</li><li>10 notebooks per pack</li></ul>',
                 'price' => 54.99,
-                'category' => 'stationery',
+                'category' => 'business-cards',
             ],
         ];
 
@@ -337,5 +349,6 @@ HTML,
         // Replay the live-data snapshot last so `db:seed` reproduces it exactly.
         // Regenerate the snapshot any time with: php artisan db:export-seeders
         $this->call(LiveDataSeeder::class);
+        $this->call(ProductNavigationCategorySeeder::class);
     }
 }

@@ -3,7 +3,7 @@
 // local to the page; JSON drives the labels and option metadata.
 import { Link, router, usePage } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
+import { Fragment, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import DesignServiceForm from '@/components/design-service-form';
 import type { DesignServiceOption } from '@/components/design-service-form';
@@ -27,6 +27,7 @@ import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { computeDynamicTiers } from '@/lib/pricing';
 import type { DynamicPricingData } from '@/lib/pricing';
+import type { PricingRule } from '@/lib/pricing';
 import { findMatchingGallery } from '@/lib/product-options';
 import type { ProductGallery } from '@/lib/product-options';
 
@@ -94,30 +95,53 @@ interface Product {
     category: { id: number; name: string; slug: string };
 }
 
+interface ProductOptionValue {
+    code?: string;
+    name: string;
+    description?: string;
+    swatch_image?: string;
+    width?: string;
+    height?: string;
+}
+
+interface ProductOptionGroup {
+    key: string;
+    label: string;
+    type: 'select' | 'multi_select';
+    required?: boolean;
+    default?: string;
+    values: ProductOptionValue[];
+}
+
 interface ProductOptions {
+    dynamic_options?: boolean;
+    option_groups?: ProductOptionGroup[];
     subtitle?: string;
     starting_price_text?: string;
-    sizes: Array<{
+    sizes?: Array<{
+        code?: string;
         name: string;
         width: string;
         height: string;
         swatch_image: string;
     }>;
-    paper_finish: Array<{
+    paper_finish?: Array<{
+        code?: string;
         name: string;
         description: string;
         added_price: string;
         swatch_image: string;
     }>;
-    corners: Array<{
+    corners?: Array<{
+        code?: string;
         name: string;
         description: string;
         swatch_image: string;
         added_price: string;
     }>;
     texture?: Array<{
+        code?: string;
         name: string;
-        code: string;
         description: string;
         swatch_image: string;
         added_price: Array<{
@@ -126,15 +150,18 @@ interface ProductOptions {
         }>;
     }>;
     special_finish: Array<{
+        code?: string;
         name: string;
         description: string;
         swatch_image: string;
     }>;
     print_code: Array<{
+        code?: string;
         name: string;
         description: string;
     }>;
     drill: Array<{
+        code?: string;
         name: string;
         swatch_image: string;
         price_add: string;
@@ -148,6 +175,7 @@ interface ProductOptions {
     }>;
     galleries?: ProductGallery[];
     pricing_data?: DynamicPricingData;
+    pricing_rules?: PricingRule[];
     detail_sections?: ProductDetailSections;
 }
 
@@ -200,6 +228,16 @@ const businessBlockHrefs = [
     '/contact',
 ];
 
+function optionValueCode(value: ProductOptionValue): string {
+    return (
+        value.code?.trim() ||
+        value.name
+            .trim()
+            .toLowerCase()
+            .replace(/[\s_]+/g, '-')
+    );
+}
+
 /* -------------------------------------------------------------------------- */
 /* Page                                                                       */
 /* -------------------------------------------------------------------------- */
@@ -223,11 +261,44 @@ export default function ShopShow({
         'classic-special-business-cards',
     ].includes(product.slug);
 
+    const usesDynamicOptions = productOptions?.dynamic_options === true;
+    const dynamicOptionGroups = useMemo(
+        () =>
+            usesDynamicOptions && Array.isArray(productOptions?.option_groups)
+                ? productOptions.option_groups
+                : [],
+        [usesDynamicOptions, productOptions],
+    );
+
+    const dynamicOptionDefaults = useMemo<
+        Record<string, string | string[]>
+    >(() => {
+        const defaults: Record<string, string | string[]> = {};
+
+        for (const group of dynamicOptionGroups) {
+            const valueCodes = group.values.map(optionValueCode);
+            const firstCode = valueCodes[0] ?? '';
+            const configuredDefault = group.default?.trim() ?? '';
+            const defaultCode = valueCodes.includes(configuredDefault)
+                ? configuredDefault
+                : firstCode;
+
+            defaults[group.key] =
+                group.type === 'multi_select'
+                    ? defaultCode
+                        ? [defaultCode]
+                        : []
+                    : defaultCode;
+        }
+
+        return defaults;
+    }, [dynamicOptionGroups]);
+
     const sizes = useMemo(
         () =>
             hasProductOptions && Array.isArray(productOptions.sizes)
                 ? productOptions.sizes.map((s) => ({
-                      id: s.name.toLowerCase(),
+                      id: s.code ?? s.name.toLowerCase(),
                       label: s.name.charAt(0).toUpperCase() + s.name.slice(1),
                       dims: `${s.width}" x ${s.height}"`,
                       swatch:
@@ -246,7 +317,7 @@ export default function ShopShow({
         () =>
             hasProductOptions && Array.isArray(productOptions.paper_finish)
                 ? productOptions.paper_finish.map((f) => ({
-                      id: f.name.toLowerCase(),
+                      id: f.code ?? f.name.toLowerCase(),
                       label: f.name,
                       description: f.description,
                       thumb:
@@ -272,7 +343,7 @@ export default function ShopShow({
         () =>
             hasProductOptions && Array.isArray(productOptions.corners)
                 ? productOptions.corners.map((cn) => ({
-                      id: cn.name.toLowerCase(),
+                      id: cn.code ?? cn.name.toLowerCase(),
                       label: cn.name,
                       swatch:
                           generatedCornerSwatches[cn.name.toLowerCase()] ??
@@ -291,7 +362,7 @@ export default function ShopShow({
         () =>
             hasProductOptions && Array.isArray(productOptions.texture)
                 ? productOptions.texture.map((t) => ({
-                      id: t.name.toLowerCase().replace(/\s+/g, '-'),
+                      id: t.code ?? t.name.toLowerCase().replace(/\s+/g, '-'),
                       label: t.name,
                       description: t.description,
                       thumb: t.swatch_image,
@@ -306,7 +377,7 @@ export default function ShopShow({
                 ? productOptions.special_finish
                       .filter((f) => f.name.toLowerCase() !== 'none')
                       .map((f) => ({
-                          id: f.name.toLowerCase().replace(/\s+/g, '-'),
+                          id: f.code ?? f.name.toLowerCase().replace(/\s+/g, '-'),
                           label:
                               f.name.charAt(0).toUpperCase() + f.name.slice(1),
                           description: f.description,
@@ -320,7 +391,7 @@ export default function ShopShow({
         () =>
             hasProductOptions && (productOptions as any).special_finish_on_sides
                 ? (productOptions as any).special_finish_on_sides.map((s: any) => ({
-                      id: s.name.toLowerCase().replace(/\s+/g, '-'),
+                      id: s.code ?? s.name.toLowerCase().replace(/\s+/g, '-'),
                       label: s.name,
                       description: s.description,
                       thumb: s.swatch_image,
@@ -332,28 +403,45 @@ export default function ShopShow({
     // Dynamic pricing is attached by the controller only for products
     // that have pricing JSON configured (see loadDynamicPricingData).
     const hasDynamicPricing =
-        hasProductOptions && productOptions.pricing_data != null;
+        hasProductOptions &&
+        (productOptions.pricing_data != null ||
+            (productOptions.pricing_rules?.length ?? 0) > 0);
 
     const dynamicStartQty = hasDynamicPricing
-        ? productOptions.pricing_data!.rectangle.startQuantity
+        ? (productOptions.pricing_data?.rectangle?.startQuantity ??
+          productOptions.pricing_rules?.[0]?.pricing.startQuantity ??
+          null)
         : null;
 
     // "X cards from $Y" derived from data: X = startQuantity from the
     // pricing JSON, Y = subtotal (currentPrice) of the first row of the
     // quantity pricing table under the default option configuration.
     const startingPriceText = useMemo(() => {
-        if (hasDynamicPricing) {
+        if (hasDynamicPricing && productOptions.pricing_data) {
             const firstTier = computeDynamicTiers(
-                productOptions.pricing_data!,
+                {
+                    ...productOptions.pricing_data,
+                    rules: productOptions.pricing_rules,
+                },
                 0, // default size
                 0, // default paper finish
                 0, // default corners
                 0, // default special finish
+                {},
             )[0];
 
             if (firstTier) {
                 return `${firstTier.qty} cards from $${firstTier.currentPrice}`;
             }
+        }
+
+        if (hasDynamicPricing && productOptions.pricing_rules?.[0]?.pricing) {
+            const pricing = productOptions.pricing_rules[0].pricing;
+            const total = Math.round(
+                pricing.startQuantity * pricing.basePrice,
+            );
+
+            return `${pricing.startQuantity} cards from $${total}`;
         }
 
         return productOptions?.starting_price_text;
@@ -419,6 +507,9 @@ export default function ShopShow({
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [selectedFinish, setSelectedFinish] = useState<string | null>(null);
     const [selectedCorners, setSelectedCorners] = useState<string | null>(null);
+    const [selectedDynamicOptions, setSelectedDynamicOptions] = useState<
+        Record<string, string | string[]>
+    >(dynamicOptionDefaults);
     const [selectedTexture, setSelectedTexture] = useState<string | null>(
         textures.length > 0 ? null : 'none',
     );
@@ -505,21 +596,43 @@ export default function ShopShow({
 
     const hasInteractedRef = useRef(false);
 
-    const hasSelection =
-        (sizes.length === 0 || selectedSize != null) &&
-        (finishes.length === 0 || selectedFinish != null) &&
-        (cornersList.length === 0 || selectedCorners != null) &&
-        (textures.length === 0 || selectedTexture != null) &&
-        (specialFinishes.length === 0 || selectedSpecialFinish != null) &&
-        (specialFinishOnSidesList.length === 0 || selectedSpecialFinishOnSides != null) &&
-        (embossingList.length === 0 || selectedEmbossing != null) &&
-        (embossingOrSignaturePanelList.length === 0 || selectedEmbossingOrSignaturePanel != null);
+    const hasSelection = usesDynamicOptions
+        ? dynamicOptionGroups.every((group) => {
+              const selected = selectedDynamicOptions[group.key];
 
-    const defaultOptions = useMemo<Record<string, string>>(
+              return group.type === 'multi_select'
+                  ? Array.isArray(selected) && selected.length > 0
+                  : typeof selected === 'string' && selected !== '';
+          })
+        : (sizes.length === 0 || selectedSize != null) &&
+          (finishes.length === 0 || selectedFinish != null) &&
+          (cornersList.length === 0 || selectedCorners != null) &&
+          (textures.length === 0 || selectedTexture != null) &&
+          (specialFinishes.length === 0 || selectedSpecialFinish != null) &&
+          (specialFinishOnSidesList.length === 0 || selectedSpecialFinishOnSides != null) &&
+          (embossingList.length === 0 || selectedEmbossing != null) &&
+          (embossingOrSignaturePanelList.length === 0 || selectedEmbossingOrSignaturePanel != null);
+
+    const defaultOptions = useMemo<Record<string, string | string[]>>(
         () => {
-            const opts: Record<string, string> = {
+            const opts: Record<string, string | string[]> = {
                 quantity: String(RECOMMENDED_QTY ?? ''),
             };
+
+            if (usesDynamicOptions) {
+                for (const group of dynamicOptionGroups) {
+                    const value = dynamicOptionDefaults[group.key];
+
+                    if (typeof value === 'string' && value !== '') {
+                        opts[group.key] = value;
+                    } else if (Array.isArray(value) && value.length > 0) {
+                        opts[group.key] = value;
+                    }
+                }
+
+                return opts;
+            }
+
             if (sizes.length > 0) opts['sizes'] = sizes[0]?.id;
             if (finishes.length > 0) opts['paper_finish'] = finishes[0]?.id;
             if (cornersList.length > 0) opts['corners'] = cornersList[0]?.id;
@@ -540,15 +653,39 @@ export default function ShopShow({
             embossingList,
             embossingOrSignaturePanelList,
             RECOMMENDED_QTY,
+            usesDynamicOptions,
+            dynamicOptionGroups,
+            dynamicOptionDefaults,
         ],
     );
 
-    const selectedOptions = useMemo<Record<string, string>>(() => {
+    const selectedOptions = useMemo<Record<string, string | string[]>>(() => {
+        if (usesDynamicOptions) {
+            const opts: Record<string, string | string[]> = {
+                quantity: String(selectedQty ?? RECOMMENDED_QTY),
+            };
+
+            for (const group of dynamicOptionGroups) {
+                const selected = selectedDynamicOptions[group.key];
+
+                if (group.type === 'multi_select') {
+                    opts[group.key] = Array.isArray(selected) ? selected : [];
+                } else {
+                    opts[group.key] =
+                        typeof selected === 'string' && selected !== ''
+                            ? selected
+                            : dynamicOptionDefaults[group.key] ?? '';
+                }
+            }
+
+            return opts;
+        }
+
         if (!hasSelection) {
             return defaultOptions;
         }
 
-        const opts: Record<string, string> = {
+        const opts: Record<string, string | string[]> = {
             quantity: String(selectedQty ?? RECOMMENDED_QTY),
         };
         if (sizes.length > 0 && selectedSize) opts['sizes'] = selectedSize;
@@ -581,6 +718,10 @@ export default function ShopShow({
         specialFinishOnSidesList,
         embossingList,
         embossingOrSignaturePanelList,
+        usesDynamicOptions,
+        dynamicOptionGroups,
+        selectedDynamicOptions,
+        dynamicOptionDefaults,
     ]);
 
     const activeGallery = useMemo(() => {
@@ -639,11 +780,15 @@ export default function ShopShow({
             );
 
             return computeDynamicTiers(
-                productOptions.pricing_data!,
+                {
+                    ...(productOptions.pricing_data ?? {}),
+                    rules: productOptions.pricing_rules,
+                },
                 Math.max(0, sizeIndex),
                 Math.max(0, finishIndex),
                 Math.max(0, cornersIndex),
                 Math.max(0, specialIndex),
+                selectedOptions,
             );
         }
 
@@ -683,6 +828,7 @@ export default function ShopShow({
         selectedFinish,
         selectedCorners,
         selectedSpecialFinish,
+        selectedOptions,
         sizes,
         finishes,
         cornersList,
@@ -713,6 +859,31 @@ export default function ShopShow({
     const fullPrice =
         (tier?.originalPrice ?? tier?.currentPrice ?? 0) + designFee;
     const finalPrice = (tier?.currentPrice ?? 0) + designFee;
+
+    function selectDynamicOption(groupKey: string, value: string) {
+        const group = dynamicOptionGroups.find((item) => item.key === groupKey);
+
+        if (!group) {
+            return;
+        }
+
+        setSelectedDynamicOptions((current) => {
+            if (group.type !== 'multi_select') {
+                return { ...current, [groupKey]: value };
+            }
+
+            const selected = Array.isArray(current[groupKey])
+                ? current[groupKey]
+                : [];
+
+            return {
+                ...current,
+                [groupKey]: selected.includes(value)
+                    ? selected.filter((item) => item !== value)
+                    : [...selected, value],
+            };
+        });
+    }
 
     function selectOption(
         group:
@@ -1053,9 +1224,14 @@ export default function ShopShow({
                         <h1 className="text-3xl leading-tight font-bold text-neutral-900 lg:text-4xl">
                             {product.name}
                         </h1>
-                        <p className="mt-4 text-sm leading-relaxed text-neutral-700">
-                            {productOptions?.subtitle ?? c.product_subtitle}
-                        </p>
+                        <div
+                            className="mt-4 text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-0 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
+                            dangerouslySetInnerHTML={{
+                                __html:
+                                    productOptions?.subtitle ??
+                                    c.product_subtitle,
+                            }}
+                        />
                         {startingPriceText && (
                             <p className="mt-2 text-sm font-semibold text-neutral-900">
                                 {startingPriceText}
@@ -1124,7 +1300,15 @@ export default function ShopShow({
                             </div>
                         )}
 
-                        {sizes.length > 0 && !isCottonBusinessCards && (
+                        {usesDynamicOptions && (
+                            <DynamicOptionGroups
+                                groups={dynamicOptionGroups}
+                                selected={selectedDynamicOptions}
+                                onSelect={selectDynamicOption}
+                            />
+                        )}
+
+                        {!usesDynamicOptions && sizes.length > 0 && !isCottonBusinessCards && (
                             <OptionGroup label={c.configurator_labels.size}>
                             <div className="grid grid-cols-2 gap-3">
                                 {sizes.map((s: any) => {
@@ -1170,7 +1354,7 @@ export default function ShopShow({
                             </OptionGroup>
                         )}
 
-                        {!isCottonBusinessCards && (
+                        {!usesDynamicOptions && !isCottonBusinessCards && (
                             <OptionGroup
                                 label={c.configurator_labels.paper_finish}
                             >
@@ -1208,7 +1392,7 @@ export default function ShopShow({
                             </OptionGroup>
                         )}
 
-                        {cornersList.length > 0 && (
+                        {!usesDynamicOptions && cornersList.length > 0 && (
                             <OptionGroup label={c.configurator_labels.corners}>
                                 <div className="grid grid-cols-2 gap-3">
                                     {cornersList.map((cn: any) => {
@@ -1268,7 +1452,7 @@ export default function ShopShow({
                             </OptionGroup>
                         )}
 
-                        {textures.length > 0 && (
+                        {!usesDynamicOptions && textures.length > 0 && (
                             <OptionGroup label="Texture">
                                 <div className="grid grid-cols-3 gap-3">
                                     {textures.map((t: any) => (
@@ -1306,7 +1490,7 @@ export default function ShopShow({
                             </OptionGroup>
                         )}
 
-                        {specialFinishes.length > 0 && (
+                        {!usesDynamicOptions && specialFinishes.length > 0 && (
                             <div className="mt-6">
                                 {isCottonBusinessCards ? (
                                     <OptionGroup label="With NFC">
@@ -1459,7 +1643,7 @@ export default function ShopShow({
                             </div>
                         )}
 
-                        {specialFinishOnSidesList.length > 0 && (
+                        {!usesDynamicOptions && specialFinishOnSidesList.length > 0 && (
                             <OptionGroup label="Special finish on sides">
                                 <div className="grid grid-cols-2 gap-3">
                                     {specialFinishOnSidesList.map((s: any) => (
@@ -1497,7 +1681,7 @@ export default function ShopShow({
                             </OptionGroup>
                         )}
 
-                        {embossingList.length > 0 && (
+                        {!usesDynamicOptions && embossingList.length > 0 && (
                             <OptionGroup label="Embossing">
                                 <div className="grid grid-cols-2 gap-3">
                                     {embossingList.map((e: any) => (
@@ -1527,7 +1711,7 @@ export default function ShopShow({
                             </OptionGroup>
                         )}
 
-                        {embossingOrSignaturePanelList.length > 0 && (
+                        {!usesDynamicOptions && embossingOrSignaturePanelList.length > 0 && (
                             <OptionGroup label="Embossing or Signature Panel">
                                 <div className="grid grid-cols-3 gap-3">
                                     {embossingOrSignaturePanelList.map((e: any) => (
@@ -1698,6 +1882,53 @@ export default function ShopShow({
                                     {c.order_summary.heading}
                                 </p>
                                 <dl className="grid grid-cols-2 gap-y-1 text-sm">
+                                    {usesDynamicOptions ? (
+                                        <>
+                                            {dynamicOptionGroups.map((group) => {
+                                                const selected = selectedOptions[group.key];
+                                                const selectedCodes = Array.isArray(selected)
+                                                    ? selected
+                                                    : selected
+                                                      ? [selected]
+                                                      : [];
+                                                const labels = group.values
+                                                    .filter((value) =>
+                                                        selectedCodes.includes(
+                                                            optionValueCode(value),
+                                                        ),
+                                                    )
+                                                    .map((value) => value.name);
+
+                                                return (
+                                                    <Fragment key={group.key}>
+                                                        <dt className="text-neutral-500">
+                                                            {group.label}
+                                                        </dt>
+                                                        <dd className="text-right font-medium">
+                                                            {labels.join(', ')}
+                                                        </dd>
+                                                    </Fragment>
+                                                );
+                                            })}
+                                            <dt className="text-neutral-500">
+                                                {summaryLabels[2]}
+                                            </dt>
+                                            <dd className="text-right font-medium">
+                                                {selectedQty}
+                                            </dd>
+                                            {selectedDesignService && (
+                                                <>
+                                                    <dt className="text-neutral-500">
+                                                        {designFeeLabel}
+                                                    </dt>
+                                                    <dd className="text-right font-medium">
+                                                        ${designFee}
+                                                    </dd>
+                                                </>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>
                                     <dt className="text-neutral-500">
                                         {summaryLabels[0]}
                                     </dt>
@@ -1778,6 +2009,8 @@ export default function ShopShow({
                                             <dd className="text-right font-medium">
                                                 ${designFee}
                                             </dd>
+                                        </>
+                                    )}
                                         </>
                                     )}
                                 </dl>
@@ -2033,6 +2266,79 @@ function FeatureChip({
     );
 }
 
+function DynamicOptionGroups({
+    groups,
+    selected,
+    onSelect,
+}: {
+    groups: ProductOptionGroup[];
+    selected: Record<string, string | string[]>;
+    onSelect: (groupKey: string, value: string) => void;
+}) {
+    return (
+        <>
+            {groups.map((group) => (
+                <OptionGroup key={group.key} label={group.label}>
+                    <div className="grid grid-cols-3 gap-3">
+                        {group.values.map((value) => {
+                            const code = optionValueCode(value);
+                            const selectedValue = selected[group.key];
+                            const active =
+                                group.type === 'multi_select'
+                                    ? Array.isArray(selectedValue) &&
+                                      selectedValue.includes(code)
+                                    : selectedValue === code;
+                            const swatch = value.swatch_image;
+                            const isSvg =
+                                typeof swatch === 'string' &&
+                                swatch.trimStart().startsWith('<svg');
+
+                            return (
+                                <ChoiceTile
+                                    key={code}
+                                    active={active}
+                                    onClick={() => onSelect(group.key, code)}
+                                >
+                                    <div className="flex min-h-16 items-center justify-center">
+                                        {isSvg ? (
+                                            <div
+                                                className="h-16 w-full text-neutral-700"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: swatch as string,
+                                                }}
+                                            />
+                                        ) : swatch ? (
+                                            <img
+                                                src={swatch}
+                                                alt=""
+                                                className="h-auto w-full rounded-sm object-contain"
+                                            />
+                                        ) : (
+                                            <span className="text-xs text-neutral-400">
+                                                {group.type === 'multi_select'
+                                                    ? 'Select option'
+                                                    : 'Option'}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p className="mt-2 text-base font-semibold">
+                                        {value.name}
+                                    </p>
+                                    {value.description && (
+                                        <p className="text-xs text-neutral-500">
+                                            {value.description}
+                                        </p>
+                                    )}
+                                </ChoiceTile>
+                            );
+                        })}
+                    </div>
+                </OptionGroup>
+            ))}
+        </>
+    );
+}
+
 function OptionGroup({
     label,
     children,
@@ -2042,7 +2348,7 @@ function OptionGroup({
 }) {
     return (
         <fieldset className="mt-6">
-            <legend className="mb-3 text-sm font-bold text-neutral-900">
+            <legend className="mb-3 text-base font-bold text-neutral-900">
                 {label}
             </legend>
             {children}

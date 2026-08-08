@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Support\HardcodedContent;
+use App\Support\ProductImagePolicy;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -28,6 +29,7 @@ class ProductImageService
 
     public function __construct(
         private HardcodedContent $content,
+        private ProductConfigurationService $configuration,
     ) {}
 
     public function supportsBusinessCard(Product $product): bool
@@ -42,26 +44,7 @@ class ProductImageService
      */
     public function productOptions(Product $product): ?array
     {
-        if (is_array($product->product_options) && ! empty($product->product_options)) {
-            return $product->product_options;
-        }
-
-        $categorySlug = $product->category?->slug;
-
-        if (! $categorySlug) {
-            return null;
-        }
-
-        $path = base_path("content/product-options/{$categorySlug}/{$product->slug}.json");
-
-        if (! file_exists($path)) {
-            return null;
-        }
-
-        $content = file_get_contents($path);
-        $decoded = $content === false ? null : json_decode($content, true);
-
-        return is_array($decoded) ? $decoded : null;
+        return $this->configuration->storefrontOptions($product);
     }
 
     /**
@@ -119,7 +102,7 @@ class ProductImageService
                     'image_index' => (int) $imageIndex,
                     'source_path' => $image,
                     'current_url' => $override instanceof Media
-                        ? $override->getUrl()
+                        ? $this->mediaUrl($override)
                         : $this->imageUrl($image),
                     'is_default' => (bool) ($gallery['is_default'] ?? false),
                     'is_overridden' => $override instanceof Media,
@@ -145,7 +128,7 @@ class ProductImageService
             $override = $overrides->get($this->gallerySlotKey('fallback', $imageIndex));
 
             if ($override instanceof Media) {
-                $image = $override->getUrl();
+                $image = $this->mediaUrl($override);
             }
         }
 
@@ -181,7 +164,7 @@ class ProductImageService
                 );
 
                 if ($override instanceof Media) {
-                    $image = $override->getUrl();
+                    $image = $this->mediaUrl($override);
                 }
             }
 
@@ -203,7 +186,7 @@ class ProductImageService
             ->first();
 
         if ($override instanceof Media) {
-            return $override->getUrl();
+            return $this->mediaUrl($override);
         }
 
         return $this->imageUrl($product->getRawOriginal('featured_image'));
@@ -249,7 +232,7 @@ class ProductImageService
             ->usingFileName($this->fileName($product, 'featured', $file))
             ->toMediaCollection(self::FEATURED_OVERRIDE_COLLECTION);
 
-        $url = $media->getUrl();
+        $url = $this->mediaUrl($media);
 
         $product->forceFill(['featured_image' => $url])->save();
 
@@ -291,6 +274,11 @@ class ProductImageService
         return Str::slug($product->slug)."-{$slotKey}-".Str::random(8).".{$extension}";
     }
 
+    private function mediaUrl(Media $media): string
+    {
+        return $media->getAvailableUrl([ProductImagePolicy::STOREFRONT_CONVERSION]);
+    }
+
     private function imageUrl(?string $path): ?string
     {
         if (! $path) {
@@ -299,6 +287,22 @@ class ProductImageService
 
         if (Str::startsWith($path, ['http://', 'https://', '//'])) {
             return $path;
+        }
+
+        if (Str::startsWith($path, '/')) {
+            return $path;
+        }
+
+        if (Str::startsWith($path, 'storage/')) {
+            return '/'.ltrim($path, '/');
+        }
+
+        if (Str::startsWith($path, [
+            'product-galleries/',
+            'product-options/',
+            'product-featured-overrides/',
+        ])) {
+            return '/storage/'.ltrim($path, '/');
         }
 
         return asset(ltrim($path, '/'));

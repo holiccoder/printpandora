@@ -13,18 +13,12 @@ export interface ProductGallery {
  * everything else is lowercased.
  */
 export function normalizeOptionValue(group: string, value: string): string {
-    const lower = value.toLowerCase();
-
-    if (group === 'special_finish' || group === 'texture') {
-        return lower.replace(/\s+/g, '-');
-    }
-
-    return lower;
+    return value.toLowerCase().trim().replace(/[\s_]+/g, '-');
 }
 
 function matches(
     match: Record<string, string>,
-    selected: Record<string, string>,
+    selected: Record<string, string | string[]>,
 ): boolean {
     return Object.entries(match).every(([key, matchValue]) => {
         const selectedValue = selected[key];
@@ -33,7 +27,11 @@ function matches(
             return false;
         }
 
-        return selectedValue === normalizeOptionValue(key, matchValue);
+        const expected = normalizeOptionValue(key, matchValue);
+
+        return Array.isArray(selectedValue)
+            ? selectedValue.some((value) => normalizeOptionValue(key, value) === expected)
+            : normalizeOptionValue(key, selectedValue) === expected;
     });
 }
 
@@ -48,7 +46,7 @@ function matches(
  */
 export function findMatchingGallery(
     galleries: ProductGallery[],
-    selected: Record<string, string>,
+    selected: Record<string, string | string[]>,
 ): ProductGallery | undefined {
     const specific = galleries.find(
         (gallery) => !gallery.is_default && matches(gallery.match, selected),

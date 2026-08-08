@@ -4,17 +4,25 @@ export interface PricingScenario {
     startQuantity: number;
     paperRates: Record<string, number>;
     processes: Array<{
+        code?: string;
         name: string;
         markup: number;
         rates: Record<string, number>;
     }>;
 }
 
+export interface PricingRule {
+    id?: string;
+    match: Record<string, string>;
+    pricing: PricingScenario;
+}
+
 export interface DynamicPricingData {
-    rectangle: PricingScenario;
+    rectangle?: PricingScenario;
     uv?: PricingScenario;
-    square: PricingScenario;
+    square?: PricingScenario;
     square_uv?: PricingScenario;
+    rules?: PricingRule[];
 }
 
 export interface QuantityTier {
@@ -30,7 +38,7 @@ export function resolvePricingScenario(
     data: DynamicPricingData,
     sizeIndex: number,
     finishIndex: number,
-): keyof DynamicPricingData {
+): 'rectangle' | 'uv' | 'square' | 'square_uv' {
     const hasUv = data.uv != null;
     const isUv = hasUv && finishIndex === 2;
 
@@ -41,23 +49,54 @@ export function resolvePricingScenario(
     return isUv ? 'square_uv' : 'square';
 }
 
+function normalizeOptionValue(value: string): string {
+    return value.trim().toLowerCase().replace(/[\s_]+/g, '-');
+}
+
+export function findMatchingPricingRule(
+    rules: PricingRule[],
+    selected: Record<string, string | string[]>,
+): PricingScenario | undefined {
+    return [...rules]
+        .sort(
+            (a, b) =>
+                Object.keys(b.match ?? {}).length -
+                Object.keys(a.match ?? {}).length,
+        )
+        .find((rule) =>
+            Object.entries(rule.match ?? {}).every(([key, expected]) => {
+                const actual = selected[key];
+                const expectedValue = normalizeOptionValue(expected);
+
+                return (
+                    actual != null &&
+                    (Array.isArray(actual)
+                        ? actual.some(
+                              (value) =>
+                                  normalizeOptionValue(value) === expectedValue,
+                          )
+                        : normalizeOptionValue(actual) === expectedValue)
+                );
+            }),
+        )?.pricing;
+}
+
 export function computeDynamicTiers(
     data: DynamicPricingData,
     sizeIndex: number,
     finishIndex: number,
     cornersIndex: number,
     specialFinishIndex: number,
+    selectedOptions: Record<string, string | string[]> = {},
 ): QuantityTier[] {
-    const scenario = data[resolvePricingScenario(data, sizeIndex, finishIndex)];
+    const scenario = data.rules?.length
+        ? findMatchingPricingRule(data.rules, selectedOptions)
+        : data[resolvePricingScenario(data, sizeIndex, finishIndex)];
 
     if (!scenario) {
         return [];
     }
 
-    // Tier rows: the start quantity itself (full base price, recommended)
-    // plus every paper-rate quantity at or above it. Some products list
-    // rates only from a higher quantity (e.g. 100) while allowing orders
-    // from a lower startQuantity (e.g. 50) — include it explicitly.
     const quantities = [
         ...new Set([
             scenario.startQuantity,
@@ -67,13 +106,61 @@ export function computeDynamicTiers(
         ]),
     ].sort((a, b) => a - b);
 
-    const roundedProcess = scenario.processes.find((p) => p.name === '圆角');
-    const foilProcess = scenario.processes.find(
-        (p) => p.name === '烫金' || p.name === 'nfc',
-    );
+    const roundedProcess = scenario.processes.find((p) => {
+        const code = normalizeOptionValue(p.code ?? '');
+        const name = p.name.toLowerCase();
 
-    const rounded = cornersIndex === 1 && roundedProcess != null;
-    const foiled = specialFinishIndex > 0 && foilProcess != null;
+        return (
+            code === 'rounded-corners' ||
+            code === 'rounded' ||
+            name.includes('rounded') ||
+            name.includes('圆角')
+        );
+    });
+    const foilProcess = scenario.processes.find((p) => {
+        const code = normalizeOptionValue(p.code ?? '');
+        const name = p.name.toLowerCase();
+
+        return (
+            code === 'foil' ||
+            code === 'nfc' ||
+            name.includes('foil') ||
+            name.includes('烫金') ||
+            name === 'nfc'
+        );
+    });
+
+    const selectedCorners = selectedOptions.corners;
+    const roundedSelected = selectedCorners
+        ? (Array.isArray(selectedCorners)
+              ? selectedCorners.some((value) =>
+                    ['rounded', 'rounded-corners', 'round'].includes(
+                        normalizeOptionValue(value),
+                    ),
+                )
+              : ['rounded', 'rounded-corners', 'round'].includes(
+                    normalizeOptionValue(selectedCorners),
+                ))
+        : cornersIndex === 1;
+    const selectedSpecialFinish = selectedOptions.special_finish;
+    const specialFinish = selectedSpecialFinish
+        ? Array.isArray(selectedSpecialFinish)
+            ? selectedSpecialFinish.map(normalizeOptionValue)
+            : normalizeOptionValue(selectedSpecialFinish)
+        : null;
+    const foiledSelected = specialFinish
+        ? Array.isArray(specialFinish)
+            ? specialFinish.some(
+                  (value) =>
+                      !['', 'none', 'no-foil', 'no-special-finish'].includes(
+                          value,
+                      ),
+              )
+            : !['', 'none', 'no-foil', 'no-special-finish'].includes(specialFinish)
+        : specialFinishIndex > 0;
+
+    const rounded = roundedSelected && roundedProcess != null;
+    const foiled = foiledSelected && foilProcess != null;
 
     return quantities.map((qty) => {
         const isStart = qty === scenario.startQuantity;
@@ -85,7 +172,7 @@ export function computeDynamicTiers(
             unit -= scenario.basePrice * (paperRate / 100);
         }
 
-        if (rounded) {
+        if (rounded && roundedProcess) {
             unit += roundedProcess.markup;
 
             if (!isStart) {
@@ -94,7 +181,7 @@ export function computeDynamicTiers(
             }
         }
 
-        if (foiled) {
+        if (foiled && foilProcess) {
             unit += foilProcess.markup;
 
             if (!isStart) {

@@ -8,7 +8,7 @@ interface DesignSpecificationsSectionProps {
 }
 
 export default function DesignSpecificationsSection({ content }: DesignSpecificationsSectionProps) {
-    const { heading, diagram, downloads } = content;
+    const { heading, diagram, downloads = [] } = content;
     const [hoveredArea, setHoveredArea] = useState<string | null>(null);
 
     return (

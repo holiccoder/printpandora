@@ -21,9 +21,10 @@ export default function ProductFaqSection({ content }: ProductFaqSectionProps) {
                             <h3 className="text-base font-bold text-neutral-900 leading-snug">
                                 {item.question}
                             </h3>
-                            <p className="text-sm leading-relaxed text-neutral-600">
-                                {item.answer}
-                            </p>
+                            <div
+                                className="text-sm leading-relaxed text-neutral-600 [&_a]:underline [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-0 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
+                                dangerouslySetInnerHTML={{ __html: item.answer }}
+                            />
                         </li>
                     ))}
                 </ul>

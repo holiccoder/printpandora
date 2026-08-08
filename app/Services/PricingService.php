@@ -4,17 +4,21 @@ namespace App\Services;
 
 use App\Models\DesignServiceRequest;
 use App\Models\Product;
+use Illuminate\Support\Str;
 
 class PricingService
 {
+    public function __construct(
+        private ProductConfigurationService $configuration,
+    ) {}
+
     /**
      * Calculate the line price for a product with the given options.
      *
      * Returns the dynamic subtotal when the product has pricing JSON configured;
      * otherwise falls back to the product's static price.
      *
-     * @param  int|string  $productId
-     * @param  array<string, string>  $options
+     * @param  array<string, mixed>  $options
      */
     public function calculate(int|string $productId, array $options = []): float
     {
@@ -25,7 +29,7 @@ class PricingService
         }
 
         $base = $this->calculateDynamicPrice($product, $options)
-            ?? (float) $product->price;
+            ?? (float) ($product->getAttribute('price') ?? 0);
 
         return $base + $this->designServiceFee($options);
     }
@@ -34,7 +38,7 @@ class PricingService
      * One-time design service fee, resolved server-side from a valid
      * service code in the options. Unknown or missing codes add nothing.
      *
-     * @param  array<string, string>  $options
+     * @param  array<string, mixed>  $options
      */
     private function designServiceFee(array $options): float
     {
@@ -50,7 +54,7 @@ class PricingService
     /**
      * Attempt dynamic pricing. Returns null when not applicable.
      *
-     * @param  array<string, string>  $options
+     * @param  array<string, mixed>  $options
      */
     private function calculateDynamicPrice(Product $product, array $options): ?float
     {
@@ -60,19 +64,27 @@ class PricingService
             return null;
         }
 
-        $optionsPath = base_path("content/product-options/{$categorySlug}/{$product->slug}.json");
-
-        if (! file_exists($optionsPath)) {
-            return null;
-        }
-
-        $productOptions = $this->decodeJson($optionsPath);
+        $productOptions = $this->configuration->storefrontOptions($product);
 
         if ($productOptions === null) {
             return null;
         }
 
-        $pricingData = $this->loadDynamicPricingData($product->slug);
+        $pricingData = is_array($productOptions['pricing_data'] ?? null)
+            ? $productOptions['pricing_data']
+            : null;
+
+        $pricingRules = is_array($productOptions['pricing_rules'] ?? null)
+            ? $productOptions['pricing_rules']
+            : [];
+
+        if ($pricingRules !== []) {
+            $rule = $this->findMatchingPricingRule($pricingRules, $options);
+
+            return $rule === null
+                ? null
+                : $this->calculateRulePrice($rule, $options);
+        }
 
         if ($pricingData === null) {
             return null;
@@ -107,15 +119,191 @@ class PricingService
     }
 
     /**
-     * Find the index of an option whose code matches the selected value.
+     * @param  array<int, array<string, mixed>>  $rules
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>|null
      */
-    private function findIndex(array $list, string $value): ?int
+    private function findMatchingPricingRule(array $rules, array $options): ?array
     {
+        usort($rules, static function (array $left, array $right): int {
+            return count(is_array($right['match'] ?? null) ? $right['match'] : [])
+                <=> count(is_array($left['match'] ?? null) ? $left['match'] : []);
+        });
+
+        foreach ($rules as $rule) {
+            $match = is_array($rule['match'] ?? null) ? $rule['match'] : [];
+            $matches = true;
+
+            foreach ($match as $key => $expected) {
+                if (! array_key_exists($key, $options)) {
+                    $matches = false;
+                    break;
+                }
+
+                $selectedValues = is_array($options[$key])
+                    ? $options[$key]
+                    : [$options[$key]];
+                $expectedValue = $this->normalizeOptionValue($expected);
+                $valueMatches = false;
+
+                foreach ($selectedValues as $selectedValue) {
+                    if ($this->normalizeOptionValue($selectedValue) === $expectedValue) {
+                        $valueMatches = true;
+                        break;
+                    }
+                }
+
+                if (! $valueMatches) {
+                    $matches = false;
+                    break;
+                }
+            }
+
+            if ($matches && is_array($rule['pricing'] ?? null)) {
+                return $rule['pricing'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Calculate a price from the JSON shape entered in the Product form.
+     *
+     * @param  array<string, mixed>  $pricing
+     * @param  array<string, mixed>  $options
+     */
+    private function calculateRulePrice(array $pricing, array $options): ?float
+    {
+        $startQuantity = (int) ($pricing['startQuantity'] ?? 0);
+        $quantity = (int) ($options['quantity'] ?? 0);
+        $basePrice = (float) ($pricing['basePrice'] ?? 0);
+        $paperRates = is_array($pricing['paperRates'] ?? null) ? $pricing['paperRates'] : [];
+
+        if ($startQuantity <= 0 || $quantity <= 0 || $basePrice < 0) {
+            return null;
+        }
+
+        $quantities = array_values(array_unique(array_merge(
+            [$startQuantity],
+            array_filter(array_map('intval', array_keys($paperRates)), static fn (int $value): bool => $value >= $startQuantity),
+        )));
+        sort($quantities);
+
+        if (! in_array($quantity, $quantities, true)) {
+            return null;
+        }
+
+        $processes = is_array($pricing['processes'] ?? null) ? $pricing['processes'] : [];
+        $unit = $basePrice;
+
+        if ($quantity !== $startQuantity) {
+            $unit -= $basePrice * ((float) ($paperRates[(string) $quantity] ?? $paperRates[$quantity] ?? 0) / 100);
+        }
+
+        foreach ($processes as $process) {
+            if (! is_array($process) || ! $this->processIsSelected($process, $options)) {
+                continue;
+            }
+
+            $markup = (float) ($process['markup'] ?? $process['markup_per_card'] ?? 0);
+            $unit += $markup;
+
+            if ($quantity !== $startQuantity) {
+                $rates = is_array($process['rates'] ?? null)
+                    ? $process['rates']
+                    : (is_array($process['quantity_discounts_percent'] ?? null) ? $process['quantity_discounts_percent'] : []);
+                $unit -= $markup * ((float) ($rates[(string) $quantity] ?? $rates[$quantity] ?? 0) / 100);
+            }
+        }
+
+        return (float) round($quantity * $unit);
+    }
+
+    /**
+     * @param  array<string, mixed>  $process
+     * @param  array<string, mixed>  $options
+     */
+    private function processIsSelected(array $process, array $options): bool
+    {
+        $rawName = strtolower(trim((string) ($process['name'] ?? '')));
+        $code = $this->normalizeOptionValue($process['code'] ?? $process['name'] ?? '');
+
+        if (
+            $code === 'rounded_corners'
+            || str_contains($rawName, 'rounded')
+            || str_contains($rawName, '圆角')
+        ) {
+            $cornerValues = is_array($options['corners'] ?? null)
+                ? $options['corners']
+                : [$options['corners'] ?? ''];
+
+            foreach ($cornerValues as $cornerValue) {
+                if (in_array($this->normalizeOptionValue($cornerValue), ['rounded', 'rounded_corners', 'round'], true)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (
+            in_array($code, ['foil', 'nfc'], true)
+            || str_contains($rawName, 'foil')
+            || str_contains($rawName, '烫金')
+            || $rawName === 'nfc'
+        ) {
+            foreach ($options as $key => $value) {
+                $values = is_array($value) ? $value : [$value];
+
+                foreach ($values as $item) {
+                    $normalized = $this->normalizeOptionValue($item);
+
+                    if ($normalized === $code || ($key === 'special_finish' && ! in_array($normalized, ['', 'none', 'no_foil', 'no_special_finish'], true))) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        if (! array_key_exists($code, $options)) {
+            return false;
+        }
+
+        $values = is_array($options[$code]) ? $options[$code] : [$options[$code]];
+
+        foreach ($values as $value) {
+            if (! in_array($this->normalizeOptionValue($value), ['', 'none', 'no'], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function normalizeOptionValue(mixed $value): string
+    {
+        return Str::slug(strtolower(trim((string) $value)), '_');
+    }
+
+    /**
+     * Find the index of an option whose code matches the selected value.
+     *
+     * @param  array<int, array<string, mixed>>  $list
+     */
+    private function findIndex(array $list, mixed $value): ?int
+    {
+        $selectedValues = is_array($value) ? $value : [$value];
+
         foreach ($list as $i => $item) {
             $code = $item['code'] ?? strtolower($item['name'] ?? '');
 
-            if ($code === $value) {
-                return $i;
+            foreach ($selectedValues as $selectedValue) {
+                if ($code === $selectedValue) {
+                    return (int) $i;
+                }
             }
         }
 
@@ -126,6 +314,8 @@ class PricingService
      * Resolve which pricing scenario applies.
      *
      * Mirrors resources/js/lib/pricing.ts::resolvePricingScenario.
+     *
+     * @param  array<string, array<string, mixed>>  $data
      */
     private function resolveScenario(array $data, int $sizeIndex, int $finishIndex): string
     {
@@ -143,6 +333,9 @@ class PricingService
      * Compute quantity tiers for a scenario.
      *
      * Mirrors resources/js/lib/pricing.ts::computeDynamicTiers.
+     *
+     * @param  array<string, mixed>  $scenario
+     * @return array<int, array<string, mixed>>
      */
     private function computeTiers(array $scenario, int $cornersIndex, int $specialFinishIndex): array
     {
@@ -200,157 +393,24 @@ class PricingService
 
     /**
      * Find a process by name, or by one of several names.
+     *
+     * @param  array<int, array<string, mixed>>  $processes
+     * @param  string|array<int, string>  $name
+     * @return array<string, mixed>|null
      */
     private function findProcess(array $processes, string|array $name): ?array
     {
         $names = is_array($name) ? $name : [$name];
 
         foreach ($processes as $process) {
-            if (in_array($process['name'] ?? '', $names, true)) {
+            if (
+                in_array($process['name'] ?? '', $names, true) ||
+                in_array($process['code'] ?? '', $names, true)
+            ) {
                 return $process;
             }
         }
 
         return null;
-    }
-
-    /**
-     * Load dynamic pricing data for a product slug.
-     *
-     * Mirrors App\Http\Controllers\Shop\ProductController::loadDynamicPricingData.
-     */
-    private function loadDynamicPricingData(string $slug): ?array
-    {
-        $configs = [
-            'classic-standard-business-cards' => [
-                'dir' => '300g铜版纸',
-                'files' => [
-                    'rectangle' => '300g铜版纸 长方形.json',
-                    'uv' => '300g铜版纸 uv.json',
-                    'square' => '300g铜版纸 正方形.json',
-                    'square_uv' => '300g铜版纸 正方形uv.json',
-                ],
-            ],
-            'classic-special-business-cards' => [
-                'dir' => '300g艺术纸',
-                'files' => [
-                    'rectangle' => '300g艺术纸-荷兰白卡.json',
-                    'square' => '300g艺术纸-荷兰白卡-正方形.json',
-                ],
-            ],
-            'classic-quality-business-cards' => [
-                'dir' => '320g铜版纸',
-                'files' => [
-                    'rectangle' => '320g铜版纸.json',
-                    'square' => '320g铜版纸-正方形.json',
-                ],
-            ],
-            'classic-solid-business-cards' => [
-                'dir' => '350g白卡',
-                'files' => [
-                    'rectangle' => '350g白卡.json',
-                    'square' => '350g白卡-正方形.json',
-                ],
-            ],
-            'basic-cotton-business-card' => [
-                'dir' => '棉纸',
-                'files' => [
-                    'rectangle' => '棉纸-基础型.json',
-                ],
-            ],
-            'classic-cotton-business-card' => [
-                'dir' => '棉纸',
-                'files' => [
-                    'rectangle' => '棉纸-经典型.json',
-                ],
-            ],
-            'premium-cotton-business-card' => [
-                'dir' => '棉纸',
-                'files' => [
-                    'rectangle' => '棉纸-高级型.json',
-                ],
-            ],
-            'luxe-cotton-business-card' => [
-                'dir' => '棉纸',
-                'files' => [
-                    'rectangle' => '棉纸-豪华型.json',
-                ],
-            ],
-            'grand-cotton-business-card' => [
-                'dir' => '棉纸',
-                'files' => [
-                    'rectangle' => '棉纸-奢华型.json',
-                ],
-            ],
-            'standard-pvc-card' => [
-                'dir' => 'pvc',
-                'files' => [
-                    'rectangle' => 'pvc0.38.json',
-                ],
-            ],
-            'premium-pvc-card' => [
-                'dir' => 'pvc',
-                'files' => [
-                    'rectangle' => 'pvc0.76.json',
-                ],
-            ],
-            'super-business-cards' => [
-                'dir' => '350g精品纸',
-                'files' => [
-                    'rectangle' => '350g精品纸.json',
-                    'square' => '350g精品纸-正方形.json',
-                ],
-            ],
-            'luxe-business-cards' => [
-                'dir' => '700g精品纸',
-                'files' => [
-                    'rectangle' => '700g精品纸.json',
-                    'square' => '700g精品纸-正方形.json',
-                ],
-            ],
-        ];
-
-        $config = $configs[$slug] ?? null;
-
-        if ($config === null) {
-            return null;
-        }
-
-        $basePath = base_path('storage/from-tool/数据文档/'.$config['dir']);
-        $data = [];
-
-        foreach ($config['files'] as $key => $file) {
-            $path = $basePath.'/'.$file;
-
-            if (! file_exists($path)) {
-                return null;
-            }
-
-            $decoded = $this->decodeJson($path);
-
-            if ($decoded === null) {
-                return null;
-            }
-
-            $data[$key] = $decoded;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Decode a JSON file, returning null on failure.
-     */
-    private function decodeJson(string $path): ?array
-    {
-        $content = file_get_contents($path);
-
-        if ($content === false) {
-            return null;
-        }
-
-        $decoded = json_decode($content, true);
-
-        return is_array($decoded) ? $decoded : null;
     }
 }

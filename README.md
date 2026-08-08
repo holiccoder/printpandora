@@ -104,6 +104,37 @@ Ports are read from `.env`:
 
 Change them in `.env` and restart the container with `docker compose up -d`.
 
+### Safe catalog synchronization
+
+Product categories and products can be moved between environments without replacing users, orders, payments, or other live data.
+
+Export the local catalog snapshots:
+
+```bash
+php artisan db:export-seeders --tables=product_categories,products
+```
+
+Preview and apply the catalog on the destination server:
+
+```bash
+php artisan migrate --force
+php artisan catalog:sync --dry-run
+php artisan catalog:sync
+```
+
+The command matches categories and products by slug. Source numeric IDs are used only to understand relationships inside the snapshot; destination relationships are rebuilt from category slugs.
+
+Records that exist only on the destination are preserved by default. To preview and then explicitly remove them:
+
+```bash
+php artisan catalog:sync --dry-run --prune
+php artisan catalog:sync --prune --force
+```
+
+Use `--source=/path/to/snapshots` to read the two JSON files from another directory. Empty or invalid snapshots are rejected before database writes, and real synchronization runs in a transaction.
+
+Do not use `LiveDataSeeder` to synchronize a populated production database: it truncates every table represented in `database/seeders/data`. Uploaded files are also separate from catalog data and must be deployed from `storage/app/public` or shared object storage.
+
 ### How file syncing works
 
 - Your project root is bind-mounted into the container at `/var/www/html`, so changes you make locally appear inside the container immediately.

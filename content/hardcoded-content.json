@@ -910,7 +910,135 @@
         "finish_thumb_image_urls": [
             "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=200&q=70",
             "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=200&q=70"
-        ]
+        ],
+        "shared_detail_sections": {
+            "business_cards": {
+                "design_specifications": {
+                    "heading": "Design Specifications",
+                    "diagram": {
+                        "bleed": {
+                            "label": "Bleed Area",
+                            "dimensions": "3.66\" x 2.16\"",
+                            "description": "Make sure that your background extends to fill the bleed to avoid your Business Cards having white edges when trimmed."
+                        },
+                        "trim": {
+                            "label": "Trim",
+                            "dimensions": "3.50\" x 2.0\"",
+                            "description": "This is where we aim to cut your cards."
+                        },
+                        "safe_area": {
+                            "label": "Safe Area",
+                            "dimensions": "3.34\" x 1.84\"",
+                            "description": "Make sure any important aspects of your design such as text and logos are inside of the safe area, otherwise they may be cut off."
+                        }
+                    },
+                    "downloads": [
+                        {
+                            "id": "photoshop",
+                            "label": "Photoshop",
+                            "extension": ".psd",
+                            "href": "/templates/template.psd",
+                            "color": "#2563eb"
+                        },
+                        {
+                            "id": "illustrator",
+                            "label": "Illustrator",
+                            "extension": ".ai",
+                            "href": "/templates/template.ai",
+                            "color": "#f97316"
+                        },
+                        {
+                            "id": "indesign",
+                            "label": "InDesign",
+                            "extension": ".indd",
+                            "href": "/templates/template.indd",
+                            "color": "#ec4899"
+                        },
+                        {
+                            "id": "jpeg",
+                            "label": "Jpeg",
+                            "extension": ".jpg",
+                            "href": "/templates/template.jpg",
+                            "color": "#0f766e"
+                        }
+                    ]
+                },
+                "design_service_banner": {
+                    "heading": "Need help designing your Business Cards?",
+                    "body": "Unlock our team of expert designers, enjoy special discounts and more with a MOO Business Plan.",
+                    "cta_label": "Compare plans",
+                    "cta_href": "/business-card-design-service",
+                    "image_url": "/images/product-detail/business-design-banner.png",
+                    "image_alt": "Two angled business card design concepts"
+                },
+                "paper_stocks": {
+                    "heading": "Check out our other paper stocks",
+                    "subtitle": "We start at premium and go all the way to extra fancy.",
+                    "items": [
+                        {
+                            "id": "cotton",
+                            "name": "Cotton Business Cards",
+                            "price": "50 cards from $33.00",
+                            "image_url": "/images/product-detail/paper-stocks/cotton-business-cards.png",
+                            "href": "/classic-cotton-business-card",
+                            "cta": "Shop Cotton Business Cards ›",
+                            "features": [
+                                "17pt thickness",
+                                "Made from cotton linters",
+                                "Uncoated bright white",
+                                "Lightweight & durable",
+                                "Sustainably sourced"
+                            ]
+                        },
+                        {
+                            "id": "super",
+                            "name": "Super Business Cards",
+                            "price": "50 cards from $33.00",
+                            "image_url": "/images/product-detail/paper-stocks/super-business-cards.png",
+                            "href": "/super-business-cards",
+                            "cta": "Shop Super Business Cards ›",
+                            "features": [
+                                "18pt thickness",
+                                "Silky smooth",
+                                "Soft Touch or High Gloss",
+                                "Foils & special finishes",
+                                "FSC® Certified"
+                            ]
+                        },
+                        {
+                            "id": "luxe",
+                            "name": "Luxe Business Cards",
+                            "price": "50 cards from $43.00",
+                            "image_url": "/images/product-detail/paper-stocks/luxe-business-cards.png",
+                            "href": "/luxe-business-cards",
+                            "cta": "Shop Luxe Business Cards ›",
+                            "features": [
+                                "32pt thickness",
+                                "4-Layer Mohawk Superfine®",
+                                "Eight color seams",
+                                "Uncoated texture",
+                                "FSC® Certified"
+                            ]
+                        },
+                        {
+                            "id": "classic",
+                            "name": "Classic Business Cards",
+                            "price": "50 cards from $23.00",
+                            "image_url": "/images/product-detail/paper-stocks/original-business-cards.png",
+                            "href": "/classic-business-cards",
+                            "cta": "Shop Classic Business Cards ›",
+                            "features": [
+                                "16pt thickness",
+                                "Premium paper",
+                                "Matte or Gloss finish",
+                                "Quality and value",
+                                "FSC® Certified"
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
     },
     "design_service_page": {
         "_source_file": "resources/js/pages/business-card-design-service.tsx",

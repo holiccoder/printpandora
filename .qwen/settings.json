@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(try *)",
+      "Bash(convertfrom-json)",
+      "Bash(out-null)",
+      "Bash(write-host *)",
+      "Bash(} *)",
+      "Bash(python *)",
+      "Bash(tomllib.load)",
+      "Bash(print)",
+      "Bash(\\\")",
+      "Bash(del *)"
+    ]
+  },
+  "$version": 4
+}

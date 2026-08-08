@@ -76,6 +76,109 @@ class DesignServicePricingTest extends TestCase
         );
     }
 
+    public function test_condition_based_pricing_json_uses_the_matching_option_rule(): void
+    {
+        $product = $this->makeProduct();
+        $product->forceFill([
+            'product_config' => [
+                'options' => [
+                    'paper_finish' => [
+                        'label' => 'Paper Finish',
+                        'values' => [
+                            ['code' => 'matte', 'label' => 'Matte'],
+                            ['code' => 'gloss', 'label' => 'Gloss'],
+                        ],
+                    ],
+                ],
+                'pricing' => [
+                    'mode' => 'rule_based',
+                    'rules' => [
+                        [
+                            'id' => 'matte',
+                            'match' => ['paper_finish' => 'matte'],
+                            'pricing' => [
+                                'packageName' => 'Matte',
+                                'basePrice' => 0.14,
+                                'startQuantity' => 200,
+                                'paperRates' => ['200' => 0, '500' => 20],
+                                'processes' => [],
+                            ],
+                        ],
+                        [
+                            'id' => 'gloss',
+                            'match' => ['paper_finish' => 'gloss'],
+                            'pricing' => [
+                                'packageName' => 'Gloss',
+                                'basePrice' => 0.2,
+                                'startQuantity' => 200,
+                                'paperRates' => ['200' => 0, '500' => 0],
+                                'processes' => [],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ])->save();
+
+        $this->assertSame(
+            56.0,
+            app(PricingService::class)->calculate($product->id, [
+                'paper_finish' => 'matte',
+                'quantity' => '500',
+            ]),
+        );
+        $this->assertSame(
+            100.0,
+            app(PricingService::class)->calculate($product->id, [
+                'paper_finish' => 'gloss',
+                'quantity' => '500',
+            ]),
+        );
+    }
+
+    public function test_condition_based_pricing_accepts_a_multi_select_option(): void
+    {
+        $product = $this->makeProduct();
+        $product->forceFill([
+            'product_config' => [
+                'options' => [
+                    'processes' => [
+                        'label' => 'Processes',
+                        'type' => 'multi_select',
+                        'values' => [
+                            ['code' => 'foil', 'label' => 'Foil'],
+                            ['code' => 'embossing', 'label' => 'Embossing'],
+                        ],
+                    ],
+                ],
+                'pricing' => [
+                    'mode' => 'rule_based',
+                    'rules' => [
+                        [
+                            'id' => 'foil',
+                            'match' => ['processes' => 'foil'],
+                            'pricing' => [
+                                'packageName' => 'Foil',
+                                'basePrice' => 0.14,
+                                'startQuantity' => 200,
+                                'paperRates' => ['200' => 0],
+                                'processes' => [],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ])->save();
+
+        $this->assertSame(
+            28.0,
+            app(PricingService::class)->calculate($product->id, [
+                'processes' => ['embossing', 'foil'],
+                'quantity' => '200',
+            ]),
+        );
+    }
+
     public function test_request_stores_code_and_fee_snapshot(): void
     {
         $this->post(route('business-card-design-service.store'), [
