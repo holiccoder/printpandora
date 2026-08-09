@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
+use App\Services\MediaLibraryCatalog;
+use App\Services\ProductImageResolver;
 use App\Services\ProductImageUploadService;
 use App\Support\ProductImagePolicy;
 use Filament\Actions;
@@ -30,7 +32,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Component as LivewireComponent;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -380,7 +382,19 @@ class ProductResource extends Resource
                                         ->label('色卡标题')
                                         ->required()
                                         ->live(onBlur: true)
-                                        ->maxLength(255),
+                                        ->maxLength(255)
+                                        ->afterStateUpdated(function (?string $state, TextInput $component): void {
+                                            $codePath = (string) str($component->getStatePath())
+                                                ->beforeLast('.')
+                                                ->append('.code');
+                                            $livewire = $component->getLivewire();
+
+                                            data_set(
+                                                $livewire,
+                                                $codePath,
+                                                Str::slug($state ?? '', '_'),
+                                            );
+                                        }),
                                     TextInput::make('code')
                                         ->label('色卡编码')
                                         ->required()
@@ -641,9 +655,8 @@ class ProductResource extends Resource
                 }
 
                 // Keep local previews on the same host and port as the
-                // Filament page. APP_URL may point to a different local
-                // development port, which leaves the preview spinner stuck.
-                $uploadedFile['url'] = '/storage/'.ltrim($file, '/');
+                // Filament page, using the original until WebP is ready.
+                $uploadedFile['url'] = app(ProductImageResolver::class)->url($file);
 
                 return $uploadedFile;
             });
@@ -664,6 +677,32 @@ class ProductResource extends Resource
             $upload->maxFiles($maxFiles);
         }
 
+        $modalUpload = FileUpload::make('new_images')
+            ->label('上传新图片')
+            ->image()
+            ->acceptedFileTypes(ProductImagePolicy::ALLOWED_MIME_TYPES)
+            ->disk('public')
+            ->directory($directory)
+            ->visibility('public')
+            ->fetchFileInformation(false)
+            ->saveUploadedFileUsing(function (FileUpload $component, TemporaryUploadedFile $file): string {
+                return app(ProductImageUploadService::class)->store(
+                    $file,
+                    $component->getDirectory() ?? '',
+                    $component->getDiskName(),
+                    $component->getVisibility(),
+                );
+            })
+            ->helperText('新上传的图片会在确认后自动选中，并在下次打开时显示在已上传图片列表中。');
+
+        if ($multiple) {
+            $modalUpload->multiple();
+        }
+
+        if ($maxFiles !== null) {
+            $modalUpload->maxFiles($maxFiles);
+        }
+
         $existingPicker = FormActions::make([
             Actions\Action::make('selectExistingImages')
                 ->label('选择已有图片')
@@ -673,15 +712,19 @@ class ProductResource extends Resource
                     ? '勾选要加入图库的图片，确认后会替换当前选择。也可以继续上传新图片。'
                     : '勾选要使用的图片，确认后会填入当前图片字段。也可以继续上传新图片。')
                 ->modalWidth('5xl')
-                ->fillForm(function ($schemaGet) use ($name): array {
+                ->fillForm(function ($schemaGet) use ($name, $multiple): array {
                     $current = $schemaGet($name);
                     $current = is_array($current)
                         ? array_values(array_filter($current))
                         : (filled($current) ? [(string) $current] : []);
 
-                    return ['images' => $current];
+                    return [
+                        'new_images' => $multiple ? [] : null,
+                        'images' => $current,
+                    ];
                 })
                 ->schema([
+                    $modalUpload,
                     CheckboxList::make('images')
                         ->label('图片')
                         ->options(fn (): array => static::existingImageOptions(withPreview: true))
@@ -690,18 +733,35 @@ class ProductResource extends Resource
                         ->columns(4)
                         ->searchable()
                         ->bulkToggleable()
-                        ->maxItems($multiple ? null : 1)
-                        ->required()
-                        ->helperText('已上传的图片按当前图片类型分类显示。'),
+                        ->maxItems($multiple ? $maxFiles : 1)
+                        ->helperText('显示全部已上传图片；转换状态会在重新打开窗口或刷新页面后更新。'),
                 ])
-                ->action(function (array $data, $schemaSet) use ($name, $multiple): void {
+                ->action(function (array $data, $schemaSet) use ($name, $multiple, $maxFiles): void {
+                    $uploaded = array_values(array_filter(
+                        Arr::wrap($data['new_images'] ?? []),
+                        fn (mixed $image): bool => is_string($image) && $image !== '',
+                    ));
                     $selected = array_values(array_filter($data['images'] ?? []));
 
-                    if ($selected === []) {
+                    if (! $multiple) {
+                        $image = $uploaded[0] ?? $selected[0] ?? null;
+
+                        if ($image !== null) {
+                            $schemaSet($name, $image);
+                        }
+
                         return;
                     }
 
-                    $schemaSet($name, $multiple ? $selected : $selected[0]);
+                    $images = array_values(array_unique([...$uploaded, ...$selected]));
+
+                    if ($maxFiles !== null) {
+                        $images = array_slice($images, 0, $maxFiles);
+                    }
+
+                    if ($images !== []) {
+                        $schemaSet($name, $images);
+                    }
                 }),
         ])->key('existing-image-picker-'.Str::slug($name))->fullWidth();
 
@@ -713,34 +773,29 @@ class ProductResource extends Resource
      */
     protected static function existingImageOptions(bool $withPreview = false): array
     {
-        $disk = Storage::disk('public');
-        $files = array_values(array_filter(
-            $disk->allFiles(),
-            fn (string $file): bool => ! Str::startsWith($file, ProductImagePolicy::ORIGINALS_DIRECTORY.'/')
-                && (bool) preg_match('/\.(?:jpe?g|png|webp|gif|svg)$/i', $file),
-        ));
-
-        usort($files, function (string $left, string $right) use ($disk): int {
-            $leftModified = $disk->lastModified($left);
-            $rightModified = $disk->lastModified($right);
-
-            if ($leftModified !== $rightModified) {
-                return $rightModified <=> $leftModified;
-            }
-
-            return strnatcasecmp($right, $left);
-        });
-
+        $assets = app(MediaLibraryCatalog::class)->assets();
         $options = [];
 
-        foreach ($files as $file) {
-            $basename = basename($file);
-            $label = e($basename.' — '.$file);
+        foreach ($assets as $asset) {
+            $file = is_string($asset['source_path'] ?? null)
+                ? $asset['source_path']
+                : ($asset['primary_path'] ?? null);
+
+            if (! is_string($file) || $file === '') {
+                continue;
+            }
+
+            $basename = (string) ($asset['name'] ?? basename($file));
+            $previewUrl = (string) ($asset['url'] ?? app(ProductImageResolver::class)->url($file));
+            $status = (string) ($asset['conversion_status'] ?? ProductImagePolicy::STATUS_ORIGINAL);
+            $statusLabel = (string) ($asset['conversion_status_label'] ?? '原图');
+            $label = e($basename.' — '.$file.' — '.$statusLabel);
 
             $options[$file] = $withPreview
                 ? '<div class="image-picker-card-content">'
                     .'<div class="image-picker-card-preview">'
-                    .'<img src="'.e('/storage/'.ltrim($file, '/')).'" alt="'.e($basename).'" class="image-picker-card-image" loading="lazy">'
+                    .'<img src="'.e($previewUrl).'" alt="'.e($basename).'" class="image-picker-card-image" loading="lazy">'
+                    .'<span class="image-picker-card-status" data-status="'.e($status).'">'.e($statusLabel).'</span>'
                     .'</div>'
                     .'<div class="image-picker-card-caption">'
                     .'<span class="image-picker-card-name" title="'.e($basename).'">'.e($basename).'</span>'

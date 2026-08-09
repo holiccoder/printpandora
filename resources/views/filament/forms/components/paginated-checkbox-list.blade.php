@@ -69,6 +69,7 @@
         }
 
         .image-picker-card-preview {
+            position: relative;
             width: 100%;
             aspect-ratio: 1 / 1;
             overflow: hidden;
@@ -82,6 +83,39 @@
             height: 100%;
             object-fit: cover;
             object-position: center;
+        }
+
+        .image-picker-card-status {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            min-height: 1.5rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            color: var(--gray-700);
+            background: rgb(255 255 255 / 90%);
+            box-shadow: 0 1px 3px rgb(0 0 0 / 14%);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            line-height: 1rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .image-picker-card-status[data-status='processing'] {
+            color: #92400e;
+            background: rgb(254 243 199 / 94%);
+        }
+
+        .image-picker-card-status[data-status='ready'] {
+            color: #166534;
+            background: rgb(220 252 231 / 94%);
+        }
+
+        .image-picker-card-status[data-status='failed'] {
+            color: #991b1b;
+            background: rgb(254 226 226 / 94%);
         }
 
         .image-picker-card-caption {
@@ -115,6 +149,116 @@
             line-height: 1rem;
         }
 
+        .image-picker-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1.25rem;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.875rem;
+            background: linear-gradient(135deg, white 0%, var(--gray-50) 100%);
+            box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+        }
+
+        .image-picker-pagination-summary,
+        .image-picker-pagination-count {
+            display: inline-flex;
+            align-items: center;
+            color: var(--gray-600);
+            font-size: 0.8125rem;
+            line-height: 1.25rem;
+        }
+
+        .image-picker-pagination-summary {
+            gap: 0.375rem;
+        }
+
+        .image-picker-pagination-count {
+            margin-left: 0.5rem;
+            padding-left: 0.75rem;
+            border-left: 1px solid var(--gray-200);
+            color: var(--gray-500);
+        }
+
+        .image-picker-pagination-count-value {
+            margin: 0 0.25rem;
+            color: var(--gray-700);
+            font-weight: 600;
+        }
+
+        .image-picker-pagination-current {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2rem;
+            height: 2rem;
+            padding: 0 0.5rem;
+            border: 1px solid var(--primary-200, var(--gray-300));
+            border-radius: 0.625rem;
+            background: var(--primary-50, var(--gray-100));
+            color: var(--primary-700, var(--gray-900));
+            font-weight: 700;
+            box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+        }
+
+        .image-picker-pagination-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .image-picker-pagination-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 2.5rem;
+            padding: 0.5rem 0.875rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.625rem;
+            background: white;
+            color: var(--gray-700);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            line-height: 1rem;
+            box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+            transition: color 150ms ease, border-color 150ms ease, background 150ms ease,
+                box-shadow 150ms ease, transform 150ms ease;
+        }
+
+        .image-picker-pagination-button:hover:not(:disabled) {
+            border-color: var(--primary-400, var(--gray-400));
+            background: var(--primary-50, var(--gray-50));
+            color: var(--primary-700, var(--gray-900));
+            box-shadow: 0 4px 10px rgb(0 0 0 / 8%);
+            transform: translateY(-1px);
+        }
+
+        .image-picker-pagination-button:active:not(:disabled) {
+            box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+            transform: translateY(0);
+        }
+
+        .image-picker-pagination-button:focus-visible {
+            outline: 2px solid var(--primary-500);
+            outline-offset: 2px;
+        }
+
+        .image-picker-pagination-button:disabled {
+            cursor: not-allowed;
+            border-color: var(--gray-200);
+            background: var(--gray-100);
+            color: var(--gray-400);
+            box-shadow: none;
+        }
+
+        .image-picker-pagination-arrow {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
         .dark .image-picker-checkbox-list .fi-fo-checkbox-list-option {
             border-color: var(--gray-700);
             background: var(--gray-900);
@@ -134,6 +278,72 @@
 
         .dark .image-picker-card-path {
             color: var(--gray-400);
+        }
+
+        .dark .image-picker-pagination {
+            border-color: var(--gray-700);
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-950) 100%);
+            box-shadow: 0 1px 2px rgb(0 0 0 / 25%);
+        }
+
+        .dark .image-picker-pagination-summary {
+            color: var(--gray-300);
+        }
+
+        .dark .image-picker-pagination-count {
+            border-left-color: var(--gray-700);
+            color: var(--gray-400);
+        }
+
+        .dark .image-picker-pagination-count-value {
+            color: var(--gray-200);
+        }
+
+        .dark .image-picker-pagination-current {
+            border-color: var(--primary-500, var(--gray-600));
+            background: rgb(255 255 255 / 7%);
+            color: var(--primary-300, white);
+            box-shadow: none;
+        }
+
+        .dark .image-picker-pagination-button {
+            border-color: var(--gray-600);
+            background: var(--gray-800);
+            color: var(--gray-200);
+            box-shadow: none;
+        }
+
+        .dark .image-picker-pagination-button:hover:not(:disabled) {
+            border-color: var(--primary-400, var(--gray-500));
+            background: var(--gray-700);
+            color: white;
+        }
+
+        .dark .image-picker-pagination-button:disabled {
+            border-color: var(--gray-800);
+            background: var(--gray-900);
+            color: var(--gray-600);
+        }
+
+        @media (max-width: 40rem) {
+            .image-picker-pagination {
+                align-items: stretch;
+                flex-direction: column;
+                padding: 0.75rem;
+            }
+
+            .image-picker-pagination-summary {
+                justify-content: center;
+            }
+
+            .image-picker-pagination-controls {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .image-picker-pagination-button {
+                width: 100%;
+            }
         }
     </style>
 @endonce
@@ -284,28 +494,38 @@
             <div
                 x-cloak
                 x-show="totalPages > 1"
-                class="mt-4 flex items-center justify-between gap-3 border-t border-gray-200 pt-4 dark:border-gray-700"
+                x-transition.opacity.duration.150ms
+                class="image-picker-pagination"
             >
-                <span class="text-sm text-gray-600 dark:text-gray-400">
-                    第 <span x-text="page"></span> / <span x-text="totalPages"></span> 页
+                <span class="image-picker-pagination-summary" aria-live="polite">
+                    <span>第</span>
+                    <strong class="image-picker-pagination-current" x-text="page"></strong>
+                    <span>/ <span x-text="totalPages"></span> 页</span>
+                    <span class="image-picker-pagination-count">
+                        共 <span class="image-picker-pagination-count-value" x-text="filteredImageOptions.length"></span> 张
+                    </span>
                 </span>
 
-                <div class="flex items-center gap-2">
+                <div class="image-picker-pagination-controls">
                     <button
                         type="button"
                         x-on:click="setPage(page - 1)"
                         x-bind:disabled="page <= 1"
-                        class="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
+                        x-bind:aria-disabled="page <= 1"
+                        class="image-picker-pagination-button"
                     >
-                        上一页
+                        <span aria-hidden="true" class="image-picker-pagination-arrow">←</span>
+                        <span>上一页</span>
                     </button>
                     <button
                         type="button"
                         x-on:click="setPage(page + 1)"
                         x-bind:disabled="page >= totalPages"
-                        class="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
+                        x-bind:aria-disabled="page >= totalPages"
+                        class="image-picker-pagination-button"
                     >
-                        下一页
+                        <span>下一页</span>
+                        <span aria-hidden="true" class="image-picker-pagination-arrow">→</span>
                     </button>
                 </div>
             </div>

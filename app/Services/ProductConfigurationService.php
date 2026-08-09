@@ -19,6 +19,7 @@ class ProductConfigurationService
 {
     public function __construct(
         private HardcodedContent $content,
+        private ProductImageResolver $imageResolver,
     ) {}
 
     /**
@@ -795,10 +796,10 @@ class ProductConfigurationService
     public function storefrontOptions(Product $product): ?array
     {
         if ($this->hasCanonicalConfig($product)) {
-            return $this->withSharedBusinessCardDetailSections(
+            return $this->withResolvedStorefrontImages($this->withSharedBusinessCardDetailSections(
                 $this->toStorefrontOptions($this->canonicalConfig($product), $product),
                 $product,
-            );
+            ));
         }
 
         $legacy = $this->loadLegacyOptions($product);
@@ -815,7 +816,9 @@ class ProductConfigurationService
             }
         }
 
-        return $this->withSharedBusinessCardDetailSections($legacy, $product);
+        return $this->withResolvedStorefrontImages(
+            $this->withSharedBusinessCardDetailSections($legacy, $product),
+        );
     }
 
     /**
@@ -1225,23 +1228,55 @@ class ProductConfigurationService
 
     private function storefrontImageUrl(mixed $image): mixed
     {
-        if (! is_string($image) || $image === '') {
-            return $image;
+        return $this->imageResolver->url($image);
+    }
+
+    /**
+     * Resolve image-bearing values in both canonical and legacy storefront
+     * configurations without changing non-image product data.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private function withResolvedStorefrontImages(array $options): array
+    {
+        $singleImageKeys = [
+            'featured_image',
+            'image',
+            'image_url',
+            'primary',
+            'swatch_image',
+            'thumbnail',
+            'thumbnail_url',
+        ];
+        $imageListKeys = ['gallery', 'images'];
+
+        foreach ($options as $key => $value) {
+            if (is_string($value) && in_array($key, $singleImageKeys, true)) {
+                $options[$key] = $this->storefrontImageUrl($value);
+
+                continue;
+            }
+
+            if (! is_array($value)) {
+                continue;
+            }
+
+            if (in_array($key, $imageListKeys, true)) {
+                $options[$key] = array_map(
+                    fn (mixed $image): mixed => is_array($image)
+                        ? $this->withResolvedStorefrontImages($image)
+                        : $this->storefrontImageUrl($image),
+                    $value,
+                );
+
+                continue;
+            }
+
+            $options[$key] = $this->withResolvedStorefrontImages($value);
         }
 
-        if (Str::startsWith(ltrim($image), '<svg')) {
-            return 'data:image/svg+xml,'.rawurlencode($image);
-        }
-
-        if (Str::startsWith($image, ['http://', 'https://', '//', '/'])) {
-            return $image;
-        }
-
-        if (Str::startsWith($image, 'storage/')) {
-            return '/'.ltrim($image, '/');
-        }
-
-        return '/storage/'.ltrim($image, '/');
+        return $options;
     }
 
     /**

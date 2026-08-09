@@ -104,6 +104,40 @@ Ports are read from `.env`:
 
 Change them in `.env` and restart the container with `docker compose up -d`.
 
+### Product image queue
+
+Product image uploads preserve the original immediately and generate the 2000px WebP derivative on the database queue. The storefront uses the original until the derivative is ready, so uploads remain usable even if the worker is temporarily unavailable.
+
+The Docker image runs the queue worker through Supervisor. Rebuild and restart after changing its configuration:
+
+```bash
+docker compose up --build -d
+docker compose logs -f app
+```
+
+On a non-Docker server, run the equivalent command under Supervisor, systemd, or another persistent process manager:
+
+```bash
+php -d memory_limit=512M artisan queue:work database \
+    --queue=default --sleep=1 --timeout=180 --tries=3 --backoff=10 --memory=450
+```
+
+Useful operational commands:
+
+```bash
+php artisan queue:restart
+php artisan queue:failed
+php artisan queue:retry <job-id>
+```
+
+Keep `DB_QUEUE_RETRY_AFTER` above the worker timeout; the supplied default is 240 seconds. Conversion failures leave the original available and appear as failed in the Filament media picker until the job succeeds or the image is uploaded again.
+
+Run the image-enabled PHP suite with the same memory ceiling used by the worker:
+
+```bash
+php -d memory_limit=512M vendor/bin/phpunit
+```
+
 ### Safe catalog synchronization
 
 Product categories and products can be moved between environments without replacing users, orders, payments, or other live data.

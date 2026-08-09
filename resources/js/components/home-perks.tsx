@@ -10,11 +10,9 @@ import { useContent } from '@/hooks/use-content';
 
 const ICONS: Array<() => React.ReactElement> = [
     ProductVarietyIcon,
-    CraftsmanshipVarietyIcon,
     MaterialVarietyIcon,
     GreatValueIcon,
     DesignServiceIcon,
-    GlobalPartnerIcon,
 ];
 
 export function HomePerks() {
@@ -27,7 +25,7 @@ export function HomePerks() {
             className="border-y border-neutral-100 bg-white"
         >
             <div className="mx-auto max-w-7xl px-4 py-10 lg:py-14">
-                <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+                <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                     {perks.items.map((perk, i) => {
                         const Icon = ICONS[i] ?? ProductVarietyIcon;
                         const C = perk.href ? Link : 'div';

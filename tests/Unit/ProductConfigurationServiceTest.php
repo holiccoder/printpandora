@@ -5,12 +5,57 @@ namespace Tests\Unit;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductConfigurationService;
+use App\Support\ProductImagePolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProductConfigurationServiceTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_legacy_storefront_images_use_originals_until_webp_derivatives_are_ready(): void
+    {
+        Storage::fake('public');
+
+        $sourcePath = ProductImagePolicy::ORIGINALS_DIRECTORY.'/product-galleries/legacy.png';
+        $webpPath = 'product-galleries/legacy.webp';
+        $product = new Product([
+            'name' => 'Legacy image product',
+            'slug' => 'legacy-image-product',
+            'product_options' => [
+                'finish' => [[
+                    'name' => 'Matte',
+                    'code' => 'matte',
+                    'swatch_image' => $sourcePath,
+                ]],
+                'galleries' => [[
+                    'id' => 'default',
+                    'images' => [$sourcePath, 'https://cdn.example.com/legacy.jpg'],
+                ]],
+            ],
+        ]);
+        $product->setRelation('category', new ProductCategory(['slug' => 'other']));
+
+        Storage::disk('public')->put($sourcePath, 'original');
+
+        $service = app(ProductConfigurationService::class);
+        $processing = $service->storefrontOptions($product);
+
+        $this->assertSame('/storage/'.$sourcePath, data_get($processing, 'finish.0.swatch_image'));
+        $this->assertSame('/storage/'.$sourcePath, data_get($processing, 'galleries.0.images.0'));
+        $this->assertSame(
+            'https://cdn.example.com/legacy.jpg',
+            data_get($processing, 'galleries.0.images.1'),
+        );
+
+        Storage::disk('public')->put($webpPath, 'webp');
+
+        $ready = $service->storefrontOptions($product);
+
+        $this->assertSame('/storage/'.$webpPath, data_get($ready, 'finish.0.swatch_image'));
+        $this->assertSame('/storage/'.$webpPath, data_get($ready, 'galleries.0.images.0'));
+    }
 
     public function test_legacy_classic_standard_data_is_exposed_as_form_state(): void
     {

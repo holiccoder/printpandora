@@ -2,9 +2,18 @@
 
 namespace App\Models;
 
+use App\Services\MediaLibraryCatalog;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
 
 class Media extends BaseMedia
 {
-    // Extends Spatie's Base Media Model to make it manageable via Filament resources
+    protected static function booted(): void
+    {
+        static::saved(function (): void {
+            app(MediaLibraryCatalog::class)->invalidate();
+        });
+        static::deleted(function (): void {
+            app(MediaLibraryCatalog::class)->invalidate();
+        });
+    }
 }

@@ -30,6 +30,7 @@ class ProductImageService
     public function __construct(
         private HardcodedContent $content,
         private ProductConfigurationService $configuration,
+        private ProductImageResolver $imageResolver,
     ) {}
 
     public function supportsBusinessCard(Product $product): bool
@@ -298,11 +299,12 @@ class ProductImageService
         }
 
         if (Str::startsWith($path, [
+            ProductImagePolicy::ORIGINALS_DIRECTORY.'/',
             'product-galleries/',
             'product-options/',
             'product-featured-overrides/',
         ])) {
-            return '/storage/'.ltrim($path, '/');
+            return $this->imageResolver->url($path);
         }
 
         return asset(ltrim($path, '/'));

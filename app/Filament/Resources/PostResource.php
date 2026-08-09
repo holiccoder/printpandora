@@ -4,14 +4,19 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Models\Post;
+use App\Services\ProductImageUploadService;
+use App\Support\ProductImagePolicy;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class PostResource extends Resource
 {
@@ -50,13 +55,39 @@ class PostResource extends Resource
                             ->label('作者')
                             ->relationship('author', 'name')
                             ->required(),
-                        Forms\Components\FileUpload::make('featured_image')
+                        FileUpload::make('featured_image')
                             ->label('封面图片')
                             ->image()
+                            ->acceptedFileTypes(ProductImagePolicy::ALLOWED_MIME_TYPES)
+                            ->maxSize(10240)
+                            ->disk('public')
                             ->directory('blog')
-                            ->imageEditor(),
-                        Forms\Components\RichEditor::make('body')
+                            ->visibility('public')
+                            ->fetchFileInformation(false)
+                            ->imageEditor()
+                            ->saveUploadedFileUsing(function (FileUpload $component, TemporaryUploadedFile $file): string {
+                                return app(ProductImageUploadService::class)->store(
+                                    $file,
+                                    $component->getDirectory() ?? 'blog',
+                                    $component->getDiskName(),
+                                    $component->getVisibility(),
+                                );
+                            }),
+                        RichEditor::make('body')
                             ->label('正文')
+                            ->fileAttachmentsDisk('public')
+                            ->fileAttachmentsDirectory('blog')
+                            ->fileAttachmentsVisibility('public')
+                            ->fileAttachmentsAcceptedFileTypes(ProductImagePolicy::ALLOWED_MIME_TYPES)
+                            ->fileAttachmentsMaxSize(10240)
+                            ->saveUploadedFileAttachmentUsing(
+                                fn (TemporaryUploadedFile $file): string => app(ProductImageUploadService::class)->store(
+                                    $file,
+                                    'blog',
+                                    'public',
+                                    'public',
+                                ),
+                            )
                             ->required()
                             ->columnSpanFull(),
                         Forms\Components\Toggle::make('is_published')

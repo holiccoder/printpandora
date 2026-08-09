@@ -2,20 +2,24 @@
 
 namespace App\Services;
 
+use App\Jobs\GenerateProductImageWebp;
 use App\Support\ProductImagePolicy;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use RuntimeException;
-use Spatie\Image\Enums\Fit;
-use Spatie\Image\Image;
 use Throwable;
 
 class ProductImageUploadService
 {
+    public function __construct(
+        private ProductImageResolver $resolver,
+        private MediaLibraryCatalog $catalog,
+    ) {}
+
     /**
-     * Preserve the source image and store a WebP derivative for storefront use.
+     * Preserve the source image and queue a WebP derivative for storefront use.
      */
     public function store(
         UploadedFile $file,
@@ -32,33 +36,10 @@ class ProductImageUploadService
         );
         $sourceName = "{$identifier}.{$sourceExtension}";
         $webpPath = $this->joinPath($directory, "{$identifier}.webp");
-        $temporaryWebpPath = tempnam(sys_get_temp_dir(), 'product-image-');
-
-        if ($temporaryWebpPath === false) {
-            throw new RuntimeException('Unable to create a temporary product image.');
-        }
-
         $storage = Storage::disk($disk);
         $storedSourcePath = null;
 
         try {
-            $sourcePath = $file->getRealPath();
-
-            if ($sourcePath === false) {
-                throw new RuntimeException('Unable to read the uploaded product image.');
-            }
-
-            Image::load($sourcePath)
-                ->orientation()
-                ->fit(
-                    Fit::Max,
-                    ProductImagePolicy::MAX_DIMENSION,
-                    ProductImagePolicy::MAX_DIMENSION,
-                )
-                ->format('webp')
-                ->quality(ProductImagePolicy::WEBP_QUALITY)
-                ->save($temporaryWebpPath);
-
             $storedSourcePath = $storage->putFileAs(
                 $sourceDirectory,
                 $file,
@@ -70,39 +51,31 @@ class ProductImageUploadService
                 throw new RuntimeException('Unable to preserve the original product image.');
             }
 
-            $webpStream = fopen($temporaryWebpPath, 'rb');
+            $storage->delete($this->resolver->failureMarkerPath($webpPath));
 
-            if ($webpStream === false) {
-                throw new RuntimeException('Unable to read the optimized product image.');
-            }
+            GenerateProductImageWebp::dispatch(
+                disk: $disk,
+                sourcePath: $storedSourcePath,
+                webpPath: $webpPath,
+                visibility: $visibility,
+            )
+                ->onConnection(config('media-library.queue_connection_name', 'database'))
+                ->onQueue(config('media-library.queue_name', 'default'));
 
-            try {
-                $stored = $storage->put(
-                    $webpPath,
-                    $webpStream,
-                    ['visibility' => $visibility],
-                );
-            } finally {
-                fclose($webpStream);
-            }
+            $this->catalog->invalidate();
 
-            if (! $stored) {
-                throw new RuntimeException('Unable to store the optimized product image.');
-            }
-
-            return $webpPath;
+            return $storedSourcePath;
         } catch (Throwable $exception) {
             if (is_string($storedSourcePath)) {
                 $storage->delete($storedSourcePath);
             }
 
-            $storage->delete($webpPath);
+            $storage->delete([
+                $webpPath,
+                $this->resolver->failureMarkerPath($webpPath),
+            ]);
 
             throw $exception;
-        } finally {
-            if (is_file($temporaryWebpPath)) {
-                unlink($temporaryWebpPath);
-            }
         }
     }
 

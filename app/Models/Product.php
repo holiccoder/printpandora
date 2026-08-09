@@ -54,6 +54,10 @@ class Product extends Model implements HasMedia
             ->acceptsMimeTypes(ProductImagePolicy::ALLOWED_MIME_TYPES)
             ->withResponsiveImages();
 
+        $this->addMediaCollection('product-galleries')
+            ->acceptsMimeTypes(ProductImagePolicy::ALLOWED_MIME_TYPES)
+            ->withResponsiveImages();
+
         $this->addMediaCollection('product-gallery-overrides')
             ->acceptsMimeTypes(ProductImagePolicy::ALLOWED_MIME_TYPES)
             ->withResponsiveImages();
@@ -66,12 +70,7 @@ class Product extends Model implements HasMedia
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion(ProductImagePolicy::STOREFRONT_CONVERSION)
-            ->performOnCollections(
-                'gallery',
-                'product-gallery-overrides',
-                'product-featured-overrides',
-            )
-            ->nonQueued()
+            ->performOnCollections(...ProductImagePolicy::MEDIA_COLLECTIONS)
             ->orientation()
             ->fit(
                 Fit::Max,

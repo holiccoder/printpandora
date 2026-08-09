@@ -1881,85 +1881,92 @@ export default function ShopShow({
                                             <th className="px-4 py-2 font-medium">
                                                 {c.quantity_table_headers[2]}
                                             </th>
-                                            <th className="px-4 py-2 font-medium">
-                                                {c.quantity_table_headers[3]}
-                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100">
-                                        {quantityTiers.map((t: any) => {
-                                            const recommended = !!t.recommended;
-                                            const active =
-                                                selectedQty === t.qty;
-                                            const was = t.originalPrice;
-                                            const now = t.currentPrice;
+                                        {(() => {
+                                            const baseUnitPrice =
+                                                quantityTiers[0]?.pricePerCard ??
+                                                0;
+                                            return quantityTiers.map(
+                                                (t: any) => {
+                                                    const recommended =
+                                                        !!t.recommended;
+                                                    const active =
+                                                        selectedQty === t.qty;
+                                                    const now = t.currentPrice;
+                                                    const bracketPrice =
+                                                        t.qty * baseUnitPrice;
 
-                                            return (
-                                                <tr
-                                                    key={t.qty}
-                                                    onClick={() =>
-                                                        setSelectedQty(t.qty)
-                                                    }
-                                                    className={`cursor-pointer transition-colors ${
-                                                        active
-                                                            ? 'bg-[#800020]/5'
-                                                            : recommended
-                                                              ? 'bg-amber-50/60 hover:bg-amber-50'
-                                                              : 'hover:bg-neutral-50'
-                                                    }`}
-                                                >
-                                                    <td className="px-4 py-3">
-                                                        <label className="flex items-center gap-3">
-                                                            <input
-                                                                type="radio"
-                                                                name="qty"
-                                                                checked={active}
-                                                                onChange={() =>
-                                                                    setSelectedQty(
-                                                                        t.qty,
-                                                                    )
-                                                                }
-                                                                className="size-4 accent-[#800020]"
-                                                            />
-                                                            <span className="font-semibold text-neutral-900">
-                                                                {t.qty}
-                                                            </span>
-                                                            {recommended && (
-                                                                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-800 uppercase">
-                                                                    {t.badge ??
-                                                                        'Recommended'}
-                                                                </span>
-                                                            )}
-                                                        </label>
-                                                    </td>
-                                                    <td className="px-4 py-3 text-neutral-500">
-                                                        $
-                                                        {t.pricePerCard.toFixed(
-                                                            3,
-                                                        )}
-                                                    </td>
-                                                    <td className="px-4 py-3 text-neutral-400">
-                                                        {was != null &&
-                                                        was > now ? (
-                                                            <span className="line-through">
+                                                    return (
+                                                        <tr
+                                                            key={t.qty}
+                                                            onClick={() =>
+                                                                setSelectedQty(
+                                                                    t.qty,
+                                                                )
+                                                            }
+                                                            className={`cursor-pointer transition-colors ${
+                                                                active
+                                                                    ? 'bg-[#800020]/5'
+                                                                    : recommended
+                                                                      ? 'bg-amber-50/60 hover:bg-amber-50'
+                                                                      : 'hover:bg-neutral-50'
+                                                            }`}
+                                                        >
+                                                            <td className="px-4 py-3">
+                                                                <label className="flex items-center gap-3">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name="qty"
+                                                                        checked={active}
+                                                                        onChange={() =>
+                                                                            setSelectedQty(
+                                                                                t.qty,
+                                                                            )
+                                                                        }
+                                                                        className="size-4 accent-[#800020]"
+                                                                    />
+                                                                    <span className="font-semibold text-neutral-900">
+                                                                        {t.qty}
+                                                                    </span>
+                                                                    {recommended && (
+                                                                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-800 uppercase">
+                                                                            {t.badge ??
+                                                                                'Recommended'}
+                                                                        </span>
+                                                                    )}
+                                                                </label>
+                                                            </td>
+                                                            <td className="px-4 py-3 text-neutral-500">
+                                                                $
+                                                                {t.pricePerCard.toFixed(
+                                                                    3,
+                                                                )}
+                                                            </td>
+                                                            <td className="px-4 py-3 font-semibold text-neutral-900">
                                                                 $
                                                                 {Math.round(
-                                                                    was,
+                                                                    now,
                                                                 ).toFixed(0)}
-                                                            </span>
-                                                        ) : (
-                                                            <span>—</span>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-4 py-3 font-semibold text-neutral-900">
-                                                        $
-                                                        {Math.round(
-                                                            now,
-                                                        ).toFixed(0)}
-                                                    </td>
-                                                </tr>
+                                                                <span className="ml-2 font-normal text-neutral-400">
+                                                                    (
+                                                                    <span className="line-through">
+                                                                        $
+                                                                        {Number(
+                                                                            bracketPrice.toFixed(
+                                                                                2,
+                                                                            ),
+                                                                        )}
+                                                                    </span>
+                                                                    )
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                },
                                             );
-                                        })}
+                                        })()}
                                     </tbody>
                                 </table>
                             </div>

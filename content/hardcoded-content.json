@@ -451,10 +451,6 @@
                     "description": "From business cards to banners, every print essential in one place."
                 },
                 {
-                    "title": "Craftsmanship Variety",
-                    "description": "Foil, embossing, UV, die-cut and more — pick the finish that fits your brand."
-                },
-                {
                     "title": "Material Variety",
                     "description": "A curated range of stocks, from everyday 300gsm to ultra-thick 700gsm cotton."
                 },
@@ -465,10 +461,6 @@
                 {
                     "title": "1-on-1 Design Service",
                     "description": "Work directly with a designer to bring your ideas to life."
-                },
-                {
-                    "title": "Global Print Partner",
-                    "description": "We print and ship worldwide, wherever your business takes you."
                 }
             ]
         },
@@ -846,8 +838,7 @@
         "quantity_table_headers": [
             "Quantity",
             "Per card",
-            "Was",
-            "Now"
+            "Pack Price"
         ],
         "save_percentage_label": "Save {n}%",
         "delivery_callout": {
