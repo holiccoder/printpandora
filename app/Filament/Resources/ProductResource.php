@@ -58,7 +58,8 @@ class ProductResource extends Resource
                 Tabs::make('产品编辑')
                     ->persistTabInQueryString()
                     ->tabs([
-                        Tab::make('产品信息')
+                        Tab::make('product-info')
+                            ->label('产品信息')
                             ->icon('heroicon-o-information-circle')
                             ->schema([
                                 Section::make('产品信息')
@@ -132,7 +133,8 @@ class ProductResource extends Resource
                                             ->columnSpanFull(),
                                     ]),
                             ]),
-                        Tab::make('选项')
+                        Tab::make('options')
+                            ->label('选项')
                             ->icon('heroicon-o-adjustments-horizontal')
                             ->schema([
                                 Section::make('选项组')
@@ -243,7 +245,8 @@ class ProductResource extends Resource
                                             ->columnSpanFull(),
                                     ]),
                             ]),
-                        Tab::make('图库')
+                        Tab::make('gallery')
+                            ->label('图库')
                             ->icon('heroicon-o-photo')
                             ->schema([
                                 Section::make('基于选项的图库规则')
@@ -288,7 +291,8 @@ class ProductResource extends Resource
                                             ->columnSpanFull(),
                                     ]),
                             ]),
-                        Tab::make('价格')
+                        Tab::make('pricing')
+                            ->label('价格')
                             ->icon('heroicon-o-currency-dollar')
                             ->schema([
                                 Hidden::make('product_config.pricing.mode')
@@ -370,7 +374,8 @@ class ProductResource extends Resource
                 $optionStateKey = (string) $optionKey;
             }
 
-            $tabs[] = Tab::make($label)
+            $tabs[] = Tab::make($optionStateKey)
+                ->label($label)
                 ->schema([
                     Section::make("{$label} 选项值")
                         ->description('第一个选项值将自动作为默认值。')
