@@ -87,7 +87,7 @@ function SocialLinks({ links }: { links: FooterSocialLink[] }) {
 
     return (
         <ul
-            className="flex shrink-0 items-center justify-center gap-1 md:order-none"
+            className="flex flex-wrap items-center gap-1"
             aria-label="Social media"
         >
             {links.map((link) => (
@@ -117,9 +117,9 @@ export function StorefrontFooter() {
         <footer className="border-t border-neutral-100 bg-white">
             <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6 lg:py-16">
                 {/* Main columns */}
-                <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
                     {/* Brand column */}
-                    <div className="md:col-span-2 lg:col-span-1">
+                    <div className="md:col-span-2 lg:col-span-2">
                         <Link
                             href="/"
                             className="flex min-h-[100px] items-center justify-center"
@@ -131,35 +131,41 @@ export function StorefrontFooter() {
                             />
                         </Link>
                         <p className="mt-4 text-sm leading-relaxed text-neutral-600">
-                            {f.brand.intro}
+                            {f.brand.intro}{' '}
+                            <Link
+                                href={f.brand.more_link_href}
+                                className={`font-semibold ${TEAL}`}
+                            >
+                                {f.brand.more_link_label}
+                            </Link>
                         </p>
+                        <div className="mt-5">
+                            <SocialLinks links={socialLinks} />
+                        </div>
                     </div>
 
-                    {/* Products */}
+                    {/* Products and services */}
                     <div>
                         <ColumnHeading>
-                            {f.column_headings.products}
+                            {f.column_headings.products_services}
                         </ColumnHeading>
-                        <LinkList links={f.products} />
+                        <LinkList links={f.products_services} />
                     </div>
 
-                    {/* Essential Links */}
+                    {/* More about InkPavo */}
                     <div>
                         <ColumnHeading>
-                            {f.column_headings.essential_links}
+                            {f.column_headings.more_about}
                         </ColumnHeading>
-                        <LinkList
-                            links={[
-                                ...f.essential_links,
-                                ...f.legal_bar.legal_links,
-                            ]}
-                        />
+                        <LinkList links={f.more_about} />
                     </div>
 
-                    {/* Social / Other */}
-                    <div className="flex flex-col items-start">
-                        <ColumnHeading>Follow us</ColumnHeading>
-                        <SocialLinks links={socialLinks} />
+                    {/* Essential pages */}
+                    <div>
+                        <ColumnHeading>
+                            {f.column_headings.essential_pages}
+                        </ColumnHeading>
+                        <LinkList links={f.essential_pages} />
                     </div>
                 </div>
 

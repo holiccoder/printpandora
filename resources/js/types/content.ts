@@ -108,15 +108,19 @@ export interface FooterSocialLink {
 
 export interface FooterContent {
     column_headings: {
-        products: string;
-        essential_links: string;
+        products_services: string;
+        more_about: string;
+        essential_pages: string;
     };
     brand: {
         logo_url: string;
         intro: string;
+        more_link_label: string;
+        more_link_href: string;
     };
-    products: NavLink[];
-    essential_links: NavLink[];
+    products_services: NavLink[];
+    more_about: NavLink[];
+    essential_pages: NavLink[];
     social_links?: FooterSocialLink[];
     legal_bar: FooterLegalBar;
 }

@@ -196,20 +196,19 @@
         },
         "footer": {
             "column_headings": {
-                "products": "Products",
-                "essential_links": "Essential Links"
+                "products_services": "Products and Services",
+                "more_about": "More about InkPavo",
+                "essential_pages": "Essential Pages"
             },
             "brand": {
                 "logo_url": "/images/footer-logo.png",
-                "intro": "Since establishing our presence in Shanghai, China in 2003, we have been a pioneer in China's printing industry for 23 years, building deep technical expertise and industry insight. With over 20 years of offline printing experience and 15 years of online printing services, we have developed a precise understanding of the core needs of individual consumers, corporate clients, advertising agencies, and designers — and we provide tailored solutions for each group."
+                "intro": "InkPavo has over 20 years of offline printing experience and 15 years of online printing services, we have developed a precise understanding of the core needs of individual consumers, corporate clients, advertising agencies, and designers — and we provide tailored solutions for each group.",
+                "more_link_label": "More about InkPavo",
+                "more_link_href": "/about"
             },
-            "products": [
+            "products_services": [
                 {
-                    "label": "All Products",
-                    "href": "/shop"
-                },
-                {
-                    "label": "Business Cards",
+                    "label": "Business cards",
                     "href": "/shop?cat=business-cards"
                 },
                 {
@@ -217,50 +216,56 @@
                     "href": "/postcards"
                 },
                 {
-                    "label": "Stickers and Labels",
+                    "label": "Stickers and labels",
                     "href": "/stickers-and-labels"
                 },
                 {
-                    "label": "Brochures",
-                    "href": "/flyers-and-brochures"
-                },
-                {
-                    "label": "Flyers",
+                    "label": "Brochures and flyers",
                     "href": "/flyers-and-brochures"
                 }
             ],
-            "essential_links": [
+            "more_about": [
                 {
                     "label": "Contact us",
                     "href": "/contact"
-                },
-                {
-                    "label": "Refer and earn",
-                    "href": "/refer"
-                },
-                {
-                    "label": "Shipping policy",
-                    "href": "/shipping-calculator"
-                },
-                {
-                    "label": "About InkPavo",
-                    "href": "/about"
-                },
-                {
-                    "label": "FAQs",
-                    "href": "/help"
-                },
-                {
-                    "label": "Shipping and cost calculator",
-                    "href": "/shipping-calculator"
                 },
                 {
                     "label": "Blog",
                     "href": "/blog"
                 },
                 {
-                    "label": "Affiliate Program",
+                    "label": "FAQ and Help Center",
+                    "href": "/help"
+                },
+                {
+                    "label": "About InkPavo",
+                    "href": "/about"
+                },
+                {
+                    "label": "Affiliate program",
                     "href": "/affiliate-program"
+                }
+            ],
+            "essential_pages": [
+                {
+                    "label": "Privacy policy",
+                    "href": "/privacy"
+                },
+                {
+                    "label": "Terms and conditions",
+                    "href": "/terms"
+                },
+                {
+                    "label": "Sitemap",
+                    "href": "/sitemap.xml"
+                },
+                {
+                    "label": "Shipping and cost calculator",
+                    "href": "/shipping-calculator"
+                },
+                {
+                    "label": "Shipping policy",
+                    "href": "/shipping"
                 }
             ],
             "social_links": [
@@ -304,7 +309,7 @@
                     },
                     {
                         "label": "Sitemap",
-                        "href": "/sitemap"
+                        "href": "/sitemap.xml"
                     }
                 ]
             }
