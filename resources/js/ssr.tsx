@@ -5,9 +5,9 @@ import type { ComponentType } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import StorefrontLayout from '@/layouts/storefront-layout';
 import '../css/app.css';
 
 const appName = process.env.VITE_APP_NAME || 'Laravel';
@@ -45,9 +45,9 @@ createServer((page) =>
                 case name.startsWith('auth/'):
                     return AuthLayout;
                 case name.startsWith('settings/'):
-                    return [AppLayout, SettingsLayout];
+                    return [StorefrontLayout, SettingsLayout];
                 default:
-                    return AppLayout;
+                    return null;
             }
         },
         // laravel-vite-plugin's inferred union is wider than the resolver

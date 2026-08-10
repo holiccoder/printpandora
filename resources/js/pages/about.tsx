@@ -44,16 +44,6 @@ export default function About() {
                                     {p}
                                 </p>
                             ))}
-                            {c.sections.map((s: any, i: number) => (
-                                <div key={`s-${i}`} className="space-y-4 pt-6 border-t border-neutral-100">
-                                    <h2 className="font-serif text-2xl font-bold text-neutral-900">
-                                        {s.heading}
-                                    </h2>
-                                    <p className="text-sm leading-relaxed text-neutral-600">
-                                        {s.body}
-                                    </p>
-                                </div>
-                            ))}
                         </div>
 
                         {/* Right Side: Image */}
@@ -68,8 +58,22 @@ export default function About() {
                 </div>
             </div>
 
+            {/* Full-width Vision Section */}
+            {c.sections.map((s: any, i: number) => (
+                <div key={`s-${i}`} className="bg-neutral-50 py-16 lg:py-20 border-y border-neutral-100/80">
+                    <div className="mx-auto max-w-4xl px-4 text-center">
+                        <h2 className="font-serif text-3xl font-bold text-neutral-900 md:text-4xl">
+                            {s.heading}
+                        </h2>
+                        <p className="mt-6 text-base leading-relaxed text-neutral-600 max-w-3xl mx-auto">
+                            {s.body}
+                        </p>
+                    </div>
+                </div>
+            ))}
+
             {/* Core Values / Feature Cards Section */}
-            <div className="bg-[#FAF7F2] py-16 lg:py-24 border-y border-neutral-100">
+            <div className="bg-[#FAF7F2] py-16 lg:py-24 border-b border-neutral-100">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <header className="mx-auto mb-16 max-w-2xl text-center">
                         <h2 className="font-serif text-3xl font-bold text-[#800020] md:text-4xl">
