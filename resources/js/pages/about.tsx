@@ -1,7 +1,7 @@
+import { Palette, Award, Zap, Smile, ArrowRight } from 'lucide-react';
+import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
-import SEO from '@/components/seo';
-import { Palette, Award, Zap, Smile, ArrowRight } from 'lucide-react';
 
 export default function About() {
     const c = useContent('about_page');
@@ -19,28 +19,40 @@ export default function About() {
             <SEO title={c.title} description={c.description} />
 
             {/* Hero Section */}
-            <div className="relative bg-[#FAF7F2] py-20 overflow-hidden border-b border-neutral-100">
-                <div className="mx-auto max-w-5xl px-4 text-center">
-                    <span className="text-xs font-semibold tracking-wider text-[#800020] uppercase">
-                        {c.eyebrow}
-                    </span>
-                    <h1 className="mt-4 font-serif text-4xl font-bold tracking-tight text-neutral-900 md:text-5xl lg:text-6xl">
-                        {c.title}
-                    </h1>
-                    <p className="mx-auto mt-6 max-w-xl text-lg text-neutral-600 md:text-xl font-medium tracking-wide">
-                        {c.description}
-                    </p>
+            <div className="relative isolate min-h-[27rem] overflow-hidden border-b border-neutral-100 bg-[#FAF7F2]">
+                <img
+                    src="/images/about/hero-banner.png"
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 h-full w-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#FAF7F2] via-[#FAF7F2]/90 to-[#FAF7F2]/10" />
+                <div className="relative mx-auto flex min-h-[27rem] max-w-7xl items-center px-4 py-20 sm:px-6 lg:px-8">
+                    <div className="max-w-xl text-left">
+                        <span className="text-xs font-semibold tracking-wider text-[#800020] uppercase">
+                            {c.eyebrow}
+                        </span>
+                        <h1 className="mt-4 font-serif text-4xl font-bold tracking-tight text-neutral-900 md:text-5xl lg:text-6xl">
+                            {c.title}
+                        </h1>
+                        <p className="mt-6 max-w-xl text-lg font-medium tracking-wide text-neutral-600 md:text-xl">
+                            {c.description}
+                        </p>
+                    </div>
                 </div>
             </div>
 
             {/* Split Story Section */}
             <div className="bg-white py-16 lg:py-24">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 items-center">
+                    <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
                         {/* Left Side: Body text */}
-                        <div className="space-y-6 text-neutral-700 leading-relaxed text-base">
+                        <div className="space-y-6 text-base leading-relaxed text-neutral-700">
                             {c.body_paragraphs.map((p: string, i: number) => (
-                                <p key={`p-${i}`} className="first:text-lg first:text-neutral-950">
+                                <p
+                                    key={`p-${i}`}
+                                    className="first:text-lg first:text-neutral-950"
+                                >
                                     {p}
                                 </p>
                             ))}
@@ -60,12 +72,15 @@ export default function About() {
 
             {/* Full-width Vision Section */}
             {c.sections.map((s: any, i: number) => (
-                <div key={`s-${i}`} className="bg-neutral-50 py-16 lg:py-20 border-y border-neutral-100/80">
+                <div
+                    key={`s-${i}`}
+                    className="border-y border-neutral-100/80 bg-neutral-50 py-16 lg:py-20"
+                >
                     <div className="mx-auto max-w-4xl px-4 text-center">
                         <h2 className="font-serif text-3xl font-bold text-neutral-900 md:text-4xl">
                             {s.heading}
                         </h2>
-                        <p className="mt-6 text-base leading-relaxed text-neutral-600 max-w-3xl mx-auto">
+                        <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-neutral-600">
                             {s.body}
                         </p>
                     </div>
@@ -73,7 +88,7 @@ export default function About() {
             ))}
 
             {/* Core Values / Feature Cards Section */}
-            <div className="bg-[#FAF7F2] py-16 lg:py-24 border-b border-neutral-100">
+            <div className="border-b border-neutral-100 bg-[#FAF7F2] py-16 lg:py-24">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <header className="mx-auto mb-16 max-w-2xl text-center">
                         <h2 className="font-serif text-3xl font-bold text-[#800020] md:text-4xl">
@@ -88,15 +103,15 @@ export default function About() {
                         {c.cards.map((card: any, i: number) => (
                             <div
                                 key={card.title}
-                                className="flex flex-col items-start rounded-2xl bg-white p-6 shadow-sm border border-neutral-100/60 transition-transform duration-300 hover:scale-[1.02]"
+                                className="flex flex-col items-start rounded-2xl border border-neutral-100/60 bg-white p-6 shadow-sm transition-transform duration-300 hover:scale-[1.02]"
                             >
-                                <div className="flex size-12 items-center justify-center rounded-xl bg-[#800020]/10 text-[#800020] mb-5">
+                                <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-[#800020]/10 text-[#800020]">
                                     {ICONS[i] ?? ICONS[0]}
                                 </div>
-                                <h3 className="text-lg font-bold text-neutral-900 mb-2 font-serif">
+                                <h3 className="mb-2 font-serif text-lg font-bold text-neutral-900">
                                     {card.title}
                                 </h3>
-                                <p className="text-sm text-neutral-600 leading-relaxed">
+                                <p className="text-sm leading-relaxed text-neutral-600">
                                     {card.description}
                                 </p>
                             </div>
@@ -108,7 +123,7 @@ export default function About() {
             {/* Closing Contact Section */}
             <div className="bg-white py-16 text-center">
                 <div className="mx-auto max-w-3xl px-4">
-                    <p className="text-lg text-neutral-700 font-medium">
+                    <p className="text-lg font-medium text-neutral-700">
                         {c.closing_paragraph}
                     </p>
                     <div className="mt-8">

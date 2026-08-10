@@ -122,6 +122,50 @@ export default function BusinessCardDesignService() {
                                 </li>
                             ))}
                         </ol>
+
+                        {/* Choose a Design Service Section */}
+                        <div className="mt-12 space-y-6 border-t border-neutral-200 pt-10">
+                            <h3 className="font-serif text-xl font-bold text-[#800020]">
+                                Choose a design service
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-xs">
+                                    <div className="flex items-start gap-4">
+                                        <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-neutral-300">
+                                            <div className="h-2.5 w-2.5 rounded-full bg-transparent" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-base font-bold text-neutral-900">
+                                                Card Layout $29
+                                            </h4>
+                                            <p className="mt-1 text-sm leading-relaxed text-neutral-500">
+                                                We arrange your provided content, align elements, and check bleed before outputting print-ready files.*
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-xs">
+                                    <div className="flex items-start gap-4">
+                                        <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-neutral-300">
+                                            <div className="h-2.5 w-2.5 rounded-full bg-transparent" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-base font-bold text-neutral-900">
+                                                Card Design $79
+                                            </h4>
+                                            <p className="mt-1 text-sm leading-relaxed text-neutral-500">
+                                                Original layout created by our designers, including color palette, graphics, and two rounds of revisions, delivered as print-ready files.*
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="rounded-xl border border-neutral-200 bg-[#FAF7F2] p-4 text-xs leading-relaxed text-neutral-600">
+                                    * Design fee is a one-time charge and does not increase with print quantity. Printing starts after you approve the final artwork.
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
