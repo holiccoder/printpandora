@@ -21,6 +21,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::inertia('/about', 'about')->name('about');
 Route::inertia('/terms', 'terms')->name('terms');
 Route::inertia('/privacy', 'privacy')->name('privacy');
+Route::inertia('/affiliate-program', 'affiliate-program')->name('affiliate-program');
+Route::inertia('/affiliate-program-terms-and-conditions', 'affiliate-terms')->name('affiliate-terms');
 Route::inertia('/shipping', 'shipping')->name('shipping');
 Route::inertia('/shipping-calculator', 'shipping-calculator')->name('shipping.calculator');
 Route::inertia('/help', 'help')->name('help');

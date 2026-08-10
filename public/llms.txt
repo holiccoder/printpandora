@@ -1,4 +1,4 @@
-# InkPavo (PrintPandora)
+# InkPavo
 
 InkPavo is a state-of-the-art premium printing studio specializing in bespoke, high-end business cards, cardstock print materials, customized product options, and professional design services. This site is fully optimized for AI-agent traversal and automated processing.
 

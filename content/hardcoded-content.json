@@ -257,6 +257,10 @@
                 {
                     "label": "Blog",
                     "href": "/blog"
+                },
+                {
+                    "label": "Affiliate Program",
+                    "href": "/affiliate-program"
                 }
             ],
             "social_links": [
@@ -1541,22 +1545,97 @@
     },
     "about_page": {
         "_source_file": "resources/js/pages/about.tsx",
-        "eyebrow": "Who we are",
-        "title": "About PrintPandora",
-        "description": "PrintPandora is a pioneer in the printing industry, delivering high-fidelity global customization and premium quality with over 20 years of craftsmanship.",
+        "eyebrow": "About InkPavo",
+        "title": "About InkPavo",
+        "description": "Made to be remembered",
         "body_paragraphs": [
             "Since rooting ourselves in Shanghai, China in 2003, we have stood as pioneers in the Chinese printing industry. Over the past 23 years, we have deepened our industry insight and amassed profound technical expertise. With over 20 years of offline and 15 years of online printing experience, we precisely understand the core needs of every client—from individual consumers and corporate partners to advertising agencies and creative designers—delivering highly tailored solutions for each group.",
-            "Today, we are bringing this long-standing heritage of professional service, exquisite craftsmanship, and flexible customization to the global stage. Through PrintPandora, we are dedicated to making premium-quality printing services accessible to clients worldwide. Our vision is to redefine the industry benchmark for online printing by delivering superior quality at highly competitive prices."
+            "Today, we are bringing this long-standing heritage of professional service, exquisite craftsmanship, and flexible customization to the global stage. Through InkPavo, we are dedicated to making premium-quality printing services accessible to clients worldwide. Our vision is to redefine the industry benchmark for online printing by delivering superior quality at highly competitive prices."
         ],
         "sections": [
             {
                 "heading": "Our Vision & Global Capabilities",
                 "level": "h2",
-                "body": "In response to the global wave of small-batch, highly diverse customization, PrintPandora has reconstructed the entire supply chain—from design and production to logistics. Leveraging our specialized production facilities across China, we deliver highly diverse printing solutions. On our continuous path of growth, we remain steadfastly focused on two core pillars: transforming your creative designs into physical products that achieve the ultimate balance of exquisite quality and exceptional cost-effectiveness. This is the fundamental difference that sets PrintPandora apart from ordinary printing providers. As a fast-growing industry leader, we continue to explore cutting-edge technologies, driving the innovation and upgrading of printing services with a truly global vision."
+                "body": "In response to the global wave of small-batch, highly diverse customization, InkPavo has reconstructed the entire supply chain—from design and production to logistics. Leveraging our specialized production facilities across China, we deliver highly diverse printing solutions. On our continuous path of growth, we remain steadfastly focused on two core pillars: transforming your creative designs into physical products that achieve the ultimate balance of exquisite quality and exceptional cost-effectiveness. This is the fundamental difference that sets InkPavo apart from ordinary printing providers. As a fast-growing industry leader, we continue to explore cutting-edge technologies, driving the innovation and upgrading of printing services with a truly global vision."
             }
         ],
+        "cards": [
+            {
+                "title": "Personalized Design",
+                "description": "Work with our expert design team 1-on-1 to craft a unique identity that represents your brand's core values."
+            },
+            {
+                "title": "More Custom Options",
+                "description": "From special foils and embossing to die-cuts and premium paper stocks, pick the exact finishes you want."
+            },
+            {
+                "title": "Deliver with Efficiency",
+                "description": "Get your high-fidelity custom prints produced and shipped globally with lightning-fast turnaround times."
+            },
+            {
+                "title": "Customer Satisfaction",
+                "description": "We are committed to delivering premium quality. If it's not perfect, we will work with you to make it right."
+            }
+        ],
+        "image_url": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80",
         "closing_paragraph": "Have an idea, a question, or a story to share? Get in touch — we'd love to hear from you.",
         "closing_link_text": "Get in touch",
+        "closing_link_href": "/contact"
+    },
+    "affiliate_program_page": {
+        "_source_file": "resources/js/pages/affiliate-program.tsx",
+        "seo": {
+            "title": "Affiliate Program — InkPavo",
+            "description": "Join the InkPavo Affiliate Program. Refer anyone and earn 20% of their first order."
+        },
+        "hero": {
+            "title": "InkPavo Affiliate Program",
+            "subtitle": "Refer anyone and earn 20% of their first order.",
+            "terms_disclaimer": "*Terms and conditions may apply."
+        },
+        "content": {
+            "main_text": "If you know a business or individual that needs a lot of personalized design and custom prints, you can refer them to us and you will get rewards whenever they place an order with us.",
+            "cookie_text": "30 days valid cookies. Get your affiliate link here and start earning today!",
+            "cta_button_text": "Register as an Affiliate",
+            "cta_button_href": "/register"
+        }
+    },
+    "affiliate_terms_page": {
+        "_source_file": "resources/js/pages/affiliate-terms.tsx",
+        "seo": {
+            "title": "Affiliate Program Terms & Conditions — InkPavo",
+            "description": "Terms and conditions for the InkPavo Affiliate Program."
+        },
+        "title": "Affiliate Program Terms & Conditions",
+        "intro": "These Terms and Conditions govern your participation in the InkPavo Affiliate Program. By registering as an affiliate, you agree to comply with these terms.",
+        "sections": [
+            {
+                "heading": "1. Enrollment & Eligibility",
+                "body": "To enroll in the Affiliate Program, you must submit a completed registration form. We review all applications and reserve the right to accept or reject any applicant for any reason. Your site or promotion channels must not contain illegal, offensive, or inappropriate content."
+            },
+            {
+                "heading": "2. Affiliate Links & Tracking",
+                "body": "Once approved, you will receive a unique affiliate tracking link. When a user clicks your link, a tracking cookie with a 30-day validity period will be set on their browser. If they make a purchase within those 30 days, the sale will be attributed to you."
+            },
+            {
+                "heading": "3. Commissions & Payouts",
+                "body": "You will earn a 20% commission on the first paid order of any new customer you refer. Commissions are validated after the order is completed and successfully delivered. Payouts are made monthly when your balance reaches the minimum threshold of $50."
+            },
+            {
+                "heading": "4. Promotion Restrictions",
+                "body": "You must promote InkPavo ethically. Direct PPC search engine bidding on trademarked keywords (such as 'InkPavo' or 'InkPavo prints') is strictly prohibited. You may not use spam emails, coupon-only aggregator sites, or misleading claims to drive traffic. Violation of these guidelines will result in immediate termination of your affiliate account and forfeiture of any unpaid commissions."
+            },
+            {
+                "heading": "5. Intellectual Property",
+                "body": "InkPavo grants you a non-exclusive, non-transferable, revocable license to use our brand assets, logos, and banners solely for promoting our services under this program."
+            },
+            {
+                "heading": "6. Termination",
+                "body": "Either party may terminate this agreement at any time with or without cause. Upon termination, you must immediately cease using all affiliate links and brand assets."
+            }
+        ],
+        "closing_paragraph": "For any questions regarding these terms, please contact our support team.",
+        "closing_link_text": "Contact Support",
         "closing_link_href": "/contact"
     },
     "help_center_page": {

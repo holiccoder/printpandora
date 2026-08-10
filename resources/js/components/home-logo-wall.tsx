@@ -16,7 +16,7 @@ export function HomeLogoWall() {
                             key={logo.alt}
                             src={logo.src}
                             alt={logo.alt}
-                            className="h-12 w-auto object-contain transition-all duration-300"
+                            className="h-12 w-auto object-contain transition-all duration-300 hover:grayscale hover:opacity-60"
                         />
                     ))}
                 </div>
