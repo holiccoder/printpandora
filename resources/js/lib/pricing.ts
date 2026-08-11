@@ -56,10 +56,26 @@ function normalizeOptionValue(value: string): string {
         .replace(/[\s_]+/g, '-');
 }
 
+function normalizeSelectedOptions(
+    selected: Record<string, string | string[]>,
+): Record<string, string | string[]> {
+    if (
+        Array.isArray(selected.sizes)
+            ? selected.sizes.includes('custom')
+            : selected.sizes === 'custom'
+    ) {
+        return { ...selected, sizes: 'standard' };
+    }
+
+    return selected;
+}
+
 export function findMatchingPricingRule(
     rules: PricingRule[],
     selected: Record<string, string | string[]>,
 ): PricingScenario | undefined {
+    const normalizedSelected = normalizeSelectedOptions(selected);
+
     return [...rules]
         .sort(
             (a, b) =>
@@ -68,7 +84,7 @@ export function findMatchingPricingRule(
         )
         .find((rule) =>
             Object.entries(rule.match ?? {}).every(([key, expected]) => {
-                const actual = selected[key];
+                const actual = normalizedSelected[key];
                 const expectedValue = normalizeOptionValue(expected);
 
                 return (

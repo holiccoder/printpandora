@@ -351,5 +351,6 @@ HTML,
         $this->call(LiveDataSeeder::class);
         $this->call(ProductNavigationCategorySeeder::class);
         $this->call(LetterpressBlogSeeder::class);
+        $this->call(ClassicStandardBusinessCardOptionsSeeder::class);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\DesignServiceRequest;
 use App\Models\Product;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class PricingService
 {
@@ -32,6 +33,79 @@ class PricingService
             ?? (float) ($product->getAttribute('price') ?? 0);
 
         return $base + $this->designServiceFee($options);
+    }
+
+    /**
+     * Validate and normalize option values submitted by the storefront.
+     *
+     * Custom dimensions are deliberately validated on the server as well as
+     * in the browser because cart requests are user-controlled.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    public function validateOptions(Product $product, array $options): array
+    {
+        $size = $options['sizes'] ?? null;
+        $size = is_array($size) ? ($size[0] ?? null) : $size;
+        $normalizedSize = $this->normalizeOptionValue($size);
+        $customSizeValues = data_get(
+            $this->configuration->canonicalConfig($product),
+            'options.sizes.values',
+            [],
+        );
+        $hasCustomSize = is_array($customSizeValues) && collect($customSizeValues)
+            ->contains(fn (mixed $value): bool => is_array($value)
+                && $this->normalizeOptionValue($value['code'] ?? $value['label'] ?? '') === 'custom');
+
+        if ($normalizedSize !== 'custom') {
+            unset($options['custom_width'], $options['custom_height']);
+
+            return $options;
+        }
+
+        if (! $hasCustomSize) {
+            throw ValidationException::withMessages([
+                'options.sizes' => 'This product does not support custom sizes.',
+            ]);
+        }
+
+        $errors = [];
+        $dimensions = [
+            'custom_width' => '',
+            'custom_height' => '',
+        ];
+
+        foreach (['width', 'height'] as $dimension) {
+            $key = "custom_{$dimension}";
+            $value = $options[$key] ?? null;
+
+            if (! is_numeric($value) || ! is_finite((float) $value)) {
+                $errors["options.{$key}"] = "Enter a {$dimension} between 2.1 and 3.5 inches.";
+
+                continue;
+            }
+
+            $numericValue = (float) $value;
+
+            if ($numericValue < 2.1 || $numericValue > 3.5) {
+                $errors["options.{$key}"] = "The {$dimension} must be between 2.1 and 3.5 inches.";
+
+                continue;
+            }
+
+            $dimensions[$key] = number_format($numericValue, 2, '.', '');
+        }
+
+        if ($errors !== []) {
+            throw ValidationException::withMessages($errors);
+        }
+
+        $options['sizes'] = 'custom';
+        $options['custom_width'] = $dimensions['custom_width'];
+        $options['custom_height'] = $dimensions['custom_height'];
+
+        return $options;
     }
 
     /**
@@ -78,23 +152,28 @@ class PricingService
             ? $productOptions['pricing_rules']
             : [];
 
+        // Custom sizes use the same base pricing as the standard rectangular
+        // card. The dimensions are still preserved in the cart options and
+        // validated above; only the pricing rule key is normalized here.
+        $pricingOptions = $this->optionsForPricing($options);
+
         if ($pricingRules !== []) {
-            $rule = $this->findMatchingPricingRule($pricingRules, $options);
+            $rule = $this->findMatchingPricingRule($pricingRules, $pricingOptions);
 
             return $rule === null
                 ? null
-                : $this->calculateRulePrice($rule, $options);
+                : $this->calculateRulePrice($rule, $pricingOptions);
         }
 
         if ($pricingData === null) {
             return null;
         }
 
-        $sizeIndex = $this->findIndex($productOptions['sizes'] ?? [], $options['sizes'] ?? '');
-        $finishIndex = $this->findIndex($productOptions['paper_finish'] ?? [], $options['paper_finish'] ?? '');
-        $cornersIndex = $this->findIndex($productOptions['corners'] ?? [], $options['corners'] ?? '');
-        $specialIndex = $this->findIndex($productOptions['special_finish'] ?? [], $options['special_finish'] ?? '');
-        $quantity = (int) ($options['quantity'] ?? 0);
+        $sizeIndex = $this->findIndex($productOptions['sizes'] ?? [], $pricingOptions['sizes'] ?? '');
+        $finishIndex = $this->findIndex($productOptions['paper_finish'] ?? [], $pricingOptions['paper_finish'] ?? '');
+        $cornersIndex = $this->findIndex($productOptions['corners'] ?? [], $pricingOptions['corners'] ?? '');
+        $specialIndex = $this->findIndex($productOptions['special_finish'] ?? [], $pricingOptions['special_finish'] ?? '');
+        $quantity = (int) ($pricingOptions['quantity'] ?? 0);
 
         if ($sizeIndex === null || $finishIndex === null || $cornersIndex === null || $quantity <= 0) {
             return null;
@@ -116,6 +195,19 @@ class PricingService
         }
 
         return null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private function optionsForPricing(array $options): array
+    {
+        if ($this->normalizeOptionValue($options['sizes'] ?? '') === 'custom') {
+            $options['sizes'] = 'standard';
+        }
+
+        return $options;
     }
 
     /**

@@ -293,6 +293,11 @@
                     "network": "youtube",
                     "label": "YouTube",
                     "href": "https://www.youtube.com/@inkpavo"
+                },
+                {
+                    "network": "linkedin",
+                    "label": "LinkedIn",
+                    "href": "https://www.linkedin.com/company/inkpavo"
                 }
             ],
             "legal_bar": {
@@ -410,6 +415,69 @@
                     "cta_href": "/shop?cat=business-cards",
                     "image_url": "/images/home/home-banner2.png",
                     "alt": "Premium business cards with metallic foil edges on a modern desk"
+                },
+                {
+                    "eyebrow": "LETTERPRESS CLASSICS",
+                    "headline": "UNMISTAKABLE\nTACTILITY",
+                    "subheadline": "Deep impression letterpress cards that demand to be held and felt.",
+                    "cta_text": "DISCOVER LETTERPRESS",
+                    "cta_href": "/shop?cat=business-cards",
+                    "image_url": "/images/home/home-banner3.png",
+                    "alt": "Elegant deep debossed letterpress card showcasing physical depth and fine paper texture"
+                },
+                {
+                    "eyebrow": "METALLIC FOIL STAMPING",
+                    "headline": "SHINE FROM THE\nFIRST SECOND",
+                    "subheadline": "Add brilliant gold, silver, or copper foil accents that catch the light and command attention.",
+                    "cta_text": "EXPLORE FOIL SHINE",
+                    "cta_href": "/shop?cat=business-cards",
+                    "image_url": "/images/home/home-banner4.png",
+                    "alt": "Gleaming gold hot foil stamped design on premium heavy dark paper stock"
+                },
+                {
+                    "eyebrow": "100% PURE COTTON",
+                    "headline": "SOFTNESS MEETS\nSTRENGTH",
+                    "subheadline": "Naturally textured, sustainably sourced cotton stock that feels exceptionally soft yet durable.",
+                    "cta_text": "SHOP COTTON CARDS",
+                    "cta_href": "/shop?cat=business-cards",
+                    "image_url": "/images/home/home-banner5.png",
+                    "alt": "Extremely thick cotton business cards with deep ink impression and raw premium edges"
+                },
+                {
+                    "eyebrow": "CUSTOM DIE-CUT SHAPES",
+                    "headline": "BREAK OUT OF\nTHE RECTANGLE",
+                    "subheadline": "Choose from rounded corners, custom circles, or unique geometric silhouettes to define your brand.",
+                    "cta_text": "EXPLORE SHAPES",
+                    "cta_href": "/shop?cat=business-cards",
+                    "image_url": "/images/home/home-banner6.png",
+                    "alt": "Distinctive geometric custom shaped cards fanned out on a natural background"
+                },
+                {
+                    "eyebrow": "CUSTOM STICKERS & LABELS",
+                    "headline": "STICK YOUR BRAND\nEVERYWHERE",
+                    "subheadline": "Waterproof, scratch-resistant vinyl stickers and elegant product labels with precision die-cutting.",
+                    "cta_text": "DESIGN STICKERS",
+                    "cta_href": "/shop?cat=stickers-and-labels",
+                    "image_url": "/images/home/home-banner7.png",
+                    "alt": "High-quality custom shaped die-cut vinyl stickers with rich colors and matte finish"
+                },
+                {
+                    "eyebrow": "BUSINESS MARKETING KIT",
+                    "headline": "YOUR BUSINESS\nIN FULL COLOR",
+                    "subheadline": "Premium flyers, brochures, and catalogs crafted to turn casual readers into loyal customers.",
+                    "cta_text": "SHOP MARKETING KIT",
+                    "cta_href": "/shop?cat=flyers-and-brochures",
+                    "image_url": "/images/home/home-banner8.png",
+                    "alt": "A beautifully folded business brochure showcasing rich graphic layouts and high-fidelity colors"
+                },
+                {
+                    "eyebrow": "POSTCARDS & ART PRINTS",
+                    "headline": "MAIL THAT MAKES\nTHEM SMILE",
+                    "subheadline": "Exquisite postcards, thank you notes, and heavy art prints with gorgeous finishes.",
+                    "cta_text": "EXPLORE POSTCARDS",
+                    "cta_href": "/shop?cat=postcards",
+                    "image_url": "/images/home/home-banner9.png",
+                    "alt": "Fanned collection of beautifully printed custom cards and postcards with rich illustration prints"
                 }
             ]
         },

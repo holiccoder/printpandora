@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Services\Cart;
 use App\Services\DiscountException;
+use App\Services\PricingService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -24,16 +26,19 @@ class CartController extends Controller
         ]);
     }
 
-    public function add(Request $request, Cart $cart)
+    public function add(Request $request, Cart $cart, PricingService $pricing)
     {
         $data = $request->validate([
             'product_id' => 'required|integer|exists:products,id',
             'options' => 'nullable|array',
         ]);
 
+        $product = Product::query()->findOrFail((int) $data['product_id']);
+        $options = $pricing->validateOptions($product, $data['options'] ?? []);
+
         $itemKey = $cart->add(
-            $request->product_id,
-            $data['options'] ?? [],
+            $product->id,
+            $options,
         );
 
         if ($request->wantsJson()) {

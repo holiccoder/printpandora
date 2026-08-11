@@ -75,6 +75,14 @@ const COLD_FOIL_OPTIONS = [
         description: 'Elegant matte silver foil',
     },
 ];
+
+const CUSTOM_SIZE_MIN = 2.1;
+const CUSTOM_SIZE_MAX = 3.5;
+const NO_SPECIAL_FINISH_CODES = [
+    'none',
+    'no-special-finish',
+    'no_special_finish',
+];
 import DesignSpecificationsSection from '@/components/product-detail/design-specifications-section';
 import DesignServiceBanner from '@/components/product-detail/design-service-banner';
 import PaperStockComparisonSection from '@/components/product-detail/paper-stock-comparison-section';
@@ -121,9 +129,9 @@ interface ProductOptions {
     sizes?: Array<{
         code?: string;
         name: string;
-        width: string;
-        height: string;
-        swatch_image: string;
+        width?: string;
+        height?: string;
+        swatch_image?: string;
     }>;
     paper_finish?: Array<{
         code?: string;
@@ -153,7 +161,7 @@ interface ProductOptions {
         code?: string;
         name: string;
         description: string;
-        swatch_image: string;
+        swatch_image?: string;
     }>;
     print_code: Array<{
         code?: string;
@@ -195,23 +203,25 @@ const sizeShapes: Record<string, 'rect' | 'square'> = {
 };
 
 const generatedSwatchBase = '/images/product-options/business-cards/generated';
+const reusableSwatchBase = '/images/product-options/business-cards/swatches';
 
 const generatedSizeSwatches: Record<string, string> = {
-    standard: `${generatedSwatchBase}/standard.png`,
-    square: `${generatedSwatchBase}/square.png`,
+    standard: `${reusableSwatchBase}/standard-size.webp`,
+    square: `${reusableSwatchBase}/square-size.webp`,
+    custom: `${reusableSwatchBase}/custom-size.webp`,
 };
 
 const generatedFinishSwatches: Record<string, string> = {
-    matte: `${generatedSwatchBase}/matte.png`,
-    gloss: `${generatedSwatchBase}/gloss.png`,
+    matte: `${reusableSwatchBase}/matte-paper-finish.webp`,
+    gloss: `${reusableSwatchBase}/gloss-paper-finish.webp`,
     cotton: `${generatedSwatchBase}/cotton.png`,
     pvc: `${generatedSwatchBase}/pvc.png`,
 };
 
 const generatedCornerSwatches: Record<string, string> = {
-    square: `${generatedSwatchBase}/square-corners.png`,
-    standard: `${generatedSwatchBase}/square-corners.png`,
-    rounded: `${generatedSwatchBase}/rounded-corners.png`,
+    square: `${reusableSwatchBase}/square.webp`,
+    standard: `${reusableSwatchBase}/square.webp`,
+    rounded: `${reusableSwatchBase}/rounded.webp`,
 };
 
 // Display-only mirror of the server-side fee map
@@ -297,14 +307,24 @@ export default function ShopShow({
     const sizes = useMemo(
         () =>
             hasProductOptions && Array.isArray(productOptions.sizes)
-                ? productOptions.sizes.map((s) => ({
-                      id: s.code ?? s.name.toLowerCase(),
-                      label: s.name.charAt(0).toUpperCase() + s.name.slice(1),
-                      dims: `${s.width}" x ${s.height}"`,
-                      swatch:
-                          generatedSizeSwatches[s.name.toLowerCase()] ??
-                          s.swatch_image,
-                  }))
+                ? productOptions.sizes.map((s) => {
+                      const id = s.code ?? s.name.toLowerCase();
+                      const isCustom = id === 'custom';
+
+                      return {
+                          id,
+                          label:
+                              s.name.charAt(0).toUpperCase() + s.name.slice(1),
+                          dims: isCustom
+                              ? `${CUSTOM_SIZE_MIN}-${CUSTOM_SIZE_MAX} in`
+                              : s.width && s.height
+                                ? `${s.width}" x ${s.height}"`
+                                : '',
+                          swatch:
+                              generatedSizeSwatches[s.name.toLowerCase()] ??
+                              s.swatch_image,
+                      };
+                  })
                 : c.configurator_options.sizes.map((s: any) => ({
                       ...s,
                       swatch:
@@ -511,6 +531,14 @@ export default function ShopShow({
     const [selectedSize, setSelectedSize] = useState<string | null>(() => {
         return sizes.length > 0 ? sizes[0].id : null;
     });
+    const [customSizeOpen, setCustomSizeOpen] = useState(false);
+    const [customWidth, setCustomWidth] = useState('');
+    const [customHeight, setCustomHeight] = useState('');
+    const [confirmedCustomSize, setConfirmedCustomSize] = useState<{
+        width: number;
+        height: number;
+    } | null>(null);
+    const [customSizeError, setCustomSizeError] = useState<string | null>(null);
     const [selectedFinish, setSelectedFinish] = useState<string | null>(() => {
         return finishes.length > 0 ? finishes[0].id : null;
     });
@@ -637,9 +665,16 @@ export default function ShopShow({
 
               return group.type === 'multi_select'
                   ? Array.isArray(selected) && selected.length > 0
-                  : typeof selected === 'string' && selected !== '';
+                  : typeof selected === 'string' &&
+                        selected !== '' &&
+                        (group.key !== 'sizes' ||
+                            selected !== 'custom' ||
+                            confirmedCustomSize != null);
           })
-        : (sizes.length === 0 || selectedSize != null) &&
+        : (sizes.length === 0 ||
+              (selectedSize !== 'custom'
+                  ? selectedSize != null
+                  : confirmedCustomSize != null)) &&
           (finishes.length === 0 || selectedFinish != null) &&
           (cornersList.length === 0 || selectedCorners != null) &&
           (textures.length === 0 || selectedTexture != null) &&
@@ -716,6 +751,16 @@ export default function ShopShow({
                             ? selected
                             : (dynamicOptionDefaults[group.key] ?? '');
                 }
+
+                if (
+                    group.key === 'sizes' &&
+                    selected === 'custom' &&
+                    confirmedCustomSize
+                ) {
+                    opts['custom_width'] = confirmedCustomSize.width.toFixed(2);
+                    opts['custom_height'] =
+                        confirmedCustomSize.height.toFixed(2);
+                }
             }
 
             return opts;
@@ -729,6 +774,10 @@ export default function ShopShow({
             quantity: String(selectedQty ?? RECOMMENDED_QTY),
         };
         if (sizes.length > 0 && selectedSize) opts['sizes'] = selectedSize;
+        if (selectedSize === 'custom' && confirmedCustomSize) {
+            opts['custom_width'] = confirmedCustomSize.width.toFixed(2);
+            opts['custom_height'] = confirmedCustomSize.height.toFixed(2);
+        }
         if (finishes.length > 0 && selectedFinish)
             opts['paper_finish'] = selectedFinish;
         if (cornersList.length > 0 && selectedCorners)
@@ -752,6 +801,7 @@ export default function ShopShow({
         hasSelection,
         defaultOptions,
         selectedSize,
+        confirmedCustomSize,
         selectedFinish,
         selectedCorners,
         selectedTexture,
@@ -773,6 +823,7 @@ export default function ShopShow({
         dynamicOptionGroups,
         selectedDynamicOptions,
         dynamicOptionDefaults,
+        confirmedCustomSize,
     ]);
 
     const activeGallery = useMemo(() => {
@@ -818,7 +869,9 @@ export default function ShopShow({
     const quantityTiers = useMemo(() => {
         if (hasDynamicPricing) {
             const sizeIndex = sizes.findIndex(
-                (s: any) => s.id === selectedSize,
+                (s: any) =>
+                    s.id ===
+                    (selectedSize === 'custom' ? 'standard' : selectedSize),
             );
             const finishIndex = finishes.findIndex(
                 (f: any) => f.id === selectedFinish,
@@ -918,6 +971,10 @@ export default function ShopShow({
             return;
         }
 
+        if (groupKey === 'sizes' && group.type !== 'multi_select') {
+            setSelectedSize(value);
+        }
+
         setSelectedDynamicOptions((current) => {
             if (group.type !== 'multi_select') {
                 return { ...current, [groupKey]: value };
@@ -934,6 +991,57 @@ export default function ShopShow({
                     : [...selected, value],
             };
         });
+    }
+
+    function openCustomSizeModal() {
+        setCustomWidth(confirmedCustomSize?.width.toFixed(2) ?? '');
+        setCustomHeight(confirmedCustomSize?.height.toFixed(2) ?? '');
+        setCustomSizeError(null);
+        setCustomSizeOpen(true);
+    }
+
+    function selectSize(value: string) {
+        if (value === 'custom') {
+            openCustomSizeModal();
+
+            return;
+        }
+
+        setSelectedSize(value);
+    }
+
+    function confirmCustomSize() {
+        const width = Number(customWidth);
+        const height = Number(customHeight);
+
+        if (
+            !Number.isFinite(width) ||
+            !Number.isFinite(height) ||
+            width < CUSTOM_SIZE_MIN ||
+            width > CUSTOM_SIZE_MAX ||
+            height < CUSTOM_SIZE_MIN ||
+            height > CUSTOM_SIZE_MAX
+        ) {
+            setCustomSizeError(
+                `Enter both dimensions between ${CUSTOM_SIZE_MIN} and ${CUSTOM_SIZE_MAX} inches.`,
+            );
+
+            return;
+        }
+
+        setConfirmedCustomSize({
+            width: Number(width.toFixed(2)),
+            height: Number(height.toFixed(2)),
+        });
+        setSelectedSize('custom');
+        if (usesDynamicOptions) {
+            setSelectedDynamicOptions((current) => ({
+                ...current,
+                sizes: 'custom',
+            }));
+        }
+        setCustomSizeError(null);
+        setCustomSizeOpen(false);
     }
 
     function selectOption(
@@ -959,9 +1067,13 @@ export default function ShopShow({
                 if (
                     value === 'gloss' &&
                     selectedSpecialFinish != null &&
-                    selectedSpecialFinish !== 'no-special-finish'
+                    !NO_SPECIAL_FINISH_CODES.includes(selectedSpecialFinish)
                 ) {
-                    setSelectedSpecialFinish('no-special-finish');
+                    setSelectedSpecialFinish(
+                        specialFinishes.find((finish: any) =>
+                            NO_SPECIAL_FINISH_CODES.includes(finish.id),
+                        )?.id ?? 'no_special_finish',
+                    );
                 }
 
                 break;
@@ -987,7 +1099,9 @@ export default function ShopShow({
     }
 
     const sizeLabel =
-        sizes.find((s: any) => s.id === selectedSize)?.label ?? '';
+        selectedSize === 'custom' && confirmedCustomSize
+            ? `Custom (${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}")`
+            : (sizes.find((s: any) => s.id === selectedSize)?.label ?? '');
     const finishLabel =
         finishes.find((f: any) => f.id === selectedFinish)?.label ?? '';
     const cornersLabel =
@@ -1349,6 +1463,8 @@ export default function ShopShow({
                                 groups={dynamicOptionGroups}
                                 selected={selectedDynamicOptions}
                                 onSelect={selectDynamicOption}
+                                customSize={confirmedCustomSize}
+                                onCustomSizeSelect={openCustomSizeModal}
                             />
                         )}
 
@@ -1369,10 +1485,7 @@ export default function ShopShow({
                                                         selectedSize === s.id
                                                     }
                                                     onClick={() =>
-                                                        selectOption(
-                                                            'sizes',
-                                                            s.id,
-                                                        )
+                                                        selectSize(s.id)
                                                     }
                                                 >
                                                     <div className="flex h-16 items-center justify-center">
@@ -1394,10 +1507,16 @@ export default function ShopShow({
                                                         )}
                                                     </div>
                                                     <p className="mt-2 text-sm font-semibold">
-                                                        {s.label}
+                                                        {s.id === 'custom' &&
+                                                        confirmedCustomSize
+                                                            ? `${s.label} (${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}")`
+                                                            : s.label}
                                                     </p>
                                                     <p className="text-xs text-neutral-500">
-                                                        {s.dims}
+                                                        {s.id === 'custom' &&
+                                                        confirmedCustomSize
+                                                            ? `${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}"`
+                                                            : s.dims}
                                                     </p>
                                                 </ChoiceTile>
                                             );
@@ -1649,8 +1768,9 @@ export default function ShopShow({
                                                         const glossLimited =
                                                             selectedFinish ===
                                                                 'gloss' &&
-                                                            f.id !==
-                                                                'no-special-finish';
+                                                            !NO_SPECIAL_FINISH_CODES.includes(
+                                                                f.id,
+                                                            );
 
                                                         return (
                                                             <ChoiceTile
@@ -2037,9 +2157,15 @@ export default function ShopShow({
                                                                 ),
                                                             ),
                                                         )
-                                                        .map(
-                                                            (value) =>
-                                                                value.name,
+                                                        .map((value) =>
+                                                            group.key ===
+                                                                'sizes' &&
+                                                            optionValueCode(
+                                                                value,
+                                                            ) === 'custom' &&
+                                                            confirmedCustomSize
+                                                                ? `Custom (${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}")`
+                                                                : value.name,
                                                         );
 
                                                     return (
@@ -2321,6 +2447,17 @@ export default function ShopShow({
                             }
                         />
 
+                        <CustomSizeModal
+                            open={customSizeOpen}
+                            onOpenChange={setCustomSizeOpen}
+                            width={customWidth}
+                            height={customHeight}
+                            error={customSizeError}
+                            onWidthChange={setCustomWidth}
+                            onHeightChange={setCustomHeight}
+                            onConfirm={confirmCustomSize}
+                        />
+
                         <Button
                             onClick={addToCart}
                             disabled={added || !hasSelection || !tier}
@@ -2426,71 +2563,135 @@ function DynamicOptionGroups({
     groups,
     selected,
     onSelect,
+    customSize,
+    onCustomSizeSelect,
 }: {
     groups: ProductOptionGroup[];
     selected: Record<string, string | string[]>;
     onSelect: (groupKey: string, value: string) => void;
+    customSize?: { width: number; height: number } | null;
+    onCustomSizeSelect?: () => void;
 }) {
+    const [foilTab, setFoilTab] = useState<'hot' | 'cold'>('hot');
+
     return (
         <>
-            {groups.map((group) => (
-                <OptionGroup key={group.key} label={group.label}>
-                    <div className="grid grid-cols-3 gap-3">
-                        {group.values.map((value) => {
-                            const code = optionValueCode(value);
-                            const selectedValue = selected[group.key];
-                            const active =
-                                group.type === 'multi_select'
-                                    ? Array.isArray(selectedValue) &&
-                                      selectedValue.includes(code)
-                                    : selectedValue === code;
-                            const swatch = value.swatch_image;
-                            const isSvg =
-                                typeof swatch === 'string' &&
-                                swatch.trimStart().startsWith('<svg');
+            {groups.map((group) => {
+                const hasColdFoilValues =
+                    group.key === 'special_finish' &&
+                    group.values.some((value) =>
+                        optionValueCode(value).startsWith('cold_'),
+                    );
+                const values = hasColdFoilValues
+                    ? group.values.filter((value) =>
+                          foilTab === 'cold'
+                              ? optionValueCode(value).startsWith('cold_')
+                              : !optionValueCode(value).startsWith('cold_'),
+                      )
+                    : group.values;
 
-                            return (
-                                <ChoiceTile
-                                    key={code}
-                                    active={active}
-                                    onClick={() => onSelect(group.key, code)}
-                                >
-                                    <div className="flex min-h-16 items-center justify-center">
-                                        {isSvg ? (
-                                            <div
-                                                className="h-16 w-full text-neutral-700"
-                                                dangerouslySetInnerHTML={{
-                                                    __html: swatch as string,
-                                                }}
-                                            />
-                                        ) : swatch ? (
-                                            <img
-                                                src={swatch}
-                                                alt=""
-                                                className="h-auto w-full rounded-sm object-contain"
-                                            />
-                                        ) : (
-                                            <span className="text-xs text-neutral-400">
-                                                {group.type === 'multi_select'
-                                                    ? 'Select option'
-                                                    : 'Option'}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p className="mt-2 text-base font-semibold">
-                                        {value.name}
-                                    </p>
-                                    {value.description && (
-                                        <p className="text-xs text-neutral-500">
-                                            {value.description}
+                return (
+                    <OptionGroup key={group.key} label={group.label}>
+                        {hasColdFoilValues && (
+                            <div className="mb-3 flex items-center justify-between border-b border-neutral-100 pb-2">
+                                <span className="text-sm font-semibold text-neutral-700">
+                                    Choose a foil type
+                                </span>
+                                <div className="flex rounded-md bg-neutral-100 p-0.5">
+                                    {(['hot', 'cold'] as const).map((tab) => (
+                                        <button
+                                            key={tab}
+                                            type="button"
+                                            onClick={() => setFoilTab(tab)}
+                                            className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
+                                                foilTab === tab
+                                                    ? 'bg-white text-[#800020] shadow-sm'
+                                                    : 'text-neutral-500 hover:text-neutral-800'
+                                            }`}
+                                        >
+                                            {tab === 'hot'
+                                                ? 'Hot Foil'
+                                                : 'Cold Foil'}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        <div className="grid grid-cols-3 gap-3">
+                            {values.map((value) => {
+                                const code = optionValueCode(value);
+                                const selectedValue = selected[group.key];
+                                const active =
+                                    group.type === 'multi_select'
+                                        ? Array.isArray(selectedValue) &&
+                                          selectedValue.includes(code)
+                                        : selectedValue === code;
+                                const swatch = value.swatch_image;
+                                const isCustomSize =
+                                    group.key === 'sizes' && code === 'custom';
+                                const isSvg =
+                                    typeof swatch === 'string' &&
+                                    swatch.trimStart().startsWith('<svg');
+
+                                return (
+                                    <ChoiceTile
+                                        key={code}
+                                        active={active}
+                                        onClick={() =>
+                                            isCustomSize && onCustomSizeSelect
+                                                ? onCustomSizeSelect()
+                                                : onSelect(group.key, code)
+                                        }
+                                    >
+                                        <div className="flex min-h-16 items-center justify-center">
+                                            {isSvg ? (
+                                                <div
+                                                    className="h-16 w-full text-neutral-700"
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: swatch as string,
+                                                    }}
+                                                />
+                                            ) : swatch ? (
+                                                <img
+                                                    src={swatch}
+                                                    alt=""
+                                                    className="h-auto w-full rounded-sm object-contain"
+                                                />
+                                            ) : (
+                                                <span className="text-xs text-neutral-400">
+                                                    {group.type ===
+                                                    'multi_select'
+                                                        ? 'Select option'
+                                                        : 'Option'}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="mt-2 text-base font-semibold">
+                                            {isCustomSize &&
+                                            active &&
+                                            customSize
+                                                ? `${value.name} (${customSize.width.toFixed(2)}" x ${customSize.height.toFixed(2)}")`
+                                                : value.name}
                                         </p>
-                                    )}
-                                </ChoiceTile>
-                            );
-                        })}
-                    </div>
-                </OptionGroup>
-            ))}
+                                        {isCustomSize &&
+                                        active &&
+                                        customSize ? (
+                                            <p className="text-xs text-neutral-500">
+                                                {customSize.width.toFixed(2)}" x{' '}
+                                                {customSize.height.toFixed(2)}"
+                                            </p>
+                                        ) : value.description ? (
+                                            <p className="text-xs text-neutral-500">
+                                                {value.description}
+                                            </p>
+                                        ) : null}
+                                    </ChoiceTile>
+                                );
+                            })}
+                        </div>
+                    </OptionGroup>
+                );
+            })}
         </>
     );
 }
@@ -2564,6 +2765,100 @@ function DesignChoice({
             <p className="text-sm font-bold text-neutral-900">{title}</p>
             <p className="text-xs leading-relaxed text-neutral-600">{body}</p>
         </button>
+    );
+}
+
+function CustomSizeModal({
+    open,
+    onOpenChange,
+    width,
+    height,
+    error,
+    onWidthChange,
+    onHeightChange,
+    onConfirm,
+}: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    width: string;
+    height: string;
+    error: string | null;
+    onWidthChange: (value: string) => void;
+    onHeightChange: (value: string) => void;
+    onConfirm: () => void;
+}) {
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Enter a custom card size</DialogTitle>
+                    <DialogDescription>
+                        Enter the width and height in inches. Each dimension
+                        must be between 2.1 and 3.5 inches.
+                    </DialogDescription>
+                </DialogHeader>
+
+                <form
+                    className="space-y-4"
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        onConfirm();
+                    }}
+                >
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <label className="space-y-1.5 text-sm font-medium text-neutral-900">
+                            Width (in)
+                            <Input
+                                type="number"
+                                inputMode="decimal"
+                                min={CUSTOM_SIZE_MIN}
+                                max={CUSTOM_SIZE_MAX}
+                                step="0.01"
+                                value={width}
+                                onChange={(event) =>
+                                    onWidthChange(event.target.value)
+                                }
+                                placeholder="2.10"
+                                required
+                            />
+                        </label>
+                        <label className="space-y-1.5 text-sm font-medium text-neutral-900">
+                            Height (in)
+                            <Input
+                                type="number"
+                                inputMode="decimal"
+                                min={CUSTOM_SIZE_MIN}
+                                max={CUSTOM_SIZE_MAX}
+                                step="0.01"
+                                value={height}
+                                onChange={(event) =>
+                                    onHeightChange(event.target.value)
+                                }
+                                placeholder="3.50"
+                                required
+                            />
+                        </label>
+                    </div>
+
+                    {error && (
+                        <p className="text-sm text-red-600" role="alert">
+                            {error}
+                        </p>
+                    )}
+
+                    <div className="flex justify-end gap-3">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button type="submit">Confirm size</Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 }
 
