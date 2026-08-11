@@ -9,21 +9,23 @@ export default function ProductFaqSection({ content }: ProductFaqSectionProps) {
     const { heading, items } = content;
 
     return (
-        <section className="bg-neutral-100 py-12 lg:py-16 border-t border-neutral-200">
+        <section className="border-t border-neutral-200 bg-neutral-100 py-12 lg:py-16">
             <div className="mx-auto max-w-7xl px-4">
-                <h2 className="mb-10 text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl text-center md:text-left">
+                <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl md:text-left">
                     {heading}
                 </h2>
 
                 <ul className="grid grid-cols-1 gap-x-10 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
                     {items.map((item, idx) => (
                         <li key={idx} className="space-y-2">
-                            <h3 className="text-base font-bold text-neutral-900 leading-snug">
+                            <h3 className="text-base leading-snug font-bold text-neutral-900">
                                 {item.question}
                             </h3>
                             <div
                                 className="text-sm leading-relaxed text-neutral-600 [&_a]:underline [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-0 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
-                                dangerouslySetInnerHTML={{ __html: item.answer }}
+                                dangerouslySetInnerHTML={{
+                                    __html: item.answer,
+                                }}
                             />
                         </li>
                     ))}

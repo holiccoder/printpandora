@@ -7,7 +7,9 @@ interface MoreGoodStuffSectionProps {
     content: MoreGoodStuffContent;
 }
 
-export default function MoreGoodStuffSection({ content }: MoreGoodStuffSectionProps) {
+export default function MoreGoodStuffSection({
+    content,
+}: MoreGoodStuffSectionProps) {
     const { heading, items } = content;
 
     return (
@@ -21,14 +23,17 @@ export default function MoreGoodStuffSection({ content }: MoreGoodStuffSectionPr
 
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                     {items.map((item) => (
-                        <div key={item.id} className="group flex flex-col items-center text-center">
+                        <div
+                            key={item.id}
+                            className="group flex flex-col items-center text-center"
+                        >
                             {/* Card Square Image Container */}
-                            <div className="aspect-square w-full rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200/50 shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:border-neutral-200">
+                            <div className="aspect-square w-full overflow-hidden rounded-2xl border border-neutral-200/50 bg-neutral-100 shadow-sm transition-all duration-300 group-hover:border-neutral-200 group-hover:shadow-md">
                                 <img
                                     src={item.image_url}
                                     alt={item.name}
                                     loading="lazy"
-                                    className="h-full w-full object-cover transform hover:scale-105 transition-transform duration-500"
+                                    className="h-full w-full transform object-cover transition-transform duration-500 hover:scale-105"
                                 />
                             </div>
 
@@ -36,7 +41,7 @@ export default function MoreGoodStuffSection({ content }: MoreGoodStuffSectionPr
                             <div className="mt-4">
                                 <Link
                                     href={item.href}
-                                    className="inline-flex items-center gap-1 text-sm font-bold text-[#0f4c3a] hover:text-[#0c3e2f] hover:underline transition-colors"
+                                    className="inline-flex items-center gap-1 text-sm font-bold text-[#0f4c3a] transition-colors hover:text-[#0c3e2f] hover:underline"
                                 >
                                     {item.link_label}
                                 </Link>

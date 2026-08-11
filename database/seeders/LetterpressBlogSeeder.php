@@ -1,0 +1,355 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Admin;
+use App\Models\Category;
+use App\Models\Post;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+
+class LetterpressBlogSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $admin = Admin::query()
+            ->where('email', 'admin@admin.com')
+            ->first() ?? Admin::query()->first();
+
+        if ($admin === null) {
+            $admin = Admin::create([
+                'name' => 'Admin',
+                'email' => 'admin@admin.com',
+                'password' => Hash::make('password'),
+            ]);
+        }
+
+        $categoryIds = [];
+
+        foreach ([
+            'design-tips' => 'Design Tips',
+            'tutorials' => 'Tutorials',
+            'case-studies' => 'Case Studies',
+        ] as $slug => $name) {
+            $categoryIds[$slug] = Category::firstOrCreate(
+                ['slug' => $slug],
+                ['name' => $name],
+            )->id;
+        }
+
+        $posts = [
+            [
+                'title' => 'Letterpress Printing Explained: Impression, Pressure, and Design Limits',
+                'slug' => 'letterpress-printing-explained-impression-pressure-and-design-limits',
+                'category' => 'design-tips',
+                'featured_image' => '/images/blog/letterpress-impression-featured.webp',
+                'published_at' => now()->subDays(4),
+                'body' => <<<'HTML'
+<p>Letterpress is often described as printing with pressure, but that phrase only tells half the story. The process combines a raised printing plate, a controlled film of ink, and a sheet that can accept both color and physical relief. The result is not just an image: it is a visual and tactile language.</p>
+<p>That tactile quality is powerful, but it should support the message rather than compete with it. Good letterpress work balances paper, ink, impression, registration, and finishing so the piece feels intentional in the hand and remains easy to read.</p>
+
+<h2>What letterpress actually does</h2>
+<p>A photopolymer or metal plate carries the printable areas above the plate surface. Ink coats those raised areas, and the press transfers the ink to paper under pressure. Depending on the stock, the same pressure can also leave a visible impression around the printed form.</p>
+<p>The mark is shaped by several variables at once: the plate depth and hardness, the pressure setting, the paper's bulk and compressibility, the size of the printed area, the ink coverage, and whether the sheet is printed on one or both sides. Change one variable and the rest of the balance may change with it.</p>
+
+<figure>
+    <img src="/images/blog/letterpress-impression-detail.webp" alt="Close-up of inked and blind-debossed details in textured cotton paper">
+    <figcaption>Impression depth is part of the design system: the paper, ink coverage, and lighting all affect how the mark is perceived.</figcaption>
+</figure>
+
+<h2>Impression is a design variable, not a trophy</h2>
+<p>A deeper impression is not automatically more premium. Too much pressure can distort fibers, show heavily on the reverse, weaken small type, or create an uneven edge around a large solid area. The best setting is the one that gives the intended tactile effect while preserving the structure of the sheet.</p>
+<p>Before choosing a pressure level, ask three questions:</p>
+<ol>
+    <li>What must the viewer notice first?</li>
+    <li>Which parts should be felt, and which parts must remain quiet?</li>
+    <li>How much reverse-side show-through can the finished piece accept?</li>
+</ol>
+
+<h2>Four practical impression levels</h2>
+<h3>1. Kiss impression</h3>
+<p>The plate makes clean contact with the sheet, but leaves almost no visible mark on the reverse. This is useful for small type, fine rules, double-sided work, and layouts where legibility matters more than relief.</p>
+
+<h3>2. Standard impression</h3>
+<p>The printed area is clearly tactile without pushing aggressively through the sheet. This is the most versatile choice for premium business cards, logos, headings, invitations, and other work that needs a refined physical presence.</p>
+
+<h3>3. Deep impression</h3>
+<p>A deeper press creates immediate impact, especially on thick cotton stock and one-sided pieces. It needs more control because large shapes may deform the sheet and double-sided registration becomes more difficult.</p>
+
+<h3>4. Blind debossing</h3>
+<p>Blind debossing uses pressure without ink. It depends on light and shadow rather than color, making it effective for quiet patterns, borders, and minimal identities on thick cotton paper. The design needs enough scale and contrast in relief to remain visible in ordinary light.</p>
+
+<h2>Where letterpress performs best</h2>
+<ul>
+    <li>One or two spot colors with clear separation between each plate.</li>
+    <li>Fine text, provided the type is large enough for the selected plate and stock.</li>
+    <li>Linear illustrations, logos, borders, and simple geometric forms.</li>
+    <li>Layouts with generous white space that let the impression breathe.</li>
+</ul>
+
+<h2>Where it needs restraint</h2>
+<p>Letterpress is not a substitute for process-color reproduction. Large flat solids can show variation as the ink meets a textured sheet. Continuous-tone photographs, gradients, and four-color images usually need another printing process. Very small reversed type and hairline rules can close up or disappear, especially inside a large solid area.</p>
+<p>A useful design test is to temporarily reduce the artwork to black and white. If the hierarchy, fine detail, and separation between colors stop working without color, the file may be relying on effects that letterpress cannot reproduce reliably.</p>
+
+<h2>How to approve a production-ready impression</h2>
+<p>Ask for a proof on the actual stock whenever the impression is a major part of the brief. Inspect the front for clean edges, continuous ink, and a consistent tactile field. Turn the sample over and decide whether the reverse mark is acceptable. For double-sided work, check whether the two sides collide visually or physically.</p>
+<p>A good press test should also remain stable across a representative run, not only on the first sheet. Once paper, plate, ink, and pressure are balanced, the result should feel deliberate from the beginning to the end of the batch.</p>
+
+<p>Letterpress succeeds when pressure is treated as part of the composition. Start with the reading experience, choose the right paper, and let the impression add meaning rather than simply adding depth.</p>
+HTML,
+            ],
+            [
+                'title' => 'Choosing Paper for Letterpress: Cotton, Texture, and Grain',
+                'slug' => 'choosing-paper-for-letterpress-cotton-texture-and-grain',
+                'category' => 'design-tips',
+                'featured_image' => '/images/blog/letterpress-paper-featured.webp',
+                'published_at' => now()->subDays(3),
+                'body' => <<<'HTML'
+<p>In letterpress, paper is not a passive background. It affects the color of the ink, the depth of the impression, the drying time, the feel of the finished piece, and how well later finishing processes behave. Choosing stock is therefore a production decision as much as a design decision.</p>
+<p>The most reliable way to select paper is to work backwards from the intended experience: decide how the piece should feel, determine how much compression the sheet can take, then test ink absorption, grain direction, thickness, and finishing compatibility together.</p>
+
+<h2>A practical paper-selection sequence</h2>
+<ol>
+    <li>Define the desired tactile effect: quiet contact, a visible impression, or a deep relief.</li>
+    <li>Compare the bulk and compressibility of candidate stocks rather than relying on weight alone.</li>
+    <li>Check how the surface absorbs and dries ink, especially for large areas.</li>
+    <li>Orient the grain so folds, creases, and long edges work with the sheet rather than against it.</li>
+    <li>Confirm that the stock can accept foil, embossing, die cutting, or other planned processes.</li>
+    <li>Approve a proof on the actual stock before committing to the full run.</li>
+</ol>
+
+<figure>
+    <img src="/images/blog/letterpress-paper-detail.webp" alt="Stacked cotton, textured, and recycled paper samples showing different thicknesses and grain directions">
+    <figcaption>Thickness, surface, and grain direction all change how a sheet responds to pressure.</figcaption>
+</figure>
+
+<h2>The physical traits that matter most</h2>
+<h3>Compressibility</h3>
+<p>Soft cotton stocks compress readily and can hold a beautiful impression. A brittle, heavily coated, or laminated sheet may resist the press or crack around a deep mark. The best choice depends on the desired relief, not just the quoted GSM.</p>
+
+<h3>Bulk</h3>
+<p>Bulk describes how much physical volume a sheet has for its weight. A high-bulk sheet can feel substantial and accept relief without being unusually heavy. Two papers with the same GSM can therefore produce very different tactile results.</p>
+
+<h3>Sizing and absorption</h3>
+<p>Surface sizing controls how quickly ink moves into the fibers. A more absorbent sheet can soften edges and create a warm, handmade look; a harder surface can preserve sharper detail. Large solids deserve special attention because absorption differences are easier to see across a broad area.</p>
+
+<h3>Grain direction</h3>
+<p>Paper folds and creases more cleanly with the grain. For folded invitations, envelopes, and tags, align the grain with the long edge or the primary fold whenever the format allows. Grain direction also influences how a thick sheet feels when handled and how it behaves during die cutting.</p>
+
+<h2>A useful starting matrix</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Stock family</th>
+            <th>Strengths</th>
+            <th>Best suited to</th>
+            <th>Watch for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>300 GSM 100% cotton</td>
+            <td>Soft feel, high bulk, clear impression, natural or bright white options</td>
+            <td>Business cards, invitations, envelopes, stationery</td>
+            <td>Absorption and surface variation can make large solids uneven</td>
+        </tr>
+        <tr>
+            <td>500–600 GSM double-thick cotton</td>
+            <td>Heavy presence, strong relief, suitable for edge dye and premium handling</td>
+            <td>Luxury cards, membership cards, gift cards</td>
+            <td>Higher cutting and die costs; front and back pressure must be balanced</td>
+        </tr>
+        <tr>
+            <td>Cotton blend or high-grade wood pulp</td>
+            <td>Good detail, stronger surface, often more economical</td>
+            <td>Corporate cards, letterheads, tags</td>
+            <td>Deep impressions may be less pronounced; brittle surfaces need testing</td>
+        </tr>
+        <tr>
+            <td>Rough or recycled texture</td>
+            <td>Strong tactile character and a visible sustainability story</td>
+            <td>Simple, bold typography and expressive packaging</td>
+            <td>Fine lines may break; dust, flecks, and batch variation are part of the look</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>What changes on dark paper?</h2>
+<p>Standard white letterpress ink is usually translucent. On a dark sheet, the stock can show through and make the color look muted. If the design needs a truly opaque white, consider white foil, screen printing, or mounting a light sheet instead of expecting ordinary letterpress ink to behave like paint.</p>
+<p>Dark stock is often most successful when its value comes from the combination of impression, foil, and controlled contrast. A blind deboss or metallic foil can reveal the paper's character without fighting the material.</p>
+
+<h2>Proof the combination, not just the components</h2>
+<p>A paper sample alone cannot tell you how ink will dry, and an ink drawdown cannot show how a deep impression will affect the reverse. Make a small proof that combines the actual stock, color, plate, pressure, and any planned finishing. Check small type, broad coverage, registration, fold or crease lines, and the edge condition after cutting.</p>
+
+<p>The right paper makes the press work easier and the design feel more coherent. Select for compression, surface, grain, and finishing compatibility together, then let a real-stock proof settle the final decision.</p>
+HTML,
+            ],
+            [
+                'title' => 'Letterpress File Preflight: Type, Trapping, and Production Safety',
+                'slug' => 'letterpress-file-preflight-type-trapping-and-production-safety',
+                'category' => 'tutorials',
+                'featured_image' => '/images/blog/letterpress-preflight-featured.webp',
+                'published_at' => now()->subDays(2),
+                'body' => <<<'HTML'
+<p>Letterpress turns a digital file into a physical plate and then into a physical impression. Small file errors can therefore become wasted plates, slow press setup, poor registration, or an unreadable finished piece. A production-ready file should communicate the intended result clearly to prepress and press operators.</p>
+<p>The safest workflow is simple: one process, one clearly named plate, one reliable color definition, and enough room in the artwork for the paper and press to do their work.</p>
+
+<h2>Build the file around separations</h2>
+<p>Use one layer or plate for each printing color. Name spot colors by their actual ink, such as <em>Pantone 186 U</em>, and make sure each swatch is set as a true Spot Color rather than a process mixture. Keep foil, die cutting, creasing, embossing, and blind debossing on separate layers or spot colors with explicit production names.</p>
+<p>Mark non-printing construction layers as “do not print.” For a black plate, use 100% K artwork rather than rich CMYK black or RGB black. Clear separation makes it possible to inspect each plate at 100% and prevents a compound color from silently becoming multiple plates.</p>
+
+<figure>
+    <img src="/images/blog/letterpress-preflight-detail.webp" alt="Spot-color separations and registration overlays aligned over a letterpress plate">
+    <figcaption>Inspect each plate by itself, then review the complete stack for registration, trapping, and collision risks.</figcaption>
+</figure>
+
+<h2>Practical minimums for a first proof</h2>
+<p>The figures below are safe starting points for discussion, not universal machine limits. Plate material, paper texture, ink coverage, press pressure, and the printer's workflow can change the result. Confirm them with the production team and test the actual stock before release.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Artwork element</th>
+            <th>Starting point</th>
+            <th>Reason</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Positive rules</td>
+            <td>About 0.25–0.30 mm or heavier for deep pressure or rough stock</td>
+            <td>Thin raised lines can break up or lose continuity</td>
+        </tr>
+        <tr>
+            <td>Reverse rules and gaps</td>
+            <td>About 0.40–0.50 mm or more inside a large solid</td>
+            <td>Ink and paper movement can close narrow negative spaces</td>
+        </tr>
+        <tr>
+            <td>Positive type</td>
+            <td>Begin around 7–8 pt, then proof the actual face and weight</td>
+            <td>Fine, light type loses detail faster than sturdy medium weights</td>
+        </tr>
+        <tr>
+            <td>Reverse type</td>
+            <td>Begin around 9–10 pt, depending on weight and solid area</td>
+            <td>White counters need more room to remain open</td>
+        </tr>
+        <tr>
+            <td>Isolated dots</td>
+            <td>Keep them close to 0.8–1.0 mm or larger; confirm plate limits</td>
+            <td>Very small unsupported dots can fill, chip, or disappear</td>
+        </tr>
+        <tr>
+            <td>QR codes</td>
+            <td>Make them generous in size, reduce the data, and test the final scan</td>
+            <td>Relief, ink spread, and textured paper can reduce scan reliability</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Use trapping intentionally</h2>
+<p>Two spot colors that meet at a fine edge can reveal a white hairline if registration shifts. Where appropriate, add a small trap—often around 0.1–0.2 mm—or create a deliberate gap that is part of the design. Do not rely on a fragile shared edge between two tiny shapes.</p>
+<p>Overprinting can be useful for production marks and special processes, but it must be intentional. Review the separated plates and the composite preview so a foil, blind deboss, or die path does not unexpectedly knock out artwork beneath it.</p>
+
+<h2>Preflight checklist before releasing the file</h2>
+<ol>
+    <li>Confirm the final trim size, orientation, and artwork scale at 1:1.</li>
+    <li>Extend backgrounds to the required bleed, typically 3 mm unless the printer specifies otherwise.</li>
+    <li>Keep important details inside the safe area and check front-to-back registration.</li>
+    <li>Outline fonts, while retaining the editable source file for future changes.</li>
+    <li>Expand or rasterize transparency, shadows, gradients, and unusual strokes, then inspect the result.</li>
+    <li>Make every process plate explicit and label non-printing construction layers clearly.</li>
+    <li>Use a closed vector path for die cutting and keep crease lines separate from cut lines.</li>
+    <li>Remove duplicate, broken, or accidentally open paths.</li>
+    <li>Inspect the artwork at high magnification for fragile rules, isolated dots, and crowded counters.</li>
+    <li>For double-sided deep impression, check whether one side will collide with the other or show too strongly through the sheet.</li>
+</ol>
+
+<h2>Proof the file as a physical object</h2>
+<p>A perfect-looking composite PDF is not enough for a tactile process. Request a final proof or a representative plate test when the design includes deep relief, large solids, small reversed type, QR codes, or several finishing processes. The goal is to give the press operator a file whose intent is unambiguous and whose limits have already been considered.</p>
+
+<p>Good preflight does not make the design less creative. It protects the creative idea by translating it into plates, pressure, and paper without avoidable surprises.</p>
+HTML,
+            ],
+            [
+                'title' => 'Letterpress Finishing: Foil, Debossing, and Four Real-World Applications',
+                'slug' => 'letterpress-finishing-foil-debossing-and-four-real-world-applications',
+                'category' => 'case-studies',
+                'featured_image' => '/images/blog/letterpress-finishing-featured.webp',
+                'published_at' => now()->subDay(),
+                'body' => <<<'HTML'
+<p>Finishing is not an afterthought in letterpress. Foil, blind debossing, embossing, die cutting, creasing, and edge treatments all affect the stock, the layout, the drying time, and the order of production. When the processes are planned together, each one reinforces the tactile idea. When they are added without a hierarchy, the result can feel busy and become difficult to manufacture.</p>
+
+<h2>Choose one tactile idea first</h2>
+<p>Start with the paper and impression that define the piece. Then add one primary finishing process that supports the purpose: foil for contrast and light, blind debossing for quiet relief, embossing for a stronger sculptural effect, or die cutting for shape and interaction.</p>
+<p>Combining foil, deep debossing, embossing, spot UV, and multiple cuts can create information overload. A restrained combination usually feels more premium because the viewer can understand what to look at and what to feel.</p>
+
+<figure>
+    <img src="/images/blog/letterpress-finishing-detail.webp" alt="Champagne foil and blind debossing on a dark uncoated card beside a die-cut tag">
+    <figcaption>Foil and relief work best when the contrast is deliberate and the material remains part of the visual story.</figcaption>
+</figure>
+
+<h2>How the main finishing processes behave</h2>
+<h3>Foil stamping</h3>
+<p>Foil is especially effective on dark paper and in small areas where metallic contrast can carry the design. Plan its sequence with the letterpress impression so the finished foil is not scratched or crushed by a later operation. Fine foil details need enough scale and a clean surface to release consistently.</p>
+
+<h3>Blind debossing</h3>
+<p>Blind debossing creates the strongest effect through light and shadow rather than color. Use shapes that are large enough to read in changing light, and avoid delicate details that may close up or flatten into the paper texture.</p>
+
+<h3>Embossing</h3>
+<p>Embossing uses a male and female die to raise the paper. It gives a stronger relief than a simple impression, but it also needs room around the edge of the form. Leave sufficient clearance from trim lines and test the stock for cracking, especially on brittle, coated, or laminated materials.</p>
+
+<h3>Die cutting and creasing</h3>
+<p>Provide a closed vector die path and keep cut, crease, and printed artwork separate. Orient the grain so folds and creases work with the sheet. A perfect impression cannot rescue a tag or folded piece whose structure is weak or whose cut edge tears during handling.</p>
+
+<h2>Four applications and what they teach</h2>
+<h3>1. A high-end consulting business card</h3>
+<p><strong>Format:</strong> 90 × 54 mm, double-sided.</p>
+<p><strong>Material and process:</strong> 300–350 GSM warm-white cotton, a burgundy spot-color logo, a fine champagne foil line, and a standard impression on the front. The information side uses a dark gray ink with a lighter impression.</p>
+<p><strong>Why it works:</strong> The brand area receives the tactile emphasis while the contact information stays quiet and readable. The card feels premium without making every element compete for attention. Because both sides are used, the impression is controlled instead of maximized.</p>
+
+<h3>2. A wedding invitation</h3>
+<p><strong>Format:</strong> 140 × 200 mm with a matching envelope.</p>
+<p><strong>Material and process:</strong> 300 GSM natural-white cotton, burgundy main type with a standard impression, champagne foil details, and a light blind-deboss botanical pattern.</p>
+<p><strong>Why it works:</strong> The botanical structure is simplified enough to remain graceful on a textured sheet. The combination of ink, foil, relief, and open space creates elegance without filling the page with effects. The envelope and fold or insert should be proofed with the same attention as the invitation itself.</p>
+
+<h3>3. A dark-stock premium business card</h3>
+<p><strong>Format:</strong> 88 × 50 mm.</p>
+<p><strong>Material and process:</strong> 350–500 GSM black uncoated stock, champagne foil for the logo, blind debossing for a secondary mark, and silver or white foil for essential information.</p>
+<p><strong>Why it works:</strong> Dark paper is treated as part of the palette rather than as a surface that needs to be covered with ordinary white ink. The relief gives the black stock depth, while foil provides the contrast needed for quick reading. A proof is essential because metallic coverage, small type, and dark fibers all affect the result.</p>
+
+<h3>4. A premium clothing hangtag</h3>
+<p><strong>Format:</strong> 55 × 100 mm with rounded corners and a top hole.</p>
+<p><strong>Material and process:</strong> 250–360 GSM colored uncoated stock, grain parallel to the long edge, one spot color with a standard impression, rounded die cutting, a reinforced hole, and optional edge dye.</p>
+<p><strong>Why it works:</strong> The design prioritizes strength, grain, hole placement, and resistance to transport abrasion before chasing maximum impression depth. A tag is handled repeatedly, so its structure and edge quality are part of the brand experience.</p>
+
+<h2>Plan price and lead time from the process list</h2>
+<p>Cost and schedule are shaped by the number of colors and plates, the area of solid coverage, the complexity of the finishing, the number of dies, and the requested delivery date. Every extra color adds plate, ink, and setup work. Foil, embossing, debossing, die cutting, creasing, and edge treatments each add their own tooling or production stage.</p>
+<p>Large solid areas can increase waste and make consistency more difficult. A high-value project should include a real-stock and real-ink proof before the full run. A typical planning window may be around 10–20 days after artwork approval when plate making, drying or resting, finishing, quality control, and logistics are all included, but the production team should confirm the actual schedule for the chosen combination.</p>
+
+<h2>Finish with a hierarchy</h2>
+<p>The strongest letterpress pieces have a clear order: the stock establishes the feel, the impression gives the mark presence, and the finishing process adds a focused moment of contrast or interaction. Decide what the audience should see and feel first, then remove anything that does not support that decision.</p>
+
+<p>When finishing is designed as part of the object—not added at the end—it becomes a practical extension of the brand story.</p>
+HTML,
+            ],
+        ];
+
+        foreach ($posts as $data) {
+            Post::updateOrCreate(
+                ['slug' => $data['slug']],
+                [
+                    'title' => $data['title'],
+                    'body' => $data['body'],
+                    'featured_image' => $data['featured_image'],
+                    'category_id' => $categoryIds[$data['category']],
+                    'admin_id' => $admin->id,
+                    'is_published' => true,
+                    'published_at' => $data['published_at'],
+                ],
+            );
+        }
+
+        $this->command?->info('Seeded four English letterpress articles with featured and inline images.');
+    }
+}

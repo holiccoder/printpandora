@@ -13,7 +13,10 @@ export interface ProductGallery {
  * everything else is lowercased.
  */
 export function normalizeOptionValue(group: string, value: string): string {
-    return value.toLowerCase().trim().replace(/[\s_]+/g, '-');
+    return value
+        .toLowerCase()
+        .trim()
+        .replace(/[\s_]+/g, '-');
 }
 
 function matches(
@@ -30,7 +33,9 @@ function matches(
         const expected = normalizeOptionValue(key, matchValue);
 
         return Array.isArray(selectedValue)
-            ? selectedValue.some((value) => normalizeOptionValue(key, value) === expected)
+            ? selectedValue.some(
+                  (value) => normalizeOptionValue(key, value) === expected,
+              )
             : normalizeOptionValue(key, selectedValue) === expected;
     });
 }

@@ -34,7 +34,7 @@ export function ExploreOtherProducts() {
                 <header className="mx-auto mb-10 max-w-2xl text-center">
                     <h2
                         id="explore-other-products-heading"
-                        className="font-serif text-3xl leading-tight font-bold text-[#800020] md:text-4xl capitalize"
+                        className="font-serif text-3xl leading-tight font-bold text-[#800020] capitalize md:text-4xl"
                     >
                         explore other products
                     </h2>
@@ -58,7 +58,7 @@ export function ExploreOtherProducts() {
 
                             {/* Card Content */}
                             <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-6">
-                                <h3 className="text-base font-semibold text-white uppercase tracking-wider">
+                                <h3 className="text-base font-semibold tracking-wider text-white uppercase">
                                     {card.title}
                                 </h3>
                                 <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#800020] text-white transition-transform group-hover:scale-110">

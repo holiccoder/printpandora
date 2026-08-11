@@ -1886,8 +1886,8 @@ export default function ShopShow({
                                     <tbody className="divide-y divide-neutral-100">
                                         {(() => {
                                             const baseUnitPrice =
-                                                quantityTiers[0]?.pricePerCard ??
-                                                0;
+                                                quantityTiers[0]
+                                                    ?.pricePerCard ?? 0;
                                             return quantityTiers.map(
                                                 (t: any) => {
                                                     const recommended =
@@ -1919,7 +1919,9 @@ export default function ShopShow({
                                                                     <input
                                                                         type="radio"
                                                                         name="qty"
-                                                                        checked={active}
+                                                                        checked={
+                                                                            active
+                                                                        }
                                                                         onChange={() =>
                                                                             setSelectedQty(
                                                                                 t.qty,

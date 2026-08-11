@@ -350,5 +350,6 @@ HTML,
         // Regenerate the snapshot any time with: php artisan db:export-seeders
         $this->call(LiveDataSeeder::class);
         $this->call(ProductNavigationCategorySeeder::class);
+        $this->call(LetterpressBlogSeeder::class);
     }
 }

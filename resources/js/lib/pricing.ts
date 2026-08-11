@@ -50,7 +50,10 @@ export function resolvePricingScenario(
 }
 
 function normalizeOptionValue(value: string): string {
-    return value.trim().toLowerCase().replace(/[\s_]+/g, '-');
+    return value
+        .trim()
+        .toLowerCase()
+        .replace(/[\s_]+/g, '-');
 }
 
 export function findMatchingPricingRule(
@@ -132,15 +135,15 @@ export function computeDynamicTiers(
 
     const selectedCorners = selectedOptions.corners;
     const roundedSelected = selectedCorners
-        ? (Array.isArray(selectedCorners)
-              ? selectedCorners.some((value) =>
-                    ['rounded', 'rounded-corners', 'round'].includes(
-                        normalizeOptionValue(value),
-                    ),
-                )
-              : ['rounded', 'rounded-corners', 'round'].includes(
-                    normalizeOptionValue(selectedCorners),
-                ))
+        ? Array.isArray(selectedCorners)
+            ? selectedCorners.some((value) =>
+                  ['rounded', 'rounded-corners', 'round'].includes(
+                      normalizeOptionValue(value),
+                  ),
+              )
+            : ['rounded', 'rounded-corners', 'round'].includes(
+                  normalizeOptionValue(selectedCorners),
+              )
         : cornersIndex === 1;
     const selectedSpecialFinish = selectedOptions.special_finish;
     const specialFinish = selectedSpecialFinish
@@ -156,7 +159,9 @@ export function computeDynamicTiers(
                           value,
                       ),
               )
-            : !['', 'none', 'no-foil', 'no-special-finish'].includes(specialFinish)
+            : !['', 'none', 'no-foil', 'no-special-finish'].includes(
+                  specialFinish,
+              )
         : specialFinishIndex > 0;
 
     const rounded = roundedSelected && roundedProcess != null;

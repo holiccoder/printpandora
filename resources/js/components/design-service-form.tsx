@@ -153,8 +153,7 @@ export default function DesignServiceForm({
                         className="grid grid-cols-1 gap-3"
                     >
                         {designServices!.map((option) => {
-                            const active =
-                                designServiceCode === option.code;
+                            const active = designServiceCode === option.code;
 
                             return (
                                 <label

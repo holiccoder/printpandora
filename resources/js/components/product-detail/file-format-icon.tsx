@@ -7,7 +7,12 @@ interface FileFormatIconProps {
     className?: string;
 }
 
-export default function FileFormatIcon({ id, extension, color, className = '' }: FileFormatIconProps) {
+export default function FileFormatIcon({
+    id,
+    extension,
+    color,
+    className = '',
+}: FileFormatIconProps) {
     // Get short uppercase label (e.g., PSD, AI, INDD, JPG)
     const label = extension.replace('.', '').toUpperCase();
 
@@ -17,7 +22,7 @@ export default function FileFormatIcon({ id, extension, color, className = '' }:
     return (
         <div
             style={bgStyle}
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-bold text-white text-xs tracking-wider shadow-sm select-none ${className}`}
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xs font-bold tracking-wider text-white shadow-sm select-none ${className}`}
             aria-hidden="true"
         >
             {label}
