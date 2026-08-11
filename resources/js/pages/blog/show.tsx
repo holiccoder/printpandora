@@ -1,9 +1,26 @@
 // Content sourced from `content/hardcoded-content.json` via useContent('blog_show_page').
+import { useMemo, useState, useEffect } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Facebook, Leaf, Link2, Linkedin, Twitter } from 'lucide-react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
+
+function slugify(text: string): string {
+    return text
+        .toLowerCase()
+        .replace(/<[^>]+>/g, '') // remove HTML tags inside heading if any
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '') // remove special chars
+        .replace(/\s+/g, '-') // replace spaces with hyphens
+        .replace(/-+/g, '-'); // remove duplicate hyphens
+}
+
+interface HeadingItem {
+    id: string;
+    text: string;
+    level: number;
+}
 
 interface Post {
     id: number;
@@ -51,6 +68,78 @@ export default function BlogShow({ post, related }: Props) {
     const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
     const shareTitle = encodeURIComponent(post.title);
     const shareEnc = encodeURIComponent(shareUrl);
+
+    // Parse headings and inject IDs dynamically
+    const { headings, modifiedHtml } = useMemo(() => {
+        const extractedHeadings: HeadingItem[] = [];
+        let headingIndex = 0;
+
+        const headingRegex = /<(h2|h3)([^>]*?)>([\s\S]*?)<\/\1>/gi;
+
+        const updatedHtml = post.body.replace(
+            headingRegex,
+            (match, tag, attrs, content) => {
+                const textContent = content.replace(/<[^>]+>/g, '').trim();
+                if (!textContent) return match;
+
+                const baseId =
+                    slugify(textContent) || `heading-${headingIndex++}`;
+                let id = baseId;
+                let counter = 1;
+                while (extractedHeadings.some((h) => h.id === id)) {
+                    id = `${baseId}-${counter++}`;
+                }
+
+                const level = tag.toLowerCase() === 'h2' ? 2 : 3;
+                extractedHeadings.push({ id, text: textContent, level });
+
+                if (/id=/i.test(attrs)) {
+                    return match;
+                }
+
+                return `<${tag}${attrs} id="${id}">${content}</${tag}>`;
+            },
+        );
+
+        return { headings: extractedHeadings, modifiedHtml: updatedHtml };
+    }, [post.body]);
+
+    // Active heading tracking state & window scroll listener
+    const [activeId, setActiveId] = useState<string>('');
+
+    useEffect(() => {
+        if (headings.length === 0) return;
+
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY + 130; // offset for sticky header
+            let currentActiveId = '';
+
+            for (const heading of headings) {
+                const element = document.getElementById(heading.id);
+                if (element) {
+                    const top = element.offsetTop;
+                    if (scrollPosition >= top) {
+                        currentActiveId = heading.id;
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            if (currentActiveId) {
+                setActiveId(currentActiveId);
+            } else if (headings.length > 0) {
+                setActiveId(headings[0].id);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // Run initially
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [headings]);
 
     return (
         <StorefrontLayout activeCategory={c.active_category}>
@@ -162,28 +251,124 @@ export default function BlogShow({ post, related }: Props) {
                             </div>
                         )}
 
-                        {/* Intro hub label above the article body */}
-                        <div
-                            className="mt-12 flex items-center gap-2 text-sm font-medium"
-                            style={{ color: HUB_GREEN }}
-                        >
-                            <Leaf className="size-4" aria-hidden />
-                            {c.brand_name}
-                        </div>
+                        <div className="mx-auto mt-12 grid grid-cols-1 gap-12 lg:grid-cols-4 lg:items-start">
+                            {/* Left Sidebar (Table of Contents) */}
+                            {headings.length > 0 && (
+                                <aside className="hidden shrink-0 border-r border-neutral-100 pr-6 lg:sticky lg:top-28 lg:col-span-1 lg:block">
+                                    <h2 className="mb-4 text-xs font-bold tracking-wider text-neutral-400 uppercase">
+                                        Table of Contents
+                                    </h2>
+                                    <nav className="space-y-1">
+                                        {headings.map((heading) => (
+                                            <a
+                                                key={heading.id}
+                                                href={`#${heading.id}`}
+                                                className={`block border-l-2 py-1.5 pl-3 text-sm transition-all duration-200 ${
+                                                    activeId === heading.id
+                                                        ? 'border-[#1f3d2f] font-semibold text-neutral-900'
+                                                        : 'border-transparent text-neutral-500 hover:text-neutral-900'
+                                                } ${heading.level === 3 ? 'ml-3' : ''}`}
+                                                style={
+                                                    activeId === heading.id
+                                                        ? { color: HUB_GREEN }
+                                                        : {}
+                                                }
+                                            >
+                                                {heading.text}
+                                            </a>
+                                        ))}
+                                    </nav>
+                                </aside>
+                            )}
 
-                        {/* Article body — rendered HTML, styled to match the editorial feel */}
-                        <div
-                            className="prose prose-neutral prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-2xl prose-h2:md:text-3xl prose-h3:mt-10 prose-h3:text-xl prose-p:my-5 prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-img:my-8 prose-img:rounded-xl prose-img:w-full mx-auto mt-6 max-w-4xl text-[17px] leading-[1.7]"
-                            // The article body comes from the CMS; render trusted HTML and
-                            // recolour links to match the green hub accent.
-                            style={
-                                {
-                                    // CSS var consumed by the prose-a override below.
-                                    ['--tw-prose-links' as never]: HUB_GREEN,
-                                } as React.CSSProperties
-                            }
-                            dangerouslySetInnerHTML={{ __html: post.body }}
-                        />
+                            {/* Right Column: Article Content */}
+                            <div
+                                className={
+                                    headings.length > 0
+                                        ? 'max-w-3xl lg:col-span-3'
+                                        : 'mx-auto max-w-4xl lg:col-span-4'
+                                }
+                            >
+                                {/* Intro hub label above the article body */}
+                                <div
+                                    className="mb-6 flex items-center gap-2 text-sm font-medium"
+                                    style={{ color: HUB_GREEN }}
+                                >
+                                    <Leaf className="size-4" aria-hidden />
+                                    {c.brand_name}
+                                </div>
+
+                                {/* Mobile/Tablet Table of Contents Accordion */}
+                                {headings.length > 0 && (
+                                    <div className="mb-6 rounded-xl border border-neutral-200 bg-neutral-50/50 p-4 lg:hidden">
+                                        <details className="group">
+                                            <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-neutral-800 [&::-webkit-details-marker]:hidden">
+                                                <span className="flex items-center gap-2 text-sm">
+                                                    <svg
+                                                        className="size-4 text-neutral-500"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M4 6h16M4 12h16M4 18h16"
+                                                        />
+                                                    </svg>
+                                                    Table of Contents
+                                                </span>
+                                                <span className="text-neutral-400 transition-transform duration-200 group-open:rotate-180">
+                                                    <svg
+                                                        className="size-4"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M19 9l-7 7-7-7"
+                                                        />
+                                                    </svg>
+                                                </span>
+                                            </summary>
+                                            <nav className="mt-4 space-y-2 border-t border-neutral-200 pt-3">
+                                                {headings.map((heading) => (
+                                                    <a
+                                                        key={heading.id}
+                                                        href={`#${heading.id}`}
+                                                        className={`block py-1 text-xs text-neutral-600 hover:text-neutral-900 ${
+                                                            heading.level === 3
+                                                                ? 'pl-4'
+                                                                : 'pl-2'
+                                                        }`}
+                                                    >
+                                                        {heading.text}
+                                                    </a>
+                                                ))}
+                                            </nav>
+                                        </details>
+                                    </div>
+                                )}
+
+                                {/* Article body — rendered HTML, styled to match the editorial feel */}
+                                <div
+                                    className="blog-content mt-6"
+                                    style={
+                                        {
+                                            ['--tw-prose-links' as never]:
+                                                HUB_GREEN,
+                                        } as React.CSSProperties
+                                    }
+                                    dangerouslySetInnerHTML={{
+                                        __html: modifiedHtml,
+                                    }}
+                                />
+                            </div>
+                        </div>
                     </article>
 
                     {/* Contact form: "Find the card that gets you" */}

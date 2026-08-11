@@ -63,16 +63,7 @@ export default function BusinessCardDesignService() {
 
             {/* 2. Design Process -------------------------------------------- */}
             <section className="border-t border-neutral-100 bg-white">
-                <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 lg:grid-cols-2 lg:gap-12 lg:py-16">
-                    {c.process_image_url && (
-                        <div className="overflow-hidden rounded-xl shadow-md">
-                            <img
-                                src={c.process_image_url}
-                                alt="Design process"
-                                className="aspect-[4/3] w-full object-cover"
-                            />
-                        </div>
-                    )}
+                <div className="mx-auto grid max-w-7xl items-start gap-10 px-4 py-12 lg:grid-cols-2 lg:gap-12 lg:py-16">
                     <div>
                         <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
                             {c.process_heading}
@@ -93,16 +84,6 @@ export default function BusinessCardDesignService() {
                             ))}
                         </ol>
                     </div>
-                </div>
-            </section>
-
-            {/* 3. Terms & Notes + Form -------------------------------------- */}
-            <section
-                id="design-form"
-                className="scroll-mt-20 border-t border-neutral-100"
-                style={{ backgroundColor: WARM_BG }}
-            >
-                <div className="mx-auto grid max-w-7xl items-start gap-10 px-4 py-12 lg:grid-cols-2 lg:gap-12 lg:py-16">
                     <div>
                         <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
                             {c.notes_heading}
@@ -122,12 +103,23 @@ export default function BusinessCardDesignService() {
                                 </li>
                             ))}
                         </ol>
+                    </div>
+                </div>
+            </section>
 
+            {/* 3. Terms & Notes + Form -------------------------------------- */}
+            <section
+                id="design-form"
+                className="scroll-mt-20 border-t border-neutral-100"
+                style={{ backgroundColor: WARM_BG }}
+            >
+                <div className="mx-auto grid max-w-7xl items-start gap-10 px-4 py-12 lg:grid-cols-2 lg:gap-12 lg:py-16">
+                    <div>
                         {/* Choose a Design Service Section */}
-                        <div className="mt-12 space-y-6 border-t border-neutral-200 pt-10">
-                            <h3 className="font-serif text-xl font-bold text-[#800020]">
+                        <div className="space-y-6">
+                            <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
                                 Choose a design service
-                            </h3>
+                            </h2>
                             <div className="space-y-4">
                                 <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-xs">
                                     <div className="flex items-start gap-4">
@@ -139,7 +131,10 @@ export default function BusinessCardDesignService() {
                                                 Card Layout $29
                                             </h4>
                                             <p className="mt-1 text-sm leading-relaxed text-neutral-500">
-                                                We arrange your provided content, align elements, and check bleed before outputting print-ready files.*
+                                                We arrange your provided
+                                                content, align elements, and
+                                                check bleed before outputting
+                                                print-ready files.*
                                             </p>
                                         </div>
                                     </div>
@@ -155,14 +150,20 @@ export default function BusinessCardDesignService() {
                                                 Card Design $79
                                             </h4>
                                             <p className="mt-1 text-sm leading-relaxed text-neutral-500">
-                                                Original layout created by our designers, including color palette, graphics, and two rounds of revisions, delivered as print-ready files.*
+                                                Original layout created by our
+                                                designers, including color
+                                                palette, graphics, and two
+                                                rounds of revisions, delivered
+                                                as print-ready files.*
                                             </p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="rounded-xl border border-neutral-200 bg-[#FAF7F2] p-4 text-xs leading-relaxed text-neutral-600">
-                                    * Design fee is a one-time charge and does not increase with print quantity. Printing starts after you approve the final artwork.
+                                    * Design fee is a one-time charge and does
+                                    not increase with print quantity. Printing
+                                    starts after you approve the final artwork.
                                 </div>
                             </div>
                         </div>
