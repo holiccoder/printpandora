@@ -64,7 +64,7 @@ export default function BlogShow({ post, related }: Props) {
             />
 
             <div className="flex flex-col bg-white text-neutral-900">
-                <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 md:py-14">
+                <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 md:py-14">
                     {/* Breadcrumbs */}
                     <nav
                         aria-label={c.breadcrumb_aria_label}
@@ -173,7 +173,7 @@ export default function BlogShow({ post, related }: Props) {
 
                         {/* Article body — rendered HTML, styled to match the editorial feel */}
                         <div
-                            className="prose prose-neutral prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-2xl prose-h2:md:text-3xl prose-h3:mt-10 prose-h3:text-xl prose-p:my-5 prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-img:my-8 prose-img:rounded-xl prose-img:w-full mx-auto mt-6 max-w-3xl text-[17px] leading-[1.7]"
+                            className="prose prose-neutral prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-2xl prose-h2:md:text-3xl prose-h3:mt-10 prose-h3:text-xl prose-p:my-5 prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-img:my-8 prose-img:rounded-xl prose-img:w-full mx-auto mt-6 max-w-4xl text-[17px] leading-[1.7]"
                             // The article body comes from the CMS; render trusted HTML and
                             // recolour links to match the green hub accent.
                             style={
@@ -195,7 +195,7 @@ export default function BlogShow({ post, related }: Props) {
 
                 {/* Related posts */}
                 {related.length > 0 && (
-                    <section className="mx-auto w-full max-w-6xl px-4 pb-16">
+                    <section className="mx-auto w-full max-w-7xl px-4 pb-16">
                         <h2 className="mb-8 text-2xl font-bold tracking-tight md:text-3xl">
                             {c.related_section.heading}
                         </h2>
@@ -447,7 +447,7 @@ function NewsletterCard() {
     const c = useContent('blog_show_page').newsletter_card;
 
     return (
-        <section className="mx-auto mt-20 max-w-5xl">
+        <section className="mx-auto mt-20 max-w-7xl">
             <div className="flex flex-col items-start justify-between gap-6 rounded-2xl bg-[#f5efe4] px-6 py-8 md:flex-row md:items-center md:gap-10 md:px-10 md:py-10">
                 <div className="max-w-2xl">
                     <h3 className="text-2xl font-bold tracking-tight text-neutral-900 md:text-3xl">

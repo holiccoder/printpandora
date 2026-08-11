@@ -45,7 +45,7 @@ export default function BlogIndex({ posts }: Props) {
             <div className="flex flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
                 <BlogHero />
 
-                <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-12">
+                <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-12">
                     <h1 className="mb-8 text-3xl font-semibold tracking-tight">
                         {c.page_heading}
                     </h1>

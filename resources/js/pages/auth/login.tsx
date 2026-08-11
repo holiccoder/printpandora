@@ -16,11 +16,12 @@ import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 
 type Props = {
+    error?: string;
     status?: string;
     canResetPassword: boolean;
 };
 
-export default function Login({ status, canResetPassword }: Props) {
+export default function Login({ error, status, canResetPassword }: Props) {
     const c = useContent('auth_login_page') as any;
 
     return (
@@ -28,6 +29,12 @@ export default function Login({ status, canResetPassword }: Props) {
             <SEO title={c.seo.title} description={c.seo.description} />
 
             <SocialAuthButtons intent="login" />
+
+            {error && (
+                <div className="mb-6 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-center text-sm text-destructive">
+                    {error}
+                </div>
+            )}
 
             <Form
                 {...store.form()}

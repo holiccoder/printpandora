@@ -2264,6 +2264,16 @@
         "verification_sent_message": "A new verification link has been sent to your email address.",
         "buttons": {
             "save": "Save"
+        },
+        "social_accounts": {
+            "heading": "Connected accounts",
+            "description": "Connect Google or Facebook for faster sign-in.",
+            "connected": "Connected",
+            "connect": "Connect",
+            "providers": {
+                "google": "Google",
+                "facebook": "Facebook"
+            }
         }
     },
     "settings_security_page": {

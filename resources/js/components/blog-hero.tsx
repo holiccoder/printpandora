@@ -117,7 +117,7 @@ export function BlogHero({
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
         >
-            <div className="mx-auto w-full max-w-6xl px-4 pt-10 pb-6 md:pt-14">
+            <div className="mx-auto w-full max-w-7xl px-4 pt-10 pb-6 md:pt-14">
                 {/* Title */}
                 <h1
                     id="blog-hero-title"
@@ -173,7 +173,7 @@ export function BlogHero({
             </div>
 
             {/* Carousel */}
-            <div className="relative mx-auto w-full max-w-6xl px-4 pb-12 md:pb-16">
+            <div className="relative mx-auto w-full max-w-7xl px-4 pb-12 md:pb-16">
                 {total > 1 && (
                     <>
                         <button

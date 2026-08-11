@@ -17,11 +17,21 @@ type PageProps = {
     auth: Auth;
 };
 
+type SocialProvider = 'google' | 'facebook';
+
+const SOCIAL_PROVIDERS: SocialProvider[] = ['google', 'facebook'];
+
 export default function Profile({
+    connectedSocialProviders,
+    error,
     mustVerifyEmail,
+    socialStatus,
     status,
 }: {
+    connectedSocialProviders: string[];
+    error?: string;
     mustVerifyEmail: boolean;
+    socialStatus?: string;
     status?: string;
 }) {
     const c = useContent('settings_profile_page') as any;
@@ -122,6 +132,56 @@ export default function Profile({
                         </>
                     )}
                 </Form>
+            </div>
+
+            <div className="space-y-4 border-t pt-6">
+                <Heading
+                    variant="small"
+                    title={c.social_accounts.heading}
+                    description={c.social_accounts.description}
+                />
+
+                {error && (
+                    <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                        {error}
+                    </div>
+                )}
+
+                {socialStatus && (
+                    <div className="rounded-md border border-green-600/30 bg-green-50 p-3 text-sm text-green-700">
+                        {socialStatus}
+                    </div>
+                )}
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                    {SOCIAL_PROVIDERS.map((provider) => {
+                        const connected =
+                            connectedSocialProviders.includes(provider);
+                        const label = c.social_accounts.providers[provider];
+
+                        return (
+                            <div
+                                key={provider}
+                                className="flex items-center justify-between gap-3 rounded-md border p-3"
+                            >
+                                <span className="font-medium">{label}</span>
+                                {connected ? (
+                                    <span className="text-sm text-muted-foreground">
+                                        {c.social_accounts.connected}
+                                    </span>
+                                ) : (
+                                    <Button asChild size="sm" variant="outline">
+                                        <a
+                                            href={`/settings/profile/social/${provider}/redirect`}
+                                        >
+                                            {c.social_accounts.connect}
+                                        </a>
+                                    </Button>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
 
             <DeleteUser />

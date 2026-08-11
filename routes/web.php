@@ -38,7 +38,7 @@ Route::inertia('/flyers-and-brochures', 'flyers-and-brochures')->name('flyers-an
 Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-// Social authentication (stubbed — wire up Laravel Socialite to enable)
+// Social authentication
 Route::get('auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])
     ->whereIn('provider', ['google', 'facebook'])
     ->name('social.redirect');
