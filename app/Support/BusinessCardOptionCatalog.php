@@ -20,6 +20,8 @@ final class BusinessCardOptionCatalog
         'premium-cotton-business-card',
         'luxe-cotton-business-card',
         'grand-cotton-business-card',
+        'luxe-business-cards',
+        'super-business-cards',
     ];
 
     /**
@@ -50,6 +52,8 @@ final class BusinessCardOptionCatalog
             'premium-cotton-business-card',
             'luxe-cotton-business-card',
             'grand-cotton-business-card' => self::cotton($options),
+            'luxe-business-cards' => self::luxeBusinessCards($options),
+            'super-business-cards' => self::superBusinessCards($options),
             default => null,
         };
 
@@ -152,16 +156,53 @@ final class BusinessCardOptionCatalog
         return [
             'corners' => self::group('Corners', self::cornerValues($options), 'square'),
             'with_nfc' => self::group('With NFC', [
+                self::value($options, 'with_nfc', 'no_nfc', [
+                    'label' => 'No NFC',
+                    'description' => 'A standard cotton business card without NFC.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/no-nfc-card.png',
+                ]),
                 self::value($options, 'with_nfc', 'with_nfc', [
                     'label' => 'With NFC',
                     'description' => 'Add an NFC chip for contactless digital sharing.',
                     'swatch_image' => '/images/product-options/business-cards/swatches/nfc-card.png',
                 ]),
-                self::value($options, 'with_nfc', 'no_nfc', [
-                    'label' => 'No NFC',
-                    'description' => 'A standard cotton business card without NFC.',
-                ]),
             ], 'no_nfc'),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private static function luxeBusinessCards(array $options): array
+    {
+        return [
+            'sizes' => self::group('Size', self::sizeValues($options), 'standard'),
+            'corners' => self::group('Corners', self::cornerValues($options), 'square'),
+            'texture' => self::group('Texture', self::luxeTextureValues($options), 'inkpavo_j1'),
+            'special_finish' => self::group(
+                'Special Finish',
+                self::hotFoilValues($options),
+                'no_special_finish',
+            ),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private static function superBusinessCards(array $options): array
+    {
+        return [
+            'sizes' => self::group('Size', self::sizeValues($options), 'standard'),
+            'corners' => self::group('Corners', self::cornerValues($options), 'square'),
+            'texture' => self::group('Texture', self::superTextureValues($options), 'j1_water_ripple_paper'),
+            'special_finish' => self::group(
+                'Special Finish',
+                self::hotFoilValues($options),
+                'no_special_finish',
+            ),
         ];
     }
 
@@ -349,10 +390,12 @@ final class BusinessCardOptionCatalog
             self::value($options, 'print_code', 'no_print_code', [
                 'label' => 'No print code',
                 'description' => 'Do not add a print code.',
+                'swatch_image' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
             ]),
             self::value($options, 'print_code', 'print_code', [
                 'label' => 'Print code',
                 'description' => 'Add a print code to the card.',
+                'swatch_image' => '/images/product-options/business-cards/swatches/pvc-print-code.png',
             ]),
         ];
     }
@@ -367,10 +410,12 @@ final class BusinessCardOptionCatalog
             self::value($options, 'print_code_or_signature_stripe', 'no_print_code_or_signature_stripe', [
                 'label' => 'No print code or signature stripe',
                 'description' => 'Do not add a print code or signature stripe.',
+                'swatch_image' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
             ]),
             self::value($options, 'print_code_or_signature_stripe', 'print_code', [
                 'label' => 'Print code',
                 'description' => 'Add a print code to the card.',
+                'swatch_image' => '/images/product-options/business-cards/swatches/pvc-print-code.png',
             ]),
             self::value($options, 'print_code_or_signature_stripe', 'signature_stripe', [
                 'label' => 'Signature stripe',
@@ -483,6 +528,55 @@ final class BusinessCardOptionCatalog
                 'label' => $texture['label'],
                 'description' => '',
                 'swatch_image' => '',
+            ]),
+            $textures,
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<int, array<string, mixed>>
+     */
+    private static function luxeTextureValues(array $options): array
+    {
+        $textures = array_map(
+            fn (int $number): array => [
+                'code' => "inkpavo_j{$number}",
+                'label' => "InkPavo-J{$number}",
+                'description' => "InkPavo-J{$number} texture.",
+                'swatch_image' => "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j{$number}.png",
+            ],
+            range(1, 8),
+        );
+
+        return array_map(
+            fn (array $texture): array => self::value($options, 'texture', $texture['code'], $texture),
+            $textures,
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<int, array<string, mixed>>
+     */
+    private static function superTextureValues(array $options): array
+    {
+        $textures = [
+            ['code' => 'j1_water_ripple_paper', 'label' => 'J1 Water Ripple Paper'],
+            ['code' => 'j2_cloth_texture_paper', 'label' => 'J2 Cloth Texture Paper'],
+            ['code' => 'j3_eggshell_texture', 'label' => 'J3 Eggshell Texture'],
+            ['code' => 'j4_high_grade_paper', 'label' => 'J4 High-Grade Paper'],
+            ['code' => 'j5_pearlescent_paper', 'label' => 'J5 Pearlescent Paper'],
+            ['code' => 'j6_kraft_paper', 'label' => 'J6 Kraft Paper'],
+            ['code' => 'j7_absorbent_cotton_paper', 'label' => 'J7 Absorbent Cotton Paper'],
+            ['code' => 'j8_pinhole_paper', 'label' => 'J8 Pinhole Paper'],
+        ];
+
+        return array_map(
+            fn (array $texture): array => self::value($options, 'texture', $texture['code'], [
+                'label' => $texture['label'],
+                'description' => $texture['label'].'.',
+                'swatch_image' => '/images/products/super-business-cards/super-business-cards-standard-'.str_replace('_', '-', $texture['code']).'.png',
             ]),
             $textures,
         );

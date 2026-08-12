@@ -232,12 +232,14 @@
         {
             "code": "no_print_code",
             "name": "No print code",
-            "description": "Do not add a print code."
+            "description": "Do not add a print code.",
+            "swatch_image": "/images/product-options/business-cards/swatches/pvc-no-print-code.png"
         },
         {
             "code": "print_code",
             "name": "Print code",
-            "description": "Add a print code to the card."
+            "description": "Add a print code to the card.",
+            "swatch_image": "/images/product-options/business-cards/swatches/pvc-print-code.png"
         }
     ]
 }

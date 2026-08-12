@@ -35,6 +35,30 @@ class BusinessCardProductOptionsSeeder extends Seeder
     ];
 
     /**
+     * @var array<string, array<int, string>>
+     */
+    private const METAL_GALLERIES = [
+        'classic-metal-business-cards' => [
+            '/images/products/metal/classic-metal-business-cards-04.png',
+            '/images/products/metal/classic-metal-business-cards-02.png',
+            '/images/products/metal/classic-metal-business-cards-03.png',
+            '/images/products/metal/classic-metal-business-cards-01.png',
+        ],
+        'premium-metal-business-cards' => [
+            '/images/products/metal/premium-metal-business-cards-02.png',
+            '/images/products/metal/premium-metal-business-cards-01.png',
+            '/images/products/metal/premium-metal-business-cards-03.png',
+            '/images/products/metal/premium-metal-business-cards-04.png',
+        ],
+        'luxe-metal-business-cards' => [
+            '/images/products/metal/luxe-metal-business-cards-04.png',
+            '/images/products/metal/luxe-metal-business-cards-02.png',
+            '/images/products/metal/luxe-metal-business-cards-03.png',
+            '/images/products/metal/luxe-metal-business-cards-01.png',
+        ],
+    ];
+
+    /**
      * @var array<string, array{subtitle: string, description: string}>
      */
     private const PVC_PRODUCT_DETAILS = [
@@ -88,6 +112,74 @@ class BusinessCardProductOptionsSeeder extends Seeder
         ],
     ];
 
+    /**
+     * @var array{default: array<int, string>, textures: array<string, string>}
+     */
+    private const LUXE_BUSINESS_CARD_GALLERY = [
+        'default' => [
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-01.png',
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-02.png',
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-03.png',
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-04.png',
+        ],
+        'textures' => [
+            'inkpavo_j1' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j1.png',
+            'inkpavo_j2' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j2.png',
+            'inkpavo_j3' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j3.png',
+            'inkpavo_j4' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j4.png',
+            'inkpavo_j5' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j5.png',
+            'inkpavo_j6' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j6.png',
+            'inkpavo_j7' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j7.png',
+            'inkpavo_j8' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j8.png',
+        ],
+    ];
+
+    /**
+     * @var array{default: array<int, string>, textures: array<string, array{standard: string, rounded: string}>}
+     */
+    private const SUPER_BUSINESS_CARD_GALLERY = [
+        'default' => [
+            '/images/products/super-business-cards/super-business-cards-default-01.png',
+            '/images/products/super-business-cards/super-business-cards-default-02.png',
+            '/images/products/super-business-cards/super-business-cards-default-03.png',
+            '/images/products/super-business-cards/super-business-cards-default-04.png',
+        ],
+        'textures' => [
+            'j1_water_ripple_paper' => [
+                'standard' => '/images/products/super-business-cards/super-business-cards-standard-j1-water-ripple-paper.png',
+                'rounded' => '/images/products/super-business-cards/super-business-cards-rounded-j1-water-ripple-paper.png',
+            ],
+            'j2_cloth_texture_paper' => [
+                'standard' => '/images/products/super-business-cards/super-business-cards-standard-j2-cloth-texture-paper.png',
+                'rounded' => '/images/products/super-business-cards/super-business-cards-rounded-j2-cloth-texture-paper.png',
+            ],
+            'j3_eggshell_texture' => [
+                'standard' => '/images/products/super-business-cards/super-business-cards-standard-j3-eggshell-texture.png',
+                'rounded' => '/images/products/super-business-cards/super-business-cards-rounded-j3-eggshell-texture.png',
+            ],
+            'j4_high_grade_paper' => [
+                'standard' => '/images/products/super-business-cards/super-business-cards-standard-j4-high-grade-paper.png',
+                'rounded' => '/images/products/super-business-cards/super-business-cards-rounded-j4-high-grade-paper.png',
+            ],
+            'j5_pearlescent_paper' => [
+                'standard' => '/images/products/super-business-cards/super-business-cards-standard-j5-pearlescent-paper.png',
+                'rounded' => '/images/products/super-business-cards/super-business-cards-rounded-j5-pearlescent-paper.png',
+            ],
+            'j6_kraft_paper' => [
+                'standard' => '/images/products/super-business-cards/super-business-cards-standard-j6-kraft-paper.png',
+                'rounded' => '/images/products/super-business-cards/super-business-cards-rounded-j6-kraft-paper.png',
+            ],
+            'j7_absorbent_cotton_paper' => [
+                'standard' => '/images/products/super-business-cards/super-business-cards-standard-j7-absorbent-cotton-paper.png',
+                'rounded' => '/images/products/super-business-cards/super-business-cards-rounded-j7-absorbent-cotton-paper.png',
+            ],
+            'j8_pinhole_paper' => [
+                'standard' => '/images/products/super-business-cards/super-business-cards-standard-j8-pinhole-paper.png',
+                'rounded' => '/images/products/super-business-cards/super-business-cards-rounded-j8-pinhole-paper.png',
+            ],
+        ],
+    ];
+
     public function run(): void
     {
         DB::transaction(function (): void {
@@ -122,8 +214,38 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 $product->product_category_id = $metalCategory->getKey();
                 $product->save();
 
+                $config = $configuration->canonicalConfig($product);
+                $gallery = self::METAL_GALLERIES[$definition['slug']];
+                $config['media']['gallery'] = $gallery;
+
+                $galleryRules = is_array($config['media']['gallery_rules'] ?? null)
+                    ? $config['media']['gallery_rules']
+                    : [];
+                $hasDefaultGalleryRule = false;
+
+                foreach ($galleryRules as &$rule) {
+                    if (is_array($rule) && (($rule['id'] ?? null) === 'default' || ($rule['match'] ?? []) === [])) {
+                        $hasDefaultGalleryRule = true;
+                        $rule['images'] = $gallery;
+                        $rule['primary'] = $gallery[0];
+                    }
+                }
+                unset($rule);
+
+                if (! $hasDefaultGalleryRule) {
+                    $galleryRules[] = [
+                        'id' => 'default',
+                        'match' => [],
+                        'images' => $gallery,
+                        'primary' => $gallery[0],
+                    ];
+                }
+
+                $config['media']['gallery_rules'] = $galleryRules;
+                $config['product']['featured_image'] = $gallery[0];
                 $product->forceFill([
-                    'product_config' => $configuration->canonicalConfig($product),
+                    'featured_image' => $gallery[0],
+                    'product_config' => $config,
                 ])->save();
 
                 $configuration->syncProductProjection($product->fresh());
@@ -175,8 +297,90 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 unset($rule);
 
                 $config['media']['gallery_rules'] = $galleryRules;
+                $config['product']['featured_image'] = $gallery[0];
                 $product->forceFill([
                     'featured_image' => $gallery[0],
+                    'product_config' => $config,
+                ])->save();
+
+                $configuration->syncProductProjection($product->fresh());
+            }
+
+            $product = Product::query()->where('slug', 'luxe-business-cards')->first();
+
+            if ($product) {
+                $config = $configuration->canonicalConfig($product);
+                $defaultGallery = self::LUXE_BUSINESS_CARD_GALLERY['default'];
+                $galleryRules = [[
+                    'id' => 'default',
+                    'match' => [],
+                    'images' => $defaultGallery,
+                    'primary' => $defaultGallery[0],
+                ]];
+
+                foreach (self::LUXE_BUSINESS_CARD_GALLERY['textures'] as $texture => $image) {
+                    $galleryRules[] = [
+                        'id' => $texture,
+                        'match' => [
+                            'sizes' => 'standard',
+                            'texture' => $texture,
+                        ],
+                        'images' => [$image],
+                        'primary' => $image,
+                    ];
+                }
+
+                $config['media']['gallery'] = $defaultGallery;
+                $config['media']['gallery_rules'] = $galleryRules;
+                $config['product']['featured_image'] = $defaultGallery[0];
+                $product->forceFill([
+                    'featured_image' => $defaultGallery[0],
+                    'product_config' => $config,
+                ])->save();
+
+                $configuration->syncProductProjection($product->fresh());
+            }
+
+            $product = Product::query()->where('slug', 'super-business-cards')->first();
+
+            if ($product) {
+                $config = $configuration->canonicalConfig($product);
+                $defaultGallery = self::SUPER_BUSINESS_CARD_GALLERY['default'];
+                $galleryRules = [[
+                    'id' => 'default',
+                    'match' => [],
+                    'images' => $defaultGallery,
+                    'primary' => $defaultGallery[0],
+                ]];
+
+                foreach (self::SUPER_BUSINESS_CARD_GALLERY['textures'] as $texture => $images) {
+                    $galleryRules[] = [
+                        'id' => "{$texture}_square",
+                        'match' => [
+                            'sizes' => 'standard',
+                            'corners' => 'square',
+                            'texture' => $texture,
+                        ],
+                        'images' => [$images['standard']],
+                        'primary' => $images['standard'],
+                    ];
+                    $galleryRules[] = [
+                        'id' => "{$texture}_rounded",
+                        'match' => [
+                            'sizes' => 'standard',
+                            'corners' => 'rounded',
+                            'texture' => $texture,
+                        ],
+                        'images' => [$images['rounded']],
+                        'primary' => $images['rounded'],
+                    ];
+                }
+
+                $config['media']['gallery'] = $defaultGallery;
+                $config['media']['gallery_rules'] = $galleryRules;
+                $config['product']['featured_image'] = $defaultGallery[0];
+                $product->forceFill([
+                    'featured_image' => $defaultGallery[0],
                     'product_config' => $config,
                 ])->save();
 

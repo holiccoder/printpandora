@@ -81,6 +81,14 @@ class BusinessCardProductOptionsTest extends TestCase
             ['no_print_code', 'print_code'],
             data_get(Product::where('slug', 'premium-pvc-card')->firstOrFail()->product_config, 'options.print_code.values.*.code'),
         );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
+            data_get(Product::where('slug', 'basic-pvc-card')->firstOrFail()->product_config, 'options.print_code.values.0.swatch_image'),
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/pvc-print-code.png',
+            data_get(Product::where('slug', 'basic-pvc-card')->firstOrFail()->product_config, 'options.print_code.values.1.swatch_image'),
+        );
     }
 
     public function test_missing_metal_products_are_created_under_business_cards(): void
@@ -107,6 +115,35 @@ class BusinessCardProductOptionsTest extends TestCase
             ['laser_engraving', 'color_printing', 'plating', 'nfc'],
             data_get(Product::where('slug', 'premium-metal-business-cards')->firstOrFail()->product_config, 'options.special_finish.values.*.code'),
         );
+
+        $expectedGalleries = [
+            'classic-metal-business-cards' => [
+                '/images/products/metal/classic-metal-business-cards-04.png',
+                '/images/products/metal/classic-metal-business-cards-02.png',
+                '/images/products/metal/classic-metal-business-cards-03.png',
+                '/images/products/metal/classic-metal-business-cards-01.png',
+            ],
+            'premium-metal-business-cards' => [
+                '/images/products/metal/premium-metal-business-cards-02.png',
+                '/images/products/metal/premium-metal-business-cards-01.png',
+                '/images/products/metal/premium-metal-business-cards-03.png',
+                '/images/products/metal/premium-metal-business-cards-04.png',
+            ],
+            'luxe-metal-business-cards' => [
+                '/images/products/metal/luxe-metal-business-cards-04.png',
+                '/images/products/metal/luxe-metal-business-cards-02.png',
+                '/images/products/metal/luxe-metal-business-cards-03.png',
+                '/images/products/metal/luxe-metal-business-cards-01.png',
+            ],
+        ];
+
+        foreach ($expectedGalleries as $slug => $gallery) {
+            $product = Product::where('slug', $slug)->firstOrFail();
+
+            $this->assertSame($gallery, data_get($product->product_config, 'media.gallery'));
+            $this->assertSame($gallery[0], $product->featured_image);
+            $this->assertSame($gallery[0], data_get($product->product_config, 'media.gallery_rules.0.primary'));
+        }
     }
 
     public function test_legacy_products_are_normalized_to_the_same_contract(): void
@@ -190,7 +227,11 @@ class BusinessCardProductOptionsTest extends TestCase
 
             $this->assertSame(['corners', 'with_nfc'], array_keys($options));
             $this->assertSame(['square', 'rounded'], data_get($options, 'corners.values.*.code'));
-            $this->assertSame(['with_nfc', 'no_nfc'], data_get($options, 'with_nfc.values.*.code'));
+            $this->assertSame(['no_nfc', 'with_nfc'], data_get($options, 'with_nfc.values.*.code'));
+            $this->assertSame(
+                '/images/product-options/business-cards/swatches/no-nfc-card.png',
+                data_get($options, 'with_nfc.values.0.swatch_image'),
+            );
             $this->assertSame($gallery, data_get($product->product_config, 'media.gallery'));
             $this->assertSame($gallery[0], $product->featured_image);
             $this->assertSame('Keep this FAQ', data_get($product->product_config, 'faq.0.question'));
@@ -237,8 +278,265 @@ class BusinessCardProductOptionsTest extends TestCase
             array_column(data_get($options, 'option_groups.0.values', []), 'code'),
         );
         $this->assertSame(
-            ['with_nfc', 'no_nfc'],
+            ['no_nfc', 'with_nfc'],
             array_column(data_get($options, 'option_groups.1.values', []), 'code'),
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/no-nfc-card.png',
+            data_get($options, 'option_groups.1.values.0.swatch_image'),
+        );
+    }
+
+    public function test_luxe_business_cards_receive_texture_options_and_standard_texture_galleries(): void
+    {
+        $businessCards = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+        $product = Product::create([
+            'name' => 'Luxe Business Cards',
+            'slug' => 'luxe-business-cards',
+            'product_category_id' => $businessCards->id,
+            'product_config' => [
+                'options' => [
+                    'paper_finish' => ['values' => [['code' => 'matte']]],
+                    'special_finish' => ['values' => [['code' => 'black_gold']]],
+                ],
+                'faq' => [['question' => 'Keep this FAQ', 'answer' => 'Yes']],
+                'detail_sections' => [
+                    'design_specifications' => ['heading' => 'Keep this design spec'],
+                ],
+            ],
+        ]);
+
+        (new BusinessCardProductOptionsSeeder)->run();
+
+        $product->refresh();
+        $config = $product->product_config;
+        $textureCodes = array_map(
+            fn (int $number): string => "inkpavo_j{$number}",
+            range(1, 8),
+        );
+        $defaultGallery = [
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-01.png',
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-02.png',
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-03.png',
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-04.png',
+        ];
+
+        $this->assertSame(
+            ['sizes', 'corners', 'texture', 'special_finish'],
+            array_keys($config['options']),
+        );
+        $this->assertSame(['standard', 'square', 'custom'], data_get($config, 'options.sizes.values.*.code'));
+        $this->assertSame(['square', 'rounded'], data_get($config, 'options.corners.values.*.code'));
+        $this->assertSame($textureCodes, data_get($config, 'options.texture.values.*.code'));
+        $this->assertSame(
+            [
+                'no_special_finish',
+                'black_gold',
+                'blue_gold',
+                'bright_gold',
+                'bright_silver',
+                'green_gold',
+                'matte_gold',
+                'matte_silver',
+                'red_gold',
+                'rose_gold',
+                'aged_gold',
+                'muted_purple_gold',
+            ],
+            data_get($config, 'options.special_finish.values.*.code'),
+        );
+        $this->assertSame($defaultGallery, data_get($config, 'media.gallery'));
+        $this->assertSame($defaultGallery[0], $product->featured_image);
+        $this->assertSame($defaultGallery[0], data_get($config, 'product.featured_image'));
+        $this->assertSame('Keep this FAQ', data_get($config, 'faq.0.question'));
+        $this->assertSame('Keep this design spec', data_get($config, 'detail_sections.design_specifications.heading'));
+
+        $rules = data_get($config, 'media.gallery_rules');
+        $this->assertCount(9, $rules);
+        $this->assertSame(
+            ['sizes' => 'standard', 'texture' => 'inkpavo_j4'],
+            data_get($rules, '4.match'),
+        );
+        $this->assertSame(
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j4.png',
+            data_get($rules, '4.primary'),
+        );
+    }
+
+    public function test_legacy_luxe_business_cards_are_normalized_to_the_same_contract(): void
+    {
+        $category = new ProductCategory([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+        $contents = file_get_contents(base_path('content/product-options/business-cards/luxe-business-cards.json'));
+
+        if ($contents === false) {
+            $this->fail('The Luxe Business Cards legacy options file could not be read.');
+        }
+
+        $product = new Product([
+            'name' => 'Luxe Business Cards',
+            'slug' => 'luxe-business-cards',
+            'product_options' => json_decode(
+                $contents,
+                true,
+                512,
+                JSON_THROW_ON_ERROR,
+            ),
+        ]);
+        $product->setRelation('category', $category);
+
+        $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+
+        $this->assertTrue((bool) data_get($options, 'dynamic_options'));
+        $this->assertSame(
+            ['sizes', 'corners', 'texture', 'special_finish'],
+            array_column(data_get($options, 'option_groups', []), 'key'),
+        );
+        $this->assertSame(
+            ['standard', 'square', 'custom'],
+            array_column(data_get($options, 'option_groups.0.values', []), 'code'),
+        );
+        $this->assertSame(
+            ['inkpavo_j1', 'inkpavo_j2', 'inkpavo_j3', 'inkpavo_j4', 'inkpavo_j5', 'inkpavo_j6', 'inkpavo_j7', 'inkpavo_j8'],
+            array_column(data_get($options, 'option_groups.2.values', []), 'code'),
+        );
+        $this->assertSame(
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j6.png',
+            data_get($options, 'galleries.7.images.0'),
+        );
+    }
+
+    public function test_super_business_cards_receive_texture_options_and_corner_specific_galleries(): void
+    {
+        $businessCards = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+        $product = Product::create([
+            'name' => 'Super Business Cards',
+            'slug' => 'super-business-cards',
+            'product_category_id' => $businessCards->id,
+            'product_config' => [
+                'options' => [
+                    'paper_finish' => ['values' => [['code' => 'matte']]],
+                    'special_finish' => ['values' => [['code' => 'black_gold']]],
+                ],
+                'faq' => [['question' => 'Keep this FAQ', 'answer' => 'Yes']],
+                'detail_sections' => [
+                    'design_specifications' => ['heading' => 'Keep this design spec'],
+                ],
+            ],
+        ]);
+
+        (new BusinessCardProductOptionsSeeder)->run();
+
+        $product->refresh();
+        $config = $product->product_config;
+        $textureCodes = [
+            'j1_water_ripple_paper',
+            'j2_cloth_texture_paper',
+            'j3_eggshell_texture',
+            'j4_high_grade_paper',
+            'j5_pearlescent_paper',
+            'j6_kraft_paper',
+            'j7_absorbent_cotton_paper',
+            'j8_pinhole_paper',
+        ];
+        $defaultGallery = [
+            '/images/products/super-business-cards/super-business-cards-default-01.png',
+            '/images/products/super-business-cards/super-business-cards-default-02.png',
+            '/images/products/super-business-cards/super-business-cards-default-03.png',
+            '/images/products/super-business-cards/super-business-cards-default-04.png',
+        ];
+
+        $this->assertSame(
+            ['sizes', 'corners', 'texture', 'special_finish'],
+            array_keys($config['options']),
+        );
+        $this->assertSame(['standard', 'square', 'custom'], data_get($config, 'options.sizes.values.*.code'));
+        $this->assertSame(['square', 'rounded'], data_get($config, 'options.corners.values.*.code'));
+        $this->assertSame($textureCodes, data_get($config, 'options.texture.values.*.code'));
+        $this->assertSame(
+            [
+                'no_special_finish',
+                'black_gold',
+                'blue_gold',
+                'bright_gold',
+                'bright_silver',
+                'green_gold',
+                'matte_gold',
+                'matte_silver',
+                'red_gold',
+                'rose_gold',
+                'aged_gold',
+                'muted_purple_gold',
+            ],
+            data_get($config, 'options.special_finish.values.*.code'),
+        );
+        $this->assertSame($defaultGallery, data_get($config, 'media.gallery'));
+        $this->assertSame($defaultGallery[0], $product->featured_image);
+        $this->assertSame('Keep this FAQ', data_get($config, 'faq.0.question'));
+        $this->assertSame('Keep this design spec', data_get($config, 'detail_sections.design_specifications.heading'));
+
+        $rules = data_get($config, 'media.gallery_rules');
+        $this->assertCount(17, $rules);
+        $this->assertSame(
+            ['sizes' => 'standard', 'corners' => 'rounded', 'texture' => 'j5_pearlescent_paper'],
+            data_get($rules, '10.match'),
+        );
+        $this->assertSame(
+            '/images/products/super-business-cards/super-business-cards-rounded-j5-pearlescent-paper.png',
+            data_get($rules, '10.primary'),
+        );
+    }
+
+    public function test_legacy_super_business_cards_are_normalized_to_the_same_contract(): void
+    {
+        $category = new ProductCategory([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+        $contents = file_get_contents(base_path('content/product-options/business-cards/super-business-cards.json'));
+
+        if ($contents === false) {
+            $this->fail('The Super Business Cards legacy options file could not be read.');
+        }
+
+        $product = new Product([
+            'name' => 'Super Business Cards',
+            'slug' => 'super-business-cards',
+            'product_options' => json_decode(
+                $contents,
+                true,
+                512,
+                JSON_THROW_ON_ERROR,
+            ),
+        ]);
+        $product->setRelation('category', $category);
+
+        $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+
+        $this->assertTrue((bool) data_get($options, 'dynamic_options'));
+        $this->assertSame(
+            ['sizes', 'corners', 'texture', 'special_finish'],
+            array_column(data_get($options, 'option_groups', []), 'key'),
+        );
+        $this->assertSame(
+            ['standard', 'square', 'custom'],
+            array_column(data_get($options, 'option_groups.0.values', []), 'code'),
+        );
+        $this->assertSame(
+            ['j1_water_ripple_paper', 'j2_cloth_texture_paper', 'j3_eggshell_texture', 'j4_high_grade_paper', 'j5_pearlescent_paper', 'j6_kraft_paper', 'j7_absorbent_cotton_paper', 'j8_pinhole_paper'],
+            array_column(data_get($options, 'option_groups.2.values', []), 'code'),
+        );
+        $this->assertSame(
+            '/images/products/super-business-cards/super-business-cards-rounded-j3-eggshell-texture.png',
+            data_get($options, 'galleries.7.images.0'),
         );
     }
 }

@@ -237,15 +237,16 @@
   },
   "with_nfc": [
     {
+      "name": "No NFC",
+      "code": "no_nfc",
+      "description": "A standard cotton business card without NFC.",
+      "swatch_image": "/images/product-options/business-cards/swatches/no-nfc-card.png"
+    },
+    {
       "name": "With NFC",
       "code": "with_nfc",
       "description": "Add an NFC chip for contactless digital sharing.",
       "swatch_image": "/images/product-options/business-cards/swatches/nfc-card.png"
-    },
-    {
-      "name": "No NFC",
-      "code": "no_nfc",
-      "description": "A standard cotton business card without NFC."
     }
   ]
 }
