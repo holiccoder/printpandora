@@ -284,7 +284,11 @@ class ProductConfigurationService
     public function canonicalConfig(Product $product): array
     {
         if ($this->hasCanonicalConfig($product)) {
-            return $this->normalizeCanonicalConfig($product->product_config ?? [], $product);
+            $config = $this->normalizeCanonicalConfig($product->product_config ?? [], $product);
+
+            $config['options'] = $this->normalizeProductSpecificOptions($config['options'], $product);
+
+            return $config;
         }
 
         return $this->fromLegacyOptions($product, $this->loadLegacyOptions($product) ?? []);
@@ -816,6 +820,17 @@ class ProductConfigurationService
             }
         }
 
+        if ($product->slug === 'classic-special-business-cards') {
+            $canonical = $this->fromLegacyOptions($product, $legacy);
+
+            return $this->withResolvedStorefrontImages(
+                $this->withSharedBusinessCardDetailSections(
+                    $this->toStorefrontOptions($canonical, $product),
+                    $product,
+                ),
+            );
+        }
+
         return $this->withResolvedStorefrontImages(
             $this->withSharedBusinessCardDetailSections($legacy, $product),
         );
@@ -956,7 +971,10 @@ class ProductConfigurationService
                 'featured_image' => $product->featured_image,
                 'meta_description' => $product->meta_description,
             ],
-            'options' => $this->optionsFromLegacy($legacy),
+            'options' => $this->normalizeProductSpecificOptions(
+                $this->optionsFromLegacy($legacy),
+                $product,
+            ),
             'media' => [
                 'gallery' => is_array($defaultGallery['images'] ?? null)
                     ? array_values($defaultGallery['images'])
@@ -990,8 +1008,13 @@ class ProductConfigurationService
     private function optionsFromLegacy(array $legacy): array
     {
         $options = [];
+        $groupLabels = self::OPTION_GROUP_LABELS;
 
-        foreach (self::OPTION_GROUP_LABELS as $key => $label) {
+        if (array_key_exists('texture', $legacy)) {
+            $groupLabels['texture'] = 'Texture';
+        }
+
+        foreach ($groupLabels as $key => $label) {
             $items = is_array($legacy[$key] ?? null) ? $legacy[$key] : [];
 
             $options[$key] = [
@@ -1457,6 +1480,208 @@ class ProductConfigurationService
         $config['faq'] = is_array($config['faq'] ?? null) ? array_values($config['faq']) : [];
 
         return $config;
+    }
+
+    /**
+     * Keep the classic special business-card option contract consistent for
+     * canonical database configurations and legacy JSON configurations.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private function normalizeProductSpecificOptions(array $options, Product $product): array
+    {
+        if ($product->slug !== 'classic-special-business-cards') {
+            return $options;
+        }
+
+        $existingValue = function (string $groupKey, string $code, array $defaults = []) use ($options): array {
+            $values = data_get($options, "{$groupKey}.values", []);
+
+            if (is_array($values)) {
+                foreach ($values as $value) {
+                    if (is_array($value) && ($value['code'] ?? null) === $code) {
+                        return array_replace($defaults, $value, ['code' => $code]);
+                    }
+                }
+            }
+
+            return array_replace(['code' => $code], $defaults);
+        };
+
+        $group = static fn (string $label, array $values, string $default): array => [
+            'label' => $label,
+            'type' => 'select',
+            'required' => true,
+            'default' => $default,
+            'values' => array_values($values),
+        ];
+
+        $sizes = [
+            array_replace(
+                $existingValue('sizes', 'standard', [
+                    'label' => 'Standard',
+                    'width' => '2.0',
+                    'height' => '3.5',
+                ]),
+                [
+                    'label' => 'Standard',
+                    'description' => '2.0″ x 3.5″',
+                    'width' => '2.0',
+                    'height' => '3.5',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/standard-size.webp',
+                ],
+            ),
+            array_replace(
+                $existingValue('sizes', 'square', [
+                    'label' => 'Square',
+                    'width' => '2.5',
+                    'height' => '2.5',
+                ]),
+                [
+                    'label' => 'Square',
+                    'description' => '2.5″ x 2.5″',
+                    'width' => '2.5',
+                    'height' => '2.5',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/square-size.webp',
+                ],
+            ),
+            [
+                'code' => 'custom',
+                'label' => 'Custom',
+                'description' => 'Enter a custom width and height from 2.1 to 3.5 inches.',
+                'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
+            ],
+        ];
+
+        $paperFinish = [
+            array_replace(
+                $existingValue('paper_finish', 'matte', ['label' => 'Matte']),
+                [
+                    'label' => 'Matte',
+                    'description' => 'With a smooth feel. Shine-free so no glare.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
+                ],
+            ),
+            array_replace(
+                $existingValue('paper_finish', 'gloss', ['label' => 'Gloss']),
+                [
+                    'label' => 'Gloss',
+                    'description' => 'Eye-catchingly shiny. Makes color photos pop.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
+                ],
+            ),
+            array_replace(
+                $existingValue('paper_finish', 'uv', ['label' => '3D UV']),
+                [
+                    'label' => '3D UV',
+                    'description' => 'Raised gloss highlights with a dimensional feel.',
+                    'swatch_image' => '/images/product-options/uv-swatch.png',
+                ],
+            ),
+        ];
+
+        $corners = [
+            array_replace(
+                $existingValue('corners', 'square', ['label' => 'Square']),
+                [
+                    'label' => 'Square',
+                    'description' => 'Sharp and stylish.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/square.webp',
+                ],
+            ),
+            array_replace(
+                $existingValue('corners', 'rounded', ['label' => 'Rounded']),
+                [
+                    'label' => 'Rounded',
+                    'description' => 'Smooth and rounded.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/rounded.webp',
+                ],
+            ),
+        ];
+
+        $foilSwatches = '/images/product-options/business-cards/swatches/';
+        $foils = [
+            ['code' => 'black_gold', 'label' => 'Black Gold', 'swatch_image' => $foilSwatches.'black-gold.png'],
+            ['code' => 'blue_gold', 'label' => 'Blue Gold', 'swatch_image' => $foilSwatches.'blue-gold.png'],
+            ['code' => 'bright_gold', 'label' => 'Bright Gold', 'swatch_image' => $foilSwatches.'bright-gold.png'],
+            ['code' => 'bright_silver', 'label' => 'Bright Silver', 'swatch_image' => $foilSwatches.'bright-silver.png'],
+            ['code' => 'green_gold', 'label' => 'Green Gold', 'swatch_image' => $foilSwatches.'green-gold.png'],
+            ['code' => 'matte_gold', 'label' => 'Matte Gold', 'swatch_image' => $foilSwatches.'matte-gold.png'],
+            ['code' => 'matte_silver', 'label' => 'Matte Silver', 'swatch_image' => $foilSwatches.'matte-silver.png'],
+            ['code' => 'red_gold', 'label' => 'Red Gold', 'swatch_image' => $foilSwatches.'red-gold.png'],
+            ['code' => 'rose_gold', 'label' => 'Rose Gold', 'swatch_image' => $foilSwatches.'rose-gold.png'],
+            ['code' => 'aged_gold', 'label' => 'Aged Gold', 'swatch_image' => $foilSwatches.'aged-gold.png'],
+            ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => $foilSwatches.'muted-purple-gold.png'],
+        ];
+        $specialFinish = [
+            array_replace(
+                $existingValue('special_finish', 'no_special_finish'),
+                [
+                    'label' => 'No special finish',
+                    'description' => 'No special finish, thanks.',
+                    'swatch_image' => '/images/product-options/no-foil.png',
+                ],
+            ),
+            ...array_map(
+                fn (array $foil): array => array_replace(
+                    $existingValue('special_finish', $foil['code'], $foil),
+                    [
+                        'label' => $foil['label'],
+                        'description' => $foil['label'].' hot foil.',
+                        'swatch_image' => $foil['swatch_image'],
+                    ],
+                ),
+                $foils,
+            ),
+        ];
+
+        $specialFinishOnSides = [
+            array_replace(
+                $existingValue('special_finish_on_sides', 'one_side', ['label' => 'One side']),
+                [
+                    'label' => 'One side',
+                    'description' => 'Special finish applied to one side only.',
+                    'swatch_image' => '/images/product-options/business-cards/special-finishes/special-finish-one-side.png',
+                ],
+            ),
+            array_replace(
+                $existingValue('special_finish_on_sides', 'both_sides', ['label' => 'Both sides']),
+                [
+                    'label' => 'Both sides',
+                    'description' => 'Special finish applied to both sides.',
+                    'swatch_image' => '/images/product-options/business-cards/special-finishes/special-finish-both-sides.png',
+                ],
+            ),
+        ];
+
+        $textures = array_map(
+            fn (array $texture): array => array_replace(
+                $existingValue('texture', $texture['code']),
+                [
+                    'label' => $texture['label'],
+                    'description' => '',
+                    'swatch_image' => '',
+                ],
+            ),
+            [
+                ['code' => 'pin_hole_paper', 'label' => 'Pin-hole Paper'],
+                ['code' => 'water_ripple_paper', 'label' => 'Water Ripple Paper'],
+                ['code' => 'linen_paper', 'label' => 'Linen Paper'],
+                ['code' => 'eggshell_paper', 'label' => 'Eggshell Paper'],
+                ['code' => 'white_cardstock', 'label' => 'White Cardstock'],
+                ['code' => 'pearlized_paper', 'label' => 'Pearlized Paper'],
+            ],
+        );
+
+        return [
+            'sizes' => $group('Size', $sizes, 'standard'),
+            'corners' => $group('Corners', $corners, 'square'),
+            'paper_finish' => $group('Paper Finish', $paperFinish, 'matte'),
+            'special_finish' => $group('Special Finish', $specialFinish, 'no_special_finish'),
+            'special_finish_on_sides' => $group('Special Finish on Sides', $specialFinishOnSides, 'one_side'),
+            'texture' => $group('Texture', $textures, 'pin_hole_paper'),
+        ];
     }
 
     private function hasCanonicalConfig(Product $product): bool

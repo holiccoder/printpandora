@@ -352,5 +352,7 @@ HTML,
         $this->call(ProductNavigationCategorySeeder::class);
         $this->call(LetterpressBlogSeeder::class);
         $this->call(ClassicStandardBusinessCardOptionsSeeder::class);
+        $this->call(ClassicSpecialBusinessCardOptionsSeeder::class);
+        $this->call(HelpCenterSeeder::class);
     }
 }

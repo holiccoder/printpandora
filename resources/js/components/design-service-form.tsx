@@ -301,7 +301,11 @@ export default function DesignServiceForm({
             <Button
                 type="submit"
                 className="w-full"
-                disabled={!data.terms_accepted || processing}
+                disabled={
+                    !data.terms_accepted ||
+                    processing ||
+                    (hasDesignServices && !designServiceCode)
+                }
             >
                 {submitLabel}
             </Button>

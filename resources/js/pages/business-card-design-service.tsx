@@ -1,6 +1,8 @@
 import { Link } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
+import { useState } from 'react';
 import DesignServiceForm from '@/components/design-service-form';
+import type { DesignServiceOption } from '@/components/design-service-form';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
@@ -9,8 +11,24 @@ const ACCENT = '#800020';
 const GOLD = '#C9A96A';
 const WARM_BG = '#FAF7F2';
 
+const DESIGN_SERVICES: DesignServiceOption[] = [
+    {
+        code: 'card_layout',
+        title: 'Card Layout $29',
+        description:
+            'We arrange your provided content, align elements, and check bleed before outputting print-ready files.*',
+    },
+    {
+        code: 'card_design',
+        title: 'Card Design $79',
+        description:
+            'Original layout created by our designers, including color palette, graphics, and two rounds of revisions, delivered as print-ready files.*',
+    },
+];
+
 export default function BusinessCardDesignService() {
     const c = useContent('design_service_page') as any;
+    const [selectedService, setSelectedService] = useState('');
 
     return (
         <StorefrontLayout>
@@ -120,45 +138,49 @@ export default function BusinessCardDesignService() {
                             <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
                                 Choose a design service
                             </h2>
-                            <div className="space-y-4">
-                                <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-xs">
-                                    <div className="flex items-start gap-4">
-                                        <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-neutral-300">
-                                            <div className="h-2.5 w-2.5 rounded-full bg-transparent" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-base font-bold text-neutral-900">
-                                                Card Layout $29
-                                            </h4>
-                                            <p className="mt-1 text-sm leading-relaxed text-neutral-500">
-                                                We arrange your provided
-                                                content, align elements, and
-                                                check bleed before outputting
-                                                print-ready files.*
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div
+                                className="space-y-4"
+                                role="radiogroup"
+                                aria-label="Choose a design service"
+                            >
+                                {DESIGN_SERVICES.map((service) => {
+                                    const active =
+                                        selectedService === service.code;
 
-                                <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-xs">
-                                    <div className="flex items-start gap-4">
-                                        <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-neutral-300">
-                                            <div className="h-2.5 w-2.5 rounded-full bg-transparent" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-base font-bold text-neutral-900">
-                                                Card Design $79
-                                            </h4>
-                                            <p className="mt-1 text-sm leading-relaxed text-neutral-500">
-                                                Original layout created by our
-                                                designers, including color
-                                                palette, graphics, and two
-                                                rounds of revisions, delivered
-                                                as print-ready files.*
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                                    return (
+                                        <label
+                                            key={service.code}
+                                            className={`block cursor-pointer rounded-xl border p-5 transition-colors ${
+                                                active
+                                                    ? 'border-[#800020] bg-white ring-1 ring-[#800020]'
+                                                    : 'border-neutral-200 bg-white hover:border-neutral-300'
+                                            }`}
+                                        >
+                                            <div className="flex items-start gap-4">
+                                                <input
+                                                    type="radio"
+                                                    name="design_service_code"
+                                                    value={service.code}
+                                                    checked={active}
+                                                    onChange={() =>
+                                                        setSelectedService(
+                                                            service.code,
+                                                        )
+                                                    }
+                                                    className="mt-0.5 size-4 accent-[#800020]"
+                                                />
+                                                <div>
+                                                    <h4 className="text-base font-bold text-neutral-900">
+                                                        {service.title}
+                                                    </h4>
+                                                    <p className="mt-1 text-sm leading-relaxed text-neutral-500">
+                                                        {service.description}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    );
+                                })}
 
                                 <div className="rounded-xl border border-neutral-200 bg-[#FAF7F2] p-4 text-xs leading-relaxed text-neutral-600">
                                     * Design fee is a one-time charge and does
@@ -180,6 +202,12 @@ export default function BusinessCardDesignService() {
                             productOptions={c.form_product_options}
                             submitLabel={c.form_submit_label}
                             className="mt-6"
+                            designServices={DESIGN_SERVICES}
+                            designServiceCode={selectedService}
+                            onDesignServiceCodeChange={setSelectedService}
+                            designServicesHeading="Choose a design service"
+                            designServicesRequiredError="Please choose a design service."
+                            hideDesignServices
                         />
                     </div>
                 </div>

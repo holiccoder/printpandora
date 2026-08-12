@@ -23,6 +23,7 @@ createInertiaApp({
             case name === 'help':
             case name === 'sample-packs':
             case name === 'business-card-sample-pack':
+            case name === 'free-sample-pack':
             case name === 'business-card-design-service':
             case name === 'postcards':
             case name === 'stickers-and-labels':

@@ -42,7 +42,6 @@ const sizeHrefs = [
 ];
 
 const finishHref = '/shop?cat=business-cards';
-const templateHref = '/shop?cat=business-cards';
 const designHref = '/shop?cat=business-cards';
 const designIcons = [Pencil, Upload, Globe];
 const perkIcons = [ShieldCheck, Leaf, Truck];
@@ -163,8 +162,38 @@ export default function BusinessCardsLanding() {
                 </div>
             </section>
 
+            {/* Anchor navigation ------------------------------------------ */}
+            <nav
+                aria-label="Business card categories"
+                className="border-b border-neutral-200 bg-white"
+            >
+                <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-x-8 gap-y-2 px-4 py-4 text-sm font-semibold">
+                    <a
+                        href="#shop-by-paper"
+                        className="text-neutral-700 transition-colors hover:text-primary"
+                    >
+                        Shop Business Cards by Paper
+                    </a>
+                    <a
+                        href="#shop-by-size"
+                        className="text-neutral-700 transition-colors hover:text-primary"
+                    >
+                        Shop Business Cards by Size
+                    </a>
+                    <a
+                        href="#shop-by-special-finish"
+                        className="text-neutral-700 transition-colors hover:text-primary"
+                    >
+                        Shop by Special Finish
+                    </a>
+                </div>
+            </nav>
+
             {/* 2. Shop by Paper -------------------------------------------- */}
-            <section className="border-t border-neutral-100 bg-white">
+            <section
+                id="shop-by-paper"
+                className="scroll-mt-24 border-t border-neutral-100 bg-white"
+            >
                 <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
                     <SectionHeader
                         title={sections.shop_by_paper.heading}
@@ -214,7 +243,10 @@ export default function BusinessCardsLanding() {
             </section>
 
             {/* 3. Shop by Size --------------------------------------------- */}
-            <section className="border-t border-neutral-100 bg-white">
+            <section
+                id="shop-by-size"
+                className="scroll-mt-24 border-t border-neutral-100 bg-white"
+            >
                 <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
                     <SectionHeader
                         title={sections.shop_by_size.heading}
@@ -264,7 +296,10 @@ export default function BusinessCardsLanding() {
             </section>
 
             {/* 4. Shop by Special Finish ----------------------------------- */}
-            <section className="border-t border-neutral-100 bg-white">
+            <section
+                id="shop-by-special-finish"
+                className="scroll-mt-24 border-t border-neutral-100 bg-white"
+            >
                 <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
                     <SectionHeader
                         title={sections.shop_by_finish.heading}
@@ -359,46 +394,7 @@ export default function BusinessCardsLanding() {
                 </div>
             </section>
 
-            {/* 5. Templates ------------------------------------------------ */}
-            <section className="border-t border-neutral-100 bg-white">
-                <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
-                    <SectionHeader
-                        title={sections.templates.heading}
-                        subtitle={sections.templates.subtitle}
-                        accent={ACCENT}
-                    />
-                    <ul className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                        {sections.templates.items.map((tpl: any) => (
-                            <li key={tpl.name} className="group">
-                                <Link href={templateHref} className="block">
-                                    <div className="overflow-hidden rounded-md bg-neutral-100">
-                                        <img
-                                            src={tpl.image_url}
-                                            alt={tpl.name}
-                                            loading="lazy"
-                                            className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                        />
-                                    </div>
-                                    <h3 className="mt-3 text-sm font-semibold text-neutral-900">
-                                        {tpl.name}
-                                    </h3>
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                    <div className="mt-10 flex justify-center">
-                        <Link
-                            href="/shop?cat=business-cards"
-                            className="inline-flex items-center gap-2 rounded-md bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-                        >
-                            {sections.templates.cta}
-                            <ArrowRight className="size-4" />
-                        </Link>
-                    </div>
-                </div>
-            </section>
-
-            {/* 6. Make your own ------------------------------------------- */}
+            {/* 5. Make your own ------------------------------------------- */}
             <section className="border-t border-neutral-100 bg-white">
                 <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
                     <SectionHeader

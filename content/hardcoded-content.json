@@ -173,7 +173,7 @@
                         "links": [
                             {
                                 "label": "Business Card Sample Pack",
-                                "href": "/business-card-sample-pack"
+                                "href": "/free-sample-pack"
                             },
                             {
                                 "label": "Business Card Design Service",
@@ -222,6 +222,10 @@
                 {
                     "label": "Brochures and flyers",
                     "href": "/flyers-and-brochures"
+                },
+                {
+                    "label": "Order free sample pack",
+                    "href": "/free-sample-pack"
                 }
             ],
             "more_about": [
@@ -545,7 +549,7 @@
             "title": "Free sample",
             "description": "New to InkPavo? See our full print range in all the possible variations of shape, paper stock & finishes for free.",
             "cta_text": "Get your sample pack",
-            "cta_href": "/shop/sample-pack",
+            "cta_href": "/free-sample-pack",
             "image_url": "/images/home/sample-pack-banner.png",
             "alt": "Person in a denim jacket pulling a yellow card from a white sample pack folder on a light wood tabletop"
         },
@@ -1245,24 +1249,24 @@
         },
         "hero_collage": [
             {
-                "alt": "Gold foil business card on cream paper",
-                "image_url": "https://picsum.photos/seed/bc-gold-foil/360/520"
+                "alt": "Burgundy and ivory printed business cards",
+                "image_url": "/images/business-cards/hero/classic-burgundy.webp"
             },
             {
                 "alt": "Business card with coloured edges",
-                "image_url": "https://picsum.photos/seed/bc-coloured-edge/360/520"
+                "image_url": "/images/business-cards/hero/coloured-edge.webp"
             },
             {
-                "alt": "Felt paper business card",
-                "image_url": "https://picsum.photos/seed/bc-felt-paper/360/520"
+                "alt": "Black letterpress cotton business card",
+                "image_url": "/images/business-cards/hero/letterpress-cotton.webp"
             },
             {
-                "alt": "Thick cardstock business card",
-                "image_url": "https://picsum.photos/seed/bc-thick-stock/360/520"
+                "alt": "Textured cotton business cards",
+                "image_url": "/images/business-cards/hero/cotton-tactile.webp"
             },
             {
                 "alt": "Square business card",
-                "image_url": "https://picsum.photos/seed/bc-mini-square/360/360"
+                "image_url": "/images/business-cards/hero/square-cards.webp"
             }
         ],
         "sections": {
@@ -1274,22 +1278,22 @@
                     {
                         "name": "Original Business Cards",
                         "blurb": "The 98% customer favourite, available in white or premium cardstock.",
-                        "image_url": "https://picsum.photos/seed/paper-original/640/480"
+                        "image_url": "/images/business-cards/paper/original-classic.webp"
                     },
                     {
                         "name": "Super Business Cards",
                         "blurb": "320 gsm thick paper available in four colour options.",
-                        "image_url": "https://picsum.photos/seed/paper-super/640/480"
+                        "image_url": "/images/business-cards/paper/super-coloured-edge.webp"
                     },
                     {
                         "name": "Luxe Business Cards",
                         "blurb": "100% cotton rag paper with a thick, tactile feel.",
-                        "image_url": "https://picsum.photos/seed/paper-luxe/640/480"
+                        "image_url": "/images/business-cards/paper/luxe-letterpress.webp"
                     },
                     {
                         "name": "Cotton Business Cards",
                         "blurb": "100% recycled cotton with a fibrous, hand-finished texture.",
-                        "image_url": "https://picsum.photos/seed/paper-cotton/640/480"
+                        "image_url": "/images/business-cards/paper/cotton-deckled.webp"
                     }
                 ]
             },
@@ -1301,17 +1305,17 @@
                     {
                         "name": "Standard",
                         "blurb": "The classic US / EU size — fits every wallet.",
-                        "image_url": "https://picsum.photos/seed/size-standard/640/480"
+                        "image_url": "/images/business-cards/size/standard.webp"
                     },
                     {
                         "name": "Square",
                         "blurb": "Stand out with a 65 × 65 mm square, finished in gold logo detail.",
-                        "image_url": "https://picsum.photos/seed/size-square-green/640/480"
+                        "image_url": "/images/business-cards/size/square.webp"
                     },
                     {
                         "name": "Square — Premium",
                         "blurb": "Same square cut, deep black stock, foil-stamped logo.",
-                        "image_url": "https://picsum.photos/seed/size-square-black/640/480"
+                        "image_url": "/images/business-cards/size/square-premium.webp"
                     }
                 ]
             },
@@ -1321,33 +1325,33 @@
                 "items": [
                     {
                         "name": "Rose Gold Foil Edges",
-                        "image_url": "https://picsum.photos/seed/finish-rose-gold/640/480",
+                        "image_url": "/images/business-cards/finish/rose-gold-edge.webp",
                         "cta": "Shop finish"
                     },
                     {
                         "name": "Neon Edges",
-                        "image_url": "https://picsum.photos/seed/finish-neon/640/480",
+                        "image_url": "/images/business-cards/finish/neon-edge.webp",
                         "cta": "Shop finish"
                     },
                     {
                         "name": "Silver Metal Edge",
-                        "image_url": "https://picsum.photos/seed/finish-silver/640/480",
+                        "image_url": "/images/business-cards/finish/silver-edge.webp",
                         "cta": "Shop finish"
                     },
                     {
                         "name": "Gold Foil Edge",
-                        "image_url": "https://picsum.photos/seed/finish-gold-edge/640/480",
+                        "image_url": "/images/business-cards/finish/gold-foil.webp",
                         "cta": "Shop finish"
                     },
                     {
                         "name": "Matt Textured Thick Paper",
-                        "image_url": "https://picsum.photos/seed/finish-matt/640/480",
+                        "image_url": "/images/business-cards/finish/linen-embossed.webp",
                         "cta": "Shop finish"
                     },
                     {
                         "name": "Business Card Design Templates",
                         "blurb": "Jump-start your card with our free in-browser design tool.",
-                        "image_url": "https://picsum.photos/seed/finish-templates/640/480",
+                        "image_url": "/images/business-cards/finish/design-templates.webp",
                         "cta": "Start designing",
                         "emphasised": true
                     }
@@ -1357,32 +1361,9 @@
                     "heading": "Free shipping worldwide",
                     "body": "Wherever your card needs to land, we'll get it there — free — on every single order.",
                     "cta": "Start an order",
-                    "image_url": "https://picsum.photos/seed/free-shipping-lifestyle/900/600",
-                    "image_alt": "Person packing business cards"
+                    "image_url": "/images/business-cards/packing/shipping-promo.webp",
+                    "image_alt": "Packed business card order ready for shipping"
                 }
-            },
-            "templates": {
-                "heading": "InkPavo Business Card Templates",
-                "subtitle": "Designer-made starting points — drop in your details and ship in minutes.",
-                "cta": "Browse 1000s of Business Card Templates",
-                "items": [
-                    {
-                        "name": "Pink Foil Logo Series",
-                        "image_url": "https://picsum.photos/seed/tpl-pink-foil/600/450"
-                    },
-                    {
-                        "name": "Monogram Series",
-                        "image_url": "https://picsum.photos/seed/tpl-monogram/600/450"
-                    },
-                    {
-                        "name": "Handwritten & Calligraphy",
-                        "image_url": "https://picsum.photos/seed/tpl-handwritten/600/450"
-                    },
-                    {
-                        "name": "Minimalist Layouts",
-                        "image_url": "https://picsum.photos/seed/tpl-minimal/600/450"
-                    }
-                ]
             },
             "make_your_own": {
                 "heading": "Make your own Business Cards",
@@ -1431,17 +1412,17 @@
                     {
                         "title": "Use colour blocks",
                         "blurb": "Bold full-bleed colour makes your card unmissable in a stack.",
-                        "image_url": "https://picsum.photos/seed/howto-color-blocks/640/480"
+                        "image_url": "/images/business-cards/usage/color-blocks.webp"
                     },
                     {
                         "title": "Customer appreciation cards",
                         "blurb": "A handwritten thank-you turns one-time buyers into loyal fans.",
-                        "image_url": "https://picsum.photos/seed/howto-thank-you/640/480"
+                        "image_url": "/images/business-cards/usage/thank-you.webp"
                     },
                     {
                         "title": "Custom luggage tag",
                         "blurb": "Punch a hole, add a loop — instantly the most stylish tag at baggage claim.",
-                        "image_url": "https://picsum.photos/seed/howto-luggage-tag/640/480"
+                        "image_url": "/images/business-cards/usage/luggage-tag.webp"
                     }
                 ]
             },
@@ -1452,19 +1433,19 @@
                 "items": [
                     {
                         "name": "Notebooks",
-                        "image_url": "https://picsum.photos/seed/cs-notebooks/640/480"
+                        "image_url": "/images/business-cards/cross-sell/notebooks.webp"
                     },
                     {
                         "name": "Thank You Cards",
-                        "image_url": "https://picsum.photos/seed/cs-thankyou/640/480"
+                        "image_url": "/images/business-cards/cross-sell/thank-you-cards.webp"
                     },
                     {
                         "name": "Stickers",
-                        "image_url": "https://picsum.photos/seed/cs-stickers/640/480"
+                        "image_url": "/images/business-cards/cross-sell/stickers.webp"
                     },
                     {
                         "name": "Card Holders",
-                        "image_url": "https://picsum.photos/seed/cs-holders/640/480"
+                        "image_url": "/images/business-cards/cross-sell/card-holder.webp"
                     }
                 ]
             }
@@ -1739,7 +1720,7 @@
             },
             {
                 "id": "artwork",
-                "title": "Artwork & Design",
+                "title": "Design and Print knowledge",
                 "description": "File formats, bleed, templates, and design services.",
                 "icon": "palette"
             },
