@@ -116,6 +116,43 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get(Product::where('slug', 'premium-metal-business-cards')->firstOrFail()->product_config, 'options.special_finish.values.*.code'),
         );
 
+        $expectedMetalSwatches = [
+            'thickness' => [
+                '/images/product-options/business-cards/swatches/metal/thickness-0-3mm.png',
+                '/images/product-options/business-cards/swatches/metal/thickness-0-5mm.png',
+            ],
+            'sizes' => [
+                '/images/product-options/business-cards/swatches/metal/size-89x51mm.png',
+                '/images/product-options/business-cards/swatches/metal/size-85x54mm.png',
+                '/images/product-options/business-cards/swatches/metal/size-80x50mm.png',
+            ],
+            'print_code_or_magnetic_stripe' => [
+                '/images/product-options/business-cards/swatches/metal/no-print-code-or-magnetic-stripe.png',
+                '/images/product-options/business-cards/swatches/metal/print-code.png',
+                '/images/product-options/business-cards/swatches/metal/magnetic-stripe.png',
+            ],
+        ];
+
+        foreach (['classic-metal-business-cards', 'premium-metal-business-cards', 'luxe-metal-business-cards'] as $slug) {
+            $config = Product::where('slug', $slug)->firstOrFail()->product_config;
+
+            foreach ($expectedMetalSwatches as $group => $swatches) {
+                $this->assertSame($swatches, data_get($config, "options.{$group}.values.*.swatch_image"));
+            }
+
+            if ($slug !== 'classic-metal-business-cards') {
+                $this->assertSame(
+                    [
+                        '/images/product-options/business-cards/swatches/metal/laser-engraving.png',
+                        '/images/product-options/business-cards/swatches/metal/color-printing.png',
+                        '/images/product-options/business-cards/swatches/metal/plating.png',
+                        '/images/product-options/business-cards/swatches/metal/nfc.png',
+                    ],
+                    data_get($config, 'options.special_finish.values.*.swatch_image'),
+                );
+            }
+        }
+
         $expectedGalleries = [
             'classic-metal-business-cards' => [
                 '/images/products/metal/classic-metal-business-cards-04.png',

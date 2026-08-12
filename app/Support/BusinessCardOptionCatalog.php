@@ -217,24 +217,29 @@ final class BusinessCardOptionCatalog
                 self::value($options, 'thickness', '0_3_mm', [
                     'label' => '0.3mm',
                     'description' => '0.3mm metal card thickness.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/metal/thickness-0-3mm.png',
                 ]),
                 self::value($options, 'thickness', '0_5_mm', [
                     'label' => '0.5mm',
                     'description' => '0.5mm metal card thickness.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/metal/thickness-0-5mm.png',
                 ]),
             ], '0_3_mm'),
             'sizes' => self::group('Size', [
                 self::value($options, 'sizes', '89x51_mm', [
                     'label' => '89x51mm',
                     'description' => '89x51mm metal business card.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/metal/size-89x51mm.png',
                 ]),
                 self::value($options, 'sizes', '85x54_mm', [
                     'label' => '85x54mm',
                     'description' => '85x54mm metal business card.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/metal/size-85x54mm.png',
                 ]),
                 self::value($options, 'sizes', '80x50_mm', [
                     'label' => '80x50mm',
                     'description' => '80x50mm metal business card.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/metal/size-80x50mm.png',
                 ]),
             ], '89x51_mm'),
             'print_code_or_magnetic_stripe' => self::group(
@@ -243,14 +248,17 @@ final class BusinessCardOptionCatalog
                     self::value($options, 'print_code_or_magnetic_stripe', 'no_print_code_or_magnetic_stripe', [
                         'label' => 'No print code or magnetic stripe',
                         'description' => 'No print code or magnetic stripe.',
+                        'swatch_image' => '/images/product-options/business-cards/swatches/metal/no-print-code-or-magnetic-stripe.png',
                     ]),
                     self::value($options, 'print_code_or_magnetic_stripe', 'print_code', [
                         'label' => 'Print code',
                         'description' => 'Add a printed code to the card.',
+                        'swatch_image' => '/images/product-options/business-cards/swatches/metal/print-code.png',
                     ]),
                     self::value($options, 'print_code_or_magnetic_stripe', 'magnetic_stripe', [
                         'label' => 'Magnetic stripe',
                         'description' => 'Add a magnetic stripe to the card.',
+                        'swatch_image' => '/images/product-options/business-cards/swatches/metal/magnetic-stripe.png',
                     ]),
                 ],
                 'no_print_code_or_magnetic_stripe',
@@ -262,18 +270,22 @@ final class BusinessCardOptionCatalog
                 self::value($options, 'special_finish', 'laser_engraving', [
                     'label' => 'Laser Engraving',
                     'description' => 'Laser engraving for a precise, tactile finish.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/metal/laser-engraving.png',
                 ]),
                 self::value($options, 'special_finish', 'color_printing', [
                     'label' => 'Color Printing',
                     'description' => 'Full-color printing on the metal card.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/metal/color-printing.png',
                 ]),
                 self::value($options, 'special_finish', 'plating', [
                     'label' => 'Plating',
                     'description' => 'Metal plating for a refined finish.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/metal/plating.png',
                 ]),
                 self::value($options, 'special_finish', 'nfc', [
                     'label' => 'NFC',
                     'description' => 'Add NFC functionality to the card.',
+                    'swatch_image' => '/images/product-options/business-cards/swatches/metal/nfc.png',
                 ]),
             ], 'laser_engraving');
         }
