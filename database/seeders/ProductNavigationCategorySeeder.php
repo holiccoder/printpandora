@@ -19,6 +19,7 @@ class ProductNavigationCategorySeeder extends Seeder
                 ['name' => 'Flyers & Brochures', 'slug' => 'flyers-brochures', 'parent_slug' => null],
                 ['name' => 'Cotton Business Cards', 'slug' => 'cotton-business-cards', 'parent_slug' => 'business-cards'],
                 ['name' => 'PVC Business Cards', 'slug' => 'pvc-business-cards', 'parent_slug' => 'business-cards'],
+                ['name' => 'Metal Business Cards', 'slug' => 'metal-business-cards', 'parent_slug' => 'business-cards'],
                 ['name' => 'Classic Business Cards', 'slug' => 'classic-business-cards', 'parent_slug' => 'business-cards'],
             ];
 
@@ -69,6 +70,8 @@ class ProductNavigationCategorySeeder extends Seeder
                 ->delete();
         });
 
-        $this->command?->info('Product categories synchronized with the storefront navigation.');
+        if ($this->command !== null) {
+            $this->command->info('Product categories synchronized with the storefront navigation.');
+        }
     }
 }

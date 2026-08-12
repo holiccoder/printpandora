@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Support\BusinessCardOptionCatalog;
 use App\Support\HardcodedContent;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -329,6 +330,7 @@ class ProductConfigurationService
      * so sharing `product_config.options.*.values` would allow the parent
      * repeater to overwrite the child values during a Livewire update.
      *
+     * @param  array<string, mixed>  $options
      * @return array<string, array<int, array<string, mixed>>>
      */
     private function resourceOptionValuesFromCanonical(array $options): array
@@ -808,9 +810,11 @@ class ProductConfigurationService
 
         $legacy = $this->loadLegacyOptions($product);
 
-        if ($legacy === null) {
+        if ($legacy === null && ! BusinessCardOptionCatalog::supports((string) $product->slug)) {
             return null;
         }
+
+        $legacy ??= [];
 
         if (! isset($legacy['pricing_data'])) {
             $pricingData = $this->loadDynamicPricingData($product->slug ?? '');
@@ -820,7 +824,10 @@ class ProductConfigurationService
             }
         }
 
-        if ($product->slug === 'classic-special-business-cards') {
+        if (
+            $product->slug === 'classic-special-business-cards'
+            || BusinessCardOptionCatalog::supports((string) $product->slug)
+        ) {
             $canonical = $this->fromLegacyOptions($product, $legacy);
 
             return $this->withResolvedStorefrontImages(
@@ -1014,6 +1021,17 @@ class ProductConfigurationService
             $groupLabels['texture'] = 'Texture';
         }
 
+        foreach ([
+            'thickness' => 'Thickness',
+            'print_code_or_signature_stripe' => 'Print Code or Signature Stripe',
+            'print_code_or_magnetic_stripe' => 'Print Code or Magnetic Stripe',
+            'with_nfc' => 'With NFC',
+        ] as $key => $label) {
+            if (array_key_exists($key, $legacy)) {
+                $groupLabels[$key] = $label;
+            }
+        }
+
         foreach ($groupLabels as $key => $label) {
             $items = is_array($legacy[$key] ?? null) ? $legacy[$key] : [];
 
@@ -1146,8 +1164,12 @@ class ProductConfigurationService
             $options[$optionKey] = $values;
         }
 
-        $options['dynamic_options'] = $this->hasCanonicalConfig($product);
-        $options['option_groups'] = $this->hasCanonicalConfig($product)
+        $hasDynamicOptions = $this->hasCanonicalConfig($product)
+            || $product->slug === 'classic-special-business-cards'
+            || BusinessCardOptionCatalog::supports((string) $product->slug);
+
+        $options['dynamic_options'] = $hasDynamicOptions;
+        $options['option_groups'] = $hasDynamicOptions
             ? $optionGroups
             : [];
 
@@ -1491,23 +1513,15 @@ class ProductConfigurationService
      */
     private function normalizeProductSpecificOptions(array $options, Product $product): array
     {
+        $catalogOptions = BusinessCardOptionCatalog::normalize((string) $product->slug, $options);
+
+        if ($catalogOptions !== null) {
+            return $catalogOptions;
+        }
+
         if ($product->slug !== 'classic-special-business-cards') {
             return $options;
         }
-
-        $existingValue = function (string $groupKey, string $code, array $defaults = []) use ($options): array {
-            $values = data_get($options, "{$groupKey}.values", []);
-
-            if (is_array($values)) {
-                foreach ($values as $value) {
-                    if (is_array($value) && ($value['code'] ?? null) === $code) {
-                        return array_replace($defaults, $value, ['code' => $code]);
-                    }
-                }
-            }
-
-            return array_replace(['code' => $code], $defaults);
-        };
 
         $group = static fn (string $label, array $values, string $default): array => [
             'label' => $label,
@@ -1519,7 +1533,7 @@ class ProductConfigurationService
 
         $sizes = [
             array_replace(
-                $existingValue('sizes', 'standard', [
+                $this->existingOptionValue($options, 'sizes', 'standard', [
                     'label' => 'Standard',
                     'width' => '2.0',
                     'height' => '3.5',
@@ -1533,7 +1547,7 @@ class ProductConfigurationService
                 ],
             ),
             array_replace(
-                $existingValue('sizes', 'square', [
+                $this->existingOptionValue($options, 'sizes', 'square', [
                     'label' => 'Square',
                     'width' => '2.5',
                     'height' => '2.5',
@@ -1556,7 +1570,7 @@ class ProductConfigurationService
 
         $paperFinish = [
             array_replace(
-                $existingValue('paper_finish', 'matte', ['label' => 'Matte']),
+                $this->existingOptionValue($options, 'paper_finish', 'matte', ['label' => 'Matte']),
                 [
                     'label' => 'Matte',
                     'description' => 'With a smooth feel. Shine-free so no glare.',
@@ -1564,7 +1578,7 @@ class ProductConfigurationService
                 ],
             ),
             array_replace(
-                $existingValue('paper_finish', 'gloss', ['label' => 'Gloss']),
+                $this->existingOptionValue($options, 'paper_finish', 'gloss', ['label' => 'Gloss']),
                 [
                     'label' => 'Gloss',
                     'description' => 'Eye-catchingly shiny. Makes color photos pop.',
@@ -1572,7 +1586,7 @@ class ProductConfigurationService
                 ],
             ),
             array_replace(
-                $existingValue('paper_finish', 'uv', ['label' => '3D UV']),
+                $this->existingOptionValue($options, 'paper_finish', 'uv', ['label' => '3D UV']),
                 [
                     'label' => '3D UV',
                     'description' => 'Raised gloss highlights with a dimensional feel.',
@@ -1583,7 +1597,7 @@ class ProductConfigurationService
 
         $corners = [
             array_replace(
-                $existingValue('corners', 'square', ['label' => 'Square']),
+                $this->existingOptionValue($options, 'corners', 'square', ['label' => 'Square']),
                 [
                     'label' => 'Square',
                     'description' => 'Sharp and stylish.',
@@ -1591,7 +1605,7 @@ class ProductConfigurationService
                 ],
             ),
             array_replace(
-                $existingValue('corners', 'rounded', ['label' => 'Rounded']),
+                $this->existingOptionValue($options, 'corners', 'rounded', ['label' => 'Rounded']),
                 [
                     'label' => 'Rounded',
                     'description' => 'Smooth and rounded.',
@@ -1616,7 +1630,7 @@ class ProductConfigurationService
         ];
         $specialFinish = [
             array_replace(
-                $existingValue('special_finish', 'no_special_finish'),
+                $this->existingOptionValue($options, 'special_finish', 'no_special_finish'),
                 [
                     'label' => 'No special finish',
                     'description' => 'No special finish, thanks.',
@@ -1625,7 +1639,7 @@ class ProductConfigurationService
             ),
             ...array_map(
                 fn (array $foil): array => array_replace(
-                    $existingValue('special_finish', $foil['code'], $foil),
+                    $this->existingOptionValue($options, 'special_finish', $foil['code'], $foil),
                     [
                         'label' => $foil['label'],
                         'description' => $foil['label'].' hot foil.',
@@ -1638,7 +1652,7 @@ class ProductConfigurationService
 
         $specialFinishOnSides = [
             array_replace(
-                $existingValue('special_finish_on_sides', 'one_side', ['label' => 'One side']),
+                $this->existingOptionValue($options, 'special_finish_on_sides', 'one_side', ['label' => 'One side']),
                 [
                     'label' => 'One side',
                     'description' => 'Special finish applied to one side only.',
@@ -1646,7 +1660,7 @@ class ProductConfigurationService
                 ],
             ),
             array_replace(
-                $existingValue('special_finish_on_sides', 'both_sides', ['label' => 'Both sides']),
+                $this->existingOptionValue($options, 'special_finish_on_sides', 'both_sides', ['label' => 'Both sides']),
                 [
                     'label' => 'Both sides',
                     'description' => 'Special finish applied to both sides.',
@@ -1657,7 +1671,7 @@ class ProductConfigurationService
 
         $textures = array_map(
             fn (array $texture): array => array_replace(
-                $existingValue('texture', $texture['code']),
+                $this->existingOptionValue($options, 'texture', $texture['code']),
                 [
                     'label' => $texture['label'],
                     'description' => '',
@@ -1682,6 +1696,26 @@ class ProductConfigurationService
             'special_finish_on_sides' => $group('Special Finish on Sides', $specialFinishOnSides, 'one_side'),
             'texture' => $group('Texture', $textures, 'pin_hole_paper'),
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @param  array<string, mixed>  $defaults
+     * @return array<string, mixed>
+     */
+    private function existingOptionValue(array $options, string $groupKey, string $code, array $defaults = []): array
+    {
+        $values = data_get($options, "{$groupKey}.values", []);
+
+        if (is_array($values)) {
+            foreach ($values as $value) {
+                if (is_array($value) && ($value['code'] ?? null) === $code) {
+                    return array_replace($defaults, $value, ['code' => $code]);
+                }
+            }
+        }
+
+        return array_replace(['code' => $code], $defaults);
     }
 
     private function hasCanonicalConfig(Product $product): bool

@@ -1,35 +1,13 @@
 {
-    "subtitle": "320 gsm coated board for a heavier, more premium hand-feel",
+    "subtitle": "320 gsm coated board with standard, square, or custom sizing and premium finish options",
     "starting_price_text": "50 cards from $14",
-    "paper_type": [
-        {
-            "name": "standard",
-            "code": "standard"
-        },
-        {
-            "name": "thick",
-            "code": "thick"
-        }
-    ],
-    "paper_thickness": [
-        {
-            "name": "Standard",
-            "code": "standard",
-            "description": "110lb weight, 12pt in thickness"
-        },
-        {
-            "name": "Thick",
-            "code": "thick",
-            "description": "118lb weight, 13pt in thickness"
-        }
-    ],
     "sizes": [
         {
             "name": "Standard",
             "code": "standard",
             "width": "2.0",
             "height": "3.5",
-            "swatch_image": "/images/product-options/business-cards/sizes/business_card-standard-526x325.jpg",
+            "swatch_image": "/images/product-options/business-cards/swatches/standard-size.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -87,14 +65,15 @@
                     "pack_size": 5000,
                     "price_per_card": 0
                 }
-            ]
+            ],
+            "description": "2.0\" x 3.5\""
         },
         {
             "name": "Square",
             "code": "square",
-            "width": "2.16",
-            "height": "3.3",
-            "swatch_image": "/images/product-options/business-cards/sizes/business_card-square-526x325.jpg",
+            "width": "2.5",
+            "height": "2.5",
+            "swatch_image": "/images/product-options/business-cards/swatches/square-size.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -152,7 +131,14 @@
                     "pack_size": 5000,
                     "price_per_card": 0
                 }
-            ]
+            ],
+            "description": "2.5\" x 2.5\""
+        },
+        {
+            "code": "custom",
+            "name": "Custom",
+            "description": "Enter a custom width and height from 2.1 to 3.5 inches.",
+            "swatch_image": "/images/product-options/business-cards/swatches/custom-size.webp"
         }
     ],
     "paper_finish": [
@@ -160,7 +146,7 @@
             "name": "Matte",
             "code": "matte",
             "description": "With a smooth feel. Shine-free so no glare.",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
+            "swatch_image": "/images/product-options/business-cards/swatches/matte-paper-finish.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -224,7 +210,7 @@
             "name": "Gloss",
             "code": "gloss",
             "description": "Eye-catchingly shiny. Makes color photos pop.",
-            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
+            "swatch_image": "/images/product-options/business-cards/swatches/gloss-paper-finish.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -285,268 +271,18 @@
             ]
         },
         {
-            "name": "Starry Film",
-            "code": "starry_film",
-            "description": "Enchanting glittering star effects",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Soft-touch Film",
-            "code": "soft_touch_film",
-            "description": "Velvety, soft tactile premium laminate",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Holographic Film",
-            "code": "holographic_film",
-            "description": "Shimmering rainbow diffraction finish",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Anti-scratch Matte Film",
-            "code": "anti_scratch_matte_film",
-            "description": "Highly durable scuff-resistant matte laminate",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
+            "code": "uv",
+            "name": "3D UV",
+            "description": "Raised gloss highlights with a dimensional feel.",
+            "swatch_image": "/images/product-options/uv-swatch.png"
         }
     ],
     "corners": [
         {
             "name": "Square",
             "code": "square",
-            "description": "Sharp and Stylish",
-            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M6.5 6.5V15h3V9.5h29v29H33v3h8.5v-35h-35zm3 27.5h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8z\"></path></svg>",
+            "description": "Sharp and stylish.",
+            "swatch_image": "/images/product-options/business-cards/swatches/square.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -609,8 +345,8 @@
         {
             "name": "Rounded",
             "code": "rounded",
-            "description": "",
-            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M9.5 34h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8zM8 6.5H6.5V15h3V9.537A30.542 30.542 0 0 1 38.463 38.5H33v3h8.5V40A33.538 33.538 0 0 0 8 6.5z\"></path></svg>",
+            "description": "Smooth and rounded.",
+            "swatch_image": "/images/product-options/business-cards/swatches/rounded.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -673,9 +409,9 @@
     ],
     "special_finish": [
         {
-            "name": "no special finish",
+            "name": "No special finish",
             "code": "no_special_finish",
-            "description": "no special finish, thanks",
+            "description": "No special finish, thanks.",
             "swatch_image": "/images/product-options/no-foil.png",
             "added_price": [
                 {
@@ -737,9 +473,9 @@
             ]
         },
         {
-            "name": "Black gold",
+            "name": "Black Gold",
             "code": "black_gold",
-            "description": "Black gold",
+            "description": "Black Gold hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/black-gold.png",
             "added_price": [
                 {
@@ -801,9 +537,9 @@
             ]
         },
         {
-            "name": "Blue gold",
+            "name": "Blue Gold",
             "code": "blue_gold",
-            "description": "Blue gold",
+            "description": "Blue Gold hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/blue-gold.png",
             "added_price": [
                 {
@@ -865,9 +601,9 @@
             ]
         },
         {
-            "name": "Bright gold",
+            "name": "Bright Gold",
             "code": "bright_gold",
-            "description": "Bright gold",
+            "description": "Bright Gold hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/bright-gold.png",
             "added_price": [
                 {
@@ -929,9 +665,9 @@
             ]
         },
         {
-            "name": "Bright silver",
+            "name": "Bright Silver",
             "code": "bright_silver",
-            "description": "Bright silver",
+            "description": "Bright Silver hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/bright-silver.png",
             "added_price": [
                 {
@@ -993,9 +729,9 @@
             ]
         },
         {
-            "name": "Green gold",
+            "name": "Green Gold",
             "code": "green_gold",
-            "description": "Green gold",
+            "description": "Green Gold hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/green-gold.png",
             "added_price": [
                 {
@@ -1057,9 +793,9 @@
             ]
         },
         {
-            "name": "Matte gold",
+            "name": "Matte Gold",
             "code": "matte_gold",
-            "description": "Matte gold",
+            "description": "Matte Gold hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/matte-gold.png",
             "added_price": [
                 {
@@ -1121,9 +857,9 @@
             ]
         },
         {
-            "name": "Matte silver",
+            "name": "Matte Silver",
             "code": "matte_silver",
-            "description": "Matte silver",
+            "description": "Matte Silver hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/matte-silver.png",
             "added_price": [
                 {
@@ -1185,9 +921,9 @@
             ]
         },
         {
-            "name": "Red gold",
+            "name": "Red Gold",
             "code": "red_gold",
-            "description": "Red gold",
+            "description": "Red Gold hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/red-gold.png",
             "added_price": [
                 {
@@ -1249,9 +985,9 @@
             ]
         },
         {
-            "name": "Rose gold",
+            "name": "Rose Gold",
             "code": "rose_gold",
-            "description": "Rose gold",
+            "description": "Rose Gold hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/rose-gold.png",
             "added_price": [
                 {
@@ -1313,9 +1049,9 @@
             ]
         },
         {
-            "name": "Aged gold",
+            "name": "Aged Gold",
             "code": "aged_gold",
-            "description": "Aged gold",
+            "description": "Aged Gold hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/aged-gold.png",
             "added_price": [
                 {
@@ -1377,9 +1113,9 @@
             ]
         },
         {
-            "name": "Muted purple gold",
+            "name": "Muted Purple Gold",
             "code": "muted_purple_gold",
-            "description": "Muted purple gold",
+            "description": "Muted Purple Gold hot foil.",
             "swatch_image": "/images/product-options/business-cards/swatches/muted-purple-gold.png",
             "added_price": [
                 {
@@ -1439,262 +1175,48 @@
                     "price_per_card": 0
                 }
             ]
-        }
-    ],
-    "print_code": [
-        {
-            "name": "no print code",
-            "code": "no_print_code",
-            "description": "no need to print codes",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
         },
         {
-            "name": "need print code",
-            "code": "need_print_code",
-            "description": "no need to print codes",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "drill": [
-        {
-            "name": "no drilling",
-            "code": "no_drilling",
-            "swatch_image": "",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
+            "code": "cold_red_gold",
+            "name": "Cold Red Gold",
+            "description": "Vibrant cold red foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/red-gold.png"
         },
         {
-            "name": "needs drilling",
-            "code": "needs_drilling",
-            "swatch_image": "",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
+            "code": "cold_blue_gold",
+            "name": "Cold Blue Gold",
+            "description": "Elegant cold blue foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/blue-gold.png"
+        },
+        {
+            "code": "cold_bright_gold",
+            "name": "Cold Bright Gold",
+            "description": "Glistening cold gold foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/bright-gold.png"
+        },
+        {
+            "code": "cold_bright_silver",
+            "name": "Cold Bright Silver",
+            "description": "Shining cold silver foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/bright-silver.png"
+        },
+        {
+            "code": "cold_green_gold",
+            "name": "Cold Green Gold",
+            "description": "Rich cold green gold foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/green-gold.png"
+        },
+        {
+            "code": "cold_matte_gold",
+            "name": "Cold Matte Gold",
+            "description": "Sophisticated matte gold foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/matte-gold.png"
+        },
+        {
+            "code": "cold_matte_silver",
+            "name": "Cold Matte Silver",
+            "description": "Elegant matte silver foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/matte-silver.png"
         }
     ],
     "quantity_price_table": [
@@ -2046,7 +1568,7 @@
         {
             "name": "One side",
             "code": "one_side",
-            "description": "Special finish applied to one side only",
+            "description": "Special finish applied to one side only.",
             "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-one-side.png",
             "added_price": [
                 {
@@ -2110,7 +1632,7 @@
         {
             "name": "Both sides",
             "code": "both_sides",
-            "description": "Special finish applied to both sides",
+            "description": "Special finish applied to both sides.",
             "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-both-sides.png",
             "added_price": [
                 {
@@ -2170,6 +1692,38 @@
                     "price_per_card": 0
                 }
             ]
+        }
+    ],
+    "texture": [
+        {
+            "code": "shattered_glass_film",
+            "name": "Shattered Glass Film",
+            "description": "",
+            "swatch_image": ""
+        },
+        {
+            "code": "holographic_film",
+            "name": "Holographic Film",
+            "description": "",
+            "swatch_image": ""
+        },
+        {
+            "code": "starlight_film",
+            "name": "Starlight Film",
+            "description": "",
+            "swatch_image": ""
+        },
+        {
+            "code": "holographic_star_film",
+            "name": "Holographic Star Film",
+            "description": "",
+            "swatch_image": ""
+        },
+        {
+            "code": "soft_touch_film",
+            "name": "Soft-Touch Film",
+            "description": "",
+            "swatch_image": ""
         }
     ]
 }

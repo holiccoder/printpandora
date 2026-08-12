@@ -143,7 +143,21 @@
                             },
                             {
                                 "label": "Metal Business Cards",
-                                "href": "/metal-business-cards"
+                                "href": "/shop?cat=metal-business-cards",
+                                "children": [
+                                    {
+                                        "label": "Classic Metal Business Cards",
+                                        "href": "/classic-metal-business-cards"
+                                    },
+                                    {
+                                        "label": "Premium Metal Business Cards",
+                                        "href": "/premium-metal-business-cards"
+                                    },
+                                    {
+                                        "label": "Luxe Metal Business Cards",
+                                        "href": "/luxe-metal-business-cards"
+                                    }
+                                ]
                             },
                             {
                                 "label": "Classic Business Cards",

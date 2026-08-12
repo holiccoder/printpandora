@@ -1,152 +1,6 @@
 {
-    "subtitle": "Premium PVC card — 0.76mm thick with optional foil finish",
+    "subtitle": "0.84mm premium PVC NFC cards with optional print code.",
     "starting_price_text": "50 cards from 0",
-    "paper_finish": [
-        {
-            "name": "PVC",
-            "code": "pvc",
-            "description": "Durable PVC plastic with a smooth finish.",
-            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "embossing": [
-        {
-            "name": "No Embossing",
-            "code": "no_embossing",
-            "description": "Standard flat printed text",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Embossing",
-            "code": "embossing",
-            "description": "Raised elegant embossing texture",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
     "quantity_price_table": [
         {
             "quantity": "50",
@@ -356,5 +210,17 @@
                 }
             ]
         }
-    }
+    },
+    "print_code": [
+        {
+            "code": "no_print_code",
+            "name": "No print code",
+            "description": "Do not add a print code."
+        },
+        {
+            "code": "print_code",
+            "name": "Print code",
+            "description": "Add a print code to the card."
+        }
+    ]
 }

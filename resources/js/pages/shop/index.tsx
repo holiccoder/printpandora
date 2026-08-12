@@ -1,5 +1,4 @@
 import { Link } from '@inertiajs/react';
-import { useState } from 'react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
@@ -29,17 +28,22 @@ interface Props {
         next_page_url: string | null;
     };
     categories: Category[];
+    selectedCategory?: string | null;
 }
 
-export default function ShopIndex({ products, categories }: Props) {
+export default function ShopIndex({
+    products,
+    categories,
+    selectedCategory: initialCategory,
+}: Props) {
     const c = useContent('shop_index_page');
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(
-        null,
+    const selectedCategory = initialCategory ?? null;
+    const totalProductCount = categories.reduce(
+        (total, category) => total + category.products_count,
+        0,
     );
 
-    const filtered = selectedCategory
-        ? products.data.filter((p) => p.category.slug === selectedCategory)
-        : products.data;
+    const filtered = products.data;
 
     return (
         <StorefrontLayout activeCategory="Business Cards">
@@ -55,8 +59,8 @@ export default function ShopIndex({ products, categories }: Props) {
                     </h1>
 
                     <div className="mb-8 flex flex-wrap gap-2">
-                        <button
-                            onClick={() => setSelectedCategory(null)}
+                        <Link
+                            href="/shop"
                             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                                 selectedCategory === null
                                     ? 'bg-primary text-primary-foreground'
@@ -65,13 +69,13 @@ export default function ShopIndex({ products, categories }: Props) {
                         >
                             {c.all_button_label.replace(
                                 '{count}',
-                                String(products.data.length),
+                                String(totalProductCount),
                             )}
-                        </button>
+                        </Link>
                         {categories.map((cat) => (
-                            <button
+                            <Link
                                 key={cat.id}
-                                onClick={() => setSelectedCategory(cat.slug)}
+                                href={`/shop?cat=${encodeURIComponent(cat.slug)}`}
                                 className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                                     selectedCategory === cat.slug
                                         ? 'bg-primary text-primary-foreground'
@@ -79,7 +83,7 @@ export default function ShopIndex({ products, categories }: Props) {
                                 }`}
                             >
                                 {cat.name} ({cat.products_count})
-                            </button>
+                            </Link>
                         ))}
                     </div>
 

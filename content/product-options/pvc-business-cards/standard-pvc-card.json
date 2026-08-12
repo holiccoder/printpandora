@@ -1,775 +1,98 @@
 {
-    "subtitle": "Standard PVC card — 0.38mm durable and waterproof",
+    "subtitle": "0.76mm PVC cards with matte, gloss, frosted-glass, foil, and stripe options.",
     "starting_price_text": "50 cards from $30",
     "paper_finish": [
         {
-            "name": "PVC",
-            "code": "pvc",
-            "description": "Durable PVC plastic with a smooth finish.",
-            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "code": "matte",
+            "name": "Matte",
+            "description": "Smooth, non-reflective matte finish.",
+            "swatch_image": "/images/products/pvc/matte-pvc.png"
+        },
+        {
+            "code": "gloss",
+            "name": "Gloss",
+            "description": "Shiny and highly reflective gloss finish.",
+            "swatch_image": "/images/products/pvc/gloss-pvc.png"
+        },
+        {
+            "code": "frosted",
+            "name": "Frosted Glass",
+            "description": "A translucent frosted-glass finish with a soft, elegant look.",
+            "swatch_image": "/images/products/pvc/frosted-pvc.png"
         }
     ],
     "special_finish": [
         {
-            "name": "no special finish",
             "code": "no_special_finish",
-            "description": "no special finish, thanks",
-            "swatch_image": "/images/product-options/no-foil.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "No special finish",
+            "description": "No special finish, thanks.",
+            "swatch_image": "/images/product-options/no-foil.png"
         },
         {
-            "name": "Black gold",
             "code": "black_gold",
-            "description": "Black gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/black-gold.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Black Gold",
+            "description": "Black Gold hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/black-gold.png"
         },
         {
-            "name": "Blue gold",
             "code": "blue_gold",
-            "description": "Blue gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/blue-gold.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Blue Gold",
+            "description": "Blue Gold hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/blue-gold.png"
         },
         {
-            "name": "Bright gold",
             "code": "bright_gold",
-            "description": "Bright gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/bright-gold.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Bright Gold",
+            "description": "Bright Gold hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/bright-gold.png"
         },
         {
-            "name": "Bright silver",
             "code": "bright_silver",
-            "description": "Bright silver",
-            "swatch_image": "/images/product-options/business-cards/swatches/bright-silver.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Bright Silver",
+            "description": "Bright Silver hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/bright-silver.png"
         },
         {
-            "name": "Green gold",
             "code": "green_gold",
-            "description": "Green gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/green-gold.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Green Gold",
+            "description": "Green Gold hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/green-gold.png"
         },
         {
-            "name": "Matte gold",
             "code": "matte_gold",
-            "description": "Matte gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/matte-gold.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Matte Gold",
+            "description": "Matte Gold hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/matte-gold.png"
         },
         {
-            "name": "Matte silver",
             "code": "matte_silver",
-            "description": "Matte silver",
-            "swatch_image": "/images/product-options/business-cards/swatches/matte-silver.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Matte Silver",
+            "description": "Matte Silver hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/matte-silver.png"
         },
         {
-            "name": "Red gold",
             "code": "red_gold",
-            "description": "Red gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/red-gold.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Red Gold",
+            "description": "Red Gold hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/red-gold.png"
         },
         {
-            "name": "Rose gold",
             "code": "rose_gold",
-            "description": "Rose gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/rose-gold.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Rose Gold",
+            "description": "Rose Gold hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/rose-gold.png"
         },
         {
-            "name": "Aged gold",
             "code": "aged_gold",
-            "description": "Aged gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/aged-gold.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Aged Gold",
+            "description": "Aged Gold hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/aged-gold.png"
         },
         {
-            "name": "Muted purple gold",
             "code": "muted_purple_gold",
-            "description": "Muted purple gold",
-            "swatch_image": "/images/product-options/business-cards/swatches/muted-purple-gold.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "embossing_or_signature_panel": [
-        {
-            "name": "No Embossing or Signature Panel",
-            "code": "no_embossing_or_signature_panel",
-            "description": "Standard flat PVC card",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Embossing",
-            "code": "embossing",
-            "description": "Raised elegant embossing",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Signature Panel",
-            "code": "signature_panel",
-            "description": "Writable panel for signing name",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
+            "name": "Muted Purple Gold",
+            "description": "Muted Purple Gold hot foil.",
+            "swatch_image": "/images/product-options/business-cards/swatches/muted-purple-gold.png"
         }
     ],
     "quantity_price_table": [
@@ -981,5 +304,36 @@
                 }
             ]
         }
-    }
+    },
+    "print_code_or_signature_stripe": [
+        {
+            "code": "no_print_code_or_signature_stripe",
+            "name": "No print code or signature stripe",
+            "description": "Do not add a print code or signature stripe."
+        },
+        {
+            "code": "print_code",
+            "name": "Print code",
+            "description": "Add a print code to the card."
+        },
+        {
+            "code": "signature_stripe",
+            "name": "Signature stripe",
+            "description": "Add a writable signature stripe."
+        }
+    ],
+    "special_finish_on_sides": [
+        {
+            "code": "one_side",
+            "name": "One side",
+            "description": "Special finish applied to one side only.",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-one-side.png"
+        },
+        {
+            "code": "both_sides",
+            "name": "Both sides",
+            "description": "Special finish applied to both sides.",
+            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-both-sides.png"
+        }
+    ]
 }

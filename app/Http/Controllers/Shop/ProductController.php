@@ -7,18 +7,34 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductConfigurationService;
 use App\Services\ProductImageService;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ProductController extends Controller
 {
-    public function index(ProductImageService $imageService): InertiaResponse
+    public function index(Request $request, ProductImageService $imageService): InertiaResponse
     {
-        $products = Product::with('category')
+        $selectedCategory = $request->string('cat')->toString();
+        $productQuery = Product::with('category')
             ->where('is_active', true)
-            ->latest()
-            ->simplePaginate(12);
+            ->latest();
+
+        if ($selectedCategory !== '') {
+            $category = ProductCategory::query()
+                ->where('slug', $selectedCategory)
+                ->first();
+
+            if ($category) {
+                $productQuery->whereIn('product_category_id', [
+                    $category->getKey(),
+                    ...$category->descendantIds(),
+                ]);
+            }
+        }
+
+        $products = $productQuery->simplePaginate(12)->withQueryString();
 
         $products->getCollection()->transform(function (Product $product) use ($imageService): Product {
             if ($image = $imageService->featuredImageUrl($product)) {
@@ -33,6 +49,7 @@ class ProductController extends Controller
         return Inertia::render('shop/index', [
             'products' => $products,
             'categories' => $categories,
+            'selectedCategory' => $selectedCategory !== '' ? $selectedCategory : null,
         ]);
     }
 

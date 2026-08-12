@@ -1,624 +1,252 @@
 {
-    "subtitle": "Classic cotton business card — timeless texture and quality",
-    "starting_price_text": "50 cards from $55",
-    "sizes": [
-        {
-            "name": "Standard",
-            "code": "standard",
-            "width": "2.0",
-            "height": "3.5",
-            "swatch_image": "/images/product-options/business-cards/sizes/business_card-standard-526x325.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "paper_finish": [
-        {
-            "name": "Cotton",
-            "code": "cotton",
-            "description": "100% cotton stock with a soft, fibrous texture.",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "corners": [
-        {
-            "name": "Square",
-            "code": "square",
-            "description": "Sharp and clean",
-            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M6.5 6.5V15h3V9.5h29v29H33v3h8.5v-35h-35zm3 27.5h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8z\"></path></svg>",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Rounded",
-            "code": "rounded",
-            "description": "Smooth rounded corners",
-            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M9.5 34h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8zM8 6.5H6.5V15h3V9.537A30.542 30.542 0 0 1 38.463 38.5H33v3h8.5V40A33.538 33.538 0 0 0 8 6.5z\"></path></svg>",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "special_finish": [
-        {
-            "name": "Non NFC Card",
-            "code": "non_nfc_card",
-            "description": "Standard cotton card without NFC chip.",
-            "swatch_image": "/images/product-options/no-foil.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "NFC Card",
-            "code": "nfc_card",
-            "description": "Embedded modern NFC chip for digital sharing.",
-            "swatch_image": "/images/product-options/business-cards/swatches/nfc-card.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "print_code": [
-        {
-            "name": "no print code",
-            "code": "no_print_code",
-            "description": "no need to print codes",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "drill": [
-        {
-            "name": "no drilling",
-            "code": "no_drilling",
-            "swatch_image": "",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 500,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 10000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "quantity_price_table": [
-        {
-            "quantity": "50",
-            "price_per_card": "1.10",
-            "pack_price": "55",
-            "pack_original_price": "",
-            "is_recommended": true
-        }
-    ],
-    "galleries": [
-        {
-            "id": "default",
-            "is_default": true,
-            "match": {},
-            "images": [
-                "/images/products/cotton/classic/classic-01.png",
-                "/images/products/cotton/classic/classic-02.png",
-                "/images/products/cotton/classic/classic-03.png",
-                "/images/products/cotton/classic/classic-04.png",
-                "/images/products/cotton/classic/classic-05.png"
-            ]
-        },
-        {
-            "id": "rounded_corners",
-            "match": {
-                "corners": "rounded"
-            },
-            "images": [
-                "/images/products/cotton/classic/classic-01.png",
-                "/images/products/cotton/classic/classic-02.png",
-                "/images/products/cotton/classic/classic-03.png",
-                "/images/products/cotton/classic/classic-04.png",
-                "/images/products/cotton/classic/classic-05.png"
-            ]
-        }
-    ],
-    "detail_sections": {
-        "design_specifications": {
-            "heading": "Design Specifications",
-            "diagram": {
-                "bleed": {
-                    "label": "Bleed Area",
-                    "dimensions": "3.66\" x 2.16\"",
-                    "description": "Make sure that your background extends to fill the bleed to avoid your Business Cards having white edges when trimmed."
-                },
-                "trim": {
-                    "label": "Trim",
-                    "dimensions": "3.50\" x 2.0\"",
-                    "description": "This is where we aim to cut your cards."
-                },
-                "safe_area": {
-                    "label": "Safe Area",
-                    "dimensions": "3.34\" x 1.84\"",
-                    "description": "Make sure any important aspects of your design such as text and logos are inside of the safe area, otherwise they may be cut off."
-                }
-            },
-            "downloads": [
-                {
-                    "id": "photoshop",
-                    "label": "Photoshop",
-                    "extension": ".psd",
-                    "href": "/templates/template.psd",
-                    "color": "#2563eb"
-                },
-                {
-                    "id": "illustrator",
-                    "label": "Illustrator",
-                    "extension": ".ai",
-                    "href": "/templates/template.ai",
-                    "color": "#f97316"
-                },
-                {
-                    "id": "indesign",
-                    "label": "InDesign",
-                    "extension": ".indd",
-                    "href": "/templates/template.indd",
-                    "color": "#ec4899"
-                },
-                {
-                    "id": "jpeg",
-                    "label": "Jpeg",
-                    "extension": ".jpg",
-                    "href": "/templates/template.jpg",
-                    "color": "#0f766e"
-                }
-            ]
-        },
-        "design_service_banner": {
-            "heading": "Need help designing your Business Cards?",
-            "body": "Unlock our team of expert designers, enjoy special discounts and more with a MOO Business Plan.",
-            "cta_label": "Compare plans",
-            "cta_href": "/business-card-design-service",
-            "image_url": "/images/product-detail/business-design-banner.png",
-            "image_alt": "Two angled business card design concepts"
-        },
-        "paper_stocks": {
-            "heading": "Check out our other paper stocks",
-            "subtitle": "We start at premium and go all the way to extra fancy.",
-            "items": [
-                {
-                    "id": "cotton",
-                    "name": "Cotton Business Cards",
-                    "price": "50 cards from $33.00",
-                    "image_url": "/images/product-detail/paper-stocks/cotton-business-cards.png",
-                    "href": "/classic-cotton-business-card",
-                    "cta": "Shop Cotton Business Cards ›",
-                    "features": [
-                        "17pt thickness",
-                        "Made from cotton linters",
-                        "Uncoated bright white",
-                        "Lightweight & durable",
-                        "Sustainably sourced"
-                    ]
-                },
-                {
-                    "id": "super",
-                    "name": "Super Business Cards",
-                    "price": "50 cards from $33.00",
-                    "image_url": "/images/product-detail/paper-stocks/super-business-cards.png",
-                    "href": "/super-business-cards",
-                    "cta": "Shop Super Business Cards ›",
-                    "features": [
-                        "18pt thickness",
-                        "Silky smooth",
-                        "Soft Touch or High Gloss",
-                        "Foils & special finishes",
-                        "FSC® Certified"
-                    ]
-                },
-                {
-                    "id": "luxe",
-                    "name": "Luxe Business Cards",
-                    "price": "50 cards from $43.00",
-                    "image_url": "/images/product-detail/paper-stocks/luxe-business-cards.png",
-                    "href": "/luxe-business-cards",
-                    "cta": "Shop Luxe Business Cards ›",
-                    "features": [
-                        "32pt thickness",
-                        "4-Layer Mohawk Superfine®",
-                        "Eight color seams",
-                        "Uncoated texture",
-                        "FSC® Certified"
-                    ]
-                },
-                {
-                    "id": "classic",
-                    "name": "Classic Business Cards",
-                    "price": "50 cards from $23.00",
-                    "image_url": "/images/product-detail/paper-stocks/original-business-cards.png",
-                    "href": "/classic-business-cards",
-                    "cta": "Shop Classic Business Cards ›",
-                    "features": [
-                        "16pt thickness",
-                        "Premium paper",
-                        "Matte or Gloss finish",
-                        "Quality and value",
-                        "FSC® Certified"
-                    ]
-                }
-            ]
-        },
-        "more_good_stuff": {
-            "heading": "Even more good stuff",
-            "items": [
-                {
-                    "id": "original-postcards",
-                    "name": "Original Postcards",
-                    "image_url": "/images/product-detail/even-more/original-postcards.png",
-                    "href": "/postcards",
-                    "link_label": "Original Postcards ›"
-                },
-                {
-                    "id": "super-postcards",
-                    "name": "Super Postcards",
-                    "image_url": "/images/product-detail/even-more/super-postcards.png",
-                    "href": "/postcards",
-                    "link_label": "Super Postcards ›"
-                },
-                {
-                    "id": "premium-flyers",
-                    "name": "Premium Flyers",
-                    "image_url": "/images/product-detail/even-more/premium-flyers.png",
-                    "href": "/flyers-and-brochures",
-                    "link_label": "Premium Flyers ›"
-                },
-                {
-                    "id": "brochures",
-                    "name": "Brochures",
-                    "image_url": "/images/product-detail/even-more/brochures.png",
-                    "href": "/flyers-and-brochures",
-                    "link_label": "Brochures ›"
-                }
-            ]
-        },
-        "faq": {
-            "heading": "Frequently asked questions",
-            "items": [
-                {
-                    "question": "What are the exact dimensions?",
-                    "answer": "Standard and square sizes are available. Standard size is 3.5\" x 2.0\" and square size is 2.16\" x 3.3\"."
-                },
-                {
-                    "question": "How thick is the paper?",
-                    "answer": "We start at premium and go all the way to extra fancy. Original thickness starts at 16pt, super starts at 18pt, luxe is 32pt, and cotton is 17pt."
-                },
-                {
-                    "question": "Can I print on both sides?",
-                    "answer": "Yes. All of our custom business cards can be printed full-colour on both sides at no extra cost."
-                },
-                {
-                    "question": "Will my colours print accurately?",
-                    "answer": "We print in CMYK. Designs created in RGB will be auto-converted, which can shift bright tones slightly."
-                },
-                {
-                    "question": "What file format should I upload?",
-                    "answer": "PDF (preferred), PNG, or JPG at 300 dpi or higher. Include bleed on every edge."
-                },
-                {
-                    "question": "How long does delivery take?",
-                    "answer": "Standard delivery takes 3–5 working days. Next Day Delivery is available on selected products before 12pm."
-                }
-            ]
-        }
+  "subtitle": "Classic cotton business card — timeless texture and quality",
+  "starting_price_text": "50 cards from $55",
+  "corners": [
+    {
+      "name": "Square",
+      "code": "square",
+      "description": "Sharp and clean"
     },
-    "special_finish_on_sides": []
+    {
+      "name": "Rounded",
+      "code": "rounded",
+      "description": "Smooth and rounded"
+    }
+  ],
+  "quantity_price_table": [
+    {
+      "quantity": "50",
+      "price_per_card": "1.10",
+      "pack_price": "55",
+      "pack_original_price": "",
+      "is_recommended": true
+    }
+  ],
+  "galleries": [
+    {
+      "id": "default",
+      "is_default": true,
+      "match": {},
+      "images": [
+        "/images/products/cotton/classic/classic-01.png",
+        "/images/products/cotton/classic/classic-02.png",
+        "/images/products/cotton/classic/classic-03.png",
+        "/images/products/cotton/classic/classic-04.png"
+      ]
+    },
+    {
+      "id": "rounded_corners",
+      "match": {
+        "corners": "rounded"
+      },
+      "images": [
+        "/images/products/cotton/classic/classic-01.png",
+        "/images/products/cotton/classic/classic-02.png",
+        "/images/products/cotton/classic/classic-03.png",
+        "/images/products/cotton/classic/classic-04.png",
+        "/images/products/cotton/classic/classic-05.png"
+      ]
+    }
+  ],
+  "detail_sections": {
+    "design_specifications": {
+      "heading": "Design Specifications",
+      "diagram": {
+        "bleed": {
+          "label": "Bleed Area",
+          "dimensions": "3.66\" x 2.16\"",
+          "description": "Make sure that your background extends to fill the bleed to avoid your Business Cards having white edges when trimmed."
+        },
+        "trim": {
+          "label": "Trim",
+          "dimensions": "3.50\" x 2.0\"",
+          "description": "This is where we aim to cut your cards."
+        },
+        "safe_area": {
+          "label": "Safe Area",
+          "dimensions": "3.34\" x 1.84\"",
+          "description": "Make sure any important aspects of your design such as text and logos are inside of the safe area, otherwise they may be cut off."
+        }
+      },
+      "downloads": [
+        {
+          "id": "photoshop",
+          "label": "Photoshop",
+          "extension": ".psd",
+          "href": "/templates/template.psd",
+          "color": "#2563eb"
+        },
+        {
+          "id": "illustrator",
+          "label": "Illustrator",
+          "extension": ".ai",
+          "href": "/templates/template.ai",
+          "color": "#f97316"
+        },
+        {
+          "id": "indesign",
+          "label": "InDesign",
+          "extension": ".indd",
+          "href": "/templates/template.indd",
+          "color": "#ec4899"
+        },
+        {
+          "id": "jpeg",
+          "label": "Jpeg",
+          "extension": ".jpg",
+          "href": "/templates/template.jpg",
+          "color": "#0f766e"
+        }
+      ]
+    },
+    "design_service_banner": {
+      "heading": "Need help designing your Business Cards?",
+      "body": "Unlock our team of expert designers, enjoy special discounts and more with a MOO Business Plan.",
+      "cta_label": "Compare plans",
+      "cta_href": "/business-card-design-service",
+      "image_url": "/images/product-detail/business-design-banner.png",
+      "image_alt": "Two angled business card design concepts"
+    },
+    "paper_stocks": {
+      "heading": "Check out our other paper stocks",
+      "subtitle": "We start at premium and go all the way to extra fancy.",
+      "items": [
+        {
+          "id": "cotton",
+          "name": "Cotton Business Cards",
+          "price": "50 cards from $33.00",
+          "image_url": "/images/product-detail/paper-stocks/cotton-business-cards.png",
+          "href": "/classic-cotton-business-card",
+          "cta": "Shop Cotton Business Cards ›",
+          "features": [
+            "17pt thickness",
+            "Made from cotton linters",
+            "Uncoated bright white",
+            "Lightweight & durable",
+            "Sustainably sourced"
+          ]
+        },
+        {
+          "id": "super",
+          "name": "Super Business Cards",
+          "price": "50 cards from $33.00",
+          "image_url": "/images/product-detail/paper-stocks/super-business-cards.png",
+          "href": "/super-business-cards",
+          "cta": "Shop Super Business Cards ›",
+          "features": [
+            "18pt thickness",
+            "Silky smooth",
+            "Soft Touch or High Gloss",
+            "Foils & special finishes",
+            "FSC® Certified"
+          ]
+        },
+        {
+          "id": "luxe",
+          "name": "Luxe Business Cards",
+          "price": "50 cards from $43.00",
+          "image_url": "/images/product-detail/paper-stocks/luxe-business-cards.png",
+          "href": "/luxe-business-cards",
+          "cta": "Shop Luxe Business Cards ›",
+          "features": [
+            "32pt thickness",
+            "4-Layer Mohawk Superfine®",
+            "Eight color seams",
+            "Uncoated texture",
+            "FSC® Certified"
+          ]
+        },
+        {
+          "id": "classic",
+          "name": "Classic Business Cards",
+          "price": "50 cards from $23.00",
+          "image_url": "/images/product-detail/paper-stocks/original-business-cards.png",
+          "href": "/classic-business-cards",
+          "cta": "Shop Classic Business Cards ›",
+          "features": [
+            "16pt thickness",
+            "Premium paper",
+            "Matte or Gloss finish",
+            "Quality and value",
+            "FSC® Certified"
+          ]
+        }
+      ]
+    },
+    "more_good_stuff": {
+      "heading": "Even more good stuff",
+      "items": [
+        {
+          "id": "original-postcards",
+          "name": "Original Postcards",
+          "image_url": "/images/product-detail/even-more/original-postcards.png",
+          "href": "/postcards",
+          "link_label": "Original Postcards ›"
+        },
+        {
+          "id": "super-postcards",
+          "name": "Super Postcards",
+          "image_url": "/images/product-detail/even-more/super-postcards.png",
+          "href": "/postcards",
+          "link_label": "Super Postcards ›"
+        },
+        {
+          "id": "premium-flyers",
+          "name": "Premium Flyers",
+          "image_url": "/images/product-detail/even-more/premium-flyers.png",
+          "href": "/flyers-and-brochures",
+          "link_label": "Premium Flyers ›"
+        },
+        {
+          "id": "brochures",
+          "name": "Brochures",
+          "image_url": "/images/product-detail/even-more/brochures.png",
+          "href": "/flyers-and-brochures",
+          "link_label": "Brochures ›"
+        }
+      ]
+    },
+    "faq": {
+      "heading": "Frequently asked questions",
+      "items": [
+        {
+          "question": "What are the exact dimensions?",
+          "answer": "Standard and square sizes are available. Standard size is 3.5\" x 2.0\" and square size is 2.16\" x 3.3\"."
+        },
+        {
+          "question": "How thick is the paper?",
+          "answer": "We start at premium and go all the way to extra fancy. Original thickness starts at 16pt, super starts at 18pt, luxe is 32pt, and cotton is 17pt."
+        },
+        {
+          "question": "Can I print on both sides?",
+          "answer": "Yes. All of our custom business cards can be printed full-colour on both sides at no extra cost."
+        },
+        {
+          "question": "Will my colours print accurately?",
+          "answer": "We print in CMYK. Designs created in RGB will be auto-converted, which can shift bright tones slightly."
+        },
+        {
+          "question": "What file format should I upload?",
+          "answer": "PDF (preferred), PNG, or JPG at 300 dpi or higher. Include bleed on every edge."
+        },
+        {
+          "question": "How long does delivery take?",
+          "answer": "Standard delivery takes 3–5 working days. Next Day Delivery is available on selected products before 12pm."
+        }
+      ]
+    }
+  },
+  "with_nfc": [
+    {
+      "name": "With NFC",
+      "code": "with_nfc",
+      "description": "Add an NFC chip for contactless digital sharing.",
+      "swatch_image": "/images/product-options/business-cards/swatches/nfc-card.png"
+    },
+    {
+      "name": "No NFC",
+      "code": "no_nfc",
+      "description": "A standard cotton business card without NFC."
+    }
+  ]
 }

@@ -240,6 +240,7 @@ HTML,
             ['name' => 'Flyers & Brochures', 'slug' => 'flyers-brochures', 'parent_slug' => null],
             ['name' => 'Cotton Business Cards', 'slug' => 'cotton-business-cards', 'parent_slug' => 'business-cards'],
             ['name' => 'PVC Business Cards', 'slug' => 'pvc-business-cards', 'parent_slug' => 'business-cards'],
+            ['name' => 'Metal Business Cards', 'slug' => 'metal-business-cards', 'parent_slug' => 'business-cards'],
             ['name' => 'Classic Business Cards', 'slug' => 'classic-business-cards', 'parent_slug' => 'business-cards'],
         ];
 
@@ -333,7 +334,9 @@ HTML,
         ];
 
         foreach ($sampleProducts as $data) {
-            $categoryId = $categoryMap[$data['category']] ?? null;
+            $categoryId = array_key_exists($data['category'], $categoryMap)
+                ? $categoryMap[$data['category']]
+                : null;
             Product::firstOrCreate(
                 ['slug' => $data['slug']],
                 [
@@ -353,6 +356,7 @@ HTML,
         $this->call(LetterpressBlogSeeder::class);
         $this->call(ClassicStandardBusinessCardOptionsSeeder::class);
         $this->call(ClassicSpecialBusinessCardOptionsSeeder::class);
+        $this->call(BusinessCardProductOptionsSeeder::class);
         $this->call(HelpCenterSeeder::class);
     }
 }
