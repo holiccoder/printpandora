@@ -56,6 +56,26 @@ function normalizeOptionValue(value: string): string {
         .replace(/[\s_]+/g, '-');
 }
 
+function hasPositiveSelection(value: string | string[] | undefined): boolean {
+    const negativeValues = new Set([
+        '',
+        'none',
+        'no',
+        'no-foil',
+        'no-special-finish',
+        'no-print-code',
+        'no-print-code-or-magnetic-stripe',
+        'no-nfc',
+        'no-magnetic-stripe',
+        'no-signature-stripe',
+    ]);
+    const values = Array.isArray(value) ? value : [value ?? ''];
+
+    return values.some(
+        (item) => !negativeValues.has(normalizeOptionValue(item)),
+    );
+}
+
 function normalizeSelectedOptions(
     selected: Record<string, string | string[]>,
 ): Record<string, string | string[]> {
@@ -143,9 +163,25 @@ export function computeDynamicTiers(
         return (
             code === 'foil' ||
             code === 'nfc' ||
+            code === 'special-finish' ||
             name.includes('foil') ||
             name.includes('烫金') ||
+            name.includes('special finish') ||
+            name.includes('激光雕刻') ||
+            name.includes('彩印') ||
+            name.includes('镀色') ||
             name === 'nfc'
+        );
+    });
+    const printCodeProcess = scenario.processes.find((p) => {
+        const code = normalizeOptionValue(p.code ?? '');
+        const name = p.name.toLowerCase();
+
+        return (
+            code === 'print-code' ||
+            code === 'print-code-or-magnetic-stripe' ||
+            name.includes('print code') ||
+            name.includes('打码')
         );
     });
 
@@ -179,9 +215,13 @@ export function computeDynamicTiers(
                   specialFinish,
               )
         : specialFinishIndex > 0;
+    const printCodeSelected = hasPositiveSelection(
+        selectedOptions.print_code_or_magnetic_stripe,
+    );
+    const nfcSelected = hasPositiveSelection(selectedOptions.with_nfc);
 
     const rounded = roundedSelected && roundedProcess != null;
-    const foiled = foiledSelected && foilProcess != null;
+    const foiled = (foiledSelected || nfcSelected) && foilProcess != null;
 
     return quantities.map((qty) => {
         const isStart = qty === scenario.startQuantity;
@@ -199,6 +239,15 @@ export function computeDynamicTiers(
             if (!isStart) {
                 const rate = roundedProcess.rates[String(qty)] ?? 0;
                 unit -= roundedProcess.markup * (rate / 100);
+            }
+        }
+
+        if (printCodeSelected && printCodeProcess) {
+            unit += printCodeProcess.markup;
+
+            if (!isStart) {
+                const rate = printCodeProcess.rates[String(qty)] ?? 0;
+                unit -= printCodeProcess.markup * (rate / 100);
             }
         }
 

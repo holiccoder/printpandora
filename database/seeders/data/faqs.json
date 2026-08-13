@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1,
+        "category_id": 4,
+        "question": "What file formats do you accept?",
+        "answer": "<p>We recommend print-ready PDFs with bleed. We also accept AI, EPS, SVG, and high-resolution PNG/JPG files.</p>",
+        "sort_order": 0,
+        "is_published": 1,
+        "created_at": "2026-08-13 02:35:40",
+        "updated_at": "2026-08-13 02:35:40"
+    },
+    {
+        "id": 2,
+        "category_id": 4,
+        "question": "How long does production take?",
+        "answer": "<p>Most orders are produced within 1–2 business days after artwork approval. Shipping time depends on your selected delivery method.</p>",
+        "sort_order": 1,
+        "is_published": 1,
+        "created_at": "2026-08-13 02:35:40",
+        "updated_at": "2026-08-13 02:35:40"
+    },
+    {
+        "id": 3,
+        "category_id": 4,
+        "question": "What is your minimum order quantity?",
+        "answer": "<p>Minimum order quantities vary by product. Many business card products start at 50 pieces; gang-run products typically start at 200 copies per design.</p>",
+        "sort_order": 2,
+        "is_published": 1,
+        "created_at": "2026-08-13 02:35:40",
+        "updated_at": "2026-08-13 02:35:40"
+    },
+    {
+        "id": 4,
+        "category_id": 4,
+        "question": "Do you offer design services?",
+        "answer": "<p>Yes. We offer free vector typesetting for print customers, template layouts, and custom original design. Visit our Business Card Design Service page to get started.</p>",
+        "sort_order": 3,
+        "is_published": 1,
+        "created_at": "2026-08-13 02:35:40",
+        "updated_at": "2026-08-13 02:35:40"
+    },
+    {
+        "id": 5,
+        "category_id": 4,
+        "question": "Can I track my order?",
+        "answer": "<p>Once your order ships, you will receive a tracking link by email. You can also view order status in your dashboard.</p>",
+        "sort_order": 4,
+        "is_published": 1,
+        "created_at": "2026-08-13 02:35:40",
+        "updated_at": "2026-08-13 02:35:40"
+    },
+    {
+        "id": 6,
+        "category_id": 4,
+        "question": "What is your refund policy?",
+        "answer": "<p>If you're not satisfied with the print quality due to a production error, contact us within 14 days. We'll reprint or refund eligible orders.</p>",
+        "sort_order": 5,
+        "is_published": 1,
+        "created_at": "2026-08-13 02:35:40",
+        "updated_at": "2026-08-13 02:35:40"
+    }
+]

@@ -320,6 +320,18 @@ class PricingService
     {
         $rawName = strtolower(trim((string) ($process['name'] ?? '')));
         $code = $this->normalizeOptionValue($process['code'] ?? $process['name'] ?? '');
+        $negativeValues = [
+            '',
+            'none',
+            'no',
+            'no_foil',
+            'no_special_finish',
+            'no_print_code',
+            'no_print_code_or_magnetic_stripe',
+            'no_nfc',
+            'no_magnetic_stripe',
+            'no_signature_stripe',
+        ];
 
         if (
             $code === 'rounded_corners'
@@ -340,9 +352,12 @@ class PricingService
         }
 
         if (
-            in_array($code, ['foil', 'nfc'], true)
+            in_array($code, ['foil', 'nfc', 'special_finish'], true)
             || str_contains($rawName, 'foil')
             || str_contains($rawName, '烫金')
+            || str_contains($rawName, '激光雕刻')
+            || str_contains($rawName, '彩印')
+            || str_contains($rawName, '镀色')
             || $rawName === 'nfc'
         ) {
             foreach ($options as $key => $value) {
@@ -351,7 +366,14 @@ class PricingService
                 foreach ($values as $item) {
                     $normalized = $this->normalizeOptionValue($item);
 
-                    if ($normalized === $code || ($key === 'special_finish' && ! in_array($normalized, ['', 'none', 'no_foil', 'no_special_finish'], true))) {
+                    if (
+                        $normalized === $code
+                        || ($code === 'nfc' && $key === 'with_nfc' && $normalized === 'with_nfc')
+                        || ($code === 'print_code_or_magnetic_stripe'
+                            && $key === 'print_code_or_magnetic_stripe'
+                            && ! in_array($normalized, $negativeValues, true))
+                        || ($key === 'special_finish' && ! in_array($normalized, $negativeValues, true))
+                    ) {
                         return true;
                     }
                 }
@@ -367,7 +389,7 @@ class PricingService
         $values = is_array($options[$code]) ? $options[$code] : [$options[$code]];
 
         foreach ($values as $value) {
-            if (! in_array($this->normalizeOptionValue($value), ['', 'none', 'no'], true)) {
+            if (! in_array($this->normalizeOptionValue($value), $negativeValues, true)) {
                 return true;
             }
         }

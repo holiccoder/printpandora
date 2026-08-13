@@ -3,722 +3,620 @@
 return [
     [
         'slug' => 'letterpress-production-and-file-specs',
-        'title' => '活版印刷（Letterpress）制作与文件规范',
+        'title' => 'Letterpress Production and File Specifications',
         'body' => <<<'HTML'
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>使用范围与核心结论</h2>
-<h2>00. 适用于高端名片、邀请函、吊牌、包装卡、信笺及小批量精品印刷。</h2>
-<p>一句话判断 活版印刷不是“用力压得越深越高级”，而是让材料、图形面积、墨量和压力保持平衡。真正高级的结果</p>
-<p>是：墨色干净、压痕有节制、细节完整、背面结构合理。</p>
-<p>本手册把活版项目拆成四个相互制约的系统：设计文件、版材与设备、纸张与油墨、后加工与品控。任何一个环节独</p>
-<p>立追求极限，都会把风险转移到下一环节。</p>
-<h2>关键判断 正确做法 错误假设</h2>
-<h2>颜色 按专色分版，一色一版一印；优先 1–2 色 把 CMYK 四色文件直接当作活版文件</h2>
-<h2>压痕 先定义轻触、标准或深压，再选纸与结构 所有纸都能压出同样深度</h2>
-<h2>纸张 优先未涂布、高松厚、可压缩材料 克重越高就一定越适合</h2>
-<h2>细节 以版材能力和上机稳定性确定最小线条 屏幕上能看见就一定能印</h2>
-<h2>双面 错开重压区域，必要时裱合或降压 正反面可在同一位置无限深压</h2>
-<h2>验收 以签样、色样、压痕与容差作为标准 用显示器颜色和放大图作为唯一标准</h2>
-<p>建议在报价前完成一次“设计可生产性审查”高端活版项目最贵的通常不是纸，而是返工、换版和多次上机。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>什么是 Letterpress 活版印刷</h2>
-<h2>01. 现代商业活版通常使用光敏树脂版或金属版，通过凸起图文直接向纸张转移油墨。</h2>
-<p>传统活版原本追求“清晰、均匀、尽量不留明显压痕”。现代精品印刷则常把压痕作为视觉语言，但压痕仍然只是结</p>
-<p>果，不应替代清晰度、套准和材料完整性。</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Scope of Use & Core Conclusions</h2>
+<h2>00. Suitable for high-end business cards, invitations, hangtags, packaging cards, letterheads, and small-batch fine printing.</h2>
+<p>One-sentence judgment: Letterpress is not about "the deeper the impression, the more premium it is." Rather, it is about maintaining a balance among materials, graphic area, ink volume, and pressure. A truly premium result is: clean ink color, controlled impression, complete details, and a reasonable structure on the back.</p>
+<p>This manual breaks down letterpress projects into four mutually constraining systems: design files, plate materials & equipment, paper & ink, post-press processing & quality control. If any single stage is pursued to its extreme in isolation, it will transfer the risk to the next stage.</p>
+<h2>Key Judgments | Correct Approach | Wrong Assumptions</h2>
+<h2>Color: Separate plates by spot color, one plate per color, printed once; prioritize 1–2 colors | Treating CMYK 4-color files directly as letterpress files</h2>
+<h2>Impression: First define light-touch, standard, or deep impression, then select paper and structure | All paper can be pressed to the same depth</h2>
+<h2>Paper: Prioritize uncoated, high-bulk, compressible materials | The higher the basis weight, the more suitable it must be</h2>
+<h2>Details: Determine minimum line weights based on plate capabilities and press stability | If it's visible on the screen, it must be printable</h2>
+<h2>Double-sided: Stagger heavy impression areas, duplex/laminate or reduce pressure if necessary | Both sides can be infinitely deeply pressed in the same position</h2>
+<h2>Acceptance: Use signed-off samples, color swatches, impression levels, and tolerances as criteria | Using screen colors and magnified images as the sole standard</h2>
+<p>It is recommended to complete a "design for manufacturability review" before quoting. The most expensive part of a high-end letterpress project is usually not the paper, but rework, plate replacement, and multiple press setups.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>What is Letterpress Printing?</h2>
+<h2>01. Modern commercial letterpress typically uses photopolymer plates or metal plates to transfer ink directly to the paper via raised images/text.</h2>
+<p>Traditional letterpress originally aimed for "clarity, uniformity, and as little visible impression as possible." Modern fine printing, however, often uses the impression as a visual language. Nevertheless, the impression is still only a result and should not replace clarity, registration, and material integrity.</p>
 <ul>
-<li>适合：少量专色、精细文字、线性图形、徽标、留白充足的设计。</li>
-<li>不擅长：大面积均匀实地、连续调照片、极细反白、四色摄影复制。</li>
-<li>典型设备：平压平机（如自动平压机）、圆压平机、手动校样机；不同设备的压力、套准与幅面能力差异很大。</li>
+    <li>Suitable for: a small number of spot colors, fine text, linear graphics, logos, and designs with ample white space.</li>
+    <li>Not suitable for: large areas of solid colors, continuous tone photographs, extremely fine reversed/negative text, or four-color photographic reproduction.</li>
+    <li>Typical equipment: platen-to-platen presses (such as automatic platens), cylinder-to-flatbed presses, manual proofing presses; different machines vary greatly in pressure, registration, and format capacity.</li>
 </ul>
-<p>历史提示 HEIDELBERG 的自动平压活版机自 1920 年代进入量产，今天仍被大量精品印刷工作室用于活版、模切与压</p>
-<p>线。历史设备并不意味着质量低；真正决定结果的是维护状态、操作经验和工艺匹配。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>完整制作流程</h2>
-<h2>02. 每一步都应留下可确认的输出：需求单、分色稿、打样、签样和品检记录。</h2>
-<h2>阶段 必须确认 常见遗漏</h2>
-<h2>需求 成品尺寸、数量、纸张、色数、压痕目标、交期 只给效果图，不给结构与数量</h2>
-<h2>设计 专色名称、正反面关系、工艺层、出血与安全区 把烫金、模切、压凹混在同一图层</h2>
-<h2>制版 版材、版厚、底座高度、最小线条与网点 未按供应商参数检查细节</h2>
-<h2>上机 墨色、墨量、压力、套准、纸纹、咬口方向 只看第一张，不看连续稳定性</h2>
-<h2>后加工 干燥时间、裱合、模切、边色、包装方式 油墨未稳定即堆叠或烫箔</h2>
-<h2>验收 签样标准、抽检频率、允许偏差、数量容差 只约定“差不多”</h2>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>设备、印版与适用场景</h2>
-<h2>03. 不要只问“是不是活版机”，要问设备类型、最大压力、套准方式、版材系统和操作经验。</h2>
-<h2>系统 优势 限制/风险 适合项目</h2>
-<h2>制版快、成本可控、细节好、适合数 过细线条/小点可能丢失；大实地易供墨</h2>
-<h2>光敏树脂版 + 标准底座 名片、邀请函、信笺、吊牌</h2>
-<h2>字文件 不均</h2>
-<h2>制版成本高；腐蚀版细节与环保要求需</h2>
-<h2>铜/镁/锌金属版 耐印、边缘硬朗、适合烫箔/压凹 长版、烫金、压凹、模切</h2>
-<h2>评估</h2>
-<h2>版面大实地会显著增加负荷；夹伤风险</h2>
-<h2>平压平自动机 压力强、效率高、可模切和压线 名片、卡片、标签、包装小件</h2>
-<h2>高</h2>
-<h2>艺术海报、小批量精品、渐变探</h2>
-<h2>圆压平/校样机 套准细致、压力均匀、适合艺术印刷 速度慢、依赖人工经验</h2>
-<h2>索</h2>
-<p>木/铅字排版 历史感强、字形与边缘独特 字体有限、磨损差异、排版效率低 限定版、文化项目、艺术作品</p>
-<p>版高不是通用值 不同底座与版材组合有不同总高度。设计师不应擅自指定“版厚”，而应把完整矢量文件交给制版/印</p>
-<p>刷方，由其按设备系统输出。</p>
-<p>制版前必须确认：线条保证值、最小独立点、可接受网线、版面最大实地面积、是否需要拼版、裁切标与套准标形</p>
-<p>式。供应商给出的极限值是“版能做出来”，不等于“上机可稳定印出”。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>压痕深度与质量标准</h2>
-<h2>04. 压痕越深，压力负荷、纸张变形、背透、套准和双面冲突越大。</h2>
-<h2>压痕目标 建议材料 适合设计 主要风险</h2>
-<h2>轻触印 平滑未涂布纸、较薄纸、双面项目 小字、细线、信息密集 触感较弱，但印刷最稳定</h2>
-<h2>标准压痕 250–350gsm 高松厚未涂布纸 Logo、标题、线性图形 背面可能轻微可见</h2>
-<p>深压印 300–600gsm 棉纸或裱合结构 单面重点、留白大、图形面积适中 背凸、变形、边缘裂纹、套准难</p>
-<h2>无色压凹 厚棉纸、柔软未涂布纸 纹样、暗纹、极简品牌 细节依赖光线；面积过大易不均</h2>
-<p>验收要看四件事 正面边缘是否干净、压痕是否连续、背面结构是否可接受、连续 50–100 张是否稳定。只看一张“压</p>
-<p>得最深”的样张会误导判断。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>纸张选择逻辑</h2>
-<h2>05. 材料不是装饰背景，而是参与成色、压痕、干燥和后加工的核心变量。</h2>
+<p>Historical Note: HEIDELBERG's automatic platen letterpress machines entered mass production in the 1920s and are still heavily used today by many fine printing studios for letterpress printing, die-cutting, and creasing. Historical equipment does not mean low quality; what truly decides the outcome is the maintenance condition, operating experience, and process matching.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Complete Production Process</h2>
+<h2>02. Every step should leave a verifiable output: requirement sheets, color separations, proofs, sign-offs, and quality inspection records.</h2>
+<h2>Stage | Must Confirm | Common Omissions</h2>
+<h2>Requirements: Finished size, quantity, paper, number of colors, impression goals, delivery date | Only providing renderings, not structure and quantities</h2>
+<h2>Design: Spot color names, front-to-back relationship, process layers, bleed and safety zones | Mixing hot stamping, die-cutting, and debossing in the same layer</h2>
+<h2>Platemaking: Plate materials, thickness, base height, minimum lines and dots | Failing to check details according to supplier parameters</h2>
+<h2>On-Press: Ink color, ink volume, pressure, registration, paper grain, gripper edge direction | Only looking at the first sheet, neglecting continuous stability</h2>
+<h2>Post-Press: Drying time, duplexing/laminating, die-cutting, edge coloring, packaging | Stacking or hot stamping foil before the ink is fully stable</h2>
+<h2>Acceptance: Sign-off standards, sampling frequency, allowable deviations, quantity tolerances | Just agreeing on "around about"</h2>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Equipment, Plates, and Applicable Scenarios</h2>
+<h2>03. Do not just ask "is it a letterpress machine?", ask about the equipment type, maximum pressure, registration system, platemaking system, and operator experience.</h2>
+<h2>System | Advantages | Limitations/Risks | Suitable Projects</h2>
+<h2>Photopolymer Plate + Standard Base: Fast platemaking, controllable costs, good details, suitable for digital files | Extremely fine lines/small dots may be lost; large solids are prone to uneven inking | Business cards, invitations, letterheads, hangtags</h2>
+<h2>Copper/Magnesium/Zinc Metal Plates: Durable, crisp edges, suitable for hot stamping/debossing | High platemaking costs; etched plate details and environmental requirements need evaluation | Long runs, hot stamping, debossing, die-cutting</h2>
+<h2>Platen Automatic Press: High pressure, high efficiency, capable of die-cutting and creasing | Large plate solids significantly increase load; high risk of crushing/injury | Business cards, cards, labels, small packaging</h2>
+<h2>Cylinder/Proofing Press: Precise registration, uniform pressure, suitable for fine art printing | Slow speed, highly dependent on manual experience | Art posters, small-batch fine prints, gradient exploration</h2>
+<p>Wood/Lead Type Composition: Strong historical feel, unique glyphs and edges | Limited fonts, wear variance, low typesetting efficiency | Limited editions, cultural projects, artistic works</p>
+<p>Plate height is not a universal value: Different base and plate combinations result in different total heights. Designers should not arbitrarily specify "plate thickness." Instead, they should deliver the complete vector file to the platemaker/printer, who will output it according to the press system.</p>
+<p>Before platemaking, you must confirm: guaranteed line weights, minimum isolated dots, acceptable halftone screen ruler (LPI), maximum solid area, whether nesting/imposition is needed, and the format of crop and registration marks. The limit values given by suppliers mean "the plate can make it," not "it can be stably printed on the press."</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Impression Depth & Quality Standards</h2>
+<h2>04. The deeper the impression, the greater the pressure load, paper deformation, show-through (ghosting), registration issues, and double-sided conflicts.</h2>
+<h2>Impression Goal | Recommended Materials | Suitable Designs | Primary Risks</h2>
+<h2>Light Touch (Kiss Print): Smooth uncoated paper, thinner paper, double-sided projects | Small text, fine lines, dense information | Weak tactile feel, but most stable printing</h2>
+<h2>Standard Impression: 250-350gsm high-bulk uncoated paper | Logos, titles, linear graphics | Back side may be slightly visible</h2>
+<p>Deep Impression: 300-600gsm cotton paper or duplexed structures | Single-sided focus, large white space, moderate graphic area | Show-through/back bruising, paper warping, edge cracking, registration difficulty</p>
+<h2>Blind Debossing: Thick cotton paper, soft uncoated paper | Patterns, subtle textures, minimalist branding | Details depend on lighting; excessively large areas are prone to unevenness</h2>
+<p>Acceptance depends on four things: whether the front edges are clean, whether the impression is continuous, whether the back-side structure is acceptable, and whether 50-100 consecutive sheets are stable. Judging solely by a single "deepest pressed" sample sheet will lead to misjudgment.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Paper Selection Logic</h2>
+<h2>05. Material is not just a decorative background; it is a core variable involved in color rendering, impression depth, drying, and post-press processing.</h2>
 <ul>
-<li>压缩性：决定纸张在压力下能否形成清晰、柔和且不爆裂的凹陷。</li>
-<li>松厚度：相同克重下，松厚纸通常能提供更明显触感；但表面粗糙可能牺牲细节。</li>
-<li>施胶与吸收：吸墨太快会发灰、扩大；太慢可能蹭脏或干燥延迟。</li>
-<li>纸纹方向：折叠和压线应尽量顺纹，尤其是厚卡和包装结构。</li>
-<li>颜色与批次：天然白、暖白、彩色纸都会改变专色。</li>
+    <li>Compressibility: Determines whether the paper can form crisp, soft, and non-cracking indentations under pressure.</li>
+    <li>Bulk/Thickness: For the same basis weight, high-bulk paper usually provides a stronger tactile feel, but rough surfaces may sacrifice details.</li>
+    <li>Sizing & Absorption: Excessively fast absorption leads to graying and dot gain; excessively slow absorption causes smudging or drying delays.</li>
+    <li>Grain Direction: Folding and creasing should align with the grain direction as much as possible, especially for thick cards and packaging structures.</li>
+    <li>Color & Batches: Natural white, warm white, and colored papers will all alter spot color appearances.</li>
 </ul>
-<p>严苛判断 “看起来很厚”不是充分条件。覆膜纸、涂布纸、脆性再生纸即使克重高，也可能在深压、折线或模切时开</p>
-<p>裂。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>棉纸与高松厚白卡</h2>
-<h2>06. 棉纤维长、柔软、可压缩，是现代深压活版最常见的材料路线。</h2>
-<h2>材料类型 典型特征 建议用途 注意事项</h2>
-<p>100% 棉纸 300gsm 左 柔软、高松厚、压痕明显、自然 吸墨与表面差异明显；大实地可</p>
-<h2>高端名片、邀请函、封套卡</h2>
-<h2>右 白/荧光白可选 能花墨</h2>
-<h2>双倍厚棉纸 500– 裁切、模切与包装成本上升；双</h2>
-<h2>结构厚重、适合深压和边缘染色 顶级名片、会员卡、礼品卡</h2>
-<h2>600gsm 面要错位</h2>
-<h2>强度更高、细节较锐利、价格通常 深压空间不如纯棉纸；需打样判</h2>
-<h2>棉混纺/高档木浆纸 企业名片、信笺、吊牌</h2>
-<h2>更低 断脆性</h2>
-<p>平滑高档未涂布纸 网点和细字更清晰，压痕相对克制 信息量较大、双面卡、信纸 不适合盲目追求深压</p>
-<p>推荐起点 360gsm-700gsm；双面文字较多：优先轻压或裱合，而不是继续加厚并加压。</p>
-<p>纸张成本只占项目的一部分。厚棉纸可能增加裁切次数、上机调压时间、废品率、烘干/静置时间和国际运输重量。报</p>
-<p>价时必须整体核算。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>彩色纸、纹理纸与特殊纸</h2>
-<h2>07. 彩纸能直接建立品牌气质，但它会显著改变油墨显色和工艺稳定性。</h2>
-<h2>材料 活版表现 优先组合 风险控制</h2>
-<h2>浅色彩纸 深色专墨清晰，压痕可见 深墨 + 轻/标准压；无色压凹 先看纸色对专色的影响</h2>
-<p>深色彩纸 普通油墨透明，浅色会透底 烫金/烫银、无色压凹、裱白芯 白墨/金属墨需多次印仍可能透底</p>
-<h2>粗纹理纸 触感强，图形自然 粗线、较大字号、简化图形 细线断裂、墨色不实、反白糊版</h2>
-<p>再生纸/纤维可见纸 环保叙事鲜明，每张略有差异 单色、轻压、朴素视觉 纸尘、批次差、表面颗粒影响细节</p>
-<p>珠光/金属纸 自带光泽，适合包装和邀请函 压凹、烫箔、少量深色墨 表面较硬或涂层可能开裂；需实测</p>
-<h2>Fedrigoni Materica 表面有棉感和体积感，可做活版/盲</h2>
-<h2>包装卡、封面、吊牌、品牌物料 油墨干燥与覆膜附着需提前测试</h2>
-<h2>类宏孔未涂布纸 压/烫箔</h2>
-<p>深色纸的现实 活版油墨通常具有透明性。追求“纯白、完全遮盖”的效果时，烫白箔、丝印白或裱合浅色纸往往比反</p>
-<p>复印白墨更可靠。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>材料选择矩阵</h2>
-<h2>08. 以下是设计与报价阶段的快速筛选，不替代实纸打样。</h2>
-<h2>指标 纯棉 300gsm 纯棉 600gsm 高档未涂布纸 彩色纹理纸 涂布/覆膜纸</h2>
-<h2>深压能力 优秀 极佳 中等 视纤维与厚度 低/高风险</h2>
-<h2>细字清晰度 良好 良好 优秀 中等 表面清晰但压痕差</h2>
-<h2>大实地均匀度 一般 一般 中等 较低 较好但不典型</h2>
-<h2>双面深压 需避让 可错位/裱合 适合轻压 需测试 不建议</h2>
-<h2>烫箔 优秀 优秀 良好 优秀 视涂层</h2>
-<h2>边缘染色 良好 优秀 一般 视纸芯 低</h2>
-<h2>模切/压线 良好 需大压力 良好 顺纹测试 易爆边</h2>
-<h2>成本与运输 中高 高 中 中高 视材料</h2>
-<h2></h2>
-<p>不要强行全能 同一张纸很难同时做到：极深压、极细字、完美大实地、双面无背透、低成本。必须先排列优先级。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>油墨、专色与颜色管理</h2>
-<h2>09. 活版的颜色由油墨、纸色、墨层厚度、压力和吸收共同决定，显示器无法准确模拟。</h2>
+<p>Critical Judgment: "Looking thick" is not a sufficient condition. Laminated paper, coated paper, and brittle recycled paper—even with a high basis weight—may still crack during deep pressing, folding, or die-cutting.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Cotton Paper & High-Bulk White Board</h2>
+<h2>06. Cotton fibers are long, soft, and highly compressible, making them the most common material path for modern deep-impression letterpress.</h2>
+<h2>Material Type | Typical Characteristics | Recommended Uses | Key Considerations</h2>
+<p>100% Cotton Paper (approx. 300gsm): Soft, high-bulk, distinct impression, natural white/fluorescent white options | High-end business cards, invitations, cover cards | Noticeable differences in ink absorption and surface; large solids may show mottling</p>
+<h2>Double-Thickness Cotton Paper (500–600gsm): Heavy structure, suitable for deep impression and edge coloring | Ultra-premium business cards, membership cards, gift cards | Increased cutting, die-cutting, and packaging costs; double-sided graphics must be staggered</h2>
+<h2>Cotton Blend/Premium Wood-Pulp Paper: Higher strength, crisper details, usually lower price | Corporate business cards, letterheads, hangtags | Deep impression potential is inferior to pure cotton; proofing is required to assess brittleness</h2>
+<p>Smooth Premium Uncoated Paper: Crisper dots and fine text, relatively restrained impression | Information-heavy layouts, double-sided cards, letterheads | Unsuitable for blindly pursuing deep impression</p>
+<p>Recommended starting point: 360gsm-700gsm. If there is extensive double-sided text, prioritize light touch or duplexing/laminating, rather than continuously increasing thickness and pressure.</p>
+<p>Paper cost is only part of the project. Thick cotton paper can increase cutting passes, press-tuning time, waste rate, drying/curing time, and international shipping weights. These must be budgeted comprehensively.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Colored Paper, Textured Paper & Special Papers</h2>
+<h2>07. Colored paper directly establishes brand character, but it significantly changes ink color rendering and process stability.</h2>
+<h2>Material | Letterpress Performance | Preferred Combinations | Risk Control</h2>
+<h2>Light Colored Paper: Clear dark spot inks, visible impression | Dark inks + light/standard impression; blind debossing | Assess the paper's color influence on spot inks first</h2>
+<p>Dark Colored Paper: Normal inks are transparent, light colors show-through | Hot foil stamping, blind debossing, duplexing with white core | White/metallic inks need multiple passes and may still show paper color</p>
+<h2>Rough Textured Paper: Strong tactile feel, natural graphics | Thick lines, larger font sizes, simplified graphics | Broken fine lines, uneven ink coverage, filled reversed text</h2>
+<p>Recycled/Visible Fiber Paper: Distinct environmental narrative, slight sheet-to-sheet variation | Single color, light impression, rustic visuals | Paper dust, batch variations, surface particles affecting fine details</p>
+<p>Pearlescent/Metallic Paper: Inherent luster, suitable for packaging & invitations | Debossing, hot stamping, small amounts of dark ink | Hard surface or coating may crack; empirical testing required</p>
+<h2>Fedrigoni Materica: Cotton-like feel and high volume, suitable for letterpress/blind debossing/hot stamping | Packaging cards, covers, hangtags, brand assets | Ink drying and laminate adhesion must be pre-tested</h2>
+<p>The Reality of Dark Paper: Letterpress inks are generally transparent. When striving for a "pure white, complete opacity" effect, white hot foil, screen-printed white, or duplexing with light paper is usually much more reliable than repeatedly printing white letterpress ink.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Material Selection Matrix</h2>
+<h2>08. The following is a quick screening guide for the design and quoting phase; it does not replace actual paper proofing.</h2>
+<h2>Metric | Pure Cotton 300gsm | Pure Cotton 600gsm | Premium Uncoated Paper | Colored Textured Paper | Coated/Laminated Paper</h2>
+<h2>Deep Impression Capacity: Excellent | Outstanding | Moderate | Depends on fiber & thickness | Low/High Risk</h2>
+<h2>Fine Text Clarity: Good | Good | Excellent | Moderate | Clear surface but poor impression</h2>
+<h2>Halftone/Solid Evenness: Fair | Fair | Moderate | Low | Good but non-typical</h2>
+<h2>Double-Sided Deep Impression: Avoid overlap | Stagger/Duplex | Suitable for light touch | Requires testing | Not recommended</h2>
+<h2>Hot Stamping: Excellent | Excellent | Good | Excellent | Depends on coating</h2>
+<h2>Edge Coloring: Good | Excellent | Fair | Depends on paper core | Low</h2>
+<h2>Die-Cutting/Creasing: Good | Requires high pressure | Good | Grain test required | Prone to cracking</h2>
+<h2>Cost & Shipping: Medium-High | High | Medium | Medium-High | Depends on material</h2>
+<p>Do Not Force Universality: It is extremely difficult for a single sheet of paper to simultaneously achieve: extremely deep impression, ultra-fine text, perfect large solids, double-sided with no show-through, and low cost. Priorities must be ranked first.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Ink, Spot Colors & Color Management</h2>
+<h2>09. Letterpress colors are co-determined by the ink, paper color, ink layer thickness, pressure, and absorption. Monitors cannot simulate this accurately.</h2>
 <ul>
-<li>优先专色：使用 Pantone Solid Uncoated 或工厂自定义配方作为沟通起点；文件中建立独立 Spot Color。</li>
-<li>纸色参与混色：同一油墨在荧光白、暖白和彩纸上会呈现不同明度与饱和度。</li>
-<li>墨层不是越厚越好：过量会导致边缘增大、反白填死、蹭脏和干燥延迟。</li>
-<li>透明与遮盖：普通活版墨适合深墨印浅纸；浅墨印深纸会透底。</li>
-<li>金属墨：有颗粒和方向感，覆盖力有限；要镜面金属效果优先烫箔。</li>
-<li>干燥：厚纸、无涂布纸和某些专色需更长氧化干燥时间，后加工前要留足静置。</li>
+    <li>Prioritize Spot Colors: Use Pantone Solid Uncoated or custom factory formulas as a starting point for communication; establish a distinct Spot Color in your files.</li>
+    <li>Paper Color Mixes with Ink: The same ink will exhibit different brightness and saturation levels on fluorescent white, warm white, and colored papers.</li>
+    <li>Ink Layer is Not "The Thicker the Better": Excessive ink causes edge spreading, clogged reversed-out spaces, smudging, and drying delays.</li>
+    <li>Transparency & Opacity: Standard letterpress inks are best for dark ink on light paper; light ink on dark paper will show the background paper color.</li>
+    <li>Metallic Inks: Possess grit and grain directionality, with limited opacity; for a mirror metallic finish, prioritize hot foil stamping.</li>
+    <li>Drying: Thick papers, uncoated papers, and certain spot colors require longer oxidative drying times; allow ample curing time before post-press work.</li>
 </ul>
-<h2>颜色方案 优点 限制 建议</h2>
-<h2>成本可控、套准稳定、最符合活版 通过纸色、压痕和留白建立高</h2>
-<h2>1 个专色 层次较少</h2>
-<h2>语言 级感</h2>
-<h2>避免细小共边，使用主动错</h2>
-<h2>2 个专色 品牌识别强，可形成层级 增加一版一印与套准风险</h2>
-<h2>位/陷印</h2>
-<h2>只在高预算、小批量且设计必</h2>
-<h2>3–4 个专色 奢华、收藏级效果 成本和废品率显著上升</h2>
-<h2>要时使用</h2>
-<h2>烫箔图形单独工艺版，先打样</h2>
-<h2>专色 + 烫箔 色彩与金属质感清晰分工 需考虑先后顺序与压痕冲突</h2>
-<h2>确认</h2>
-<p>色样优先级 实纸实墨签样 &gt; 同纸数字打样 &gt; Pantone 纸质色卡 &gt; 屏幕预览。Pantone 编号是沟通语言，不是成品绝对</p>
-<p>保证。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>什么设计适合活版</h2>
-<h2>10. 活版的优势是边缘、触感、留白和有限色彩；不要把它当成低分辨率胶印。</h2>
-<h2>设计元素 推荐 谨慎/避免 改进方法</h2>
-<h2>加粗细笔画、扩大字腔、提高字</h2>
-<h2>文字 6pt 以上正字，中等字重，字距略放松 极细衬线、超小字号、密集反白</h2>
-<h2>号</h2>
-<p>线条 0.4–0.5pt 以上正线；简洁轮廓 hairline、密集交叉线、细共边 扩大线宽或拆成独立色版</p>
-<h2>Logo 单色、几何、留白清楚 渐变、阴影、发光、半透明 重绘成纯色矢量版本</h2>
-<p>大实地 小面积色块、允许轻微纹理 整版深色平涂、细反白叠在实地上 改用彩纸、丝印、胶印或烫箔</p>
-<h2>照片 高对比单色网点、艺术化处理 常规四色照片 使用胶印/数码与活版组合</h2>
-<h2>渐变 用线性纹理、疏密点阵表达 软件渐变直接输出 转换为可控网点并由工厂确认 LPI</h2>
-<p>设计压力测试 把所有工艺预览暂时变成纯黑白：若版稿仍然层级清晰、细节安全、每个颜色可独立理解，才是可生产</p>
-<p>的活版设计。</p>
-<p>大面积实地在活版中常出现自然斑驳，这可能是风格，也可能是缺陷。必须在下单前明确：客户接受“手工纹理”，</p>
-<p>还是要求工业级均匀。后一种通常应换工艺。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>交付文件总规范</h2>
-<h2>11. 核心目标：让制版人员无需猜测设计意图，也无需在最后一刻修复基础错误。</h2>
-<h2>项目 要求 说明</h2>
-<h2>优先 PDF/X 或可编辑 AI/PDF；同时附低分辨率复合</h2>
-<h2>文件格式 不要只交 JPG/PNG/截图</h2>
-<h2>预览</h2>
-<h2>尺寸 1:1 实际尺寸；单位统一为 mm 不要在拼版文件中缩放成 50%</h2>
-<h2>阅读方向 正读（成品看到的方向） 无需自行镜像，制版端会处理</h2>
-<h2>颜色模式 工艺版稿使用专色；制版黑稿为 100% K 不要用四色黑或 RGB 黑</h2>
-<h2>字体 全部转曲/轮廓化；保留一份未转曲源文件 防止字体缺失和字形替换</h2>
-<h2>链接图片 嵌入或完整打包；线稿优先矢量/TIFF 避免低质量 JPEG</h2>
-<h2>效果 透明、阴影、描边、混合模式需展开或栅格化 确认展开后线条未变细或消失</h2>
-<p>图层 按印刷色与工艺清楚命名 例如 LP_Burgundy、FOIL_Gold、DIECUT</p>
-<h2>标记 成品线、出血、套准标、咬口方向按工厂模板 标记不要与印刷版混淆</h2>
-<p>必须附带 成品复合效果图 + 每色分版图 + 正反面对应图 + 工艺说明文字。只有源文件而没有“目标效果”，同样容易</p>
-<p>出错。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>分色、图层与工艺版</h2>
-<h2>12. 一色一版、一工艺一层，是活版文件最重要的结构原则。</h2>
+<h2>Color Scheme | Advantages | Limitations | Recommendations</h2>
+<h2>1 Spot Color: Controllable cost, stable registration, aligns best with letterpress language | Fewer tones/layers | Build a premium feel through paper color, impression, and negative space</h2>
+<h2>2 Spot Colors: Strong brand identity, creates hierarchy | Increases print passes and registration risks | Avoid tiny shared edges, use active staggering/trapping</h2>
+<h2>3–4 Spot Colors: Luxurious, collector-grade results | Significantly higher cost and waste rates | Use only for high-budget, low-volume projects where the design demands it</h2>
+<h2>Spot Color + Hot Foil: Clear division between color and metallic textures | Must consider sequence and impression conflicts | Separate plate for foil graphics, proof first to confirm</h2>
+<p>Color Proofing Priority: Signed off sample with actual ink on actual paper & > Digital proofing on same paper > Pantone paper color guide > On-screen preview. Pantone numbers are a language of communication, not an absolute product guarantee.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>What Designs Suit Letterpress?</h2>
+<h2>10. The advantages of letterpress are its edges, tactile feel, negative space, and limited colors; do not treat it as low-resolution offset printing.</h2>
+<h2>Design Element | Recommended | Use Caution/Avoid | How to Improve</h2>
+<h2>Text: ≥ 6pt positive text, medium weight, slightly open letter-spacing | Ultra-fine serifs, tiny font sizes, dense reversed-out text | Thicken fine strokes, expand counter spaces, increase font size</h2>
+<p>Lines: ≥ 0.4–0.5pt positive lines; clean outlines | Hairlines, dense crossing lines, fine shared borders | Thicken line weights or separate into independent color plates</p>
+<p>Logos: Monochromatic, geometric, clear negative space | Gradients, shadows, glows, translucency | Redraw into solid vector versions</p>
+<p>Large Solids: Small solid accents, allowing slight mottling | Full-page solid flood coats, fine reversed text on large solids | Use colored paper, screen-printing, offset, or hot foil instead</p>
+<h2>Photographs: High-contrast single-color halftones, artistic treatment | Standard CMYK 4-color photos | Use offset/digital combined with letterpress</h2>
+<h2>Gradients: Express via linear patterns, variable density dots | Direct software gradient outputs | Convert to controlled halftones and have factory confirm LPI</h2>
+<p>Design Stress Test: Temporarily convert all process previews to pure black and white. If the artwork remains clear in hierarchy, safe in details, and each color can be understood independently, then it is a manufacturable letterpress design.</p>
+<p>Large-area solids in letterpress often exhibit a natural mottling. This can be viewed as a style or a defect. It must be clarified before ordering whether the client accepts "artisanal textures" or demands industrial-grade uniformity. For the latter, a change in process is usually required.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>General Specifications for Delivered Files</h2>
+<h2>11. Core Goal: Ensure platemakers do not have to guess design intentions or fix fundamental errors at the last minute.</h2>
+<h2>Item | Requirements | Notes</h2>
+<h2>File Format: Prioritize PDF/X or editable AI/PDF; attach a low-resolution composite preview | Never submit only JPG/PNG/screenshots</h2>
+<h2>Dimensions: 1:1 actual size; dimensions unified in mm | Do not scale to 50% in imposition files</h2>
+<h2>Reading Direction: Right-reading (as seen on final product) | No need to mirror files yourself; the platemaking department will handle it</h2>
+<h2>Color Mode: Use spot colors for process artwork; use 100% K for platemaking black artwork | Do not use 4-color black (rich black) or RGB black</h2>
+<h2>Fonts: Outline/convert all text to curves; keep one unoutlined source file | Prevents missing fonts and glyph substitutions</h2>
+<h2>Linked Images: Embedded or fully packaged; prioritize vectors/TIFFs for line art | Avoid low-quality JPEGs</h2>
+<h2>Effects: Expand or rasterize transparency, shadows, strokes, and blending modes | Confirm that lines do not thin or disappear after expansion</h2>
+<p>Layers: Clearly name layers by ink color and process (e.g., LP_Burgundy, FOIL_Gold, DIECUT)</p>
+<h2>Marks: Bleed, crop marks, registration marks, and gripper direction according to factory templates | Do not mix production marks with printing plates</h2>
+<p>Must Accompany: Finished composite rendering + color separation plates + front-to-back correlation guides + process description text. Having only source files without the "target effect" is equally prone to errors.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Color Separation, Layers & Process Plates</h2>
+<h2>12. One color per plate, one process per layer is the most important structural principle for letterpress files.</h2>
 <ul>
-<li>专色命名：不要使用“红色 1、红色 2”；应写 PANTONE 编号或明确配方名，并标注 U（Uncoated）沟通基准。</li>
-<li>工艺色：烫金、模切、压线、无色压凹必须使用独立专色，设置为叠印，并在文件说明中明确“不印刷”。</li>
-<li>复合预览：工艺层可用近似颜色模拟，但必须同时提供纯黑分版稿，避免制版人员误解透明度或混合效果。</li>
-<li>刀线：模切/压线使用闭合矢量路径；不要做成位图，不要重复线，不要留断点。</li>
-<li>顺序：提前确认活版、烫箔、压凹、模切的生产顺序；不同顺序会改变套准、表面和压痕。</li>
+    <li>Spot Color Naming: Do not use generic names like "Red 1, Red 2." Write the PANTONE number or a clear custom formula name, and specify U (Uncoated) as the communication baseline.</li>
+    <li>Process Colors: Hot stamping, die-cutting, scoring/creasing, and blind debossing must use distinct spot colors, set to overprint, and clearly marked "Do Not Print" in file notes.</li>
+    <li>Composite Preview: Process layers can simulate approximate colors, but must accompany pure black separation drafts to prevent platemakers from misinterpreting transparencies or blending effects.</li>
+    <li>Dielines: Use closed vector paths for die-cutting/creasing; do not use bitmaps, avoid duplicate paths, and do not leave disconnected endpoints.</li>
+    <li>Sequence: Confirm the production sequence of letterpress, hot foil, debossing, and die-cutting in advance; different sequences alter registration, surface finishes, and impressions.</li>
 </ul>
-<p>套印陷阱 两个专色图形精确共边看似干净，实际上对多次走纸要求极高。优先使用叠压、0.1–0.2mm 陷印或主动</p>
-<p>留缝。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>文字、线条与最小细节</h2>
-<h2>13. 以下数值用于设计预检的安全起点；制版商的版材保证值优先。</h2>
-<h2>对象 稳妥起点 高风险条件</h2>
-<h2>正线条 ≥0.4–0.5pt 深压、粗糙纸、长细线、低字重衬线</h2>
-<h2>反白线/缝 ≥0.6–0.75pt 大实地内、墨量大、交叉处密集</h2>
-<h2>正文字 ≥6pt；细衬线建议更大 Didot/Bodoni 等高反差字形、中文宋体细横</h2>
-<h2>反白文字 ≥8–12pt，视字体和实地面积 小字号、细字重、字腔狭窄</h2>
-<h2>独立点/句点 直径 ≥1pt 作为保守起点 孤立微点、细虚线、二维码细模块</h2>
-<h2>二维码 建议做大并减少信息量，必须实印测试 深压导致模块变形、纸纹影响识读</h2>
-<p>Boxcar Press 对不同光敏树脂版给出的线条保证值约为 0.25pt 或 0.35pt，独立点建议 1–1.25pt；这些是特定版材的</p>
-<p>制版保证，不应被当作所有设备的稳定印刷极限。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>位图、照片、网点与大实地</h2>
-<h2>14. 活版可以印网点，但网点越细，对版材、供墨、纸面和操作要求越高。</h2>
-<h2>内容类型 文件做法 建议参数/策略 风险</h2>
-<p>纯黑线稿 矢量优先；或 600–1200dpi 1-bit TIFF 50% Threshold 二值化，按实际尺寸 低分辨率会锯齿、边缘虚</p>
-<h2>常用起点 85–100 LPI；粗糙纸可降到</h2>
-<h2>单色照片 灰度图转网点，提前确认 LPI 与角度 阴影糊版、亮部掉点</h2>
-<h2>65 LPI</h2>
-<h2>软件渐变无法直接成为纯凸</h2>
-<h2>渐变 转为可控网点/线性纹理 避免极浅和极深端；做局部样张</h2>
-<h2>版</h2>
-<h2>花墨、供墨不均、压力负荷</h2>
-<h2>大实地 缩小面积、拆版或接受自然纹理 优先彩纸/丝印/胶印替代</h2>
-<h2>大</h2>
-<h2>反白叠大实地 加宽反白，必要时实地单独一版 反白字建议更大、更粗 墨增导致字腔填死</h2>
-<p>网点不是默认方案 很多情况下，使用第二个浅色专墨比用同色网点更稳定，也更符合活版的色彩语言。</p>
-<h2>B</h2>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>出血、裁切、套准与双面结构</h2>
-<h2>15. 印刷能否完成不只取决于图形，也取决于走纸方向、咬口、裁切和正反面压力关系。</h2>
+<p>Registration Traps: Having two spot color elements share exact, precise borders looks clean on screen but demands extremely high tolerance over multiple press passes. Prioritize overprinting, 0.1-0.2mm trapping, or active gap designs.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Text, Lines & Minimum Details</h2>
+<h2>13. The following values serve as safe starting points for design preflighting; plate maker guarantees take precedence.</h2>
+<h2>Object | Safe Starting Point | High-Risk Conditions</h2>
+<h2>Positive Lines: ≥ 0.4–0.5pt | Deep impression, rough paper, long fine lines, low-weight serifs</h2>
+<h2>Negative/Reversed Lines: ≥ 0.6–0.75pt | Inside large solids, heavy ink volume, dense intersections</h2>
+<h2>Positive Text: ≥ 6pt; larger recommended for fine serifs | High-contrast typefaces (Didot, Bodoni, etc.), thin horizontal strokes of Chinese Songti</h2>
+<h2>Negative/Reversed Text: ≥ 8–12pt (depends on font & solid area) | Small sizes, thin weights, narrow counters</h2>
+<h2>Isolated Dots/Periods: Diameter ≥ 1pt (conservative starting point) | Isolated micro-dots, fine dashed lines, tiny QR code modules</h2>
+<h2>QR Codes: Keep large and reduce data density; empirical print test required | Deep impression deforming modules, paper grain affecting scanning readability</h2>
+<p>Boxcar Press lists guaranteed line tolerances of approximately 0.25pt or 0.35pt for different photopolymer plates, and recommends 1-1.25pt for isolated dots. These are specific platemaking guarantees and should not be confused with stable printing limits for all presses.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Bitmaps, Photographs, Halftones & Large Solids</h2>
+<h2>14. Letterpress can print halftone dots, but finer dots demand higher plate quality, ink supply consistency, paper smoothness, and press operation expertise.</h2>
+<h2>Content Type | File Preparation | Recommended Parameters/Strategy | Risks</h2>
+<p>Pure Black Line Art: Vector prioritized; or 600–1200dpi 1-bit TIFF | 50% Threshold binarization, actual size | Low resolution results in pixelation, fuzzy edges</p>
+<h2>Monochrome Photos: Convert grayscale to halftone, pre-confirm LPI & angle | Common starting point 85–100 LPI; can drop to 65 LPI for rough paper | Clogged shadow areas, missing highlight dots</h2>
+<h2>Gradients: Convert to controlled halftones/linear patterns | Avoid extreme highlight and shadow ends; make local test plates | Software gradients cannot directly become relief plates</h2>
+<h2>Large Solids: Shrink area, separate plates, or accept natural mottling | Prioritize colored paper, screen printing, or offset instead | Mottling, uneven ink supply, heavy pressure load</h2>
+<h2>Reversed-Out on Large Solids: Widen negative spaces, print solid on separate plate if needed | Recommend larger, bolder reversed text | Ink gain clogging counters and fine loops</h2>
+<p>Halftones are Not the Default Option: In many cases, using a second light spot ink is much more stable than printing halftones of the same color, and aligns better with the aesthetic language of letterpress.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Bleed, Cutting, Registration & Double-Sided Structure</h2>
+<h2>15. A successful print run depends not only on graphics, but also on paper feed direction, gripper margins, cutting accuracy, and front-to-back pressure relationships.</h2>
 <ul>
-<li>出血：常规商业项目可按 3mm 设计；某些活版制版流程使用更小出血，但必须按工厂模板。</li>
-<li>安全区：文字与关键 Logo 距成品边至少 3–5mm；厚卡、模切和手工裁切应更保守。</li>
-<li>双面错位：正反面深压图形不要完全重叠，尤其是大字与实地图形。</li>
-<li>裱合：两张纸分别印刷后裱合，可隐藏背凸、实现双色纸芯和超厚结构，但成本、交期与翘曲风险增加。</li>
-<li>咬口：设计和拼版要保留设备夹纸区域；不要把关键图形放在未知的机器极限位置。</li>
+    <li>Bleed: Standard commercial projects use 3mm; some letterpress platemaking processes use smaller bleeds, but you must follow factory templates.</li>
+    <li>Safety Zone: Keep text and critical logos at least 3-5mm away from the trimmed edge; be even more conservative with heavy boards, die-cutting, and manual cutting.</li>
+    <li>Double-Sided Staggering: Do not align deep-impression graphics on the front and back side perfectly over each other, especially for large type and solid graphic shapes.</li>
+    <li>Duplexing/Laminating: Printing two sheets separately and gluing them together hides back bruising, enables dual-colored cores, and creates ultra-thick cards, though costs, lead times, and warping risks increase.</li>
+    <li>Gripper Margin: Design and imposition layouts must reserve space for the paper gripper mechanism; do not place critical graphics at unknown machine clearance boundaries.</li>
 </ul>
-<p>双面名片的硬规则 需要“正反面都深压且背面完全平整”时，单张纸通常无法同时满足。最可靠的方案是浅压、错位</p>
-<p>或双层裱合。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>后加工兼容矩阵</h2>
-<h2>16. 后加工不是“最后再加”，它会反过来决定纸张、版面、干燥时间和生产顺序。</h2>
-<h2>工艺 与活版组合 文件要求 主要风险</h2>
-<h2>压痕与箔边冲突、套准、纸面粗</h2>
-<h2>烫金/烫银/彩箔 非常适合，尤其是深色纸 独立 100% 黑矢量版；避免细碎孤点</h2>
-<h2>糙漏箔</h2>
-<h2>无色压凹 最能强化纸张触感 独立版；图形不宜过细或面积悬殊 细节依赖光线；背凸</h2>
-<h2>击凸（凸起） 需阴阳版配合，立体更强 阴阳版对位文件，留足边缘 纸张爆裂、套准与模具成本</h2>
-<h2>厚卡刀口毛、尖角撕裂、尺寸公</h2>
-<h2>模切 活版机可完成小型模切 闭合刀线、无重复路径、标注桥位</h2>
-<h2>差</h2>
-<h2>压线/折叠 包装卡/邀请函常用 压线专色路径，标明山折/谷折 逆纹爆裂、深压削弱折线</h2>
-<h2>边缘染色 厚卡效果突出 通常无额外版稿，但需颜色样 渗色、边缘不均、浅色面污染</h2>
-<h2>裱合/对裱 可隐藏背凸并组合双色纸 正反面定位图、纸纹和胶黏方案 翘曲、溢胶、厚度公差</h2>
-<h2>覆膜/UV 一般不作为活版首选 需确定先后顺序和表面处理 未涂布粗纸附着差、压痕处起膜</h2>
-<p>工艺层级建议 先用纸张和压痕建立触感，再用 1 个关键工艺强化重点。活版 + 烫箔 + 击凸 + UV 全部堆叠，往往不是</p>
-<p>高级，而是信息失控。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>烫箔、压凹、击凸与模切的设计细则</h2>
-<h2>17. 同一图形在不同工艺中需要不同的最小细节，不能简单复制粘贴。</h2>
-<h2>工艺 设计建议 不建议</h2>
-<h2>极细孤点、密集反白、小号细字、长而尖</h2>
-<h2>烫箔 笔画适度加粗；大面积与细线可拆版；粗糙纸先试箔</h2>
-<h2>的毛刺</h2>
-<h2>无色压凹 利用侧光与留白；图形轮廓清晰；面积中等 非常浅的纹理、过细线、正反面重叠深压</h2>
-<h2>击凸 圆角与过渡更安全；图形周边留足空间 锐利尖角、极窄通道、靠近裁切边</h2>
-<h2>重复刀线、开放路径、极小内孔、过密齿</h2>
-<h2>模切 闭合单路径；尖角适当圆化；小孔与窄桥先评估</h2>
-<h2>形</h2>
-<h2>压线 按纸纹方向；厚卡考虑双线/宽线方案 逆纹硬折、压线与深压图形重叠</h2>
-<p>生产顺序没有万能答案 常见路线包括先活版后烫箔、先烫箔后活版、先印后裱再模切。顺序取决于图形重叠、箔面耐</p>
-<p>压、纸张伸缩与设备套准，必须由工厂确认。</p>
-<p>工艺版必须标注用途，而不是只用颜色暗示。例如：“FOIL_GOLD - 不印刷”“DIECUT - 刀线”“CREASE - 压</p>
-<p>线”“BLIND_DEBOSS - 无色压凹”。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>案例 1：高端咨询品牌名片</h2>
-<h2>20. 目标：低调、可信、触感明显，同时保证联系方式清晰。</h2>
-<h2>项目 方案</h2>
-<h2>成品 90 × 54mm，横式，正反面</h2>
-<h2>材料 300–350gsm 暖白棉纸；若要求背面完全平整，改用双层裱合</h2>
-<h2>正面 勃艮第红专色 Logo + 香槟金烫箔细线；标准压痕</h2>
-<h2>背面 深灰专色联系方式；轻触印，避免与正面 Logo 重叠</h2>
-<h2>文件 3 个独立版层：LP_BURGUNDY、LP_DARKGRAY、FOIL_GOLD</h2>
-<h2>关键细节 最小文字 7pt，中等字重；金线不小于烫箔供应商建议值</h2>
-<h2>风险 正面深压与背面文字重叠；暖白纸使红色更沉稳</h2>
-<p>为什么这样做 把触感集中在正面品牌区，把信息面改为轻压；这比正反面都深压更稳定，也更符合商务名片的可读</p>
-<p>性。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>案例 2：婚礼邀请函</h2>
-<h2>21. 目标：浪漫但不过度装饰，使用两种专色和无色压凹建立层次。</h2>
-<h2>项目 方案</h2>
-<h2>成品 140 × 200mm，单张邀请函 + 配套信封</h2>
-<h2>材料 300gsm 天然白棉纸；信封选同色系但较薄纸</h2>
-<h2>工艺 勃艮第红主文字 + 香槟金专色细节 + 无色压凹植物纹样</h2>
-<h2>压痕 文字标准压痕；背景纹样轻压，避免抢正文</h2>
-<h2>网点 不使用连续渐变；植物纹样改为纯线性矢量</h2>
-<h2>文件 每色/工艺单独图层；信封版面按可印区域模板</h2>
-<h2>风险 细体英文、植物细线、信封接缝导致压力不均</h2>
-<p>案例教训 婚礼设计最容易堆叠细线、浅色和纹样。活版版稿应主动简化，让纸张、留白和压痕承担“精美”，而不是</p>
-<p>靠大量细节。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>案例 3：深色纸精品名片</h2>
-<h2>22. 目标：在黑色纸上获得高遮盖、高对比和金属质感。</h2>
-<h2>项目 方案</h2>
-<h2>成品 88 × 50mm，黑色厚卡，单面重点</h2>
-<h2>材料 350–500gsm 黑色未涂布纸；或黑面 + 白芯裱合</h2>
-<h2>工艺 香槟金烫箔 Logo + 无色压凹图形；信息可用银箔/白箔</h2>
-<h2>不选方案 普通白色活版墨作为主信息色</h2>
-<h2>原因 透明油墨会透出黑色纸底，多次印刷仍难达到纯白箔的遮盖</h2>
-<h2>文件 FOIL_GOLD、FOIL_WHITE、BLIND_DEBOSS 三个独立工艺层</h2>
-<h2>风险 粗纹纸漏箔、箔面被后续深压破坏、黑纸裁切毛边</h2>
-<p>核心取舍 深色纸项目应把活版的价值放在“压痕”，把明亮颜色交给烫箔或丝印。强迫透明油墨实现不透明白，会增</p>
-<p>加成本但仍可能失望。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>案例 4：高端服装吊牌</h2>
-<h2>23. 目标：保留天然材料感，同时完成压线、打孔、模切和品牌触感。</h2>
-<h2>项目 方案</h2>
-<h2>成品 55 × 100mm 圆角吊牌，顶部穿孔</h2>
-<h2>材料 250–360gsm 彩色未涂布纸；优先顺纹方向与吊牌长边一致</h2>
-<h2>印刷 勃艮第红 1 个专色，标准压痕；小字轻压</h2>
-<h2>后加工 圆角模切 + 圆孔 + 可选边缘染色/棉绳</h2>
-<h2>文件 印刷版、闭合刀线、孔位三层；孔边保留足够结构宽度</h2>
-<h2>风险 小孔距离边缘过近、吊绳拉裂、逆纹、模切尖角、纸尘</h2>
-<h2>品检 孔位、边缘毛刺、吊绳摩擦、100 次弯折/拉扯抽测</h2>
-<p>包装类重点 包装与吊牌首先是结构件，其次才是视觉件。纸纹、孔位、桥位和运输摩擦的重要性，往往高于压痕深</p>
-<p>度。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>成本、交期与报价变量</h2>
-<h2>24. 活版报价不是“纸张单价 × 数量”，而是准备成本、上机次数和风险的组合。</h2>
-<h2>变量 如何影响成本/交期 降低成本的方式</h2>
-<h2>色数/版数 每个颜色增加制版、调墨、校准、印刷和清洗 控制在 1–2 色；用纸色代替第三色</h2>
-<h2>工艺数 烫箔、压凹、模切各增加模具与上机 只保留一个最有价值的重点工艺</h2>
-<h2>纸张 厚棉纸、特殊纸、进口纸有起订与损耗 优先稳定供货纸；先确认库存再设计</h2>
-<h2>版面面积 大实地/面积悬殊增加调压与废品 缩小实地、拆版或改用彩纸</h2>
-<h2>双面结构 需要二次套准，深压冲突明显 正反面错位、信息面轻压、考虑裱合</h2>
-<h2>数量 小批量准备成本占比高；大批量关注耐印与稳定 统一规格、合并生产、减少版本</h2>
-<h2>打样 实机打样增加时间，但显著降低返工 高价值项目必须打样，不应省略</h2>
-<h2>后加工与包装 厚卡、箔面、边色易在运输中受损 加隔纸、分层装盒、控制单箱重量</h2>
-<p>交期判断 “文件确认后 10–20天送达”，取决于、国际运输、清关。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>设计文件预检清单</h2>
-<h2>25. 提交前逐项勾选；任何“未知”都应在制版前解决。</h2>
-<h2>□ 成品尺寸 1:1，单位与方向正确</h2>
-<h2>□ 有复合效果图、分色图、正反面定位图</h2>
-<h2>□ 每个专色和工艺独立命名、独立图层</h2>
-<h2>□ 所有字体转曲；保留未转曲备份</h2>
-<h2>□ 所有链接图片已嵌入或完整打包</h2>
-<h2>□ 黑版稿为 100% K，不含四色黑/RGB 黑</h2>
-<h2>□ 透明、阴影、渐变、描边已展开并复查</h2>
-<h2>□ 正线、反白线、独立点和小字通过最小值检查</h2>
-<h2>□ 出血、成品线、安全区和咬口方向符合模板</h2>
-<h2>□ 刀线为闭合单路径，无重复线和断点</h2>
-<h2>□ 正反面深压区域已检查重叠与背透</h2>
-<h2>□ 专色编号只是目标，已确认实纸色样</h2>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>下单与生产说明模板</h2>
-<h2>26. 可直接复制到订单或邮件中，减少反复沟通。</h2>
-<h2>项目名称 ____________________________</h2>
-<h2>成品尺寸/方向 ____________________________</h2>
-<h2>数量/允许溢短装 ____________________________</h2>
-<h2>纸张品牌/系列/颜色/克重 ____________________________</h2>
-<h2>正面印刷色/工艺 ____________________________</h2>
-<h2>背面印刷色/工艺 ____________________________</h2>
-<h2>压痕目标 □ 轻触 □ 标准 □ 深压 □ 无色压凹</h2>
-<h2>专色目标 PANTONE ______ U / 自定义色样编号 ______</h2>
-<h2>后加工 □ 烫箔 □ 模切 □ 压线 □ 裱合 □ 边缘染色</h2>
-<h2>打样方式 □ 数字样 □ 实纸实墨机样 □ 不打样（需书面确认风险）</h2>
-<h2>质量重点 ____________________________</h2>
-<h2>包装/运输 ____________________________</h2>
-<h2>交付日期与地址 ____________________________</h2>
-<h2>最终文件名/版本 ____________________________</h2>
-<h2>批准人/日期 ____________________________</h2>
-<p>审批声明 “已批准”应同时包含：版面内容、纸张、专色目标、压痕目标、工艺位置与生产容差。只回复“可以</p>
-<p>做”并不构成完整签样。</p>
-<h2>LETTERPRESS · 活版印刷制作手册</h2>
-<h2>参考资料与技术边界</h2>
-<h2>27. 本手册以公开技术资料和生产实践为基础；具体参数必须服从实际设备、版材、纸张批次与供应商要求。</h2>
-<h2>主要参考（访问日期：2026-07-27）：</h2>
+<p>The Hard Rule of Double-Sided Business Cards: When requiring "deep impression on both sides and perfectly flat back surfaces," a single sheet of paper cannot satisfy both sides simultaneously. The most reliable solution is light touch, staggered layouts, or dual-layer duplexing.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Post-Press Compatibility Matrix</h2>
+<h2>16. Post-press finishing is not "added at the very end"; it actively determines paper choices, layouts, drying times, and production sequences.</h2>
+<h2>Process | Combined with Letterpress | File Requirements | Primary Risks</h2>
+<h2>Hot Foiling (Gold, Silver, Color): Highly recommended, especially on dark papers | Independent 100% black vector plate; avoid tiny isolated dots | Conflict between impression and foiled edge, registration, rough paper surface causing foil flaking</h2>
+<h2>Blind Debossing: Strongly enhances paper texture | Independent plate; graphics should not be excessively fine or wildly disparate in area | Details rely on lighting; back bruising</h2>
+<h2>Embossing (Raised): Requires male and female dies for strong dimensionality | Aligned male/female die files; leave ample surrounding clearance | Paper fiber cracking, registration, and tooling costs</h2>
+<h2>Die-Cutting: Letterpress machine can handle small die-cuts | Closed vector path; no duplicate paths; indicate bridge positions | Fuzzy cuts on thick board, sharp corners tearing, dimensional tolerances</h2>
+<h2>Creasing/Scoring: Commonly used for packaging/invitations | Scoring spot-color path; indicate mountain/valley folds | Cracking against the grain, deep impressions weakening scores</h2>
+<h2>Edge Coloring: Highly effective on thick cardstock | Usually no extra plates, but color swatches are required | Bleeding, uneven margins, contamination on light faces</h2>
+<h2>Duplexing/Laminating: Hides back bruising, combines double-color paper | Front/back alignment marks, grain direction, and gluing plan | Warping, glue squeeze-out, thickness tolerances</h2>
+<h2>Lamination/UV: Generally not preferred for letterpress | Define process sequence and surface treatment | Poor adhesion on rough uncoated paper, film peeling near impressions</h2>
+<p>Hierarchy Recommendation: First establish texture using paper and impression, then use exactly one key specialty finish to reinforce focus. Overstacking letterpress + hot foil + embossing + UV is usually not premium; it is information overload.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Design Specifics for Hot Foiling, Debossing, Embossing & Die-cutting</h2>
+<h2>17. The same graphic requires different minimum details in different processes; you cannot simply copy and paste.</h2>
+<h2>Process | Design Recommendations | Avoid / Not Recommended</h2>
+<h2>Hot Foiling: Moderate stroke thickening; split large areas and fine lines; test coarse papers | Extremely fine isolated dots, dense negative spaces, tiny thin fonts, long sharp spurs</h2>
+<h2>Blind Debossing: Utilize side-lighting and white space; clean graphic contours; moderate areas | Extremely shallow textures, overly fine lines, overlapping deep impressions on front/back</h2>
+<h2>Embossing: Rounded corners and smooth transitions are safer; leave ample surrounding clearance | Sharp pointed corners, extremely narrow channels, close proximity to trimmed edges</h2>
+<h2>Die-Cutting: Closed single path; round off sharp corners appropriately; evaluate small holes and narrow bridges first | Duplicate paths, open paths, tiny interior holes, excessively dense teeth patterns</h2>
+<h2>Creasing/Scoring: Follow paper grain direction; consider double-line/wide scoring for thick cardstock | Sharp folds against the grain, overlapping crease paths and deep impression graphics</h2>
+<p>There is No Universal Answer for Production Sequence: Common routes include letterpress first then hot foiling, hot foiling first then letterpress, or printing first then laminating and die-cutting. The sequence depends on graphic overlaps, foil pressure resistance, paper stretching, and press registration. It must be confirmed by the factory.</p>
+<p>Process plates must label their purpose rather than just implying it with colors. For example: "FOIL_GOLD - Do Not Print", "DIECUT - Cut line", "CREASE - Score line", "BLIND_DEBOSS - Blind Deboss".</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Case 1: High-End Consulting Brand Business Card</h2>
+<h2>20. Goal: Low-profile, trustworthy, distinct tactile feel, while ensuring contact information is highly legible.</h2>
+<h2>Item | Solution</h2>
+<h2>Finished Dimensions: 90 × 54mm, horizontal, double-sided</h2>
+<h2>Material: 300-350gsm warm white cotton paper; if the back side must be completely flat, use dual-layer duplexing</h2>
+<h2>Front Side: Burgundy spot color Logo + Champagne Gold hot foiled fine lines; standard impression</h2>
+<h2>Back Side: Dark gray spot color contact info; light touch (kiss print) to avoid overlapping the front-side Logo</h2>
+<h2>Files: 3 independent plate layers: LP_BURGUNDY, LP_DARKGRAY, FOIL_GOLD</h2>
+<h2>Key Details: Minimum text 7pt, medium weight; gold lines no thinner than hot foil supplier recommendations</h2>
+<h2>Risks: Overlapping front-deep-impression and back-side text; warm white paper deepening the red tone</h2>
+<p>Why we did this: Centered the tactile touch on the front branding zone while keeping the informational back side lightly pressed. This is more stable than deep impressions on both sides, and improves professional readability.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Case 2: Wedding Invitation</h2>
+<h2>21. Goal: Romantic but not overly decorative, using two spot colors and blind debossing to establish visual layers.</h2>
+<h2>Item | Solution</h2>
+<h2>Finished Dimensions: 140 × 200mm, flat invitation card + matching envelope</h2>
+<h2>Material: 300gsm natural white cotton paper; envelopes made of a matching but thinner paper</h2>
+<h2>Processes: Burgundy main text + Champagne Gold spot color details + blind debossed botanical patterns</h2>
+<h2>Impression: Standard impression for text; light touch for background patterns to avoid clashing with the copy</h2>
+<h2>Halftones: No continuous gradients; botanical patterns converted to clean line-art vectors</h2>
+<h2>Files: Individual layer per color/process; envelope layout based on printable area templates</h2>
+<h2>Risks: Fine script fonts, delicate botanical lines, and envelope seams causing uneven pressure distribution</h2>
+<p>Case Lesson: Wedding designs are highly prone to overstacking fine lines, pastel colors, and busy patterns. Letterpress artwork should actively simplify, letting paper, negative space, and impressions carry the "elegance," rather than crowding with excessive details.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Case 3: Dark Paper Premium Business Card</h2>
+<h2>22. Goal: Achieve high opacity, strong contrast, and rich metallic textures on black cardstock.</h2>
+<h2>Item | Solution</h2>
+<h2>Finished Dimensions: 88 × 50mm, black heavy cardstock, single-sided focus</h2>
+<h2>Material: 350-500gsm black uncoated paper; or black face + white core duplexing</h2>
+<h2>Processes: Champagne Gold hot foiled Logo + blind debossed graphics; information can use silver/white foil</h2>
+<h2>Rejected Alternative: Standard white letterpress ink as the primary information color</h2>
+<h2>Reason: Transparent ink will show the black paper core, and even multiple passes cannot match the opacity of solid white foil</h2>
+<h2>Files: FOIL_GOLD, FOIL_WHITE, BLIND_DEBOSS three independent process layers</h2>
+<h2>Risks: Foil flaking on coarse paper, foiled surfaces crushed by subsequent heavy pressing, rough edges on black card cutting</h2>
+<p>Core Trade-off: Dark paper projects should leverage letterpress for its "impression" and leave bright colors to hot foiling or screen-printing. Forcing transparent ink to achieve opaque white increases costs but still disappoints.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Case 4: High-End Clothing Hangtag</h2>
+<h2>23. Goal: Maintain natural material feel while completing creasing, punching, die-cutting, and tactile branding.</h2>
+<h2>Item | Solution</h2>
+<h2>Finished Dimensions: 55 × 100mm rounded corner hangtag, top punched hole</h2>
+<h2>Material: 250-360gsm colored uncoated paper; prioritize grain direction aligning with the long edge</h2>
+<h2>Printing: 1 Burgundy spot color, standard impression; small text lightly pressed</h2>
+<h2>Post-Press: Rounded corner die-cutting + punched hole + optional edge coloring/cotton cord</h2>
+<h2>Files: Printing plate, closed dieline, hole position three layers; maintain sufficient structural width around hole edges</h2>
+<h2>Risks: Punched hole too close to margins, cord tearing the paper, cross-grain folds, die-cut sharp corners, paper dust</h2>
+<h2>Quality Control: Spot check hole placement, edge burrs, cord friction wear, and 100-cycle bend/pull strength tests</h2>
+<p>Packaging Priority: Packaging and tags are structural items first and visual items second. The importance of grain direction, hole locations, bridge clearances, and shipping friction often exceeds the depth of impression.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Costs, Lead Times & Quoting Variables</h2>
+<h2>24. Letterpress quoting is not "paper unit cost × quantity" but a combination of setup overhead, press run count, and operational risks.</h2>
+<h2>Variable | Impact on Cost/Lead Time | Ways to Reduce Cost</h2>
+<h2>Number of Colors/Plates: Each color adds platemaking, ink tuning, calibration, printing, and cleanups | Limit to 1-2 colors; utilize paper color to replace a third ink</h2>
+<h2>Number of Specialty Finishes: Hot foiling, debossing, die-cutting each add molds/tooling and press setups | Retain only the single most valuable premium finish</h2>
+<h2>Paper: Thick cotton, specialty, and imported papers have minimum order quantities and waste overheads | Prioritize papers with stable local supply; confirm stock before design</h2>
+<h2>Plate/Graphic Area: Large solids or massive size differences increase pressure adjustments and scrap rates | Reduce solid sizes, split plates, or switch to colored papers</h2>
+<h2>Double-Sided Structure: Demands secondary registration; deep impression conflicts are obvious | Stagger front/back graphics, use light touch on info-side, consider duplexing</h2>
+<h2>Quantity: Setup costs dominate small runs; plate durability and consistency are focus for large runs | Standardize specifications, consolidate runs, reduce versions</h2>
+<h2>Proofing: On-press physical proofing adds time, but significantly reduces costly rework | Essential for high-value projects; do not bypass</h2>
+<h2>Finishing & Packaging: Thick boards, foiled surfaces, and edge colors are easily damaged during transit | Add interleaving sheets, box in layer packs, control single-box weights</h2>
+<p>Lead Time Estimation: "Delivery 10-20 days after file confirmation," subject to international transport and customs clearance.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Design File Preflight Checklist</h2>
+<h2>25. Check off each item before submission; resolve any "unknowns" before platemaking.</h2>
+<h2>□ Finished dimensions are 1:1, units and orientation are correct</h2>
+<h2>□ Composite mockup, color separations, and front-to-back alignment maps are provided</h2>
+<h2>□ Each spot color and process is uniquely named and set on an independent layer</h2>
+<h2>□ All fonts are converted to curves/outlines; keep an un-outlined backup copy</h2>
+<h2>□ All linked images are embedded or fully packaged</h2>
+<h2>□ Platemaking black plates are 100% K, without 4-color rich black/RGB black</h2>
+<h2>□ Transparencies, shadows, gradients, and strokes are expanded and reviewed</h2>
+<h2>□ Positive lines, negative lines, isolated dots, and small text pass minimum checks</h2>
+<h2>□ Bleed, trim lines, safety zones, and gripper directions align with templates</h2>
+<h2>□ Dielines are closed single paths, with no duplicate paths or breaks</h2>
+<h2>□ Front and back deep impression zones are checked for overlaps and show-through</h2>
+<h2>□ Spot color numbers are targets only; actual ink on actual paper swatches are confirmed</h2>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Order & Production Specification Template</h2>
+<h2>26. Can be copied directly to orders or emails to reduce back-and-forth communication.</h2>
+<h2>Project Name: ____________________________</h2>
+<h2>Finished Dimensions / Orientation: ____________________________</h2>
+<h2>Quantity / Allowed Overrun/Underrun: ____________________________</h2>
+<h2>Paper Brand / Series / Color / Basis Weight: ____________________________</h2>
+<h2>Front Side Ink Colors / Processes: ____________________________</h2>
+<h2>Back Side Ink Colors / Processes: ____________________________</h2>
+<h2>Impression Target: □ Light Touch (Kiss Print) □ Standard □ Deep Impression □ Blind Debossing</h2>
+<h2>Spot Color Target: PANTONE ______ U / Custom Swatch ID ______</h2>
+<h2>Post-Press Finishing: □ Hot Foil □ Die-Cut □ Creasing/Scoring □ Duplexing/Laminating □ Edge Coloring</h2>
+<h2>Proofing Method: □ Digital Proof □ Actual Paper & Ink Press Proof □ No Proof (written risk sign-off required)</h2>
+<h2>Quality Priorities: ____________________________</h2>
+<h2>Packaging / Shipping: ____________________________</h2>
+<h2>Delivery Date & Address: ____________________________</h2>
+<h2>Final File Name / Version: ____________________________</h2>
+<h2>Approved By / Date: ____________________________</h2>
+<p>Approval Statement: "Approved" must simultaneously cover: layout content, paper selection, spot color targets, impression targets, specialty finish placements, and production tolerances. Simply replying "looks good" does not constitute complete sign-off.</p>
+<h2>LETTERPRESS · Letterpress Production Manual</h2>
+<h2>Reference Materials & Technical Boundaries</h2>
+<h2>27. This manual is based on public technical publications and production practices; specific parameters must yield to actual equipment, plates, paper batches, and supplier requirements.</h2>
+<h2>Primary References (Accessed 2026-07-27):</h2>
 <ul>
-<li>Boxcar Press — File prep tips for letterpress design（矢量/位图、正读文件、字体转曲、网线与出血建议）</li>
-<li>Boxcar Press — Checking Line and Dot Thicknesses（特定光敏树脂版的线条与独立点保证值）</li>
-<li>Boxcar Press — Letterpress design tips（字号、专色数量、大实地、浅墨印深纸等设计建议）</li>
-<li>LetterpressPaper / Legion Paper — Crane’s Lettra 纸张规格与 100% 棉、未压光特性说明</li>
-<li>Fedrigoni Special Papers — MATERICA Technical Data Sheet（活版、盲压、烫箔及覆膜/顺纹建议）</li>
-<li>HEIDELBERG — 175 Years / Tiegel 历史资料（自动平压活版机发展背景）</li>
+    <li>Boxcar Press — File prep tips for letterpress design (vector vs. bitmap, right-reading files, outlining fonts, screen lines, and bleed suggestions)</li>
+    <li>Boxcar Press — Checking Line and Dot Thicknesses (guaranteed line and isolated dot tolerances for specific photopolymer plates)</li>
+    <li>Boxcar Press — Letterpress design tips (design suggestions for font sizes, spot color counts, large solids, light ink on dark paper, etc.)</li>
+    <li>LetterpressPaper / Legion Paper — Crane’s Lettra specifications and explanations of 100% cotton, uncalendered characteristics</li>
+    <li>Fedrigoni Special Papers — MATERICA Technical Data Sheet (letterpress, blind deboss, hot stamping, and lamination/grain suggestions)</li>
+    <li>HEIDELBERG — 175 Years / Tiegel Historical Archives (development background of automatic platen letterpress machines)</li>
 </ul>
-<p>参数声明 文中“建议值”用于设计预检和方案沟通，不构成对任何工厂的生产保证。版材线宽、网线、出血、套准、</p>
-<p>烫箔最小细节、模切公差等，应以承印方书面确认和签样为准。</p>
-<p>版本说明：本手册为中文专业说明版，适合内部培训、客户教育、报价前沟通和设计文件预检。案例均为原创示意，</p>
-<p>不代表特定纸厂或品牌的最终实物颜色。</p>
+<p>Parameter Disclaimer: The "recommended values" in this document are for design preflighting and conceptual communication, and do not constitute a production guarantee for any factory. Plate line weights, screen rulings, bleed margins, registration tolerances, minimum foiling details, and die-cutting tolerances must be based on written confirmation and physical sign-off from the printing supplier.</p>
+<p>Edition Notes: This manual is a professional reference edition, suitable for internal training, client education, pre-quote coordination, and design file preflighting. Cases are original schematics and do not represent the final physical colors of any specific paper mill or brand.</p>
 <p>GOOD LETTERPRESS IS CONTROLLED, NOT FORCED.</p>
-<p>好的活版印刷，是受控的压力、清晰的边缘与被尊重的材料。</p>
+<p>Good letterpress printing is about controlled pressure, crisp edges, and respected materials.</p>
 HTML,
     ],
     [
         'slug' => 'business-card-size-and-notes',
-        'title' => '印刷名片文件尺寸与注意事项',
+        'title' => 'Business Card Dimensions and Design Considerations',
         'body' => <<<'HTML'
-<h2>印刷名片设计指南</h2>
-<h2>01. 尺寸边界必须在排版软件中精确建立，不能依靠图片缩放或目测比例。</h2>
-<h2>出血尺寸：96 × 60 mm</h2>
-<h2>背景、底色和贴边图片必须延伸到出血线，避免裁切后出</h2>
-<p>现白边。</p>
-<h2>成品尺寸：90 × 54 mm</h2>
-<p>这是最终交付给客户的名片尺寸，也是裁切线所在位置。</p>
-<h2>安全区域：86 × 50 mm</h2>
-<h2>文字、Logo、二维码等关键内容建议距成品边至少 2 m</h2>
-<p>m；重要内容可留 3 mm。</p>
-<h2>尺寸关系</h2>
-<h2>90 × 54 mm + 四周 3 mm 出血 = 96 × 60 mm</h2>
-<h2>文件与色彩规范</h2>
-<h2>02. 文件可打开、字体不缺失、图像清晰，才算真正可生产的印刷文件。</h2>
-<h2>推荐文件格式 色彩模式</h2>
-<h2>01 02</h2>
-<p>优先提交 PDF；也可提交 AI 或 CDR 源文件。JPG 仅作为无可编辑元素的 所有印刷内容使用 CMYK。不要直接提交 RGB 文件；屏幕颜色与印刷颜</p>
-<p>整版图使用，不建议作为首选。 色存在差异，深色与高饱和色尤其明显。</p>
-<h2>图片清晰度 字体与效果</h2>
-<h2>03 04</h2>
-<p>位图按最终尺寸计算应达到 300 dpi。不要把低分辨率图片强行放大；截 交付前将字体转曲或嵌入。透明、阴影、渐变、叠印等效果应检查并适当</p>
-<p>图、社交媒体图片通常不满足印刷要求。 扁平化，避免跨软件显示变化。</p>
-<h2>正反面与命名 文件版本</h2>
-<h2>05 06</h2>
-<p>正面、背面应明确区分，方向一致。多款文件按“款号-正面 / 款号-背面 避免使用过旧软件版本保存源文件。提交前重新打开最终文件，确认链接</p>
-<p>”命名，避免错版与倒置。 图片、字体与版面均正常。</p>
-<h2>特别提醒</h2>
-<p>PDF 导出时保留出血信息；成品尺寸不是文件尺寸。不要把 90 × 54 mm 的页面再整体缩放到 96 × 60 mm。</p>
-<h2>内容、工艺与上传检查</h2>
-<h2>03. 特殊工艺必须与彩色印刷内容分离表达，否则印刷厂无法准确识别加工位置。</h2>
-<h2>内容安全 下单与上传</h2>
-<p>文字、Logo、二维码不要压在裁切线附近。 同尺寸、同纸张、同工艺、同数量的多款可按供应商规则合并。</p>
-<p>二维码建议至少 15 × 15 mm，并保留完整静区。 尺寸、纸张、工艺或数量不同，应拆分文件与订单。</p>
-<p>细线不宜过细；反白小字需特别检查可读性。 不要把成品线、安全线等辅助标记保留在最终印刷内容中。</p>
-<h2>特殊工艺文件 提交前最终检查</h2>
-<p>烫金、UV、击凸、压凹、模切等单独建立专色图层。 页面 96 × 60 mm，裁切后成品 90 × 54 mm。</p>
-<p>工艺版使用 100% 单色矢量，不使用渐变、阴影或透明度。 CMYK、300 dpi、字体转曲或嵌入、图片链接完整。</p>
-<p>另附一张工艺效果示意图，明确工艺名称与对应位置。 正反面顺序、方向、数量、姓名、电话及二维码逐项复核。</p>
-<h2>关键原则</h2>
-<p>出血内容要超出裁切线；关键内容要远离裁切线；特殊工艺要独立成版。</p>
+<h2>Business Card Printing Design Guide</h2>
+<h2>01. Dimensional boundaries must be precisely established in layout software, rather than relying on image scaling or visual estimation.</h2>
+<h2>Bleed Size: 96 × 60 mm</h2>
+<h2>Background colors, full-bleed images, and border-hugging elements must extend all the way to the bleed line to prevent white margins after cutting.</h2>
+<h2>Finished Size: 90 × 54 mm</h2>
+<p>This is the final business card size delivered to the customer, and where the trim line is located.</p>
+<h2>Safety Zone: 86 × 50 mm</h2>
+<h2>Critical content such as text, logos, and QR codes should be kept at least 2 mm away from the finished edge; 3 mm is recommended for vital information.</h2>
+<h2>Dimensional Relationship</h2>
+<h2>90 × 54 mm + 3 mm Bleed on all sides = 96 × 60 mm</h2>
+<h2>File and Color Specifications</h2>
+<h2>02. A truly production-ready print file must be openable, with no missing fonts and crisp images.</h2>
+<h2>Recommended File Formats | Color Mode</h2>
+<h2>01 | 02</h2>
+<p>Prioritize submitting PDF; AI or CDR source files are also acceptable. JPG is only recommended as a last resort when no editable elements exist, and is not preferred. | All print content must use CMYK. Do not submit RGB files; screen colors differ significantly from printed colors, especially for dark and highly saturated hues.</p>
+<h2>Image Resolution | Fonts and Effects</h2>
+<h2>03 | 04</h2>
+<p>Bitmaps should reach 300 dpi at final printed dimensions. Do not force-scale low-resolution images; screenshots and social media images generally do not meet professional print requirements. | Outline (convert to curves) or embed all fonts before delivery. Inspect and properly flatten transparencies, shadows, gradients, and overprints to prevent rendering shifts across different software.</p>
+<h2>Front and Back Labeling | Software File Versions</h2>
+<h2>05 | 06</h2>
+<p>Front and back sides should be clearly distinguished, keeping consistent orientations. Label multi-item files as "ItemID-Front / ItemID-Back" to prevent plate mismatches and inversions. | Avoid saving source files in outdated software versions. Re-open final exported files before submission to confirm linked images, fonts, and layouts are intact.</p>
+<h2>Special Notice</h2>
+<p>Retain bleed information during PDF export; the finished size is not the file canvas size. Do not take a 90 × 54 mm page layout and stretch the entire design canvas to 96 × 60 mm.</p>
+<h2>Content, Processes, and Upload Inspection</h2>
+<h2>03. Specialty finishes must be separated from CMYK color printing layers; otherwise, the printing facility cannot accurately identify execution areas.</h2>
+<h2>Content Safety | Ordering and Uploading</h2>
+<p>Keep text, logos, and QR codes away from the crop/trim line.</p>
+<p>QR codes should be at least 15 × 15 mm and retain a complete quiet zone.</p>
+<p>Fine lines should not be too thin; reversed small text requires special readability checks.</p>
+<p>Multiple designs of the same size, paper, process, and quantity can be consolidated per supplier guidelines.</p>
+<p>Split files and orders if sizes, papers, processes, or quantities differ.</p>
+<p>Do not leave trim lines, safety lines, or auxiliary guide marks in the final production print file.</p>
+<h2>Specialty Finish Files | Final Pre-Submission Inspection</h2>
+<p>Create independent spot color layers for hot stamping, UV, embossing, debossing, and die-cutting.</p>
+<p>Use 100% solid monochrome vectors for process plates; do not use gradients, shadows, or transparencies.</p>
+<p>Attach an additional rendering/mockup to clearly indicate process names and their corresponding positions.</p>
+<p>Page size is 96 × 60 mm, finished trimmed product is 90 × 54 mm.</p>
+<p>CMYK mode, 300 dpi resolution, fonts outlined or embedded, image links intact.</p>
+<p>Double-check front/back sequence, orientation, quantity, name, phone number, and QR codes item by item.</p>
+<h2>Key Principles</h2>
+<p>Bleed contents must extend past the trim line; critical elements must stay far from the trim line; specialty finishes must be plate-separated.</p>
 HTML,
     ],
     [
         'slug' => 'prepress-source-files-and-special-finishes',
-        'title' => '名片印前源文件与特殊工艺完稿手册',
+        'title' => 'Business Card Pre-press & Specialty Finishes Finishing Manual',
         'body' => <<<'HTML'
-<h2>名片印前与特殊工艺完稿手册</h2>
-<h2>01. 从“为什么要源文件”到 11 类特殊工艺的材质选择、设计稿、工艺版与完稿检查。</h2>
-<h2>这份手册解决三个实际问题</h2>
-<h2>01 02 03</h2>
-<h2>文件为什么会影响印刷质量 工艺与材质怎么匹配 最终交给印厂什么文件</h2>
-<p>区分源文件、合格 PDF/X 与普通图片；用放大案 热烫、冷烫、UV、立体 UV、模切、激光镂空、滴 所有工艺均给出 CMYK 成品稿、独立工艺版、刀</p>
-<p>例解释像素、压缩、颜色和工艺分版。 塑、滚边、压凹与凹凸逐项判断。 线/镂空线及效果示意图的对应关系。</p>
-<h2>PDF 材质 完稿</h2>
-<p>关键结论：印刷需要的是“可验证、可分版、可修改的生产数据”，不等于任何订单都必须索取 AI/CDR 源文件。合格 PDF/X 可以是正式生产母版；普通 JPG 往往只能作为图片素材或低风险单</p>
-<p>面彩印稿。</p>
-<h2>为什么要源文件：真正需要的是可生产性</h2>
-<h2>02. 源文件的价值不是文件后缀本身，而是保留矢量、字体、色彩、图层、出血与工艺信息。</h2>
-<h2>源文件能解决什么 什么时候不一定要源文件</h2>
-<p>修改姓名、电话、尺寸和出血时，不必重新描图。 客户提交的是经过预检的 PDF/X，字体已嵌入或转曲。</p>
-<p>文字和 Logo 保持矢量，放大后边缘仍然清晰。 尺寸、出血、TrimBox/BleedBox、颜色和图片分辨率正确。</p>
-<p>可检查 CMYK、专色、叠印、透明度和总墨量。</p>
-<p>专色工艺版、刀线及效果示意都已包含或单独提交。</p>
-<p>热烫、UV、模切等工艺可独立成版并精确套准。</p>
-<p>印厂不需要改字、拆图、重做陷印或转换生产方式。</p>
-<p>链接图片、字体和图层问题能在生产前被发现。</p>
-<h2>文件角色对比</h2>
-<h2>AI / CDR / INDD 可编辑生产源文件 修改与复杂工艺 需打包字体/链接或转曲</h2>
-<h2>PDF/X-4 可交换生产母版 直接生产与预检 必须按印厂规范导出</h2>
-<h2>TIFF / PSD 高质量位图素材 照片、纹理、整版图 文字和工艺版不应只靠位图</h2>
-<h2>JPG / PNG 展示或一般图像 校样、预览、简单彩印 压缩、RGB、透明和不可分版风险</h2>
-<h2>实际案例 1：同一个 Logo，为什么图片放大后会糊</h2>
-<h2>03. 矢量以路径描述边缘；位图以像素记录画面。名片上的小字、细线和二维码最容易暴露差异。</h2>
-<h2>A. 矢量源文件放大 800% B. 低分辨率 JPG 放大 800%</h2>
-<p>边缘由数学路径生成：放大、改色、分版后仍然锐利。 像素数量固定：放大后出现台阶、毛边，细线可能断裂。</p>
-<p>90 × 54 mm 成品在 300 ppi 下约为 1063 × 638 px；含 3 mm 出血的 96 × 60 mm 文件约为 1134 × 709 px。把 300 px 宽的小图“设置成 300 dpi”并不会凭空创造细节。</p>
-<p>生产后果 Logo 边缘发虚｜5-6 pt 小字粘连｜二维码识别率下降｜烫金或 UV 蒙版无法得到干净路径</p>
-<h2>实际案例 2：图片格式不是原罪，错误的图片才是</h2>
-<h2>04. JPG 可以印照片，但不适合承担需要锐利边缘、透明背景、专色分版或反复修改的生产任务。</h2>
-<h2>72 ppi 网页图 300 ppi 原始图</h2>
-<h2>名片宽 90 mm 时仅约 255 px 名片宽 90 mm 时约 1063 px</h2>
-<h2>放大明显模糊 照片通常可用</h2>
-<h2>反复保存 JPG RGB 霓虹色</h2>
-<h2>每次有损压缩累积方块与振铃 屏幕发光，CMYK 油墨无法同等再现</h2>
-<h2>文字边缘最明显 印刷变暗或降饱和</h2>
-<p>图片文件最常见的五个问题：像素不足、RGB 未转换、JPG 有损压缩、文字被栅格化、没有独立工艺版。正确做法不是“禁止图片”，而是照片用高质量 TIFF/PSD/JPG，文字与 Logo 用矢量</p>
-<p>，最终输出经过预检的 PDF/X。</p>
-<h2>正确交付包：让印厂能检查、能修改、能生产</h2>
-<h2>05. 复杂工艺建议同时提交源文件、生产 PDF、独立工艺版和效果示意，不要只发一张聊天软件预览图。</h2>
-<h2>01 02 03 04 05</h2>
-<h2>01_SOURCE 02_PRINT 03_FINISH 04_CUT 05_PROOF</h2>
-<p>AI / CDR / INDD + 链接图 正面_CMYK.pdf / 背面_CMY HOTFOIL / UV / EMBOSS.p DIELINE / LASER.pdf 效果示意图.jpg</p>
-<h2>K.pdf df</h2>
-<h2>可编辑母版 正式彩印稿 独立工艺版 刀线与镂空线 只用于说明，不直接生产</h2>
-<h2>实际交付案例：热烫 + 模切名片</h2>
-<h2>正面 CMYK 正面 HOTFOIL 正面 DIELINE 背面 CMYK 效果图</h2>
-<h2>统一完稿逻辑：一个坐标系统，多张独立工艺版</h2>
-<h2>06. 所有页面使用相同 96 × 60 mm 画板、相同方向和相同坐标；每种工艺只保留要加工的黑色矢量。</h2>
-<h2>CMYK HOTFOIL COLDFOIL</h2>
-<h2>CMYK 彩印内容</h2>
-<h2>普通彩印 热烫 冷烫胶版</h2>
-<h2>SPOTUV RAISEDUV DIELINE</h2>
-<h2>局部 UV 立体 UV 模切刀线</h2>
-<p>工艺版正确画法：100% K 或指定专色、Overprint 按印厂要求设置、无渐变/透明/阴影、文字转曲、线条转轮廓。效果图可以有金色和高光，但生产工艺版必须保持简单、单色、可分色。</p>
-<h2>材质 × 工艺匹配表：能做不等于适合做</h2>
-<h2>07. “推荐”表示通常稳定；“打样”表示需看设备、涂层或专用材料；“慎用”表示风险高或常规工艺不匹配。</h2>
-<h2>材质 热烫 冷烫 UV 立体UV 模切 激光 滴塑 滚边 压凹/凹凸</h2>
-<h2>平滑铜版/覆膜 推荐 推荐 推荐 推荐 推荐 打样 打样 推荐 推荐</h2>
-<h2>平滑未涂布艺术纸 推荐 打样 打样 打样 推荐 推荐 慎用 推荐 推荐</h2>
-<h2>纹理/棉纸 推荐 慎用 打样 打样 推荐 推荐 慎用 推荐 推荐</h2>
-<h2>超厚裱合纸 推荐 打样 推荐 推荐 推荐 推荐 打样 最佳 最佳</h2>
-<h2>PVC/PET 合成卡 打样 推荐 推荐 推荐 推荐 限材质 最佳 慎用 慎用</h2>
-<h2>木片 打样 慎用 慎用 慎用 打样 最佳 慎用 慎用 打样</h2>
-<h2>金属卡 专用工艺 不适用 专用涂层 专用涂层 专用冲切 专用激光 打样 不适用 专用压印</h2>
-<p>重要：PVC/含氯材料不得直接进入普通 CO 激光切割流程；可能释放腐蚀性和有害气体。合成材料、木材和金属使用的设备、功率与安全规则与纸卡完全不同。</p>
-<h2>热烫与冷烫：同样是金属感，生产逻辑完全不同</h2>
-<h2>08. 热烫靠加热模具与压力；冷烫靠胶黏剂转移，通常是平面效果，并可在金属层上叠印彩色。</h2>
-<h2>热烫 HOT FOIL 冷烫 COLD FOIL</h2>
-<h2>可选 CMYK 叠印</h2>
-<h2>热烫转移层 银色金属层</h2>
-<h2>胶黏与色层 冷烫胶黏剂</h2>
-<h2>纸张 / 覆膜 纸张 / 涂层</h2>
-<p>适合：平滑纸、艺术纸、棉纸、厚纸；纹理越粗越需要专用材料和打样。 适合：平滑涂布纸、覆膜纸及经验证的 PET/PP；明显纹理纸通常不理想。</p>
-<p>优势：镜面金属感、色箔选择多，可结合压纹或压凹。 优势：精细图形、网点、大面积、彩色金属及较高生产效率。</p>
-<p>风险：细线断裂、小字糊版、大面积针孔、双面压痕互相影响。 风险：胶量、固化、表面张力、套准和附着力；片张冷烫通常无明显凸感。</p>
-<p>工艺版：HOTFOIL 专色，纯色矢量；建议线条 ≥0.30 mm、反白间距 ≥0.40 工艺版：COLDFOIL 胶版 + 可选 OVERPRINT 彩色叠印版，坐标完全一致。</p>
-<p>mm。</p>
-<p>选择原则：需要强触感、粗纹纸或传统奢华感，优先热烫；需要细节、彩色金属、网点或较大面积，优先冷烫。两者都必须看实际材料样，屏幕金色不能代表实物箔色。</p>
-<h2>局部 UV 与立体 UV：透明高光，不是金属色</h2>
-<h2>09. 普通局部 UV 主要制造亮哑反差；立体 UV/高构建光油通过更厚的透明聚合物形成可触摸的凸起。</h2>
-<h2>局部 UV / SPOT UV 立体 UV / RAISED UV</h2>
-<h2>薄层透明 UV 光油 高构建透明聚合物 10-80m 或设备范围</h2>
-<h2>彩印层 彩印层</h2>
-<h2>纸张 / 覆膜 纸张 / 覆膜</h2>
-<p>适合：哑膜、哑光涂布纸最容易形成反差；未涂布纸需底涂或专用设备。 适合：平滑覆膜纸、涂布纸和经过表面处理的合成材料；粗纹纸需专用方案。</p>
-<p>设计：Logo、暗纹、局部图片；避免满版和紧贴裁切线。 设计：粗线、图标、纹理和局部触感；过细线可能变圆、粘连或高度不足。</p>
-<p>工艺版：SPOTUV 黑白硬边蒙版；不用灰度、渐变、羽化或阴影。 风险：弯折、裁切和高摩擦位置可能崩裂；大面积会产生流平和气泡风险。</p>
-<p>建议：线条 ≥0.30 mm，间距 ≥0.40-0.50 mm；小字套印需留容差。 工艺版：RAISEDUV 单色蒙版；高度并非由灰度自动决定，除非印厂明确支持</p>
-<p>多层数据。</p>
-<p>不要把局部 UV 与无色凹凸混为一谈：UV 是透明材料堆积在表面；凹凸是纸张被模具永久变形。前者亮且可凸起，后者可完全无色、依靠纸张光影。</p>
-<h2>模切与激光镂空：一条是刀线，一条是能量路径</h2>
-<h2>10. 两种工艺都能改变外形，但最小连接位、内角、焦痕、材料安全和批量成本完全不同。</h2>
-<h2>模切 DIELINE 激光镂空 LASER CUT</h2>
-<h2>刀线专版 激光路径</h2>
-<p>适合：纸卡、覆膜纸、合成纸和部分薄塑料；大批量稳定。 适合：纸、纸板、木片及经验证的特定塑料；小批量与复杂镂空灵活。</p>
-<p>设计：刀线必须闭合、无重复路径、无极小锯齿；内角会受刀具圆角限制。 风险：纸边可能焦黄、有烟味或背面熏黑；细连接位会变形或断裂。</p>
-<p>结构：狭窄连接位易断，尖角易起毛；文字和 Logo 远离刀线至少 2-3 mm。 安全：PVC/乙烯基等含氯材料禁止用普通 CO 激光处理。</p>
-<p>完稿：DIELINE 专色矢量、通常设为不印刷刀线；另附成品方向图。 完稿：LASER-CUT 路径使用极细矢量描边；雕刻、切穿与打标必须分层命名。</p>
-<p>选择原则：数量大、外形稳定、边缘不希望焦黄，优先模切；少量、复杂花纹、个性化镂空，激光更灵活。任何镂空都必须先检查最窄连接位，而不是只看图案是否漂亮。</p>
-<h2>水晶滴塑与滚边：一个在表面，一个在侧边</h2>
-<h2>11. 滴塑依靠透明树脂自流平形成弧面；滚边必须先确认供应商指的是边缘上色、边缘烫箔还是彩色夹芯。</h2>
-<h2>水晶滴塑 / RESIN DOMING 滚边 / EDGE FINISH</h2>
-<h2>透明环氧或聚氨酯弧面</h2>
-<h2>彩色印刷</h2>
-<h2>非吸水底材 / 膜材</h2>
-<h2>厚纸叠放后，对侧边上色或烫箔</h2>
-<h2>最佳：PET/PVC/乙烯基标签、覆膜或非吸水表面；普通纸直接滴塑易渗透、扩</h2>
-<p>最佳：600 gsm、32 pt 以上厚纸或多层裱合卡；越厚，边缘效果越明显。</p>
-<p>散或翘曲。</p>
-<p>边缘上色可能向纸面轻微渗色；浅色纸、吸水纸与荧光色需做样。</p>
-<p>设计：圆角和封闭图形更利于树脂停留；尖角、极窄通道与开放边缘易溢胶。</p>
-<p>边缘烫箔、边缘喷色和彩色夹芯不是同一种工艺，下单名称必须明确。</p>
-<p>用途：Logo 徽章、NFC 标贴或局部装饰；不建议把整张纸名片都做成厚树脂。</p>
-<h2>完稿：通常不需要表面黑版；提交 EDGE-COLOR 色号、四边范围和侧视示意图</h2>
-<p>完稿：DOMING 外轮廓 + UNDERPRINT 彩印层 + 透明效果示意；需标注是否贴</p>
-<p>。</p>
-<p>附式滴塑。</p>
-<p>严格建议：如果客户说“做滚边”，必须追问“边缘油墨、边缘金箔还是夹芯色纸”。三者的质感、成本、耐磨性与完稿方式不同，不能只凭一张正面稿判断。</p>
-<h2>压凹、凹凸与无色凹凸：先确定纸往哪一面变形</h2>
-<h2>12. 压凹是在正面向下形成凹痕；压凸/凸印从背面顶起。无色处理通常称盲压，不代表工艺版使用白色。</h2>
-<h2>压凹 / DEBOSS 压凸 / EMBOSS 无色盲压 / BLIND</h2>
-<h2>正面凹下 正面凸起 不加油墨或色箔</h2>
-<h2>背面可轻微显痕或通过裱合隐藏 背面通常出现对应凹位 依靠纸张形变、光影和触感</h2>
-<h2>工艺版：100% 单色矢量 工艺版：100% 单色矢量 工艺版：100% 单色矢量</h2>
-<h2>材质建议</h2>
-<p>最佳：有韧性、较厚、未涂布或棉质纸张；纸张纤维能保留明显形变。</p>
-<p>覆膜铜版纸可以做，但过深会出现膜层拉伸、开裂或光斑；薄纸容易显背痕。</p>
-<p>超厚裱合卡可先压印再裱合，以隐藏背面痕迹；需要与印厂确认生产顺序。</p>
-<p>文字和细线不能无限缩小；深压凹、大实地和相邻双面压印必须打样。</p>
-<h2>有色压凹与无色凹凸：颜色层和结构层必须分开</h2>
-<h2>13. 有色压凹可能是凸版油墨压印、先印后压，或色箔结合压凹；必须在工艺说明中写清生产方式。</h2>
-<p>有色压凹 / INKED DEBOSS 无色凹凸 / BLIND EMBOSS-DEBOSS</p>
-<h2>INK / DEBOSS BLIND 结构版</h2>
-<h2>INKPAVO INKPAVO</h2>
-<p>适合：棉纸、未涂布厚纸、软质艺术纸；可获得类似 letterpress 的触感。 适合：颜色本身漂亮、纤维感强的厚纸；通过斜光体现形变。</p>
-<p>颜色会受纸张吸收、纹理与压力影响；大实地可能不如胶印均匀。 不适合过于复杂的细节和大面积浅浮雕，除非使用多层或雕刻模具。</p>
-<p>完稿：INK-COLOR 色版 + DEBOSS 结构版。若同版同压，仍应注明色号与压深 完稿：BLIND-EMBOSS 或 BLIND-DEBOSS 单色结构版，不要把对象填白。</p>
-<p>。 效果图需标明正面凸/凹方向，并附侧面剖面或箭头说明。</p>
-<p>细字、反白和双面内容要避开深压区域。</p>
-<p>命名建议：不要只写“凹凸”。应写“正面压凹 / 正面压凸 / 无色盲压 / 有色凸版压凹 / 烫箔压纹”，并明确希望背面是否保留对应痕迹。</p>
-<h2>11 类工艺的完稿文件应该怎么交</h2>
-<h2>14. 每种工艺都需要生产版与效果说明。下表中的文件名可直接作为团队内部标准。</h2>
-<h2>工艺 推荐文件名 生产版内容 必须补充</h2>
-<h2>热烫 HOTFOIL.pdf 100% 单色矢量 标注箔号与正反面</h2>
-<p>冷烫 COLDFOIL.pdf + OVERPRINT.pdf 胶版 + 可选叠印色 标注金属底色</p>
-<h2>局部 UV SPOTUV.pdf 黑白硬边蒙版 黑=上光</h2>
-<h2>立体 UV RAISEDUV.pdf 黑白硬边蒙版 标注目标高度/设备</h2>
-<h2>模切 DIELINE.pdf 闭合刀线矢量 切线/压线分专色</h2>
-<h2>激光镂空 LASER.pdf 切穿/雕刻分层路径 标注材料与焦痕容忍</h2>
-<h2>水晶滴塑 DOMING.pdf 封闭外轮廓 + 底图 标注贴附式或直接滴塑</h2>
-<h2>滚边 EDGE-SPEC.pdf 色号 + 四边范围图 明确油墨/箔/夹芯</h2>
-<h2>压凹 DEBOSS.pdf 单色结构版 箭头标正面向下</h2>
-<h2>无色凹凸 BLIND-EMBOSS.pdf 单色结构版 明确凸起或凹下</h2>
-<h2>有色压凹 INK.pdf + DEBOSS.pdf 颜色层 + 结构层 标注是否同版同压</h2>
-<p>另附一张合成效果图：用金色、透明高光、阴影或立体效果向客户解释成品，但在图上醒目标注“仅作效果示意，不作生产输出”。生产版绝不能从效果图截图或自动描摹获得。</p>
-<h2>最终检查与技术依据</h2>
-<h2>15. 这份检查表用于拦截最常见、同时也是代价最高的印前错误。</h2>
-<h2>交付前 10 项检查 主要公开依据</h2>
-<p>1 画板 96 × 60 mm；裁切后 90 × 54 mm；所有页面坐标一致。 Adobe：PDF/X 用于减少颜色、字体和陷印变量；Acrobat Prefli</p>
-<p>ght 可检查字体、颜色、透明度与图像分辨率。</p>
-<p>2 字体转曲或嵌入；Logo、文字、刀线和工艺层保持矢量。</p>
-<p>3 照片有效分辨率足够；没有把小图仅修改 dpi 数字后强行放大。 KURZ：热烫、冷烫的转移原理、适用基材和冷烫平面特性。</p>
-<p>4 彩印为印厂要求的 CMYK / PDF/X；专色名称统一且无多余颜色。 Duplo / Scodix：局部 UV、立体 UV 的透明聚合物、厚度与基材</p>
-<p>能力。</p>
-<p>5 每种工艺独立成版；没有渐变、透明、阴影或误留预览色。</p>
-<h2>Trotec：纸张激光火灾风险；PVC/乙烯基等含氯材料不适合 CO</h2>
-<p>6 工艺层与彩印层不重复印刷；套准处留出合理容差。</p>
-<p>激光。</p>
-<p>7 刀线闭合、无重复路径；激光切穿/雕刻分层；PVC 不进入 CO 激光。</p>
-<p>MOO / Jukebox：超厚纸、彩色夹芯及边缘上色的材料逻辑。</p>
-<p>8 纸张、覆膜、表面张力、厚度与工艺材料已由印厂确认。</p>
-<p>SunDance：压凸、压凹和盲压的结构差异与纸卡适用性。</p>
-<p>9 双面压印、深压、大面积烫箔、粗纹纸和复杂镂空均已安排打样。</p>
-<p>10 文件名包含正反面、工艺、版本和日期；效果图明确标注非生产文件。</p>
-<p>本手册给出的最小线宽、间距和材质判断是偏保守的设计起点，不是所有设备通用极限。供应商的模具、油墨、箔材、胶黏剂、UV 聚合物、表面处理与生产顺序不同，量产前必须以真实材料打</p>
-<p>样确认。</p>
-<p>参考网址：Adobe PDF/X 与 Preflight｜KURZ Hot Stamping / Cold Transfer｜Duplo DuSense｜Scodix｜Trotec Laser｜MOO Luxe｜SunDance</p>
+<h2>Business Card Pre-press & Specialty Finishes Finishing Manual</h2>
+<h2>01. From "Why are source files required" to material selection, artwork guidelines, process plates, and final checklists for 11 specialty finishes.</h2>
+<h2>This manual addresses three practical problems:</h2>
+<h2>01 | 02 | 03</h2>
+<h2>Why files affect print quality | How to match processes with substrates | What files to actually deliver to the printer</h2>
+<p>Differentiate among source files, verified PDF/X, and standard images; use magnified examples to explain pixels, compression, colors, and plate separation. | Evaluate hot foil, cold foil, spot UV, raised UV, die-cutting, laser cutting, doming, edge coloring, debossing, and embossing one by one. | Map out CMYK print files, standalone process plates, dielines/laser paths, and visual renderings for all finishes.</p>
+<p>Key Conclusion: What printing requires is "verifiable, plate-separable, and editable production data." This does not mean AI/CDR source files are mandatory for every order. A certified PDF/X can serve as the official production master, whereas a generic JPG is usually only suitable as a raw image asset or for low-risk single-sided color prints.</p>
+<h2>Why Source Files are Needed: The Real Demand is Manufacturability</h2>
+<h2>02. The value of source files lies not in the file extension itself, but in preserving vectors, typography, color spaces, layers, bleeds, and process parameters.</h2>
+<h2>What Source Files Solve | When Source Files May Not Be Essential</h2>
+<p>No need to redraw artwork when editing names, phones, dimensions, and bleeds. | The client submits a preflight-verified PDF/X with all fonts embedded or outlined.</p>
+<p>Keep text and logos vector so edges stay razor-sharp at any scale. | The dimensions, bleeds, TrimBox/BleedBox, color spaces, and image resolutions are entirely correct.</p>
+<p>Enables inspections of CMYK values, spot colors, overprints, transparencies, and total ink coverage (TAC). | Spot color process plates, dielines, and rendering mockups are already included or submitted separately.</p>
+<p>Specialty finishes like hot stamping, UV, and die-cutting can be plate-separated and accurately registered. | The printer does not need to edit copy, extract graphics, recreate trapping, or convert production formats.</p>
+<p>Linked images, missing fonts, and layer structures are detected before on-press setup.</p>
+<h2>File Role Comparison</h2>
+<h2>AI / CDR / INDD: Editable production source files | Best for modifications & complex processes | Must package fonts/links or outline curves</h2>
+<h2>PDF/X-4: Standardized production master exchange format | Direct production & preflighting | Must export strictly per printer specifications</h2>
+<h2>TIFF / PSD: High-quality bitmap assets | Photos, textures, full-bleed images | Text and process plates should not rely on bitmaps</h2>
+<h2>JPG / PNG: Visual presentation or basic images | Proofs, previews, basic color printing | Risks of lossy compression, RGB profiles, and lack of plate separation</h2>
+<h2>Case 1: The Same Logo—Why Images Get Blurry When Enlarged</h2>
+<h2>03. Vectors describe edges mathematically via paths; bitmaps record images with pixels. Small text, fine lines, and QR codes on a business card are the most sensitive to these differences.</h2>
+<h2>A. Vector Source File (800% zoom) | B. Low-Resolution JPG (800% zoom)</h2>
+<p>Edges generated by mathematical paths: remain razor-sharp after scaling, color changes, or plate separations.</p>
+<p>Fixed pixel count: zooming exposes steps/jagged edges, fine lines may break up.</p>
+<p>A 90 × 54 mm finished size at 300 ppi is approximately 1063 × 638 px; a 96 × 60 mm file with 3 mm bleed is about 1134 × 709 px. Simply re-entering "300 dpi" into a 300-pixel-wide small image does not magically generate detail.</p>
+<p>Production Consequences: Fuzzy logo boundaries | Clogged 5-6 pt fine text | Reduced QR code scanning rates | Inability to extract clean paths for hot stamping or UV plates</p>
+<h2>Case 2: Image Format is Not the Enemy—Incorrect Image Setup Is</h2>
+<h2>04. JPG can print photos perfectly, but is unsuited for production tasks requiring crisp borders, transparent backgrounds, spot color separations, or frequent editing.</h2>
+<h2>72 ppi Web Image | 300 ppi Original Image</h2>
+<h2>Width 255 px (at 90 mm card size) | Width 1063 px (at 90 mm card size)</h2>
+<h2>Visibly blurry when enlarged | Photos are generally usable</h2>
+<h2>Repeated JPG Saves | RGB Neon Colors</h2>
+<h2>Lossy compression accumulates blocky artifacts. | Emissive screen colors cannot be reproduced identically by physical CMYK inks. Prints look darker or desaturated. Most visible on text edges.</h2>
+<p>Five Most Common Problems with Image Files: Insufficient pixels, un-converted RGB profiles, lossy JPG compression, rasterized text, and missing standalone process plates. The correct approach is not to ban images, but to use high-quality TIFF/PSD/JPG for photos and vectors for text and logos, ultimately exporting a preflight-verified PDF/X.</p>
+<h2>The Ideal Delivery Package: Verifiable, Editable, and Production-Ready</h2>
+<h2>05. For complex finishes, it is recommended to submit source files, production PDFs, independent process plates, and high-fidelity mockups simultaneously, rather than just sending a single chat screenshot preview.</h2>
+<h2>01 | 02 | 03 | 04 | 05</h2>
+<h2>01_SOURCE | 02_PRINT | 03_FINISH | 04_CUT | 05_PROOF</h2>
+<p>AI / CDR / INDD + Link Assets | Front_CMYK.pdf / Back_CMYK.pdf | HOTFOIL / UV / EMBOSS.pdf | DIELINE / LASER.pdf | RenderingProof.jpg</p>
+<h2>Editable Master | Official Print Proof | Standalone Process Plates | Dielines & Laser Paths | For Reference Only (Not for Production)</h2>
+<h2>Actual Delivery Case: Hot Stamping + Die-Cutting Business Card</h2>
+<h2>Front CMYK | Front HOTFOIL | Front DIELINE | Back CMYK | Mockup Rendering</h2>
+<h2>Unified Finishing Logic: One Coordinate System, Multiple Independent Process Plates</h2>
+<h2>06. All pages must use the exact same 96 × 60 mm canvas/artboard, same orientation, and same coordinates. Each process plate must isolate only the black vectors to be executed.</h2>
+<h2>CMYK | HOTFOIL | COLDFOIL</h2>
+<h2>CMYK Color Printing</h2>
+<h2>Standard Print | Hot Foil | Cold Foil Adhesive Plate</h2>
+<h2>SPOTUV | RAISEDUV | DIELINE</h2>
+<h2>Spot UV | Raised/3D UV | Die-cut Dielines</h2>
+<p>Correct Process Plate Setup: 100% solid Black (K) or designated spot color; Overprint configured per printer specs; absolutely no gradients/transparencies/shadows; text outlined; paths expanded. While mockups can feature shiny golds and highlights, production process plates must remain flat, monochromatic, and color-separable.</p>
+<h2>Substrate × Process Compatibility Table: Able to Make does not equal Suitable to Make</h2>
+<h2>07. "Recommended" indicates stable production; "Proofing Required" means dependent on machinery, coating, or dedicated materials; "Use Caution" flags high risk or process mismatches.</h2>
+<h2>Material | Hot Foil | Cold Foil | Spot UV | Raised UV | Die-cutting | Laser Cutting | Doming | Edge Finishes | Deboss/Emboss</h2>
+<h2>Smooth Coated/Laminated: Recommended | Recommended | Recommended | Recommended | Recommended | Proofing Required | Proofing Required | Recommended | Recommended</h2>
+<h2>Smooth Uncoated Fine: Recommended | Proofing Required | Proofing Required | Proofing Required | Recommended | Recommended | Use Caution | Recommended | Recommended</h2>
+<h2>Textured / Cotton Paper: Recommended | Use Caution | Proofing Required | Proofing Required | Recommended | Recommended | Use Caution | Recommended | Recommended</h2>
+<h2>Ultra-Thick Duplexed: Recommended | Proofing Required | Recommended | Recommended | Recommended | Recommended | Proofing Required | Outstanding | Outstanding</h2>
+<h2>PVC/PET Synthetic Cards: Proofing Required | Recommended | Recommended | Recommended | Recommended | Material-Limited | Outstanding | Use Caution | Use Caution</h2>
+<h2>Wood Sheets: Proofing Required | Use Caution | Use Caution | Use Caution | Proofing Required | Outstanding | Use Caution | Use Caution | Proofing Required</h2>
+<h2>Metal Cards: Specialized Process | Not Applicable | Specialized Coating | Specialized Coating | Specialized Punch | Specialized Laser | Proofing Required | Not Applicable | Specialized Debossing</h2>
+<p>IMPORTANT: PVC and other chlorine-containing materials must never enter standard CO2 laser cutting workflows, as they release corrosive and highly toxic gases. Synthetic materials, wood, and metal require equipment, power ratings, and safety measures that are entirely different from paper stock.</p>
+<h2>Hot Foiling & Cold Transfer: Similar Metallic Shine, Radically Different Mechanics</h2>
+<h2>08. Hot foiling relies on heated dies and physical pressure; cold transfer transfers foil via adhesive, usually resulting in a flat finish and allowing CMYK overprinting.</h2>
+<h2>Hot Foiling (HOT FOIL) | Cold Transfer (COLD FOIL)</h2>
+<h2>Optional CMYK Overprinting</h2>
+<h2>Hot Foil Transfer Layer | Silver Metallic Layer</h2>
+<h2>Adhesive & Foil Layer: Cold Transfer Adhesive | LOGO | LOGO</h2>
+<h2>Process Overlay Sequence</h2>
+<h2>CMYK Color Printing (Overprinting directly on top of the foil)</h2>
+<h2>Paper / Lamination | Paper / Coating</h2>
+<p>Best for: Smooth paper, art paper, cotton paper, heavy board; rougher textures require specialty foils and proofing. | Best for: Smooth coated paper, laminated board, and tested PET/PP; noticeably textured papers are generally sub-optimal.</p>
+<p>Advantages: Mirror-like metallic gloss, extensive foil color selection, compatible with embossing or debossing. | Advantages: Highly detailed graphics, halftone dots, large areas, overprinted colored metallic effects, and higher production speeds.</p>
+<p>Risks: Broken fine lines, clogged small text, pinholes in large solids, double-sided impression conflicts. | Risks: Adhesive volume control, UV curing, surface tension, registration, and adhesion; sheetfed cold foil generally lacks tactile relief.</p>
+<p>Process Plate: HOTFOIL spot color, flat vector paths; recommended lines ≥0.30 mm, negative spacing ≥0.40 mm. | Process Plate: COLD FOIL adhesive plate + optional OVERPRINT color plate, in absolute perfect registration.</p>
+<p>Selection Principle: Choose hot foiling for heavy tactile feel, coarse paper, or classic luxury; choose cold transfer for ultra-fine details, colored metallics, halftones, or large solid surfaces. Both demand physical stock proofs, as on-screen golds cannot represent real-world foil lusters.</p>
+<h2>Spot UV & Raised/3D UV: Transparent Gloss, Not Metallic Ink</h2>
+<h2>09. Flat Spot UV primarily creates glossy/matte contrasts; Raised UV (scodix/3D UV) forms a touchable dimensional relief through thicker layers of transparent polymer.</h2>
+<h2>Flat Spot UV (SPOT UV) | Raised/3D UV (RAISED UV)</h2>
+<h2>Thin Layer of Gloss UV Varnish | High-Build Transparent Polymer (10-80μm or machine-dependent)</h2>
+<h2>CMYK Color Print Layer | CMYK Color Print Layer</h2>
+<h2>Paper / Lamination | Paper / Lamination</h2>
+<p>Best for: Matte lamination and matte coated stocks yield the strongest contrast; uncoated stocks require priming or specialized machinery. | Best for: Smooth laminated papers, coated papers, and surface-treated synthetic stocks; rough textured papers need custom formulations.</p>
+<p>Design: Logos, subtle backgrounds, localized image highlights; avoid full floods and border-hugging graphics. | Design: Bolder paths, icons, textures, and selective tactile accents; excessively fine lines may round out, bleed together, or lack height.</p>
+<p>Process Plate: SPOTUV black and white hard-edged mask; do not use grayscale, gradients, feathering, or soft drop shadows. | Risks: Cracking or chipping along fold lines, cuts, and high-friction contact points; flat large-floods carry leveling and bubble risks.</p>
+<p>Recommendations: Line weights ≥0.30 mm, negative clearance ≥0.40-0.50 mm; reserve register tolerances for small type overprinting. | Process Plate: RAISEDUV monochromatic mask; height is not automatically driven by grayscale gradients unless explicitly supported by your printer.</p>
+<p>Do Not Confuse Spot UV with Blind Debossing/Embossing: UV piles transparent material on top of the sheet, whereas embossing/debossing permanently deforms the paper using metal dies. The former is shiny and raised, while the latter can be completely inkless, relying entirely on paper-texture shadows.</p>
+<h2>Die-Cutting & Laser Cutting: One is a Blade Path, One is an Energy Path</h2>
+<h2>10. Both techniques alter the final outer shape, but minimum connection widths, interior corners, char marks, material safety rules, and bulk costs are entirely different.</h2>
+<h2>Die-Cutting (DIELINE) | Laser Cutting (LASER CUT)</h2>
+<h2>Dedicated Dieline Plate | Laser Toolpath</h2>
+<p>Best for: Paperboard, laminated sheets, synthetic stocks, and some thin plastics; highly stable for high-volume runs. | Best for: Paper, cardboard, wood sheets, and tested non-chlorinated plastics; highly flexible for short runs and complex filigrees.</p>
+<p>Design: Paths must be closed, single-pass, with no tiny jagged nodes; inside corners are physically constrained by steel rule radius limits. | Risks: Paper edges may show yellow/brown scorch marks, retain smoke odors, or show soot on the back; thin bridges may warp or snap.</p>
+<p>Structure: Narrow bridges snap easily; sharp corners can tear; keep copy and logos at least 2-3 mm from cutting lines. | Safety: PVC and other chlorine-based vinyls are strictly banned from entering standard CO2 laser setups.</p>
+<p>Finishing: DIELINE spot-color vector path, usually set to non-printing; include a separate composite mockup. | Finishing: LASER-CUT paths must use hairline vector strokes; separate through-cuts, engraving, and scoring by layer names.</p>
+<p>Selection Principle: Choose die-cutting for high quantities, consistent structural shapes, and clean un-scorched edges; choose laser cutting for short runs, complex lace patterns, or custom shapes. Always review the narrowest bridge connections before falling in love with a delicate pattern.</p>
+<h2>Resin Doming & Edge Finishes: One on the Face, One on the Edge</h2>
+<h2>11. Doming relies on transparent resin self-leveling to form a high-gloss lens; edge finishing must clarify if the supplier is doing liquid edge coloring, edge foiling, or sandwiching colored paper cores.</h2>
+<h2>Resin Doming (RESIN DOMING) | Edge Finishes (EDGE FINISH)</h2>
+<h2>Clear Epoxy or Polyurethane Lens</h2>
+<h2>CMYK Color Printing</h2>
+<h2>Non-Absorbent Substrate / Film Stock</h2>
+<h2>Paper block compressed, then edge painted or hot foiled</h2>
+<p>Outstanding for: PET/PVC/vinyl labels, laminated surfaces, or non-absorbent materials; doming directly on raw paper causes bleeding, fiber soaking, and edge lift. | Outstanding for: 600 gsm / 32 pt and above heavy cards or duplexed stocks; the thicker the card, the more spectacular the edge effect looks.</p>
+<p>Liquid edge coloring can show slight bleed onto the face of absorbent, light-colored, or fluorescent paper; physical testing is required.</p>
+<p>Design: Rounded corners and enclosed circular profiles help surface tension contain the resin; sharp corners, tight bottlenecks, or open borders leak. | Edge foiling, edge painting, and colored paper sandwich cores are entirely different techniques; orders must specify exactly which is wanted.</p>
+<p>Uses: Brand emblems, dimensional NFC decals, or selective accents; wrapping an entire business card in a thick resin bubble is not recommended. | Finishing: Typically no printing plate is needed; deliver an EDGE-COLOR spec (Pantone), the four-edge coverage map, and a cross-section.</p>
+<p>Finishing: DOMING outer boundary outline + UNDERPRINT color layer + transparency rendering; indicate if pre-applied sticker or direct pour.</p>
+<p>Strict Recommendation: If a client asks for "edge treatment," you must follow up: "Are we doing edge painting, edge foiling, or a colored core paper?" Their aesthetics, pricing, shelf-life, and pre-press setups differ entirely and cannot be judged from a 2D flat layout.</p>
+<h2>Debossing, Embossing & Blind Pressing: Know Which Way the Sheet Deforms</h2>
+<h2>12. Debossing depresses the sheet downward from the front; embossing pushes it up from the back. Monochromatic inkless processing is called blind debossing/embossing—do not submit white filled graphics in your production plate!</h2>
+<h2>Debossing (DEBOSS) | Embossing (EMBOSS) | Blind Pressing (BLIND)</h2>
+<h2>Depressed on front face | Raised on front face | No ink or metallic foil applied</h2>
+<h2>Back-side bruising slightly visible (can duplex to hide) | Corresponding depression on the back | Relies entirely on paper deformation, side light, and tactile feedback</h2>
+<h2>Process Plate: 100% solid vector | Process Plate: 100% solid vector | Process Plate: 100% solid vector</h2>
+<h2>Substrate Recommendations</h2>
+<p>Outstanding for: Ductile, thick, uncoated, or cotton-rich papers; paper fibers natively lock in structural deformation.</p>
+<p>Laminated coated boards can be debossed, but excessive depths cause film stretching, micro-cracking, or optical gloss spots; thin papers bleed bruises easily.</p>
+<p>Ultra-thick duplexed cardstocks can be blind pressed prior to gluing to completely hide back bruising; coordinate production sequence with the plant.</p>
+<p>Characters and fine paths cannot be infinitely scaled down; deep debossing, massive solids, and tight front/back elements must be physically proofed.</p>
+<h2>Inked Debossing vs. Blind Embossing/Debossing: Separate Color & Structure</h2>
+<h2>13. Inked debossing can be letterpress ink printing, register-then-deboss, or foil debossing; orders must explicitly specify the mechanical execution method.</h2>
+<h2>Inked Debossing (INKED DEBOSS) | Blind Embossing-Debossing (BLIND EMBOSS-DEBOSS)</h2>
+<h2>Color Ink/Deboss Plate | Blind Structure Plate</h2>
+<p>Best for: Cotton paper, uncoated thick cardstocks, soft fine art papers; delivers authentic letterpress-like tactile branding. | Best for: Beautifully colored, fiber-rich thick cardstocks; leverages ambient lighting to show paper deformation.</p>
+<p>Colors are influenced by paper absorption, fibers, and heavy press pressure; large solids are less uniform than offset. | Unsuited for overly intricate details and massive flat bas-reliefs, unless using multi-level CNC brass dies.</p>
+<p>Finishing: INK-COLOR ink plate + DEBOSS structural plate. If using a single plate to print-and-press, still specify Pantone color and target depth. | Finishing: BLIND-EMBOSS or BLIND-DEBOSS monochromatic plate; do not color elements white. Mockups must show directional arrows and cross-sections.</p>
+<p>Avoid overlapping fine text, negative shapes, and double-sided graphics over deep impression zones.</p>
+<p>Naming Recommendation: Never just write "emboss/deboss." Specify: "Front Deboss / Front Emboss / Blind Deboss / Inked Letterpress Deboss / Foil Deboss," and explicitly note if the back side is allowed to show bruising.</p>
+<h2>How to Submit Production Files for 11 Specialty Finishes</h2>
+<h2>14. Every finish requires a production plate and an illustrative rendering. The filenames below can be adopted as direct internal standards.</h2>
+<h2>Process | Recommended Filename | Production Plate Content | Mandatory Additions</h2>
+<h2>Hot Foiling: HOTFOIL.pdf | 100% flat vector path | Note foil swatch ID and side (front/back)</h2>
+<p>Cold Transfer: COLDFOIL.pdf + OVERPRINT.pdf | Adhesive layer + optional overprint colors | Specify metal base tone</p>
+<h2>Flat Spot UV: SPOTUV.pdf | Black & white hard-edged mask (Black = UV varnish area) | Specify laminate type</h2>
+<h2>Raised/3D UV: RAISEDUV.pdf | Black & white hard-edged mask | Specify target height or equipment</h2>
+<h2>Die-Cutting: DIELINE.pdf | Closed vector paths | Differentiate cut and score lines by spot color</h2>
+<h2>Laser Cutting: LASER.pdf | Layered paths for through-cuts vs. engraving | Specify material and scorch tolerance</h2>
+<h2>Resin Doming: DOMING.pdf | Enclosed boundary path + printed backing | Indicate if pre-applied sticker or direct pour</h2>
+<h2>Edge Coloring: EDGE-SPEC.pdf | Swatch ID + coverage map | Clarify ink, foil, or colored core sandwich</h2>
+<h2>Debossing: DEBOSS.pdf | Flat structural vector plate | Use arrows to indicate downward front-face force</h2>
+<h2>Blind Embossing: BLIND-EMBOSS.pdf | Flat structural vector plate | Explicitly state raised vs. depressed direction</h2>
+<h2>Inked Debossing: INK.pdf + DEBOSS.pdf | Ink layer + structural plate | Specify if same-die run or separate passes</h2>
+<p>Also Attach a Composite Mockup: Use golds, gloss reflections, shadows, or 3D angles to explain the finished card to clients, but clearly stamp "Mockup Only - Not for Production" on the page. Production plates must never be screen-grabbed or auto-traced from mockup artwork.</p>
+<h2>Final Checklist & Technical Foundations</h2>
+<h2>15. This checklist is designed to intercept the most common—and expensive—pre-press setup failures.</h2>
+<h2>Pre-Submission Top 10 Checks | Principal Public Sources</h2>
+<p>1. Artboard 96 × 60 mm; finished cut size 90 × 54 mm; identical coordinates across all files. | Adobe: PDF/X guidelines for minimizing color, font, and trapping variances; Acrobat Preflight checks for fonts, colors, transparencies, and resolutions.</p>
+<p>2. Fonts converted to curves or embedded; logos, text, lines, and finish paths remain purely vector. | Kurz: Hot stamping and cold transfer physics, compatible substrates, and the flat profile properties of cold transfer foil.</p>
+<p>3. Image assets carry genuine resolution; small pictures were not artificially scaled simply by editing dpi settings. | Duplo / Scodix: Spot UV and Raised/3D UV transparent polymer layering, thicknesses, and substrate adhesion capacities.</p>
+<p>4. CMYK print content aligns with CMYK or PDF/X specs; spot color names are unified with zero junk channels. | Trotec: Laser-cutting ignition risks; why PVC and chlorinated vinyls are strictly forbidden in standard CO2 laser machinery.</p>
+<p>5. Standalone plates for every specialty finish; zero gradients, transparencies, or layout guides left on production layers. | MOO / Jukebox: Super-thick stocks, sandwiched colored cores, and edge coloring chemistry.</p>
+<p>6. Specialty paths and color printing inks do not overlap unnecessarily; reserve register tolerances. | Sundance: Structural dynamics of debossing, embossing, and blind pressing on heavy paper stocks.</p>
+<p>7. Dielines are closed, single paths; laser cuts/engravings are separated by layer names; zero PVC enters CO2 lasers.</p>
+<p>8. Paper selection, laminations, surface tensions, board thicknesses, and foil/ink compatibility are factory-approved.</p>
+<p>9. Heavy debossing, double-sided impression areas, large foil solids, coarse rough stocks, and complex filigrees are physically proofed.</p>
+<p>10. Filenames list sides (Front/Back), finish types, versions, and dates; mockups are strictly stamped as non-production reference.</p>
+<p>The minimum line widths, clearances, and substrate compatibility recommendations in this manual are conservative starting baselines, not universal machine limitations. Tooling, specialized inks, foils, adhesives, polymers, surface treatments, and press sequences differ by manufacturer; physical prototyping with exact stocks is mandatory prior to volume production.</p>
+<p>References: Adobe PDF/X & Preflight | KURZ Hot Stamping / Cold Transfer | Duplo DuSense | Scodix | Trotec Laser | MOO Luxe | SunDance</p>
 HTML,
     ],
     [
         'slug' => 'foil-and-spot-uv-design-guide',
-        'title' => '名片热烫、冷烫与局部 UV 工艺设计指南',
+        'title' => 'Specialty Finishes: Spot UV & Foil Stamping Design Guide',
         'body' => <<<'HTML'
-<h2>名片表面工艺：先选效果，再做文件</h2>
-<h2>01. 三种工艺都能产生高光效果，但工作原理、适用设计和文件制作方式并不相同。</h2>
-<h2>热烫 HOT FOIL 冷烫 COLD FOIL 局部 UV SPOT UV</h2>
-<h2>INKPAVO INKPAVO</h2>
-<p>加热的金属版以压力将烫印层转移到纸面。 先印胶黏剂，再贴合转移层并固化，无需热 在指定区域施加透明 UV 光油并瞬间固化。</p>
-<p>压版。</p>
-<h2>金属感最强，可在纸面留下轻微压痕与触感 产生亮哑反差；厚 UV 还可形成明显凸起触</h2>
-<p>。 可表现细节、网点、大面积和叠印彩色金属 感。</p>
-<p>效果。</p>
-<h2>适合 Logo、文字、线条和中小面积图形。 适合 Logo、纹理、暗纹和局部图形，不产生</h2>
-<p>依赖纸张平整度、胶量、套准与后续覆膜/上 金属颜色。</p>
-<p>光。</p>
-<h2>先纠正一个概念</h2>
-<p>“烫金”并不等于金色：热烫和冷烫均可使用银色、彩色、哑光或镭射转移材料；局部 UV 则是透明光油。</p>
-<h2>热烫：设计稿与成品的对应关系</h2>
-<h2>02. 热烫的优势是金属质感和压印触感；主要风险是糊版、断线、填不满和大面积不均。</h2>
-<h2>成品示意</h2>
-<h2>A. 普通彩印层 B. 热烫专色层</h2>
-<h2>两份文件画板、方向和位置必须完全一致</h2>
-<p>金色区域由热烫专版决定，普通彩印稿中不要重复保留。</p>
-<h2>设计建议（保守起点） 纸张与生产注意</h2>
-<p>正向线条建议不小于 0.30 mm；反白缝隙建议不小于 0.40 mm。 粗纹纸需要更高压力或专用材料；细节和边缘通常不如平滑纸稳定。</p>
-<p>小字避免过细；中文细宋体、极细英文和密集网纹风险高。 大实地容易出现针孔、边缘毛糙或压力不均；应先做烫样。</p>
-<p>工艺层使用 100% 单色矢量，不用渐变、透明度、阴影或描边特效。 热压可能留下压痕；双面烫印及背靠背位置要评估互相影响。</p>
-<h2>冷烫：适合精细图形与彩色金属效果</h2>
-<h2>03. 冷烫先在指定区域施加胶黏剂，再转移金属层；银色底层还可叠印 CMYK 形成彩色金属。</h2>
-<h2>A. 胶黏剂专版 B. 叠印彩色稿</h2>
-<h2>结构示意</h2>
-<h2>金属转移层</h2>
-<h2>冷烫胶黏剂 LOGO LOGO</h2>
-<h2>工艺叠加方向</h2>
-<h2>彩色印刷（可在金属层上叠印）</h2>
-<h2>纸张 / 涂布层</h2>
-<h2>叠印颜色会受到银色金属底层影响，必须看实物样</h2>
-<h2>设计与文件注意 生产风险</h2>
-<p>胶黏剂版与彩印版必须同尺寸、同坐标、同方向，避免套准错位。 非涂布、吸收性强或明显纹理纸会影响胶层均匀和金属镜面感。</p>
-<p>细节能力通常优于传统热烫，但不能据此无限缩小线条或间距。 冷烫对胶量、固化、表面洁净度和套准敏感；大面积更要打样。</p>
-<p>需要彩色金属效果时，以银色冷烫为底，再制作独立叠印色稿。 后续覆膜、折叠、压痕或裁切前，需确认附着力与耐刮性。</p>
-<h2>局部 UV：亮哑反差比“到处都亮”更高级</h2>
-<h2>04. 局部 UV 是透明效果层。普通局部 UV 偏平滑高亮；厚 UV / 数码增效可形成更明显的凸起。</h2>
-<h2>成品示意：哑膜黑卡 + 透明局部 UV</h2>
-<h2>A. 普通彩印层 B. UV 黑白蒙版</h2>
-<h2>蒙版：黑色 = 做 UV；白色 = 不做 UV</h2>
-<p>UV 是透明高光，设计稿用黑色仅表示施工位置，不代表成品印黑色。</p>
-<h2>设计建议（保守起点） 套准与表面注意</h2>
-<p>UV 线条建议不小于 0.30 mm；相邻间隙建议至少 0.40-0.50 mm。 与小字、细线和彩印边缘完全重合时，微小套准误差会非常明显。</p>
-<p>蒙版必须是纯黑白硬边，不使用灰度、渐变、羽化、阴影或透明度。 通常搭配哑膜或哑光表面形成对比；未覆膜纸张需先确认附着力。</p>
-<p>UV 适合精选重点；大面积满版会削弱亮哑反差并增加表面缺陷风险。 避免 UV 直接压在裁切线、折线或高频摩擦位置，防止崩边和开裂。</p>
-<h2>正式设计稿：图层、页面与文件命名</h2>
-<h2>05. 不要把效果图当生产文件；普通彩印和每一种特殊工艺都应独立、可识别、可套准。</h2>
-<h2>推荐文件结构</h2>
-<p>01-正面-CMYK.pdf 02-正面-HOTFOIL.pdf 03-正面-COLDFOIL.pdf 04-正面-SPOTUV.pdf</p>
-<h2>普通彩印层 热烫专色层 冷烫胶版 UV 黑白蒙版</h2>
-<h2>设计稿画板示意</h2>
-<h2>彩色内容</h2>
-<h2>CMYK HOT FOIL COLD FOIL SPOT UV</h2>
-<p>四个页面必须使用相同的 96 × 60 mm 画板、相同坐标和相同方向；辅助线只作说明，不得印在最终成品上。</p>
-<h2>提交前检查：最容易出错的 12 项</h2>
-<h2>06. 以下任意一项未确认，都可能造成工艺错位、糊版、断线、附着不良或成品与效果图不一致。</h2>
-<h2>尺寸 坐标 颜色</h2>
-<h2>1 2 3</h2>
-<p>每个页面 96 × 60 mm，裁切后成品 90 × 54 m CMYK 与工艺层位置、方向、缩放比例完全一致。 工艺层为 100% 单色；不含 CMYK 混色、灰度或</p>
-<p>m。 RGB。</p>
-<h2>矢量 效果 细节</h2>
-<h2>4 5 6</h2>
-<p>文字转曲，线条与图形尽量使用矢量路径。 工艺层不使用渐变、羽化、透明、阴影或混合模 细线、小字、反白缝隙按供应商极限重新检查。</p>
-<p>式。</p>
-<h2>边缘 纸张 面积</h2>
-<h2>7 8 9</h2>
-<p>工艺不要紧贴裁切线；关键位置预留套准容差。 确认纸张平滑度、涂布、覆膜与工艺材料相容。 大实地、满版、密集网纹先做样，不能只看屏幕</p>
-<p>。</p>
-<h2>双面 命名 打样</h2>
-<h2>10 11 12</h2>
-<p>确认正反面方向，以及双面压痕或厚工艺互相影 正反面与 CMYK、HOTFOIL、COLDFOIL、SPOT 颜色、金属感、附着力、套准与触感以实物打样</p>
-<p>响。 UV 清楚命名。 为准。</p>
-<p>本文中的最小线条与间距属于偏保守的设计起点，并非所有设备通用标准；下单前必须索取实际供应商模板并打样。</p>
-<h2>工艺依据与使用说明</h2>
-<h2>07. 本指南将设备厂商公开工艺原理与面向名片生产的保守设计经验结合使用。</h2>
-<h2>主要依据</h2>
-<p>KURZ：热烫以热和压力转移装饰层；纸张表面粗糙度和材料特性会影响工艺调整。</p>
-<p>KURZ：冷烫先精确施加胶黏剂，再转移装饰层并固化；可表现精细细节、网点、大面积和叠印。</p>
-<p>Duplo：局部 UV 使用 UV 固化光油；生产需要黑白硬边蒙版，不应包含渐变或柔边。</p>
-<p>本指南中的 0.30 mm、0.40-0.50 mm 等为降低名片生产风险的建议起点，不是厂商统一设备极限。</p>
-<h2>公开资料</h2>
+<h2>Specialty Finishes: Choose Your Effect First, Build Your Files Second</h2>
+<h2>01. All three techniques create high-gloss accents, but their mechanical principles, ideal layouts, and file setups differ entirely.</h2>
+<h2>HOT FOIL (Hot Foiling) | COLD FOIL (Cold Transfer) | SPOT UV (Spot UV)</h2>
+<p>Heated metal dies use high pressure to stamp foil onto the paper. | First prints adhesive, then laminates the foil and cures it with UV, requiring no heated metal tooling. | Applies clear UV varnish to targeted areas and cures it instantly under UV lamps.</p>
+<h2>Deepest, brightest metallic finish; leaves a slight tactile indentation on the sheet. | Creates a striking gloss/matte contrast; raised UV can also produce a distinct 3D tactile relief.</h2>
+<p>Can render fine details, halftone screens, large solids, and overprinted multi-colored metallic effects. | Ideal for logos, repeating patterns, background textures, and selective graphic highlights (retaining paper color).</p>
+<p>Dependent on paper smoothness, adhesive laydown, register, and subsequent lamination/varnish options. | Does not introduce metallic pigments (clear gloss only).</p>
+<h2>Let's Correct a Core Concept</h2>
+<p>"Foil Stamping" does not just mean Gold: Both hot and cold foiling can employ silver, colored, matte, or holographic foils; Spot UV is a clear glossy coating.</p>
+<h2>Hot Foiling: Mapping Design Files to Finished Products</h2>
+<h2>02. The advantages of hot foiling are brilliant metallic luster and a slight tactile impression; the primary risks are clogged details, broken lines, incomplete transfers, and uneven solid coverage.</h2>
+<h2>Finished Card Illustration</h2>
+<h2>A. Standard Color Printing Layer | B. Standalone HOT FOIL Plate</h2>
+<h2>The canvas/artboard, orientation, and coordinates of both files must be identical.</h2>
+<p>The foiled zones are strictly governed by the standalone hot foil plate; do not leave duplicate colored elements in the CMYK print file.</p>
+<h2>Design Recommendations (Safe Baselines) | Paper & Production Notice</h2>
+<p>Positive lines should be ≥0.30 mm; negative/reversed gaps should be ≥0.40 mm. | Coarse textured stocks demand heavier pressure or specialty foils; fine details are less stable than on smooth stocks.</p>
+<p>Avoid overly thin characters; fine script fonts, tiny serif text, and dense cross-hatching carry high risks. | Large solids are prone to pinholes, jagged edges, or uneven pressure; always run physical hot stamp tests.</p>
+<p>Use 100% solid flat vectors for process plates; do not include gradients, transparencies, shadows, or outer glows. | Heated pressing leaves back bruising; evaluate back-to-back overlaps on double-sided foil designs.</p>
+<h2>Cold Transfer: Ideal for Fine Details and Colored Metallic Finishes</h2>
+<h2>03. Cold transfer prints adhesive on target areas first, then transfers a metallic layer; a silver foil base can be overprinted with CMYK to create an infinite spectrum of colored metallics.</h2>
+<h2>A. Cold Foil Adhesive Plate | B. Overprinted CMYK Color File</h2>
+<h2>Structural Cross-Section</h2>
+<h2>Metal Foil Transfer Layer</h2>
+<h2>Adhesive & Foil Layer: Cold Transfer Adhesive | LOGO | LOGO</h2>
+<h2>Process Overlay Sequence</h2>
+<h2>CMYK Color Printing (Overprinting directly on top of the foil)</h2>
+<h2>Paper / Lamination | Paper / Coating Layer</h2>
+<h2>Overprinted CMYK colors are visually influenced by the underlying silver foil reflection; physical proofing is mandatory.</h2>
+<h2>Design & File Setup Notes | Production Risks</h2>
+<p>Adhesive plates and CMYK files must align perfectly in size, coordinates, and orientation to prevent registration shifts. | Uncoated, highly absorbent, or rough textured stocks compromise adhesive uniformity and mirror reflectivity.</p>
+<p>Detail capabilities are generally superior to traditional hot stamping, but do not push strokes past minimum thresholds. | Cold transfer is highly sensitive to adhesive weights, UV curing power, surface cleanliness, and press tolerances; large solid floods demand physical proofs.</p>
+<p>When creating colored metallics, specify silver foil as the base and construct an independent CMYK overprint file. | Test foil adhesion and scratch-resistance before proceeding to lamination, folding, scoring, or trimming.</p>
+<h2>Spot UV: Glossy-on-Matte Contrasts Look More Premium Than Flood Gloss</h2>
+<h2>04. Spot UV is a transparent glossy effect layer. Standard Spot UV is flat and glossy; Raised/3D UV forms a thick dimensional tactile relief.</h2>
+<h2>Finished Business Card: Matte Laminated Black Board + Clear Spot UV</h2>
+<h2>A. CMYK Color Print File | B. Standalone SPOT UV Plate</h2>
+<h2>Mask Plate: Black = Execute Spot UV | White = Keep Matte (No UV)</h2>
+<p>Spot UV is clear and transparent; black in the process plate represents where varnish is applied, not that the element prints black.</p>
+<h2>Design Recommendations (Safe Baselines) | Registration & Surface Notice</h2>
+<p>UV line weights should be ≥0.30 mm; negative clearances should be ≥0.40-0.50 mm. | Aligning UV varnish perfectly over fine text or color printing margins leaves zero tolerance for register variance.</p>
+<p>Varnish plates must be pure black/white with hard edges; no grays, gradients, feathering, or soft drop shadows. | Strongest contrast is achieved over matte laminations or matte stocks; confirm varnish adhesion on raw papers first.</p>
+<p>Use Spot UV selectively for focus; full flood coats weaken the matte/gloss contrast and increase surface defect risks. | Avoid placing Spot UV varnish over trim lines, scores, or heavy friction points to prevent chipping or cracking.</p>
+<h2>Official Production Files: Layers, Pages, and File Naming</h2>
+<h2>05. Never submit visual mockups as production files. CMYK color prints and every specialty finish must be standalone, recognizable, and registrable.</h2>
+<h2>Recommended File Structure</h2>
+<p>01-Front-CMYK.pdf | 02-Front-HOTFOIL.pdf | 03-Front-COLDFOIL.pdf | 04-Front-SPOTUV.pdf</p>
+<h2>Standard Color Print | Standalone Hot Foil Plate | Cold Foil Adhesive Plate | Standalone Spot UV Varnish Plate</h2>
+<h2>Production Artboards Illustration</h2>
+<h2>Color Content</h2>
+<h2>CMYK | HOT FOIL | COLD FOIL | SPOT UV</h2>
+<p>All four pages must use identical 96 × 60 mm canvas sizes, identical coordinates, and identical directions. Auxiliary guides are for reference and must not print.</p>
+<h2>Final Checklist: Top 12 Most Common Pitfalls</h2>
+<h2>06. Overlooking any single item below can result in registration shifts, clogged plates, broken paths, poor adhesion, or a final product that fails to match your mockup.</h2>
+<h2>Trim Dimensions | Absolute Coordinates | Monochromatic Plates</h2>
+<h2>1 | 2 | 3</h2>
+<p>Each page is 96 × 60 mm, finished card is 90 × 54 mm. | CMYK elements and process plates align in position, scale, and direction. | Varnish/foil plates are 100% solid Black (K); no CMYK mixes, grays, or RGB.</p>
+<h2>Pure Vector Paths | Expanded Effects | Fine-Detail Thresholds</h2>
+<h2>4 | 5 | 6</h2>
+<p>All fonts are outlined; lines and designs are flat vector paths. | Zero gradients, feathering, transparency, or shadow effects in process plates. | Double-check positive lines, negative gaps, and font sizes against supplier parameters.</p>
+<h2>Margin Clearances | Substrate Compatibility | Flood Area Limits</h2>
+<h2>7 | 8 | 9</h2>
+<p>Keep processes away from trim lines; leave registering tolerance margins. | Confirm paper smoothness, coatings, laminations, and foil compatibility. | Proof large solids, full flood coatings, and dense patterns first; do not trust screens.</p>
+<h2>Double-Sided Interferences | Standard Filenames | Physical Prototyping</h2>
+<h2>10 | 11 | 12</h2>
+<p>Confirm front/back matching orientation and assess double-sided conflicts. | Organize files clearly with Front/Back and CMYK/HOTFOIL/COLDFOIL/SPOTUV. | Verify colors, metallic shine, varnish adhesion, and registration via physical proofing.</p>
+<p>The minimum line weights and clearances listed in this manual represent conservative starting baselines, not universal equipment tolerances. Always request actual supplier templates and run tests before printing.</p>
+<h2>Process Foundations & Usage Guide</h2>
+<h2>07. This guide combines manufacturer-published engineering principles with practical, conservative design guidelines for business card manufacturing.</h2>
+<h2>Principal Foundations:</h2>
+<p>KURZ: Hot stamping uses heat and physical pressure to transfer foil; paper surface roughness and substrate characteristics dictate press tuning.</p>
+<p>KURZ: Cold transfer applies adhesive with high precision, then laminates and cures the foil layer; highly capable of fine details, halftones, large solids, and overprinting.</p>
+<p>Duplo: Spot UV utilizes UV-curable varnish; production requires binary black/white hard-edged masks without soft edges or gradients.</p>
+<p>The 0.30 mm, 0.40-0.50 mm, etc., values specified are recommended baselines to reduce manufacturing failure rates and do not represent absolute equipment limits.</p>
+<h2>Public Resources:</h2>
 <p>KURZ Hot Stamping: https://www.kurz-graphics.com/en/hot-stamping/</p>
 <p>KURZ Cold Transfer: https://www.kurz-graphics.com/en/cold-transfer/</p>
 <p>Duplo Spot UV: https://www.duplointernational.com/article/spot-uv-discussing-its-benefits-and-how-it-works</p>

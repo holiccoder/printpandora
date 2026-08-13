@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Services\PricingService;
 use App\Services\ProductConfigurationService;
 use Database\Seeders\BusinessCardProductOptionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -151,6 +152,33 @@ class BusinessCardProductOptionsTest extends TestCase
                     data_get($config, 'options.special_finish.values.*.swatch_image'),
                 );
             }
+
+            $expectedBasePrices = [
+                'classic-metal-business-cards' => ['0_3_mm' => 4.6, '0_5_mm' => 5.4],
+                'premium-metal-business-cards' => ['0_3_mm' => 5.6, '0_5_mm' => 6.4],
+                'luxe-metal-business-cards' => ['0_3_mm' => 7.2, '0_5_mm' => 8],
+            ];
+
+            $this->assertSame('rule_based', data_get($config, 'pricing.mode'));
+            $this->assertSame([], data_get($config, 'pricing.scenarios'));
+            $this->assertSame(
+                ['0_3_mm', '0_5_mm'],
+                data_get($config, 'pricing.rules.*.match.thickness'),
+            );
+            $this->assertSame(
+                [$expectedBasePrices[$slug]['0_3_mm'], $expectedBasePrices[$slug]['0_5_mm']],
+                data_get($config, 'pricing.rules.*.pricing.basePrice'),
+            );
+            $this->assertSame(
+                [
+                    ['print_code_or_magnetic_stripe', 'special_finish'],
+                    ['print_code_or_magnetic_stripe', 'special_finish'],
+                ],
+                array_map(
+                    fn (array $rule): array => data_get($rule, 'pricing.processes.*.code'),
+                    data_get($config, 'pricing.rules', []),
+                ),
+            );
         }
 
         $expectedGalleries = [
@@ -181,6 +209,39 @@ class BusinessCardProductOptionsTest extends TestCase
             $this->assertSame($gallery[0], $product->featured_image);
             $this->assertSame($gallery[0], data_get($product->product_config, 'media.gallery_rules.0.primary'));
         }
+
+        $pricing = app(PricingService::class);
+        $classic = Product::where('slug', 'classic-metal-business-cards')->firstOrFail();
+        $premium = Product::where('slug', 'premium-metal-business-cards')->firstOrFail();
+
+        $this->assertSame(
+            230.0,
+            $pricing->calculate($classic->id, [
+                'quantity' => '50',
+                'thickness' => '0_3_mm',
+                'sizes' => '89x51_mm',
+                'print_code_or_magnetic_stripe' => 'no_print_code_or_magnetic_stripe',
+            ]),
+        );
+        $this->assertSame(
+            280.0,
+            $pricing->calculate($classic->id, [
+                'quantity' => '50',
+                'thickness' => '0_3_mm',
+                'sizes' => '89x51_mm',
+                'print_code_or_magnetic_stripe' => 'print_code',
+            ]),
+        );
+        $this->assertSame(
+            470.0,
+            $pricing->calculate($premium->id, [
+                'quantity' => '50',
+                'thickness' => '0_3_mm',
+                'sizes' => '89x51_mm',
+                'print_code_or_magnetic_stripe' => 'print_code',
+                'special_finish' => 'laser_engraving',
+            ]),
+        );
     }
 
     public function test_legacy_products_are_normalized_to_the_same_contract(): void

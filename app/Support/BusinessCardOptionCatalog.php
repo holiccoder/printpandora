@@ -215,30 +215,30 @@ final class BusinessCardOptionCatalog
         $groups = [
             'thickness' => self::group('Thickness', [
                 self::value($options, 'thickness', '0_3_mm', [
-                    'label' => '0.3mm',
-                    'description' => '0.3mm metal card thickness.',
+                    'label' => '12pt',
+                    'description' => '12pt metal card thickness.',
                     'swatch_image' => '/images/product-options/business-cards/swatches/metal/thickness-0-3mm.png',
                 ]),
                 self::value($options, 'thickness', '0_5_mm', [
-                    'label' => '0.5mm',
-                    'description' => '0.5mm metal card thickness.',
+                    'label' => '20pt',
+                    'description' => '20pt metal card thickness.',
                     'swatch_image' => '/images/product-options/business-cards/swatches/metal/thickness-0-5mm.png',
                 ]),
             ], '0_3_mm'),
             'sizes' => self::group('Size', [
                 self::value($options, 'sizes', '89x51_mm', [
-                    'label' => '89x51mm',
-                    'description' => '89x51mm metal business card.',
+                    'label' => '4x2 inches',
+                    'description' => '4x2 inches metal business card.',
                     'swatch_image' => '/images/product-options/business-cards/swatches/metal/size-89x51mm.png',
                 ]),
                 self::value($options, 'sizes', '85x54_mm', [
-                    'label' => '85x54mm',
-                    'description' => '85x54mm metal business card.',
+                    'label' => '3x2 inches',
+                    'description' => '3x2 inches metal business card.',
                     'swatch_image' => '/images/product-options/business-cards/swatches/metal/size-85x54mm.png',
                 ]),
                 self::value($options, 'sizes', '80x50_mm', [
-                    'label' => '80x50mm',
-                    'description' => '80x50mm metal business card.',
+                    'label' => '3x2 inches',
+                    'description' => '3x2 inches metal business card.',
                     'swatch_image' => '/images/product-options/business-cards/swatches/metal/size-80x50mm.png',
                 ]),
             ], '89x51_mm'),

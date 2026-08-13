@@ -295,6 +295,55 @@ class ProductConfigurationService
         return $this->fromLegacyOptions($product, $this->loadLegacyOptions($product) ?? []);
     }
 
+    /**
+     * Build fresh canonical pricing scenarios from the imported reference
+     * data for a product. This lets repeatable seeders refresh pricing on
+     * products that already have a canonical configuration.
+     *
+     * @return array<string, array<string, mixed>>|null
+     */
+    public function dynamicPricingScenarios(Product $product): ?array
+    {
+        $pricingData = $this->loadDynamicPricingData((string) $product->slug);
+
+        return $pricingData === null ? null : $this->scenariosFromDynamicPricing($pricingData);
+    }
+
+    /**
+     * Build thickness-matched pricing rules for metal business cards from the
+     * imported thin/thick reference files.
+     *
+     * @return array<int, array{id: string, match: array<string, string>, pricing: array<string, mixed>}>
+     */
+    public function dynamicPricingRules(Product $product): ?array
+    {
+        if (! in_array((string) $product->slug, [
+            'classic-metal-business-cards',
+            'premium-metal-business-cards',
+            'luxe-metal-business-cards',
+        ], true)) {
+            return null;
+        }
+
+        $scenarios = $this->dynamicPricingScenarios($product);
+
+        if ($scenarios === null) {
+            return null;
+        }
+
+        $rules = [];
+
+        foreach ($scenarios as $thickness => $scenario) {
+            $rules[] = [
+                'id' => "metal-thickness-{$thickness}",
+                'match' => ['thickness' => (string) $thickness],
+                'pricing' => $this->scenarioToPricingJson($scenario),
+            ];
+        }
+
+        return $rules === [] ? null : $rules;
+    }
+
     public function hasLegacyConfiguration(Product $product): bool
     {
         return $this->loadLegacyOptions($product) !== null;
@@ -1784,6 +1833,8 @@ class ProductConfigurationService
 
     private function processCode(string $name): string
     {
+        $normalizedName = strtolower(trim($name));
+
         if (str_contains($name, '圆角')) {
             return 'rounded_corners';
         }
@@ -1792,8 +1843,24 @@ class ProductConfigurationService
             return 'foil';
         }
 
-        if (strtolower($name) === 'nfc') {
+        if ($normalizedName === 'nfc') {
             return 'nfc';
+        }
+
+        if (
+            str_contains($name, '打码')
+            || str_contains($normalizedName, 'print code')
+        ) {
+            return 'print_code_or_magnetic_stripe';
+        }
+
+        if (
+            str_contains($name, '激光雕刻')
+            || str_contains($name, '彩印')
+            || str_contains($name, '镀色')
+            || str_contains($normalizedName, 'special finish')
+        ) {
+            return 'special_finish';
         }
 
         return Str::slug($name, '_') ?: 'process';
@@ -1849,11 +1916,32 @@ class ProductConfigurationService
             ],
             'luxe-cotton-business-card' => [
                 'dir' => '棉纸',
-                'files' => ['rectangle' => '棉纸-豪华型.json'],
+                'files' => ['rectangle' => '棉纸-奢华型.json'],
             ],
             'grand-cotton-business-card' => [
                 'dir' => '棉纸',
-                'files' => ['rectangle' => '棉纸-奢华型.json'],
+                'files' => ['rectangle' => '棉纸-豪华型.json'],
+            ],
+            'classic-metal-business-cards' => [
+                'dir' => '金卡',
+                'files' => [
+                    '0_3_mm' => '金卡-经典型薄款.json',
+                    '0_5_mm' => '金卡-经典型厚款.json',
+                ],
+            ],
+            'premium-metal-business-cards' => [
+                'dir' => '金卡',
+                'files' => [
+                    '0_3_mm' => '金卡-高级型薄款.json',
+                    '0_5_mm' => '金卡-高级型厚款.json',
+                ],
+            ],
+            'luxe-metal-business-cards' => [
+                'dir' => '金卡',
+                'files' => [
+                    '0_3_mm' => '金卡-豪华型薄款.json',
+                    '0_5_mm' => '金卡-豪华型厚款.json',
+                ],
             ],
             'standard-pvc-card' => [
                 'dir' => 'pvc',

@@ -1,0 +1,46 @@
+[
+    {
+        "id": 1,
+        "name": "Getting started with InkPavo",
+        "slug": "getting-started-with-inkpavo",
+        "description": "Learn how InkPavo works, choose the right products, and place your first order.",
+        "icon": "document-text",
+        "sort_order": 1,
+        "is_active": 1,
+        "created_at": "2026-08-13 02:35:40",
+        "updated_at": "2026-08-13 02:35:40"
+    },
+    {
+        "id": 2,
+        "name": "Account and orders",
+        "slug": "account-and-orders",
+        "description": "Manage your account, payments, order status, shipping, and delivery details.",
+        "icon": "shopping-bag",
+        "sort_order": 2,
+        "is_active": 1,
+        "created_at": "2026-08-13 02:35:40",
+        "updated_at": "2026-08-13 02:35:40"
+    },
+    {
+        "id": 3,
+        "name": "Your designs",
+        "slug": "your-designs",
+        "description": "Upload, prepare, proof, and manage artwork for your print projects.",
+        "icon": "palette",
+        "sort_order": 3,
+        "is_active": 1,
+        "created_at": "2026-08-13 02:35:40",
+        "updated_at": "2026-08-13 02:35:40"
+    },
+    {
+        "id": 4,
+        "name": "Design and Print knowledge",
+        "slug": "design-and-print-knowledge",
+        "description": "File formats, bleed, templates, special finishes, and production-ready artwork guidelines.",
+        "icon": "palette",
+        "sort_order": 4,
+        "is_active": 1,
+        "created_at": "2026-08-13 02:35:40",
+        "updated_at": "2026-08-13 02:35:40"
+    }
+]

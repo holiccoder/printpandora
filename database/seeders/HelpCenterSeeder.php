@@ -14,16 +14,51 @@ class HelpCenterSeeder extends Seeder
 
     public function run(): void
     {
-        $category = HelpCategory::firstOrCreate(
-            ['slug' => 'design-and-print-knowledge'],
+        $categories = [
             [
+                'slug' => 'getting-started-with-inkpavo',
+                'name' => 'Getting started with InkPavo',
+                'description' => 'Learn how InkPavo works, choose the right products, and place your first order.',
+                'icon' => 'document-text',
+                'sort_order' => 1,
+            ],
+            [
+                'slug' => 'account-and-orders',
+                'name' => 'Account and orders',
+                'description' => 'Manage your account, payments, order status, shipping, and delivery details.',
+                'icon' => 'shopping-bag',
+                'sort_order' => 2,
+            ],
+            [
+                'slug' => 'your-designs',
+                'name' => 'Your designs',
+                'description' => 'Upload, prepare, proof, and manage artwork for your print projects.',
+                'icon' => 'palette',
+                'sort_order' => 3,
+            ],
+            [
+                'slug' => 'design-and-print-knowledge',
                 'name' => 'Design and Print knowledge',
                 'description' => 'File formats, bleed, templates, special finishes, and production-ready artwork guidelines.',
                 'icon' => 'palette',
-                'sort_order' => 1,
-                'is_active' => true,
+                'sort_order' => 4,
             ],
-        );
+        ];
+
+        foreach ($categories as $definition) {
+            HelpCategory::updateOrCreate(
+                ['slug' => $definition['slug']],
+                [
+                    'name' => $definition['name'],
+                    'description' => $definition['description'],
+                    'icon' => $definition['icon'],
+                    'sort_order' => $definition['sort_order'],
+                    'is_active' => true,
+                ],
+            );
+        }
+
+        $category = HelpCategory::where('slug', 'design-and-print-knowledge')->firstOrFail();
 
         $articlesPath = storage_path('from-tool/help-center-articles.php');
 
@@ -31,7 +66,7 @@ class HelpCenterSeeder extends Seeder
             $articles = require $articlesPath;
 
             foreach ($articles as $index => $data) {
-                HelpArticle::firstOrCreate(
+                HelpArticle::updateOrCreate(
                     ['slug' => $data['slug']],
                     [
                         'category_id' => $category->id,
@@ -74,7 +109,7 @@ class HelpCenterSeeder extends Seeder
         ];
 
         foreach ($faqs as $index => $faq) {
-            Faq::firstOrCreate(
+            Faq::updateOrCreate(
                 ['question' => $faq['question']],
                 [
                     'category_id' => $category->id,

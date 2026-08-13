@@ -462,6 +462,29 @@ export default function ShopShow({
         }
 
         if (hasDynamicPricing && productOptions.pricing_rules?.[0]?.pricing) {
+            const defaultPricingOptions: Record<string, string | string[]> = {};
+
+            for (const group of dynamicOptionGroups) {
+                const value = dynamicOptionDefaults[group.key];
+
+                if (value !== undefined) {
+                    defaultPricingOptions[group.key] = value;
+                }
+            }
+
+            const firstTier = computeDynamicTiers(
+                { rules: productOptions.pricing_rules },
+                0,
+                0,
+                0,
+                0,
+                defaultPricingOptions,
+            )[0];
+
+            if (firstTier) {
+                return `${firstTier.qty} cards from $${firstTier.currentPrice}`;
+            }
+
             const pricing = productOptions.pricing_rules[0].pricing;
             const total = Math.round(pricing.startQuantity * pricing.basePrice);
 
@@ -469,7 +492,12 @@ export default function ShopShow({
         }
 
         return productOptions?.starting_price_text;
-    }, [hasDynamicPricing, productOptions]);
+    }, [
+        dynamicOptionDefaults,
+        dynamicOptionGroups,
+        hasDynamicPricing,
+        productOptions,
+    ]);
 
     const staticRecommendedQty = (() => {
         if (hasDynamicPricing) {
@@ -578,6 +606,7 @@ export default function ShopShow({
         }
 
         setFoilTab(tab);
+        markInteracted('special_finish');
         if (tab === 'hot') {
             if (
                 selectedSpecialFinish &&
@@ -658,6 +687,15 @@ export default function ShopShow({
     const [selectedDesignService, setSelectedDesignService] = useState<
         string | null
     >(null);
+    const [interactedGroups, setInteractedGroups] = useState<
+        Record<string, boolean>
+    >({});
+
+    const markInteracted = (groupKey: string) => {
+        setInteractedGroups((current) =>
+            current[groupKey] ? current : { ...current, [groupKey]: true },
+        );
+    };
 
     const hasSelection = usesDynamicOptions
         ? dynamicOptionGroups.every((group) => {
@@ -991,6 +1029,8 @@ export default function ShopShow({
                     : [...selected, value],
             };
         });
+
+        markInteracted(groupKey);
     }
 
     function openCustomSizeModal() {
@@ -1008,6 +1048,7 @@ export default function ShopShow({
         }
 
         setSelectedSize(value);
+        markInteracted('sizes');
     }
 
     function confirmCustomSize() {
@@ -1034,6 +1075,7 @@ export default function ShopShow({
             height: Number(height.toFixed(2)),
         });
         setSelectedSize('custom');
+        markInteracted('sizes');
         if (usesDynamicOptions) {
             setSelectedDynamicOptions((current) => ({
                 ...current,
@@ -1096,6 +1138,8 @@ export default function ShopShow({
                 setSelectedEmbossingOrSignaturePanel(value);
                 break;
         }
+
+        markInteracted(group);
     }
 
     const sizeLabel =
@@ -1482,7 +1526,8 @@ export default function ShopShow({
                                                 <ChoiceTile
                                                     key={s.id}
                                                     active={
-                                                        selectedSize === s.id
+                                                        selectedSize === s.id &&
+                                                        interactedGroups['sizes']
                                                     }
                                                     onClick={() =>
                                                         selectSize(s.id)
@@ -1499,7 +1544,10 @@ export default function ShopShow({
                                                             <span
                                                                 className={`block rounded-sm border-2 ${
                                                                     selectedSize ===
-                                                                    s.id
+                                                                        s.id &&
+                                                                    interactedGroups[
+                                                                        'sizes'
+                                                                    ]
                                                                         ? 'border-[#800020] bg-[#800020]/5'
                                                                         : 'border-neutral-300 bg-neutral-50'
                                                                 } ${shape === 'rect' ? 'h-8 w-14' : 'size-10'}`}
@@ -1540,7 +1588,10 @@ export default function ShopShow({
                                     {finishes.map((f: any) => (
                                         <ChoiceTile
                                             key={f.id}
-                                            active={selectedFinish === f.id}
+                                            active={
+                                                selectedFinish === f.id &&
+                                                interactedGroups['paper_finish']
+                                            }
                                             onClick={() =>
                                                 selectOption(
                                                     'paper_finish',
@@ -1584,7 +1635,8 @@ export default function ShopShow({
                                             <ChoiceTile
                                                 key={cn.id}
                                                 active={
-                                                    selectedCorners === cn.id
+                                                    selectedCorners === cn.id &&
+                                                    interactedGroups['corners']
                                                 }
                                                 onClick={() =>
                                                     selectOption(
@@ -1616,7 +1668,10 @@ export default function ShopShow({
                                                                     : 'rounded-sm'
                                                             } ${
                                                                 selectedCorners ===
-                                                                cn.id
+                                                                    cn.id &&
+                                                                interactedGroups[
+                                                                    'corners'
+                                                                ]
                                                                     ? 'border-[#800020] bg-[#800020]/5'
                                                                     : 'border-neutral-300 bg-neutral-50'
                                                             }`}
@@ -1639,7 +1694,10 @@ export default function ShopShow({
                                     {textures.map((t: any) => (
                                         <ChoiceTile
                                             key={t.id}
-                                            active={selectedTexture === t.id}
+                                            active={
+                                                selectedTexture === t.id &&
+                                                interactedGroups['texture']
+                                            }
                                             onClick={() =>
                                                 selectOption('texture', t.id)
                                             }
@@ -1681,7 +1739,10 @@ export default function ShopShow({
                                                     key={f.id}
                                                     active={
                                                         selectedSpecialFinish ===
-                                                        f.id
+                                                            f.id &&
+                                                        interactedGroups[
+                                                            'special_finish'
+                                                        ]
                                                     }
                                                     onClick={() =>
                                                         selectOption(
@@ -1777,7 +1838,10 @@ export default function ShopShow({
                                                                 key={f.id}
                                                                 active={
                                                                     selectedSpecialFinish ===
-                                                                    f.id
+                                                                        f.id &&
+                                                                    interactedGroups[
+                                                                        'special_finish'
+                                                                    ]
                                                                 }
                                                                 disabled={
                                                                     glossLimited
@@ -1819,7 +1883,10 @@ export default function ShopShow({
                                                             key={f.id}
                                                             active={
                                                                 selectedSpecialFinish ===
-                                                                f.id
+                                                                    f.id &&
+                                                                interactedGroups[
+                                                                    'special_finish'
+                                                                ]
                                                             }
                                                             onClick={() =>
                                                                 selectOption(
@@ -1863,7 +1930,10 @@ export default function ShopShow({
                                                     key={s.id}
                                                     active={
                                                         selectedSpecialFinishOnSides ===
-                                                        s.id
+                                                            s.id &&
+                                                        interactedGroups[
+                                                            'special_finish_on_sides'
+                                                        ]
                                                     }
                                                     onClick={() =>
                                                         selectOption(
@@ -1906,7 +1976,10 @@ export default function ShopShow({
                                     {embossingList.map((e: any) => (
                                         <ChoiceTile
                                             key={e.id}
-                                            active={selectedEmbossing === e.id}
+                                            active={
+                                                selectedEmbossing === e.id &&
+                                                interactedGroups['embossing']
+                                            }
                                             onClick={() =>
                                                 selectOption('embossing', e.id)
                                             }
@@ -1946,7 +2019,10 @@ export default function ShopShow({
                                                     key={e.id}
                                                     active={
                                                         selectedEmbossingOrSignaturePanel ===
-                                                        e.id
+                                                            e.id &&
+                                                        interactedGroups[
+                                                            'embossing_or_signature_panel'
+                                                        ]
                                                     }
                                                     onClick={() =>
                                                         selectOption(
@@ -2573,6 +2649,15 @@ function DynamicOptionGroups({
     onCustomSizeSelect?: () => void;
 }) {
     const [foilTab, setFoilTab] = useState<'hot' | 'cold'>('hot');
+    const [interactedGroups, setInteractedGroups] = useState<
+        Record<string, boolean>
+    >({});
+
+    const markInteracted = (groupKey: string) => {
+        setInteractedGroups((current) =>
+            current[groupKey] ? current : { ...current, [groupKey]: true },
+        );
+    };
 
     return (
         <>
@@ -2602,7 +2687,10 @@ function DynamicOptionGroups({
                                         <button
                                             key={tab}
                                             type="button"
-                                            onClick={() => setFoilTab(tab)}
+                                            onClick={() => {
+                                                setFoilTab(tab);
+                                                markInteracted('special_finish');
+                                            }}
                                             className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
                                                 foilTab === tab
                                                     ? 'bg-white text-[#800020] shadow-sm'
@@ -2621,11 +2709,13 @@ function DynamicOptionGroups({
                             {values.map((value) => {
                                 const code = optionValueCode(value);
                                 const selectedValue = selected[group.key];
-                                const active =
+                                const isSelected =
                                     group.type === 'multi_select'
                                         ? Array.isArray(selectedValue) &&
                                           selectedValue.includes(code)
                                         : selectedValue === code;
+                                const active =
+                                    isSelected && interactedGroups[group.key];
                                 const swatch = value.swatch_image;
                                 const isCustomSize =
                                     group.key === 'sizes' && code === 'custom';
@@ -2637,11 +2727,17 @@ function DynamicOptionGroups({
                                     <ChoiceTile
                                         key={code}
                                         active={active}
-                                        onClick={() =>
-                                            isCustomSize && onCustomSizeSelect
-                                                ? onCustomSizeSelect()
-                                                : onSelect(group.key, code)
-                                        }
+                                        onClick={() => {
+                                            if (
+                                                isCustomSize &&
+                                                onCustomSizeSelect
+                                            ) {
+                                                onCustomSizeSelect();
+                                            } else {
+                                                onSelect(group.key, code);
+                                            }
+                                            markInteracted(group.key);
+                                        }}
                                     >
                                         <div className="flex min-h-16 items-center justify-center">
                                             {isSvg ? (

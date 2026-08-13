@@ -17,7 +17,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
         [
             'slug' => 'classic-metal-business-cards',
             'name' => 'Classic Metal Business Cards',
-            'subtitle' => '0.3mm or 0.5mm metal business cards in three sizes.',
+            'subtitle' => '12pt or 20pt metal business cards in three sizes.',
             'description' => '<p>Make a lasting impression with durable metal business cards in your choice of thickness, size, and code or stripe finish.</p>',
         ],
         [
@@ -203,18 +203,32 @@ class BusinessCardProductOptionsSeeder extends Seeder
 
                 if (! $product->exists) {
                     $product->forceFill([
-                        'name' => $definition['name'],
-                        'subtitle' => $definition['subtitle'],
-                        'description' => $definition['description'],
                         'price_line' => null,
                         'is_active' => true,
                     ]);
                 }
 
+                $product->name = $definition['name'];
+                $product->subtitle = $definition['subtitle'];
+                $product->description = $definition['description'];
                 $product->product_category_id = $metalCategory->getKey();
                 $product->save();
 
                 $config = $configuration->canonicalConfig($product);
+                $pricingRules = $configuration->dynamicPricingRules($product);
+
+                if ($pricingRules !== null) {
+                    $pricing = is_array($config['pricing'] ?? null) ? $config['pricing'] : [];
+                    $config['pricing'] = array_replace($pricing, [
+                        'mode' => 'rule_based',
+                        'currency' => (string) ($pricing['currency'] ?? 'USD'),
+                        'total_rounding' => (string) ($pricing['total_rounding'] ?? 'nearest_integer'),
+                        'rules' => $pricingRules,
+                        'scenarios' => [],
+                        'quantity_price_table' => [],
+                    ]);
+                }
+
                 $gallery = self::METAL_GALLERIES[$definition['slug']];
                 $config['media']['gallery'] = $gallery;
 
@@ -282,6 +296,20 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 }
 
                 $config = $configuration->canonicalConfig($product);
+                $pricingScenarios = $configuration->dynamicPricingScenarios($product);
+
+                if ($pricingScenarios !== null) {
+                    $pricing = is_array($config['pricing'] ?? null) ? $config['pricing'] : [];
+                    $config['pricing'] = array_replace($pricing, [
+                        'mode' => 'rule_based',
+                        'currency' => (string) ($pricing['currency'] ?? 'USD'),
+                        'total_rounding' => (string) ($pricing['total_rounding'] ?? 'nearest_integer'),
+                        'rules' => [],
+                        'scenarios' => $pricingScenarios,
+                        'quantity_price_table' => [],
+                    ]);
+                }
+
                 $config['media']['gallery'] = $gallery;
 
                 $galleryRules = is_array($config['media']['gallery_rules'] ?? null)
