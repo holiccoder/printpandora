@@ -290,6 +290,10 @@ class ProductImageService
             return $path;
         }
 
+        if (Str::startsWith($path, ['/images/products/', 'images/products/'])) {
+            return $this->imageResolver->url($path);
+        }
+
         if (Str::startsWith($path, '/')) {
             return $path;
         }

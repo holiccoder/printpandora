@@ -23,7 +23,15 @@ class ProductImageResolver
             return 'data:image/svg+xml,'.rawurlencode($image);
         }
 
-        if (Str::startsWith($image, ['http://', 'https://', '//', '/', 'data:'])) {
+        if (Str::startsWith($image, ['http://', 'https://', '//', 'data:'])) {
+            return $image;
+        }
+
+        if (Str::startsWith($image, ['/images/products/', 'images/products/'])) {
+            return $this->publicProductImageUrl($image);
+        }
+
+        if (Str::startsWith($image, '/')) {
             return $image;
         }
 
@@ -76,6 +84,39 @@ class ProductImageResolver
     public function failureMarkerPath(string $webpPath): string
     {
         return $this->normaliseStoragePath($webpPath).ProductImagePolicy::FAILURE_MARKER_SUFFIX;
+    }
+
+    private function publicProductImageUrl(string $image): string
+    {
+        $url = '/'.ltrim(str_replace('\\', '/', $image), '/');
+        $parsedUrl = parse_url($url);
+        $path = is_array($parsedUrl) && is_string($parsedUrl['path'] ?? null)
+            ? $parsedUrl['path']
+            : $url;
+
+        $extension = strtolower((string) pathinfo($path, PATHINFO_EXTENSION));
+
+        if (! in_array($extension, ['jpg', 'jpeg', 'png'], true)) {
+            return $url;
+        }
+
+        $webpPath = preg_replace('/\\.(?:jpe?g|png)$/i', '.webp', $path);
+
+        if (! is_string($webpPath) || ! is_file(public_path(ltrim($webpPath, '/')))) {
+            return $url;
+        }
+
+        $suffix = '';
+
+        if (is_array($parsedUrl) && isset($parsedUrl['query'])) {
+            $suffix .= '?'.$parsedUrl['query'];
+        }
+
+        if (is_array($parsedUrl) && isset($parsedUrl['fragment'])) {
+            $suffix .= '#'.$parsedUrl['fragment'];
+        }
+
+        return $webpPath.$suffix;
     }
 
     public function status(string $path, string $disk = 'public'): string
