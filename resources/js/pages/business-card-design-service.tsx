@@ -79,53 +79,7 @@ export default function BusinessCardDesignService() {
                 </div>
             </section>
 
-            {/* 2. Design Process -------------------------------------------- */}
-            <section className="border-t border-neutral-100 bg-white">
-                <div className="mx-auto grid max-w-7xl items-start gap-10 px-4 py-12 lg:grid-cols-2 lg:gap-12 lg:py-16">
-                    <div>
-                        <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
-                            {c.process_heading}
-                        </h2>
-                        <ol className="mt-6 space-y-4">
-                            {c.process_steps.map((step: string, i: number) => (
-                                <li key={i} className="flex gap-4">
-                                    <span
-                                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-                                        style={{ backgroundColor: ACCENT }}
-                                    >
-                                        {i + 1}
-                                    </span>
-                                    <p className="text-sm leading-relaxed text-neutral-700">
-                                        {step}
-                                    </p>
-                                </li>
-                            ))}
-                        </ol>
-                    </div>
-                    <div>
-                        <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
-                            {c.notes_heading}
-                        </h2>
-                        <ol className="mt-6 space-y-4">
-                            {c.notes.map((note: string, i: number) => (
-                                <li key={i} className="flex gap-4">
-                                    <span
-                                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-                                        style={{ backgroundColor: ACCENT }}
-                                    >
-                                        {i + 1}
-                                    </span>
-                                    <p className="text-sm leading-relaxed text-neutral-700">
-                                        {note}
-                                    </p>
-                                </li>
-                            ))}
-                        </ol>
-                    </div>
-                </div>
-            </section>
-
-            {/* 3. Terms & Notes + Form -------------------------------------- */}
+            {/* 2. Terms & Notes + Form -------------------------------------- */}
             <section
                 id="design-form"
                 className="scroll-mt-20 border-t border-neutral-100"
@@ -223,6 +177,52 @@ export default function BusinessCardDesignService() {
                     </Link>
                 </p>
             </section>
+            {/* 3. Design Process -------------------------------------------- */}
+            <section className="border-t border-neutral-100 bg-white">
+                <div className="mx-auto grid max-w-7xl items-start gap-10 px-4 py-12 lg:grid-cols-2 lg:gap-12 lg:py-16">
+                    <div>
+                        <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
+                            {c.process_heading}
+                        </h2>
+                        <ol className="mt-6 space-y-4">
+                            {c.process_steps.map((step: string, i: number) => (
+                                <li key={i} className="flex gap-4">
+                                    <span
+                                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                                        style={{ backgroundColor: ACCENT }}
+                                    >
+                                        {i + 1}
+                                    </span>
+                                    <p className="text-sm leading-relaxed text-neutral-700">
+                                        {step}
+                                    </p>
+                                </li>
+                            ))}
+                        </ol>
+                    </div>
+                    <div>
+                        <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
+                            {c.notes_heading}
+                        </h2>
+                        <ol className="mt-6 space-y-4">
+                            {c.notes.map((note: string, i: number) => (
+                                <li key={i} className="flex gap-4">
+                                    <span
+                                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                                        style={{ backgroundColor: ACCENT }}
+                                    >
+                                        {i + 1}
+                                    </span>
+                                    <p className="text-sm leading-relaxed text-neutral-700">
+                                        {note}
+                                    </p>
+                                </li>
+                            ))}
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
         </StorefrontLayout>
     );
 }

@@ -310,7 +310,7 @@ export function StorefrontHeader({
                                         activeCategory != null &&
                                         cat.label === activeCategory;
                                     const triggerCls = cn(
-                                        'relative flex h-12 items-center px-4 text-base font-medium transition-colors',
+                                        'relative flex h-12 items-center px-4 text-base font-medium transition-colors first:pl-0',
                                         isActive ? ACTIVE_GREEN : INACTIVE_GREY,
                                     );
 
