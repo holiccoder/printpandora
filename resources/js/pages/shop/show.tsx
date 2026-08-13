@@ -606,7 +606,7 @@ export default function ShopShow({
         }
 
         setFoilTab(tab);
-        markInteracted('special_finish');
+        markInteracted();
         if (tab === 'hot') {
             if (
                 selectedSpecialFinish &&
@@ -687,14 +687,10 @@ export default function ShopShow({
     const [selectedDesignService, setSelectedDesignService] = useState<
         string | null
     >(null);
-    const [interactedGroups, setInteractedGroups] = useState<
-        Record<string, boolean>
-    >({});
+    const [hasInteracted, setHasInteracted] = useState(false);
 
-    const markInteracted = (groupKey: string) => {
-        setInteractedGroups((current) =>
-            current[groupKey] ? current : { ...current, [groupKey]: true },
-        );
+    const markInteracted = () => {
+        setHasInteracted(true);
     };
 
     const hasSelection = usesDynamicOptions
@@ -1030,7 +1026,7 @@ export default function ShopShow({
             };
         });
 
-        markInteracted(groupKey);
+        markInteracted();
     }
 
     function openCustomSizeModal() {
@@ -1048,7 +1044,7 @@ export default function ShopShow({
         }
 
         setSelectedSize(value);
-        markInteracted('sizes');
+        markInteracted();
     }
 
     function confirmCustomSize() {
@@ -1075,7 +1071,7 @@ export default function ShopShow({
             height: Number(height.toFixed(2)),
         });
         setSelectedSize('custom');
-        markInteracted('sizes');
+        markInteracted();
         if (usesDynamicOptions) {
             setSelectedDynamicOptions((current) => ({
                 ...current,
@@ -1139,7 +1135,7 @@ export default function ShopShow({
                 break;
         }
 
-        markInteracted(group);
+        markInteracted();
     }
 
     const sizeLabel =
@@ -1527,7 +1523,7 @@ export default function ShopShow({
                                                     key={s.id}
                                                     active={
                                                         selectedSize === s.id &&
-                                                        interactedGroups['sizes']
+                                                        hasInteracted
                                                     }
                                                     onClick={() =>
                                                         selectSize(s.id)
@@ -1545,9 +1541,7 @@ export default function ShopShow({
                                                                 className={`block rounded-sm border-2 ${
                                                                     selectedSize ===
                                                                         s.id &&
-                                                                    interactedGroups[
-                                                                        'sizes'
-                                                                    ]
+                                                                    hasInteracted
                                                                         ? 'border-[#800020] bg-[#800020]/5'
                                                                         : 'border-neutral-300 bg-neutral-50'
                                                                 } ${shape === 'rect' ? 'h-8 w-14' : 'size-10'}`}
@@ -1590,7 +1584,7 @@ export default function ShopShow({
                                             key={f.id}
                                             active={
                                                 selectedFinish === f.id &&
-                                                interactedGroups['paper_finish']
+                                                hasInteracted
                                             }
                                             onClick={() =>
                                                 selectOption(
@@ -1636,7 +1630,7 @@ export default function ShopShow({
                                                 key={cn.id}
                                                 active={
                                                     selectedCorners === cn.id &&
-                                                    interactedGroups['corners']
+                                                    hasInteracted
                                                 }
                                                 onClick={() =>
                                                     selectOption(
@@ -1669,9 +1663,7 @@ export default function ShopShow({
                                                             } ${
                                                                 selectedCorners ===
                                                                     cn.id &&
-                                                                interactedGroups[
-                                                                    'corners'
-                                                                ]
+                                                                hasInteracted
                                                                     ? 'border-[#800020] bg-[#800020]/5'
                                                                     : 'border-neutral-300 bg-neutral-50'
                                                             }`}
@@ -1696,7 +1688,7 @@ export default function ShopShow({
                                             key={t.id}
                                             active={
                                                 selectedTexture === t.id &&
-                                                interactedGroups['texture']
+                                                hasInteracted
                                             }
                                             onClick={() =>
                                                 selectOption('texture', t.id)
@@ -1740,9 +1732,7 @@ export default function ShopShow({
                                                     active={
                                                         selectedSpecialFinish ===
                                                             f.id &&
-                                                        interactedGroups[
-                                                            'special_finish'
-                                                        ]
+                                                        hasInteracted
                                                     }
                                                     onClick={() =>
                                                         selectOption(
@@ -1839,9 +1829,7 @@ export default function ShopShow({
                                                                 active={
                                                                     selectedSpecialFinish ===
                                                                         f.id &&
-                                                                    interactedGroups[
-                                                                        'special_finish'
-                                                                    ]
+                                                                    hasInteracted
                                                                 }
                                                                 disabled={
                                                                     glossLimited
@@ -1884,9 +1872,7 @@ export default function ShopShow({
                                                             active={
                                                                 selectedSpecialFinish ===
                                                                     f.id &&
-                                                                interactedGroups[
-                                                                    'special_finish'
-                                                                ]
+                                                                hasInteracted
                                                             }
                                                             onClick={() =>
                                                                 selectOption(
@@ -1931,9 +1917,7 @@ export default function ShopShow({
                                                     active={
                                                         selectedSpecialFinishOnSides ===
                                                             s.id &&
-                                                        interactedGroups[
-                                                            'special_finish_on_sides'
-                                                        ]
+                                                        hasInteracted
                                                     }
                                                     onClick={() =>
                                                         selectOption(
@@ -1978,7 +1962,7 @@ export default function ShopShow({
                                             key={e.id}
                                             active={
                                                 selectedEmbossing === e.id &&
-                                                interactedGroups['embossing']
+                                                hasInteracted
                                             }
                                             onClick={() =>
                                                 selectOption('embossing', e.id)
@@ -2020,9 +2004,7 @@ export default function ShopShow({
                                                     active={
                                                         selectedEmbossingOrSignaturePanel ===
                                                             e.id &&
-                                                        interactedGroups[
-                                                            'embossing_or_signature_panel'
-                                                        ]
+                                                        hasInteracted
                                                     }
                                                     onClick={() =>
                                                         selectOption(
@@ -2649,14 +2631,10 @@ function DynamicOptionGroups({
     onCustomSizeSelect?: () => void;
 }) {
     const [foilTab, setFoilTab] = useState<'hot' | 'cold'>('hot');
-    const [interactedGroups, setInteractedGroups] = useState<
-        Record<string, boolean>
-    >({});
+    const [hasInteracted, setHasInteracted] = useState(false);
 
-    const markInteracted = (groupKey: string) => {
-        setInteractedGroups((current) =>
-            current[groupKey] ? current : { ...current, [groupKey]: true },
-        );
+    const markInteracted = () => {
+        setHasInteracted(true);
     };
 
     return (
@@ -2689,7 +2667,7 @@ function DynamicOptionGroups({
                                             type="button"
                                             onClick={() => {
                                                 setFoilTab(tab);
-                                                markInteracted('special_finish');
+                                                markInteracted();
                                             }}
                                             className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
                                                 foilTab === tab
@@ -2715,7 +2693,7 @@ function DynamicOptionGroups({
                                           selectedValue.includes(code)
                                         : selectedValue === code;
                                 const active =
-                                    isSelected && interactedGroups[group.key];
+                                    isSelected && hasInteracted;
                                 const swatch = value.swatch_image;
                                 const isCustomSize =
                                     group.key === 'sizes' && code === 'custom';
@@ -2736,7 +2714,7 @@ function DynamicOptionGroups({
                                             } else {
                                                 onSelect(group.key, code);
                                             }
-                                            markInteracted(group.key);
+                                            markInteracted();
                                         }}
                                     >
                                         <div className="flex min-h-16 items-center justify-center">
