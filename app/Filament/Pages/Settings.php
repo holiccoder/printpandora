@@ -190,6 +190,7 @@ class Settings extends Page implements HasForms
                                             ->columns(2)
                                             ->defaultItems(0)
                                             ->collapsible()
+                                            ->collapsed()
                                             ->reorderable()
                                             ->addActionLabel('添加轮播图')
                                             ->itemLabel(function (array $state): string {
