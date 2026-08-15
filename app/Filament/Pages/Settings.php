@@ -53,8 +53,13 @@ class Settings extends Page implements HasForms
         $storedHomepage = $settings->homepage();
         $resolvedSlides = Arr::get($homepage, 'hero_carousel.slides', []);
         $storedSlides = Arr::get($storedHomepage, 'hero_carousel.slides', []);
+        $globalChrome = $content->section('global_chrome', []);
+        $storedGlobalChrome = $settings->globalChrome();
+        $resolvedAnnouncementMessages = Arr::get($globalChrome, 'announcement_bar.default_messages', []);
+        $storedAnnouncementMessages = Arr::get($storedGlobalChrome, 'announcement_bar.default_messages', []);
 
         $slides = [];
+        $announcementMessages = [];
 
         foreach (is_array($resolvedSlides) ? $resolvedSlides : [] as $index => $slide) {
             if (! is_array($slide)) {
@@ -67,6 +72,21 @@ class Settings extends Page implements HasForms
 
             $slides[] = [
                 ...array_replace($slide, $storedSlide),
+                'original_index' => $index,
+            ];
+        }
+
+        foreach (is_array($resolvedAnnouncementMessages) ? $resolvedAnnouncementMessages : [] as $index => $message) {
+            if (! is_array($message)) {
+                continue;
+            }
+
+            $storedMessage = is_array($storedAnnouncementMessages[$index] ?? null)
+                ? $storedAnnouncementMessages[$index]
+                : [];
+
+            $announcementMessages[] = [
+                ...array_replace($message, $storedMessage),
                 'original_index' => $index,
             ];
         }
@@ -92,6 +112,21 @@ class Settings extends Page implements HasForms
                     'prev_button_label' => Arr::get($homepage, 'hero_carousel.prev_button_label', 'Previous slide'),
                     'next_button_label' => Arr::get($homepage, 'hero_carousel.next_button_label', 'Next slide'),
                     'slides' => $slides,
+                ],
+            ],
+            'global_chrome' => [
+                'announcement_bar' => [
+                    'region_aria_label' => Arr::get(
+                        $globalChrome,
+                        'announcement_bar.region_aria_label',
+                        'Announcements',
+                    ),
+                    'default_interval_ms' => Arr::get(
+                        $globalChrome,
+                        'announcement_bar.default_interval_ms',
+                        5000,
+                    ),
+                    'default_messages' => $announcementMessages,
                 ],
             ],
         ]);
@@ -126,6 +161,48 @@ class Settings extends Page implements HasForms
                             ->label('首页设置')
                             ->icon('heroicon-o-home')
                             ->schema([
+                                Section::make('顶部广告条')
+                                    ->description('设置网站顶部广告条的轮播间隔、广告文本和链接。')
+                                    ->schema([
+                                        TextInput::make('global_chrome.announcement_bar.region_aria_label')
+                                            ->label('无障碍标签')
+                                            ->required()
+                                            ->maxLength(255),
+                                        TextInput::make('global_chrome.announcement_bar.default_interval_ms')
+                                            ->label('轮播间隔（毫秒）')
+                                            ->numeric()
+                                            ->minValue(1000)
+                                            ->maxValue(60000)
+                                            ->required(),
+                                        Repeater::make('global_chrome.announcement_bar.default_messages')
+                                            ->label('广告内容')
+                                            ->schema([
+                                                Hidden::make('original_index'),
+                                                TextInput::make('text')
+                                                    ->label('广告文本')
+                                                    ->required()
+                                                    ->maxLength(255),
+                                                TextInput::make('href')
+                                                    ->label('链接')
+                                                    ->required()
+                                                    ->maxLength(500),
+                                            ])
+                                            ->columns(2)
+                                            ->defaultItems(0)
+                                            ->collapsible()
+                                            ->collapsed(false)
+                                            ->reorderable()
+                                            ->addActionLabel('添加广告内容')
+                                            ->itemLabel(function (array $state): string {
+                                                $text = trim((string) ($state['text'] ?? ''));
+
+                                                return $text !== ''
+                                                    ? Str::limit($text, 60)
+                                                    : '广告内容';
+                                            })
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(2),
                                 Section::make('首页 SEO 设置')
                                     ->description('以下内容将用于首页标题和元描述。')
                                     ->schema([
@@ -190,6 +267,7 @@ class Settings extends Page implements HasForms
                                             ->columns(2)
                                             ->defaultItems(0)
                                             ->collapsible()
+                                            ->collapsed()
                                             ->reorderable()
                                             ->addActionLabel('添加轮播图')
                                             ->itemLabel(function (array $state): string {
@@ -217,7 +295,19 @@ class Settings extends Page implements HasForms
         $homepage = is_array($state['homepage'] ?? null) ? $state['homepage'] : [];
         $currentSlides = Arr::get($content->section('home_page', []), 'hero_carousel.slides', []);
         $submittedSlides = Arr::get($homepage, 'hero_carousel.slides', []);
+        $globalChrome = is_array($state['global_chrome'] ?? null) ? $state['global_chrome'] : [];
+        $currentAnnouncementMessages = Arr::get(
+            $content->section('global_chrome', []),
+            'announcement_bar.default_messages',
+            [],
+        );
+        $submittedAnnouncementMessages = Arr::get(
+            $globalChrome,
+            'announcement_bar.default_messages',
+            [],
+        );
         $slides = [];
+        $announcementMessages = [];
 
         foreach (is_array($submittedSlides) ? $submittedSlides : [] as $slide) {
             if (! is_array($slide)) {
@@ -233,11 +323,33 @@ class Settings extends Page implements HasForms
             $slides[] = array_replace($baseSlide, $slide);
         }
 
+        foreach (is_array($submittedAnnouncementMessages) ? $submittedAnnouncementMessages : [] as $message) {
+            if (! is_array($message)) {
+                continue;
+            }
+
+            $originalIndex = filter_var($message['original_index'] ?? null, FILTER_VALIDATE_INT);
+            $baseMessage = is_int($originalIndex) && is_array($currentAnnouncementMessages[$originalIndex] ?? null)
+                ? $currentAnnouncementMessages[$originalIndex]
+                : [];
+
+            unset($message['original_index']);
+            $announcementMessages[] = array_replace($baseMessage, $message);
+        }
+
         Arr::set($homepage, 'hero_carousel.slides', $slides);
+        Arr::set($globalChrome, 'announcement_bar.default_messages', $announcementMessages);
+
+        $announcementInterval = Arr::get($globalChrome, 'announcement_bar.default_interval_ms');
+
+        if (is_numeric($announcementInterval)) {
+            Arr::set($globalChrome, 'announcement_bar.default_interval_ms', (int) $announcementInterval);
+        }
 
         $settings->saveSections([
             'general' => is_array($state['general'] ?? null) ? $state['general'] : [],
             'homepage' => $homepage,
+            'global_chrome' => $globalChrome,
         ]);
 
         $content->forget();
