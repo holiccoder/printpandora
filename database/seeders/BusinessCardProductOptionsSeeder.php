@@ -281,8 +281,23 @@ class BusinessCardProductOptionsSeeder extends Seeder
                     $product->forceFill(self::PVC_PRODUCT_DETAILS[$slug])->save();
                 }
 
+                $config = $configuration->canonicalConfig($product);
+                $pricingScenarios = $configuration->dynamicPricingScenarios($product);
+
+                if ($pricingScenarios !== null) {
+                    $pricing = is_array($config['pricing'] ?? null) ? $config['pricing'] : [];
+                    $config['pricing'] = array_replace($pricing, [
+                        'mode' => 'rule_based',
+                        'currency' => (string) ($pricing['currency'] ?? 'USD'),
+                        'total_rounding' => (string) ($pricing['total_rounding'] ?? 'nearest_integer'),
+                        'rules' => [],
+                        'scenarios' => $pricingScenarios,
+                        'quantity_price_table' => [],
+                    ]);
+                }
+
                 $product->forceFill([
-                    'product_config' => $configuration->canonicalConfig($product),
+                    'product_config' => $config,
                 ])->save();
 
                 $configuration->syncProductProjection($product->fresh());

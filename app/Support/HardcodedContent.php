@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Services\ProductImageResolver;
+use App\Services\SiteSettingsService;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
@@ -10,10 +12,9 @@ use Illuminate\Support\Facades\File;
  * Loads and caches the storefront content tree from
  * `content/hardcoded-content.json`.
  *
- * The JSON is the single source of truth for hardcoded strings, image
- * URLs, and link hrefs in the React storefront. It's shared with the
- * frontend via Inertia and consumed component-side through the
- * `useContent()` hook.
+ * The JSON provides the storefront fallback content. Administrator-managed
+ * settings overlay editable sections before the tree is shared with the
+ * frontend via Inertia and consumed through the `useContent()` hook.
  *
  * Caching is keyed by the file's last-modified timestamp, so saving the
  * JSON file invalidates the cache automatically on the next request —
@@ -22,10 +23,13 @@ use Illuminate\Support\Facades\File;
 class HardcodedContent
 {
     /** In-process memo to avoid hitting the cache backend twice per request. */
+    /** @var array<array-key, mixed>|null */
     protected ?array $memo = null;
 
     /**
      * Return the full content tree, with dev-only metadata keys stripped.
+     *
+     * @return array<array-key, mixed>
      */
     public function all(): array
     {
@@ -37,17 +41,37 @@ class HardcodedContent
         // filemtime() can be opcache-stale on Windows; clear it explicitly.
         clearstatcache(true, $path);
         $mtime = @filemtime($path) ?: 0;
+        $settings = app(SiteSettingsService::class);
+        $settingsVersion = $settings->cacheVersion();
 
         return $this->memo = Cache::remember(
-            "hardcoded-content:v1:{$mtime}",
+            "hardcoded-content:v2:{$mtime}:{$settingsVersion}",
             3600,
-            function () use ($path): array {
+            function () use ($path, $settings): array {
                 $raw = File::get($path);
                 $decoded = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+                $content = $this->stripDevMetadata($decoded);
+                $homepageOverrides = $settings->homepage();
 
-                return $this->stripDevMetadata($decoded);
+                if ($homepageOverrides !== []) {
+                    $content['home_page'] = $settings->mergeHomepage(
+                        is_array($content['home_page'] ?? null) ? $content['home_page'] : [],
+                        $homepageOverrides,
+                    );
+                }
+
+                return $this->resolveHomepageImages($content);
             }
         );
+    }
+
+    /**
+     * Clear the per-request memo after settings are saved in a Livewire
+     * request, and keep the service deterministic in tests.
+     */
+    public function forget(): void
+    {
+        $this->memo = null;
     }
 
     /**
@@ -72,6 +96,9 @@ class HardcodedContent
      * Recursively strip any key whose name starts with `_` (e.g. `_meta`,
      * `_source_file`, `_source_files`, `_note`). Numeric keys are kept so
      * lists of objects survive intact.
+     *
+     * @param  array<array-key, mixed>  $data
+     * @return array<array-key, mixed>
      */
     protected function stripDevMetadata(array $data): array
     {
@@ -84,5 +111,35 @@ class HardcodedContent
         }
 
         return $out;
+    }
+
+    /**
+     * Resolve uploaded carousel source paths to their preferred WebP URL,
+     * while leaving repository-managed absolute URLs untouched.
+     *
+     * @param  array<string, mixed>  $content
+     * @return array<string, mixed>
+     */
+    protected function resolveHomepageImages(array $content): array
+    {
+        $slides = Arr::get($content, 'home_page.hero_carousel.slides', []);
+
+        if (! is_array($slides)) {
+            return $content;
+        }
+
+        $resolver = app(ProductImageResolver::class);
+
+        foreach ($slides as $index => $slide) {
+            if (! is_array($slide) || ! is_string($slide['image_url'] ?? null)) {
+                continue;
+            }
+
+            $content['home_page']['hero_carousel']['slides'][$index]['image_url'] = $resolver->url(
+                $slide['image_url'],
+            );
+        }
+
+        return $content;
     }
 }

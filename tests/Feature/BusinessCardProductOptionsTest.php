@@ -90,6 +90,54 @@ class BusinessCardProductOptionsTest extends TestCase
             '/images/product-options/business-cards/swatches/pvc-print-code.png',
             data_get(Product::where('slug', 'basic-pvc-card')->firstOrFail()->product_config, 'options.print_code.values.1.swatch_image'),
         );
+
+        $expectedPvcPricing = [
+            'basic-pvc-card' => 0.6,
+            'standard-pvc-card' => 1.6,
+            'premium-pvc-card' => 10,
+        ];
+
+        foreach ($expectedPvcPricing as $slug => $basePrice) {
+            $config = Product::where('slug', $slug)->firstOrFail()->product_config;
+
+            $this->assertSame('rule_based', data_get($config, 'pricing.mode'));
+            $this->assertSame($basePrice, data_get($config, 'pricing.scenarios.rectangle.base_price_per_card'));
+            $this->assertSame(50, data_get($config, 'pricing.scenarios.rectangle.start_quantity'));
+        }
+
+        $pricing = app(PricingService::class);
+
+        $this->assertSame(
+            30.0,
+            $pricing->calculate(Product::where('slug', 'basic-pvc-card')->firstOrFail()->id, [
+                'quantity' => '50',
+                'paper_finish' => 'matte',
+                'print_code' => 'no_print_code',
+            ]),
+        );
+        $this->assertSame(
+            43.0,
+            $pricing->calculate(Product::where('slug', 'basic-pvc-card')->firstOrFail()->id, [
+                'quantity' => '50',
+                'paper_finish' => 'matte',
+                'print_code' => 'print_code',
+            ]),
+        );
+        $this->assertSame(
+            80.0,
+            $pricing->calculate(Product::where('slug', 'standard-pvc-card')->firstOrFail()->id, [
+                'quantity' => '50',
+                'paper_finish' => 'matte',
+                'print_code_or_signature_stripe' => 'no_print_code_or_signature_stripe',
+            ]),
+        );
+        $this->assertSame(
+            500.0,
+            $pricing->calculate(Product::where('slug', 'premium-pvc-card')->firstOrFail()->id, [
+                'quantity' => '50',
+                'print_code' => 'no_print_code',
+            ]),
+        );
     }
 
     public function test_missing_metal_products_are_created_under_business_cards(): void

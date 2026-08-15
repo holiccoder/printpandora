@@ -1943,13 +1943,17 @@ class ProductConfigurationService
                     '0_5_mm' => '金卡-豪华型厚款.json',
                 ],
             ],
-            'standard-pvc-card' => [
+            'basic-pvc-card' => [
                 'dir' => 'pvc',
                 'files' => ['rectangle' => 'pvc0.38.json'],
             ],
-            'premium-pvc-card' => [
+            'standard-pvc-card' => [
                 'dir' => 'pvc',
                 'files' => ['rectangle' => 'pvc0.76.json'],
+            ],
+            'premium-pvc-card' => [
+                'dir' => 'pvc',
+                'files' => ['rectangle' => 'pvc0.84.json'],
             ],
             'super-business-cards' => [
                 'dir' => '350g精品纸',

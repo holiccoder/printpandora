@@ -1,5 +1,5 @@
 {
-  "packageName": "0.38mm pvc",
+  "packageName": "0.38pvc",
   "basePrice": 0.6,
   "startQuantity": 50,
   "paperRates": {
@@ -16,7 +16,7 @@
   "processes": [
     {
       "name": "打码",
-      "markup": 0.24,
+      "markup": 0.25,
       "rates": {
         "100": 50,
         "200": 70.83,
@@ -28,6 +28,78 @@
         "5000": 83.33,
         "10000": 83.33
       }
+    }
+  ],
+  "rows": [
+    {
+      "quantity": 50,
+      "preUnitPrice": 0.85,
+      "unitPrice": 0.85,
+      "totalPrice": 42.5,
+      "effectiveDiscountRate": 0
+    },
+    {
+      "quantity": 100,
+      "preUnitPrice": 0.85,
+      "unitPrice": 0.445,
+      "totalPrice": 44.498,
+      "effectiveDiscountRate": 47.6494
+    },
+    {
+      "quantity": 200,
+      "preUnitPrice": 0.85,
+      "unitPrice": 0.2529,
+      "totalPrice": 50.585,
+      "effectiveDiscountRate": 70.2441
+    },
+    {
+      "quantity": 500,
+      "preUnitPrice": 0.85,
+      "unitPrice": 0.2225,
+      "totalPrice": 111.26,
+      "effectiveDiscountRate": 73.8212
+    },
+    {
+      "quantity": 1000,
+      "preUnitPrice": 0.85,
+      "unitPrice": 0.2021,
+      "totalPrice": 202.075,
+      "effectiveDiscountRate": 76.2265
+    },
+    {
+      "quantity": 2000,
+      "preUnitPrice": 0.85,
+      "unitPrice": 0.1921,
+      "totalPrice": 384.11,
+      "effectiveDiscountRate": 77.4053
+    },
+    {
+      "quantity": 3000,
+      "preUnitPrice": 0.85,
+      "unitPrice": 0.1869,
+      "totalPrice": 560.565,
+      "effectiveDiscountRate": 78.0171
+    },
+    {
+      "quantity": 4000,
+      "preUnitPrice": 0.85,
+      "unitPrice": 0.1769,
+      "totalPrice": 707.58,
+      "effectiveDiscountRate": 79.1888
+    },
+    {
+      "quantity": 5000,
+      "preUnitPrice": 0.85,
+      "unitPrice": 0.1717,
+      "totalPrice": 858.475,
+      "effectiveDiscountRate": 79.8006
+    },
+    {
+      "quantity": 10000,
+      "preUnitPrice": 0.85,
+      "unitPrice": 0.1617,
+      "totalPrice": 1616.75,
+      "effectiveDiscountRate": 80.9794
     }
   ]
 }

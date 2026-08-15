@@ -1,5 +1,5 @@
 {
-  "packageName": "0.76mm pvc",
+  "packageName": "0.76pvc",
   "basePrice": 1.6,
   "startQuantity": 50,
   "paperRates": {
@@ -16,7 +16,7 @@
   "processes": [
     {
       "name": "打码",
-      "markup": 0.24,
+      "markup": 0.25,
       "rates": {
         "100": 50,
         "200": 70.83,
@@ -28,21 +28,78 @@
         "5000": 83.33,
         "10000": 83.33
       }
+    }
+  ],
+  "rows": [
+    {
+      "quantity": 50,
+      "preUnitPrice": 1.85,
+      "unitPrice": 1.85,
+      "totalPrice": 92.5,
+      "effectiveDiscountRate": 0
     },
     {
-      "name": "烫金",
-      "markup": 0.4,
-      "rates": {
-        "100": 50,
-        "200": 70.83,
-        "500": 75,
-        "1000": 79.17,
-        "2000": 79.17,
-        "3000": 81.25,
-        "4000": 81.25,
-        "5000": 83.33,
-        "10000": 83.33
-      }
+      "quantity": 100,
+      "preUnitPrice": 1.85,
+      "unitPrice": 0.985,
+      "totalPrice": 98.5,
+      "effectiveDiscountRate": 46.7568
+    },
+    {
+      "quantity": 200,
+      "preUnitPrice": 1.85,
+      "unitPrice": 0.5529,
+      "totalPrice": 110.585,
+      "effectiveDiscountRate": 70.1122
+    },
+    {
+      "quantity": 500,
+      "preUnitPrice": 1.85,
+      "unitPrice": 0.4225,
+      "totalPrice": 211.25,
+      "effectiveDiscountRate": 77.1622
+    },
+    {
+      "quantity": 1000,
+      "preUnitPrice": 1.85,
+      "unitPrice": 0.3721,
+      "totalPrice": 372.075,
+      "effectiveDiscountRate": 79.8878
+    },
+    {
+      "quantity": 2000,
+      "preUnitPrice": 1.85,
+      "unitPrice": 0.3521,
+      "totalPrice": 704.15,
+      "effectiveDiscountRate": 80.9689
+    },
+    {
+      "quantity": 3000,
+      "preUnitPrice": 1.85,
+      "unitPrice": 0.3469,
+      "totalPrice": 1040.625,
+      "effectiveDiscountRate": 81.25
+    },
+    {
+      "quantity": 4000,
+      "preUnitPrice": 1.85,
+      "unitPrice": 0.3269,
+      "totalPrice": 1307.5,
+      "effectiveDiscountRate": 82.3311
+    },
+    {
+      "quantity": 5000,
+      "preUnitPrice": 1.85,
+      "unitPrice": 0.3217,
+      "totalPrice": 1608.375,
+      "effectiveDiscountRate": 82.6122
+    },
+    {
+      "quantity": 10000,
+      "preUnitPrice": 1.85,
+      "unitPrice": 0.2916,
+      "totalPrice": 2915.95,
+      "effectiveDiscountRate": 84.2381
     }
   ]
 }

@@ -169,10 +169,10 @@ class PricingService
             return null;
         }
 
-        $sizeIndex = $this->findIndex($productOptions['sizes'] ?? [], $pricingOptions['sizes'] ?? '');
-        $finishIndex = $this->findIndex($productOptions['paper_finish'] ?? [], $pricingOptions['paper_finish'] ?? '');
-        $cornersIndex = $this->findIndex($productOptions['corners'] ?? [], $pricingOptions['corners'] ?? '');
-        $specialIndex = $this->findIndex($productOptions['special_finish'] ?? [], $pricingOptions['special_finish'] ?? '');
+        $sizeIndex = $this->optionIndexOrDefault($productOptions, 'sizes', $pricingOptions['sizes'] ?? '');
+        $finishIndex = $this->optionIndexOrDefault($productOptions, 'paper_finish', $pricingOptions['paper_finish'] ?? '');
+        $cornersIndex = $this->optionIndexOrDefault($productOptions, 'corners', $pricingOptions['corners'] ?? '');
+        $specialIndex = $this->optionIndexOrDefault($productOptions, 'special_finish', $pricingOptions['special_finish'] ?? '');
         $quantity = (int) ($pricingOptions['quantity'] ?? 0);
 
         if ($sizeIndex === null || $finishIndex === null || $cornersIndex === null || $quantity <= 0) {
@@ -186,7 +186,7 @@ class PricingService
             return null;
         }
 
-        $tiers = $this->computeTiers($scenario, $cornersIndex, $specialIndex ?? 0);
+        $tiers = $this->computeTiers($scenario, $cornersIndex, $specialIndex ?? 0, $pricingOptions);
 
         foreach ($tiers as $tier) {
             if ($tier['qty'] === $quantity) {
@@ -334,6 +334,42 @@ class PricingService
         ];
 
         if (
+            $code === 'print_code_or_magnetic_stripe'
+            && array_key_exists('print_code_or_magnetic_stripe', $options)
+        ) {
+            $values = is_array($options['print_code_or_magnetic_stripe'])
+                ? $options['print_code_or_magnetic_stripe']
+                : [$options['print_code_or_magnetic_stripe']];
+
+            foreach ($values as $value) {
+                if (! in_array($this->normalizeOptionValue($value), $negativeValues, true)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (
+            $code === 'print_code'
+            || $code === 'print_code_or_magnetic_stripe'
+            || str_contains($rawName, 'print code')
+            || str_contains($rawName, '打码')
+        ) {
+            foreach (['print_code', 'print_code_or_signature_stripe', 'print_code_or_magnetic_stripe'] as $key) {
+                $values = is_array($options[$key] ?? null) ? $options[$key] : [$options[$key] ?? ''];
+
+                foreach ($values as $value) {
+                    if ($this->normalizeOptionValue($value) === 'print_code') {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        if (
             $code === 'rounded_corners'
             || str_contains($rawName, 'rounded')
             || str_contains($rawName, '圆角')
@@ -403,6 +439,24 @@ class PricingService
     }
 
     /**
+     * Products with a single pricing scenario do not need every standard
+     * business-card option group. Treat an omitted group as the first/default
+     * scenario index instead of falling back to the static product price.
+     *
+     * @param  array<string, mixed>  $productOptions
+     */
+    private function optionIndexOrDefault(array $productOptions, string $key, mixed $value): ?int
+    {
+        $list = $productOptions[$key] ?? [];
+
+        if (! is_array($list) || $list === []) {
+            return 0;
+        }
+
+        return $this->findIndex($list, $value);
+    }
+
+    /**
      * Find the index of an option whose code matches the selected value.
      *
      * @param  array<int, array<string, mixed>>  $list
@@ -451,7 +505,7 @@ class PricingService
      * @param  array<string, mixed>  $scenario
      * @return array<int, array<string, mixed>>
      */
-    private function computeTiers(array $scenario, int $cornersIndex, int $specialFinishIndex): array
+    private function computeTiers(array $scenario, int $cornersIndex, int $specialFinishIndex, array $options = []): array
     {
         $quantities = array_values(array_unique(array_merge(
             [$scenario['startQuantity']],
@@ -465,10 +519,18 @@ class PricingService
         $roundedProcess = $this->findProcess($scenario['processes'] ?? [], '圆角');
         $foilProcess = $this->findProcess($scenario['processes'] ?? [], ['烫金', 'nfc']);
 
+        $printCodeProcess = $this->findProcess($scenario['processes'] ?? [], [
+            'print_code',
+            'print_code_or_magnetic_stripe',
+            '打码',
+            '鎵撶爜',
+        ]);
+
         $rounded = $cornersIndex === 1 && $roundedProcess !== null;
         $foiled = $specialFinishIndex > 0 && $foilProcess !== null;
+        $printCodeSelected = $printCodeProcess !== null && $this->processIsSelected($printCodeProcess, $options);
 
-        return array_map(function ($qty) use ($scenario, $rounded, $foiled, $roundedProcess, $foilProcess) {
+        return array_map(function ($qty) use ($scenario, $rounded, $foiled, $printCodeSelected, $roundedProcess, $foilProcess, $printCodeProcess) {
             $isStart = $qty === $scenario['startQuantity'];
             $unit = (float) $scenario['basePrice'];
 
@@ -492,6 +554,15 @@ class PricingService
                 if (! $isStart) {
                     $rate = (float) ($foilProcess['rates'][$qty] ?? 0);
                     $unit -= (float) $foilProcess['markup'] * ($rate / 100);
+                }
+            }
+
+            if ($printCodeSelected) {
+                $unit += (float) $printCodeProcess['markup'];
+
+                if (! $isStart) {
+                    $rate = (float) ($printCodeProcess['rates'][$qty] ?? 0);
+                    $unit -= (float) $printCodeProcess['markup'] * ($rate / 100);
                 }
             }
 

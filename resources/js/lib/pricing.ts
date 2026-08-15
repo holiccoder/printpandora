@@ -76,6 +76,12 @@ function hasPositiveSelection(value: string | string[] | undefined): boolean {
     );
 }
 
+function hasPrintCodeSelection(value: string | string[] | undefined): boolean {
+    const values = Array.isArray(value) ? value : [value ?? ''];
+
+    return values.some((item) => normalizeOptionValue(item) === 'print-code');
+}
+
 function normalizeSelectedOptions(
     selected: Record<string, string | string[]>,
 ): Record<string, string | string[]> {
@@ -215,9 +221,15 @@ export function computeDynamicTiers(
                   specialFinish,
               )
         : specialFinishIndex > 0;
-    const printCodeSelected = hasPositiveSelection(
-        selectedOptions.print_code_or_magnetic_stripe,
-    );
+    const printCodeSelected = [
+        selectedOptions.print_code,
+        selectedOptions.print_code_or_signature_stripe,
+    ].some(hasPrintCodeSelection);
+    const printCodeOrMagneticStripeSelected =
+        selectedOptions.print_code_or_magnetic_stripe !== undefined &&
+        hasPositiveSelection(selectedOptions.print_code_or_magnetic_stripe);
+    const effectivePrintCodeSelected =
+        printCodeSelected || printCodeOrMagneticStripeSelected;
     const nfcSelected = hasPositiveSelection(selectedOptions.with_nfc);
 
     const rounded = roundedSelected && roundedProcess != null;
@@ -242,7 +254,7 @@ export function computeDynamicTiers(
             }
         }
 
-        if (printCodeSelected && printCodeProcess) {
+        if (effectivePrintCodeSelected && printCodeProcess) {
             unit += printCodeProcess.markup;
 
             if (!isStart) {

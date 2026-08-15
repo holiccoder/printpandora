@@ -50,6 +50,7 @@ $NPM_BIN run build
 
 echo "==> 5/6 执行数据库迁移（不重置数据）"
 $PHP_BIN artisan migrate --force
+$PHP_BIN artisan db:seed --class=BusinessCardProductOptionsSeeder --force
 
 echo "==> 6/6 重建配置 / 路由 / 视图与优化缓存"
 $PHP_BIN artisan optimize
