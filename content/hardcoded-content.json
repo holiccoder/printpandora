@@ -406,8 +406,8 @@
                     "subheadline": "Exquisite letterpress craftsmanship that turns every connection into a lasting impression.",
                     "cta_text": "EXPLORE COLLECTION",
                     "cta_href": "/shop",
-                    "image_url": "/images/home/home-banner1.png",
-                    "alt": "Embossed white business cards with clean typography on a light textured surface",
+                    "image_url": "/images/home/homepage-carousel-01.webp",
+                    "alt": "White embossed business cards arranged on a light textured desk with greenery and a pen",
                     "features": [
                         {
                             "icon": "card",
@@ -431,8 +431,8 @@
                     "subheadline": "Thicker than your average card, with finishes that turn first impressions into lasting ones.",
                     "cta_text": "Shop business cards",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/home-banner2.png",
-                    "alt": "Premium business cards with metallic foil edges on a modern desk"
+                    "image_url": "/images/home/homepage-carousel-02.webp",
+                    "alt": "Minimal white embossed business cards displayed on a dark stone desk"
                 },
                 {
                     "eyebrow": "LETTERPRESS CLASSICS",
@@ -440,8 +440,8 @@
                     "subheadline": "Deep impression letterpress cards that demand to be held and felt.",
                     "cta_text": "DISCOVER LETTERPRESS",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/home-banner3.png",
-                    "alt": "Elegant deep debossed letterpress card showcasing physical depth and fine paper texture"
+                    "image_url": "/images/home/homepage-carousel-03.webp",
+                    "alt": "Stacks of white business cards with vivid turquoise painted edges on a light surface"
                 },
                 {
                     "eyebrow": "METALLIC FOIL STAMPING",
@@ -449,8 +449,8 @@
                     "subheadline": "Add brilliant gold, silver, or copper foil accents that catch the light and command attention.",
                     "cta_text": "EXPLORE FOIL SHINE",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/home-banner4.png",
-                    "alt": "Gleaming gold hot foil stamped design on premium heavy dark paper stock"
+                    "image_url": "/images/home/homepage-carousel-04.webp",
+                    "alt": "Black business cards with silver foil and embossed lettering on a dark textured surface"
                 },
                 {
                     "eyebrow": "100% PURE COTTON",
@@ -458,8 +458,8 @@
                     "subheadline": "Naturally textured, sustainably sourced cotton stock that feels exceptionally soft yet durable.",
                     "cta_text": "SHOP COTTON CARDS",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/home-banner5.png",
-                    "alt": "Extremely thick cotton business cards with deep ink impression and raw premium edges"
+                    "image_url": "/images/home/homepage-carousel-05.webp",
+                    "alt": "Blue and white business cards beside a gold watch and pen on a dark desk"
                 },
                 {
                     "eyebrow": "CUSTOM DIE-CUT SHAPES",
@@ -467,8 +467,8 @@
                     "subheadline": "Choose from rounded corners, custom circles, or unique geometric silhouettes to define your brand.",
                     "cta_text": "EXPLORE SHAPES",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/home-banner6.png",
-                    "alt": "Distinctive geometric custom shaped cards fanned out on a natural background"
+                    "image_url": "/images/home/homepage-carousel-06.webp",
+                    "alt": "Colorful brochures and folded marketing materials arranged against graphic circles"
                 },
                 {
                     "eyebrow": "CUSTOM STICKERS & LABELS",
@@ -476,8 +476,8 @@
                     "subheadline": "Waterproof, scratch-resistant vinyl stickers and elegant product labels with precision die-cutting.",
                     "cta_text": "DESIGN STICKERS",
                     "cta_href": "/shop?cat=stickers-and-labels",
-                    "image_url": "/images/home/home-banner7.png",
-                    "alt": "High-quality custom shaped die-cut vinyl stickers with rich colors and matte finish"
+                    "image_url": "/images/home/homepage-carousel-07.webp",
+                    "alt": "Assorted colorful printed cards and illustrated flash cards on white display tables"
                 },
                 {
                     "eyebrow": "BUSINESS MARKETING KIT",
@@ -485,8 +485,8 @@
                     "subheadline": "Premium flyers, brochures, and catalogs crafted to turn casual readers into loyal customers.",
                     "cta_text": "SHOP MARKETING KIT",
                     "cta_href": "/shop?cat=flyers-and-brochures",
-                    "image_url": "/images/home/home-banner8.png",
-                    "alt": "A beautifully folded business brochure showcasing rich graphic layouts and high-fidelity colors"
+                    "image_url": "/images/home/homepage-carousel-08.webp",
+                    "alt": "Invitations, postcards, folded cards, and envelopes arranged on a neutral surface"
                 },
                 {
                     "eyebrow": "POSTCARDS & ART PRINTS",
@@ -494,8 +494,8 @@
                     "subheadline": "Exquisite postcards, thank you notes, and heavy art prints with gorgeous finishes.",
                     "cta_text": "EXPLORE POSTCARDS",
                     "cta_href": "/shop?cat=postcards",
-                    "image_url": "/images/home/home-banner9.png",
-                    "alt": "Fanned collection of beautifully printed custom cards and postcards with rich illustration prints"
+                    "image_url": "/images/home/homepage-carousel-09.webp",
+                    "alt": "Postcards and thank-you cards arranged in warm sunlight with a presentation box"
                 }
             ]
         },
@@ -509,31 +509,31 @@
                 {
                     "title": "Basic Cotton Business Cards",
                     "description": "Soft, natural texture for everyday elegance.",
-                    "image_url": "/images/home/product-cotton-cards.png",
+                    "image_url": "/images/home/cotton-basic.webp",
                     "href": "/basic-cotton-business-card"
                 },
                 {
                     "title": "Classic Cotton Business Cards",
                     "description": "Timeless feel with refined cotton stock.",
-                    "image_url": "/images/home/product-classic-cards.png",
+                    "image_url": "/images/home/cotton-classic.webp",
                     "href": "/classic-cotton-business-card"
                 },
                 {
                     "title": "Premium Cotton Business Cards",
                     "description": "Substantial weight and rich texture.",
-                    "image_url": "/images/home/product-premium-cards.png",
+                    "image_url": "/images/home/cotton-premium.webp",
                     "href": "/premium-cotton-business-card"
                 },
                 {
-                    "title": "Die-cut Business Cards",
-                    "description": "Unique shapes for bold brands.",
-                    "image_url": "/images/home/card-die-cut.png",
-                    "href": "/shop?cat=business-cards"
+                    "title": "Luxe Cotton Business Cards",
+                    "description": "Rich, tactile cotton stock for a luxurious feel.",
+                    "image_url": "/images/home/cotton-luxe.webp",
+                    "href": "/luxe-cotton-business-card"
                 },
                 {
                     "title": "Grand Cotton Business Cards",
                     "description": "Luxurious cotton stock that makes a statement.",
-                    "image_url": "/images/home/product-cotton-cards.png",
+                    "image_url": "/images/home/cotton-grand.webp",
                     "href": "/grand-cotton-business-card"
                 }
             ]

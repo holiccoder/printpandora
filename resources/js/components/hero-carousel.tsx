@@ -149,6 +149,7 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
                         slide={slide}
                         hidden={i !== index}
                         active={i === index}
+                        priority={i === 0}
                     />
                 ))}
             </div>
@@ -211,10 +212,12 @@ function Slide({
     slide,
     hidden,
     active,
+    priority,
 }: {
     slide: HeroSlide;
     hidden: boolean;
     active: boolean;
+    priority: boolean;
 }) {
     const hasFeatures = slide.features && slide.features.length > 0;
 
@@ -231,7 +234,9 @@ function Slide({
                     'absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out',
                     active ? 'scale-100' : 'scale-105',
                 )}
-                loading="eager"
+                loading={priority ? 'eager' : 'lazy'}
+                fetchPriority={priority ? 'high' : 'low'}
+                decoding="async"
             />
 
             {/* Copy on the photo */}
