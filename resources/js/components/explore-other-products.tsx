@@ -6,22 +6,22 @@ export function ExploreOtherProducts() {
         {
             title: 'shop business cards',
             href: '/business-cards',
-            image_url: '/images/home/product-business-cards.png',
+            image_url: '/images/home/explore-business-cards.webp',
         },
         {
             title: 'shop postcards',
             href: '/postcards',
-            image_url: '/images/home/product-postcards.png',
+            image_url: '/images/home/explore-postcards.webp',
         },
         {
             title: 'shop flyers and brochures',
             href: '/flyers-and-brochures',
-            image_url: '/images/home/product-flyers.png',
+            image_url: '/images/home/explore-flyers.webp',
         },
         {
             title: 'shop stickers and labels',
             href: '/stickers-and-labels',
-            image_url: '/images/home/product-stickers-labels.png',
+            image_url: '/images/home/explore-stickers.webp',
         },
     ];
 
