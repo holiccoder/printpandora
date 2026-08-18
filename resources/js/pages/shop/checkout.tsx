@@ -5,6 +5,7 @@ import SEO from '@/components/seo';
 import { countries, countriesByCode } from '@/data/countries';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
+import { isPvcProductSlug } from '@/lib/product-images';
 
 interface CartItem {
     key: string;
@@ -29,11 +30,24 @@ interface CryptomusConfig {
     test: boolean;
 }
 
+interface ShippingMethod {
+    code: string;
+    label: string;
+    carrier: string;
+    fee: number;
+    description: string;
+    estimated_delivery: string;
+}
+
 interface Props {
     cart: Record<string, CartItem>;
     subtotal: number;
     discountAmount: number;
+    itemsTotal: number;
     total: number;
+    shippingFee: number;
+    shippingMethods: ShippingMethod[];
+    defaultShippingMethod: string;
     discountCode: string | null;
     paypal: PaypalConfig;
     cryptomus: CryptomusConfig;
@@ -51,7 +65,11 @@ export default function Checkout({
     cart,
     subtotal,
     discountAmount,
+    itemsTotal,
     total,
+    shippingFee,
+    shippingMethods,
+    defaultShippingMethod,
     discountCode,
     paypal,
     cryptomus,
@@ -68,6 +86,7 @@ export default function Checkout({
         shipping_country:
             c.form_sections.shipping_address.fields.country.default_value ??
             'US',
+        shipping_method: defaultShippingMethod,
         notes: '',
     });
 
@@ -137,6 +156,15 @@ export default function Checkout({
 
     const [cryptomusLoading, setCryptomusLoading] = useState(false);
     const [cryptomusError, setCryptomusError] = useState<string | null>(null);
+
+    const selectedShipping =
+        shippingMethods.find(
+            (method) => method.code === data.shipping_method,
+        ) ?? shippingMethods[0];
+    const orderTotal =
+        shippingMethods.length > 0
+            ? itemsTotal + (selectedShipping?.fee ?? shippingFee)
+            : total;
 
     // Keep latest form values available inside PayPal SDK callbacks.
     useEffect(() => {
@@ -211,6 +239,7 @@ export default function Checkout({
                     },
                     body: JSON.stringify({
                         customer_email: dataRef.current.customer_email,
+                        shipping_method: dataRef.current.shipping_method,
                     }),
                 });
                 const json = await res.json().catch(() => ({}));
@@ -360,6 +389,7 @@ export default function Checkout({
 
     const contact = c.form_sections.contact_information;
     const shipping = c.form_sections.shipping_address;
+    const shippingMethodSection = c.form_sections.shipping_method;
     const payment = c.form_sections.payment_method;
     // Cache payment option lookups by `value` so we can read labels/descriptions
     // without depending on positional ordering.
@@ -406,7 +436,7 @@ export default function Checkout({
                                                     <img
                                                         src={item.image}
                                                         alt={item.name}
-                                                        className="h-full w-full object-cover"
+                                                        className={`h-full w-full ${isPvcProductSlug(item.slug) ? 'object-contain' : 'object-cover'}`}
                                                     />
                                                 ) : (
                                                     <div className="flex h-full items-center justify-center text-neutral-400">
@@ -684,6 +714,69 @@ export default function Checkout({
 
                             <div className="rounded-lg border border-[#e3e3e0] bg-white p-6 dark:border-[#3E3E3A] dark:bg-[#161615]">
                                 <h2 className="mb-4 text-lg font-semibold">
+                                    {shippingMethodSection.heading}
+                                </h2>
+                                <div className="space-y-3">
+                                    {shippingMethods.map((method) => {
+                                        const optionContent =
+                                            shippingMethodSection.options[
+                                                method.code
+                                            ] ?? {};
+
+                                        return (
+                                            <label
+                                                key={method.code}
+                                                className="flex cursor-pointer items-start gap-3 rounded-md border border-[#e3e3e0] p-3 dark:border-[#3E3E3A]"
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name="shipping_method"
+                                                    value={method.code}
+                                                    checked={
+                                                        data.shipping_method ===
+                                                        method.code
+                                                    }
+                                                    onChange={() =>
+                                                        setData(
+                                                            'shipping_method',
+                                                            method.code,
+                                                        )
+                                                    }
+                                                    className="mt-1"
+                                                />
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex flex-wrap items-center justify-between gap-2 font-medium">
+                                                        <span>
+                                                            {method.label ||
+                                                                optionContent.fallback_label}
+                                                        </span>
+                                                        <span>
+                                                            $
+                                                            {method.fee.toFixed(
+                                                                2,
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-xs text-[#706f6c]">
+                                                        {method.description ||
+                                                            optionContent.fallback_description}{' '}
+                                                        {method.estimated_delivery &&
+                                                            `(${method.estimated_delivery})`}
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        );
+                                    })}
+                                </div>
+                                {errors.shipping_method && (
+                                    <p className="mt-2 text-xs text-red-500">
+                                        {errors.shipping_method}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="rounded-lg border border-[#e3e3e0] bg-white p-6 dark:border-[#3E3E3A] dark:bg-[#161615]">
+                                <h2 className="mb-4 text-lg font-semibold">
                                     {payment.heading}
                                 </h2>
                                 <div className="space-y-3">
@@ -839,9 +932,23 @@ export default function Checkout({
                                         </button>
                                     </>
                                 )}
+                                <div className="mt-2 flex justify-between text-sm">
+                                    <span>
+                                        {shippingMethodSection.fee_label}
+                                        {selectedShipping?.label
+                                            ? ` (${selectedShipping.label})`
+                                            : ''}
+                                    </span>
+                                    <span>
+                                        $
+                                        {(
+                                            selectedShipping?.fee ?? shippingFee
+                                        ).toFixed(2)}
+                                    </span>
+                                </div>
                                 <div className="mt-2 flex justify-between text-lg font-semibold">
                                     <span>{summary.total_label}</span>
-                                    <span>${total.toFixed(2)}</span>
+                                    <span>${orderTotal.toFixed(2)}</span>
                                 </div>
 
                                 {paymentMethod === 'manual' && (

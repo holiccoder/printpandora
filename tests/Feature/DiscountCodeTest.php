@@ -89,18 +89,48 @@ class DiscountCodeTest extends TestCase
             'shipping_state' => 'TX',
             'shipping_zip' => '78701',
             'shipping_country' => 'US',
+            'shipping_method' => 'standard',
             'notes' => '',
         ])->assertRedirect();
 
         $order = Order::firstOrFail();
-        $this->assertSame('71.10', $order->total);
+        $this->assertSame('77.09', $order->total);
         $this->assertDatabaseHas('discount_redemptions', [
             'order_id' => $order->id,
             'code' => 'CHECKOUT10',
             'discount_amount' => '7.90',
-            'total' => '71.10',
+            'total' => '77.09',
         ]);
         $this->assertSame(1, DiscountCode::firstOrFail()->usage_count);
+    }
+
+    public function test_dhl_express_shipping_is_saved_and_added_to_total(): void
+    {
+        $user = User::factory()->create();
+        $product = $this->makeProduct();
+        $cart = app(Cart::class);
+        $cart->add($product->id);
+
+        $this->actingAs($user)->post(route('shop.checkout.store'), [
+            'customer_name' => 'Customer',
+            'customer_email' => 'dhl@example.com',
+            'shipping_address' => '1 Main Street',
+            'shipping_city' => 'Austin',
+            'shipping_state' => 'TX',
+            'shipping_zip' => '78701',
+            'shipping_country' => 'US',
+            'shipping_method' => 'dhl_express',
+        ])->assertRedirect();
+
+        $order = Order::with('items')->firstOrFail();
+
+        $this->assertSame('dhl_express', $order->shipping_method);
+        $this->assertSame('DHL', $order->shipping_carrier);
+        $this->assertSame('14.99', $order->shipping_fee);
+        $this->assertEquals(
+            (float) $order->items->sum('subtotal') + 14.99,
+            (float) $order->total,
+        );
     }
 
     public function test_global_and_per_customer_limits_are_enforced(): void

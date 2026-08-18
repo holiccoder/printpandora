@@ -28,6 +28,7 @@ import StorefrontLayout from '@/layouts/storefront-layout';
 import { computeDynamicTiers } from '@/lib/pricing';
 import type { DynamicPricingData } from '@/lib/pricing';
 import type { PricingRule } from '@/lib/pricing';
+import { isPvcProductSlug } from '@/lib/product-images';
 import { findMatchingGallery } from '@/lib/product-options';
 import type { ProductGallery } from '@/lib/product-options';
 
@@ -258,6 +259,9 @@ export default function ShopShow({
     fallbackGalleryImages,
 }: Props) {
     const c = useContent('product_detail_page') as any;
+    const isPvcProduct =
+        isPvcProductSlug(product.slug) ||
+        product.category.slug === 'pvc-business-cards';
     const ACCENT = c.accent_color;
 
     const galleryThumbs: string[] = c.gallery_thumb_image_urls;
@@ -1250,7 +1254,7 @@ export default function ShopShow({
                             <img
                                 src={activeImage}
                                 alt={product.name}
-                                className="h-[420px] w-full transform object-cover transition-transform duration-500 hover:scale-[1.02] sm:h-[540px] lg:h-[600px]"
+                                className={`h-[420px] w-full transform ${isPvcProduct ? 'object-contain' : 'object-cover'} transition-transform duration-500 hover:scale-[1.02] sm:h-[540px] lg:h-[600px]`}
                             />
                         </div>
                         <div className="mt-3 grid grid-cols-4 gap-2">
@@ -1268,7 +1272,7 @@ export default function ShopShow({
                                     <img
                                         src={src}
                                         alt=""
-                                        className="aspect-square w-full object-cover"
+                                        className={`aspect-square w-full bg-neutral-100 ${isPvcProduct ? 'object-contain' : 'object-cover'}`}
                                     />
                                 </button>
                             ))}

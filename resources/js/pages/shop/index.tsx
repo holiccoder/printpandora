@@ -2,6 +2,7 @@ import { Link } from '@inertiajs/react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
+import { isPvcProductSlug } from '@/lib/product-images';
 
 interface Product {
     id: number;
@@ -104,7 +105,7 @@ export default function ShopIndex({
                                             <img
                                                 src={product.featured_image}
                                                 alt={product.name}
-                                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                className={`h-full w-full ${isPvcProductSlug(product.slug) || product.category.slug === 'pvc-business-cards' ? 'object-contain' : 'object-cover'} transition-transform duration-300 group-hover:scale-105`}
                                             />
                                         ) : (
                                             <div className="flex h-full items-center justify-center text-neutral-400">

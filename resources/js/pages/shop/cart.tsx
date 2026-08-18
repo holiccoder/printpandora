@@ -4,6 +4,7 @@ import { useState } from 'react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
+import { isPvcProductSlug } from '@/lib/product-images';
 
 interface CartItem {
     key: string;
@@ -110,7 +111,7 @@ export default function Cart({
                                                 <img
                                                     src={item.image}
                                                     alt={item.name}
-                                                    className="h-full w-full object-cover"
+                                                    className={`h-full w-full ${isPvcProductSlug(item.slug) ? 'object-contain' : 'object-cover'}`}
                                                 />
                                             ) : (
                                                 <div className="flex h-full items-center justify-center text-neutral-400">

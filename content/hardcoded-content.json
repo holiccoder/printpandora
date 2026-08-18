@@ -1559,6 +1559,20 @@
                     }
                 }
             },
+            "shipping_method": {
+                "heading": "Shipping Method",
+                "options": {
+                    "standard": {
+                        "fallback_label": "Standard Shipping",
+                        "fallback_description": "Tracked delivery for routine orders."
+                    },
+                    "dhl_express": {
+                        "fallback_label": "Fast Shipping (DHL Express)",
+                        "fallback_description": "Fast tracked delivery. DHL shipment will be created manually after payment."
+                    }
+                },
+                "fee_label": "Shipping"
+            },
             "payment_method": {
                 "heading": "Payment Method",
                 "options": [
@@ -2082,6 +2096,10 @@
             "shipping": "Shipping",
             "notes": "Notes"
         },
+        "shipping_method_label": "Shipping method",
+        "shipping_fee_label": "Shipping fee",
+        "tracking_label": "Tracking number",
+        "track_package_label": "Track package",
         "qty_label": "Qty:",
         "total_label": "Total:"
     },

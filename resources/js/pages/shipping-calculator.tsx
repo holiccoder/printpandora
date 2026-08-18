@@ -42,20 +42,14 @@ const RATES: Record<
         {
             method: 'Standard Shipping',
             price: 5.99,
-            days: '5–8 business days',
-            note: ' placeholder rate',
+            days: '5-10 business days',
+            note: ' fixed rate',
         },
         {
-            method: 'Express Shipping',
+            method: 'Fast Shipping (DHL Express)',
             price: 14.99,
-            days: '2–4 business days',
-            note: ' placeholder rate',
-        },
-        {
-            method: 'Next Day Delivery',
-            price: 24.99,
-            days: '1 business day',
-            note: ' placeholder rate (US only)',
+            days: '2-5 business days',
+            note: ' manual DHL fulfillment',
         },
     ],
 };
@@ -168,9 +162,9 @@ export default function ShippingCalculator() {
                     {submitted && (
                         <div className="mt-8">
                             <p className="mb-4 text-sm font-medium text-amber-700">
-                                These are placeholder rates for demo purposes.
-                                Real-time rates will replace them once the
-                                shipping API is connected.
+                                These are fixed estimate rates for the
+                                semi-automatic shipping flow. Final checkout
+                                totals are calculated server-side.
                             </p>
                             <div className="overflow-hidden rounded-lg border border-neutral-200">
                                 <table className="w-full text-sm">

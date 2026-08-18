@@ -37,6 +37,16 @@ class SiteSettingsService
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function globalChrome(): array
+    {
+        $globalChrome = Arr::get($this->all(), 'global_chrome', []);
+
+        return is_array($globalChrome) ? $globalChrome : [];
+    }
+
+    /**
      * Provide a cache-key component that changes when the setting value
      * changes, even if two updates happen within the same timestamp tick.
      */
@@ -70,28 +80,19 @@ class SiteSettingsService
 
         foreach ($sections as $section => $value) {
             if ($section === 'homepage' && is_array($value)) {
-                $currentHomepage = is_array($settings['homepage'] ?? null)
-                    ? $settings['homepage']
-                    : [];
+                $settings[$section] = $this->mergeHomepage(
+                    is_array($settings['homepage'] ?? null) ? $settings['homepage'] : [],
+                    $value,
+                );
 
-                $homepage = array_replace_recursive($currentHomepage, $value);
+                continue;
+            }
 
-                if (
-                    isset($value['hero_carousel'])
-                    && is_array($value['hero_carousel'])
-                    && array_key_exists('slides', $value['hero_carousel'])
-                ) {
-                    $homepage['hero_carousel']['slides'] = array_values(
-                        array_filter(
-                            is_array($value['hero_carousel']['slides'])
-                                ? $value['hero_carousel']['slides']
-                                : [],
-                            is_array(...),
-                        ),
-                    );
-                }
-
-                $settings[$section] = $homepage;
+            if ($section === 'global_chrome' && is_array($value)) {
+                $settings[$section] = $this->mergeGlobalChrome(
+                    is_array($settings['global_chrome'] ?? null) ? $settings['global_chrome'] : [],
+                    $value,
+                );
 
                 continue;
             }
@@ -123,6 +124,33 @@ class SiteSettingsService
                 array_filter(
                     is_array($overrides['hero_carousel']['slides'])
                         ? $overrides['hero_carousel']['slides']
+                        : [],
+                    is_array(...),
+                ),
+            );
+        }
+
+        return $merged;
+    }
+
+    /**
+     * @param  array<string, mixed>  $base
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    public function mergeGlobalChrome(array $base, array $overrides): array
+    {
+        $merged = array_replace_recursive($base, $overrides);
+
+        if (
+            isset($overrides['announcement_bar'])
+            && is_array($overrides['announcement_bar'])
+            && array_key_exists('default_messages', $overrides['announcement_bar'])
+        ) {
+            $merged['announcement_bar']['default_messages'] = array_values(
+                array_filter(
+                    is_array($overrides['announcement_bar']['default_messages'])
+                        ? $overrides['announcement_bar']['default_messages']
                         : [],
                     is_array(...),
                 ),

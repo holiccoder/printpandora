@@ -39,7 +39,7 @@ class FilamentSettingsTest extends TestCase
             'InkPavo - your go-to solution for printing, customization, and on-demand production.',
             data_get($component->get('data'), 'homepage.seo.page_description'),
         );
-        $this->assertCount(9, $slides);
+        $this->assertCount(8, $slides);
         $this->assertSame(
             "MADE TO BE\nREMEMBERED",
             data_get($slides, array_key_first($slides).'.headline'),
@@ -52,6 +52,12 @@ class FilamentSettingsTest extends TestCase
         $component = Livewire::test(SettingsPage::class);
         $slides = data_get($component->get('data'), 'homepage.hero_carousel.slides', []);
         $slideKey = (string) array_key_first($slides);
+        $announcementMessages = data_get(
+            $component->get('data'),
+            'global_chrome.announcement_bar.default_messages',
+            [],
+        );
+        $announcementKey = (string) array_key_first($announcementMessages);
 
         $component
             ->set('data.homepage.seo.page_title', 'Print better with InkPavo')
@@ -59,6 +65,14 @@ class FilamentSettingsTest extends TestCase
             ->set("data.homepage.hero_carousel.slides.{$slideKey}.headline", 'A SAVED HOMEPAGE')
             ->set("data.homepage.hero_carousel.slides.{$slideKey}.cta_text", 'SHOP NOW')
             ->set("data.homepage.hero_carousel.slides.{$slideKey}.cta_href", '/shop')
+            ->set(
+                "data.global_chrome.announcement_bar.default_messages.{$announcementKey}.text",
+                'Free shipping on qualifying orders',
+            )
+            ->set(
+                "data.global_chrome.announcement_bar.default_messages.{$announcementKey}.href",
+                '/shipping',
+            )
             ->call('save')
             ->assertHasNoErrors();
 
@@ -77,10 +91,23 @@ class FilamentSettingsTest extends TestCase
             'card',
             data_get($stored, 'homepage.hero_carousel.slides.0.features.0.icon'),
         );
+        $this->assertSame(
+            'Free shipping on qualifying orders',
+            data_get($stored, 'global_chrome.announcement_bar.default_messages.0.text'),
+        );
+        $this->assertSame(
+            '/shipping',
+            data_get($stored, 'global_chrome.announcement_bar.default_messages.0.href'),
+        );
 
         $content = app(HardcodedContent::class);
         $this->assertSame('Print better with InkPavo', $content->section('home_page.seo.page_title'));
         $this->assertSame('A SAVED HOMEPAGE', $content->section('home_page.hero_carousel.slides.0.headline'));
+        $this->assertSame(
+            'Free shipping on qualifying orders',
+            $content->section('global_chrome.announcement_bar.default_messages.0.text'),
+        );
+        $this->assertSame('/shipping', $content->section('global_chrome.announcement_bar.default_messages.0.href'));
         $this->assertSame($popularProducts, $content->section('home_page.popular_products'));
     }
 

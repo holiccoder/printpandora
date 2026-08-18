@@ -13,14 +13,20 @@ use App\Services\CryptomusService;
 use App\Services\DiscountException;
 use App\Services\DiscountService;
 use App\Services\PayPalService;
+use App\Services\ShippingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Throwable;
 
 class CheckoutController extends Controller
 {
+    public function __construct(
+        protected ShippingService $shipping,
+    ) {}
+
     public function show(Cart $cart)
     {
         if ($cart->count() === 0) {
@@ -28,12 +34,18 @@ class CheckoutController extends Controller
         }
 
         $quote = $cart->quote();
+        $defaultShippingMethod = $this->shipping->defaultMethod();
+        $shippingFee = $this->shipping->fee($defaultShippingMethod);
 
         return Inertia::render('shop/checkout', [
             'cart' => $cart->all(),
             'subtotal' => $quote['subtotal'],
             'discountAmount' => $quote['discount'],
-            'total' => $quote['total'],
+            'itemsTotal' => $quote['total'],
+            'total' => round($quote['total'] + $shippingFee, 2),
+            'shippingFee' => $shippingFee,
+            'shippingMethods' => $this->shipping->methods(),
+            'defaultShippingMethod' => $defaultShippingMethod,
             'discountCode' => $quote['code'],
             'paypal' => [
                 'client_id' => config('services.paypal.client_id'),
@@ -79,8 +91,10 @@ class CheckoutController extends Controller
 
         try {
             $reference = 'cart-'.($request->user()?->id ?? 'guest').'-'.now()->timestamp;
+            $shippingMethod = $this->validateShippingMethod($request);
             $quote = $cart->quote($request->input('customer_email'), true);
-            $result = $paypal->createOrder($quote['total'], $reference);
+            $total = round($quote['total'] + $this->shipping->fee($shippingMethod), 2);
+            $result = $paypal->createOrder($total, $reference);
 
             return response()->json(['id' => $result['id'] ?? null]);
         } catch (DiscountException $e) {
@@ -270,6 +284,10 @@ class CheckoutController extends Controller
 
     protected function validateCheckout(Request $request): array
     {
+        $request->merge([
+            'shipping_method' => $request->input('shipping_method') ?: $this->shipping->defaultMethod(),
+        ]);
+
         return $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
@@ -279,8 +297,16 @@ class CheckoutController extends Controller
             'shipping_state' => 'required|string|max:255',
             'shipping_zip' => 'required|string|max:20',
             'shipping_country' => 'required|string|max:2',
+            'shipping_method' => ['required', Rule::in($this->shipping->codes())],
             'notes' => 'nullable|string',
         ]);
+    }
+
+    protected function validateShippingMethod(Request $request): string
+    {
+        return $request->validate([
+            'shipping_method' => ['required', Rule::in($this->shipping->codes())],
+        ])['shipping_method'];
     }
 
     /**
@@ -295,8 +321,11 @@ class CheckoutController extends Controller
         ?string $paymentId,
         string $orderStatus = 'pending',
     ): Order {
-        return DB::transaction(function () use ($validated, $cart, $request, $paymentMethod, $paymentStatus, $paymentId, $orderStatus) {
+        $shipping = $this->shipping->get($validated['shipping_method']);
+
+        return DB::transaction(function () use ($validated, $cart, $request, $paymentMethod, $paymentStatus, $paymentId, $orderStatus, $shipping) {
             $quote = $cart->quote($validated['customer_email'], true);
+            $orderTotal = round($quote['total'] + $shipping['fee'], 2);
 
             $order = Order::create([
                 'user_id' => $request->user()?->id ?? 1,
@@ -304,7 +333,10 @@ class CheckoutController extends Controller
                 'payment_method' => $paymentMethod,
                 'payment_status' => $paymentStatus,
                 'payment_id' => $paymentId,
-                'total' => $quote['total'],
+                'total' => $orderTotal,
+                'shipping_method' => $shipping['code'],
+                'shipping_carrier' => $shipping['carrier'],
+                'shipping_fee' => $shipping['fee'],
                 ...$validated,
             ]);
 
@@ -315,7 +347,7 @@ class CheckoutController extends Controller
                     $validated['customer_email'],
                     $quote['subtotal'],
                     $quote['discount'],
-                    $quote['total'],
+                    $orderTotal,
                 );
             }
 

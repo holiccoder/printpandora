@@ -41,6 +41,26 @@ class OrderResource extends Resource
                                 'delivered' => '已送达',
                                 'cancelled' => '已取消',
                             ]),
+                        Forms\Components\Select::make('shipping_method')
+                            ->label('Shipping method')
+                            ->options([
+                                'standard' => 'Standard Shipping',
+                                'dhl_express' => 'Fast Shipping (DHL Express)',
+                            ])
+                            ->disabled(),
+                        Forms\Components\TextInput::make('shipping_carrier')
+                            ->label('Carrier')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('shipping_fee')
+                            ->label('Shipping fee')
+                            ->prefix('$')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('tracking_number')
+                            ->label('Tracking number')
+                            ->helperText('Enter the DHL waybill after creating the shipment in EShip.'),
+                        Forms\Components\TextInput::make('tracking_url')
+                            ->label('Tracking URL')
+                            ->url(),
                         Forms\Components\Textarea::make('notes')
                             ->label('备注')
                             ->columnSpanFull(),
@@ -114,6 +134,8 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('customer_name')->label('客户姓名')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('customer_email')->label('电子邮箱')->searchable(),
                 Tables\Columns\TextColumn::make('total')->label('订单总计')->money('USD')->sortable(),
+                Tables\Columns\TextColumn::make('shipping_carrier')->label('Carrier')->sortable(),
+                Tables\Columns\TextColumn::make('tracking_number')->label('Tracking')->searchable(),
                 Tables\Columns\SelectColumn::make('status')
                     ->label('状态')
                     ->options([

@@ -24,6 +24,11 @@ class Order extends Model
         'shipping_state',
         'shipping_zip',
         'shipping_country',
+        'shipping_method',
+        'shipping_carrier',
+        'shipping_fee',
+        'tracking_number',
+        'tracking_url',
         'notes',
     ];
 
@@ -31,6 +36,7 @@ class Order extends Model
     {
         return [
             'total' => 'decimal:2',
+            'shipping_fee' => 'decimal:2',
         ];
     }
 

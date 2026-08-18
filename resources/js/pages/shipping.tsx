@@ -54,58 +54,32 @@ export default function Shipping() {
 
             <h2>2. Shipping methods</h2>
             <p>
-                We offer four shipping options. Available methods depend on your
+                We offer two shipping options. Available methods depend on your
                 destination and product:
             </p>
             <ul>
                 <li>
-                    <strong>Standard</strong> — 3 to 5 business days (domestic),
-                    7 to 14 business days (international). Tracked.
+                    <strong>Standard</strong> — 5 to 10 business days. Tracked.
                 </li>
                 <li>
-                    <strong>Express</strong> — 1 to 2 business days (domestic),
-                    3 to 5 business days (international). Tracked, signature on
-                    delivery.
-                </li>
-                <li>
-                    <strong>Next-Day</strong> — Next business day for orders
-                    placed before 12 noon local time. Available in the UK, most
-                    of the EU, and major US metro areas. Tracked, signature on
-                    delivery.
-                </li>
-                <li>
-                    <strong>Economy</strong> — 5 to 10 business days, lowest
-                    cost. Tracked. Not available for fragile or oversized items.
+                    <strong>Fast (DHL Express)</strong> — 2 to 5 business days.
+                    Tracked; DHL waybill is added after manual fulfillment.
                 </li>
             </ul>
 
             <h2>3. Carriers</h2>
             <p>
-                We work with a global network of trusted carriers — the actual
-                carrier assigned to your order depends on your destination,
-                shipping method, and parcel weight:
+                Standard orders use our regular fulfillment carrier. Fast orders
+                are fulfilled through DHL Express:
             </p>
             <ul>
                 <li>
-                    <strong>United Kingdom</strong> — Royal Mail (Standard,
-                    Economy), DPD and Parcelforce (Express, Next-Day).
+                    <strong>Standard</strong> — Tracked delivery using the
+                    regular fulfillment route.
                 </li>
                 <li>
-                    <strong>European Union</strong> — DHL, DPD, GLS, regional
-                    posts.
-                </li>
-                <li>
-                    <strong>United States & Canada</strong> — USPS, UPS, FedEx,
-                    Canada Post.
-                </li>
-                <li>
-                    <strong>Australia & New Zealand</strong> — Australia Post,
-                    Aramex, NZ Post.
-                </li>
-                <li>
-                    <strong>Rest of the world</strong> — DHL Express, FedEx
-                    International, or your country's national post (depending on
-                    method selected).
+                    <strong>Fast</strong> — DHL Express shipment created
+                    manually in EShip after payment.
                 </li>
             </ul>
 

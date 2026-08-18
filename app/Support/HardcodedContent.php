@@ -60,6 +60,15 @@ class HardcodedContent
                     );
                 }
 
+                $globalChromeOverrides = $settings->globalChrome();
+
+                if ($globalChromeOverrides !== []) {
+                    $content['global_chrome'] = $settings->mergeGlobalChrome(
+                        is_array($content['global_chrome'] ?? null) ? $content['global_chrome'] : [],
+                        $globalChromeOverrides,
+                    );
+                }
+
                 return $this->resolveHomepageImages($content);
             }
         );

@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
+import { isPvcProductSlug } from '@/lib/product-images';
 
 interface OrderItem {
     id: number;
@@ -28,6 +29,11 @@ interface Order {
     shipping_state: string | null;
     shipping_zip: string;
     shipping_country: string;
+    shipping_method: string;
+    shipping_carrier: string;
+    shipping_fee: string;
+    tracking_number: string | null;
+    tracking_url: string | null;
     notes: string | null;
     created_at: string;
     items: OrderItem[];
@@ -125,7 +131,7 @@ export default function OrderShow({ order }: Props) {
                                                     item.product.featured_image
                                                 }
                                                 alt={item.product.name}
-                                                className="h-full w-full object-cover"
+                                                className={`h-full w-full ${isPvcProductSlug(item.product.slug) ? 'object-contain' : 'object-cover'}`}
                                             />
                                         ) : (
                                             <div className="flex h-full items-center justify-center text-neutral-400">
@@ -201,6 +207,42 @@ export default function OrderShow({ order }: Props) {
                                 <p className="text-sm text-[#706f6c]">
                                     {order.shipping_country}
                                 </p>
+                                <div className="mt-4 border-t border-[#e3e3e0] pt-4 text-sm dark:border-[#3E3E3A]">
+                                    <p className="font-medium">
+                                        {c.shipping_method_label}
+                                    </p>
+                                    <p className="text-[#706f6c]">
+                                        {order.shipping_carrier} ·{' '}
+                                        {order.shipping_method === 'dhl_express'
+                                            ? 'DHL Express'
+                                            : 'Standard Shipping'}
+                                    </p>
+                                    <p className="text-[#706f6c]">
+                                        {c.shipping_fee_label}: $
+                                        {parseFloat(order.shipping_fee).toFixed(
+                                            2,
+                                        )}
+                                    </p>
+                                    {order.tracking_number && (
+                                        <p className="mt-2 text-[#706f6c]">
+                                            {c.tracking_label}:{' '}
+                                            {order.tracking_url ? (
+                                                <a
+                                                    href={order.tracking_url}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="font-medium text-[#1b1b18] underline dark:text-[#EDEDEC]"
+                                                >
+                                                    {order.tracking_number}
+                                                </a>
+                                            ) : (
+                                                <span className="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">
+                                                    {order.tracking_number}
+                                                </span>
+                                            )}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                             {order.notes && (
                                 <div className="rounded-lg border border-[#e3e3e0] bg-white p-6 dark:border-[#3E3E3A] dark:bg-[#161615]">
