@@ -104,6 +104,33 @@ class DiscountCodeTest extends TestCase
         $this->assertSame(1, DiscountCode::firstOrFail()->usage_count);
     }
 
+    public function test_checkout_uses_the_authenticated_customer_contact_details(): void
+    {
+        $user = User::factory()->create([
+            'name' => 'Registered Customer',
+            'email' => 'registered@example.com',
+        ]);
+        $product = $this->makeProduct();
+        $cart = app(Cart::class);
+        $cart->add($product->id);
+
+        $this->actingAs($user)->post(route('shop.checkout.store'), [
+            'shipping_address' => '1 Main Street',
+            'shipping_city' => 'Austin',
+            'shipping_state' => 'TX',
+            'shipping_zip' => '78701',
+            'shipping_country' => 'US',
+            'shipping_method' => 'standard',
+            'notes' => '',
+        ])->assertRedirect();
+
+        $order = Order::firstOrFail();
+
+        $this->assertSame('Registered Customer', $order->customer_name);
+        $this->assertSame('registered@example.com', $order->customer_email);
+        $this->assertNull($order->customer_phone);
+    }
+
     public function test_dhl_express_shipping_is_saved_and_added_to_total(): void
     {
         $user = User::factory()->create();

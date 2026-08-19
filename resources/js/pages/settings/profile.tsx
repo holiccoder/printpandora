@@ -1,7 +1,6 @@
 // Content (labels/placeholders/links) sourced from `content/hardcoded-content.json` via useContent('settings_profile_page').
 import { Form, Link, usePage } from '@inertiajs/react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
-import DeleteUser from '@/components/delete-user';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import SEO from '@/components/seo';
@@ -183,8 +182,6 @@ export default function Profile({
                     })}
                 </div>
             </div>
-
-            <DeleteUser />
         </>
     );
 }

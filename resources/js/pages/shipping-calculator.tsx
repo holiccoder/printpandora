@@ -43,7 +43,7 @@ const RATES: Record<
             method: 'Standard Shipping',
             price: 5.99,
             days: '5-10 business days',
-            note: ' fixed rate',
+            note: ' 4PX semi-automatic fulfillment',
         },
         {
             method: 'Fast Shipping (DHL Express)',

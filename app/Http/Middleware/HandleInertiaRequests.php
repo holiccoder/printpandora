@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Cart;
 use App\Support\HardcodedContent;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -51,6 +52,8 @@ class HandleInertiaRequests extends Middleware
             // Closure so the JSON parse only runs when Inertia actually merges
             // shared props — and the service memoises within the request.
             'content' => fn () => app(HardcodedContent::class)->all(),
+            // Keep the global storefront drawer in sync with the session cart.
+            'global_cart' => fn () => app(Cart::class)->drawerPayload(),
             'intercom' => [
                 'app_id' => config('intercom.enabled', true) ? config('intercom.app_id') : null,
                 'user' => $request->user() ? [

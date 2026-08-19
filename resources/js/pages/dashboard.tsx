@@ -2,7 +2,7 @@
 import { Link } from '@inertiajs/react';
 import {
     ChevronRight,
-    MapPin,
+    LifeBuoy,
     Package,
     ShieldCheck,
     User as UserIcon,
@@ -48,17 +48,16 @@ type Props = {
         name: string;
         email: string;
         email_verified_at: string | null;
-        created_at: string | null;
     };
     recentOrders: RecentOrder[];
-    address: Address | null;
+    shippingAddress: Address | null;
     affiliate: AffiliateInfo | null;
 };
 
 export default function Dashboard({
     user,
     recentOrders,
-    address,
+    shippingAddress,
     affiliate,
 }: Props) {
     const c = useContent('dashboard_index_page') as any;
@@ -82,12 +81,16 @@ export default function Dashboard({
                     </header>
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                        <ProfileCard user={user} c={c.cards.profile} />
+                        <ProfileCard
+                            user={user}
+                            shippingAddress={shippingAddress}
+                            c={c.cards.profile}
+                        />
                         <RecentOrdersCard
                             orders={recentOrders}
                             c={c.cards.recent_orders}
                         />
-                        <AddressCard address={address} c={c.cards.address} />
+                        <SupportTicketsCard c={c.cards.support_tickets} />
                         <AffiliateCard
                             affiliate={affiliate}
                             c={c.cards.affiliate}
@@ -128,7 +131,15 @@ function Card({
     );
 }
 
-function ProfileCard({ user, c }: { user: Props['user']; c: any }) {
+function ProfileCard({
+    user,
+    shippingAddress,
+    c,
+}: {
+    user: Props['user'];
+    shippingAddress: Address | null;
+    c: any;
+}) {
     const verified = user.email_verified_at !== null;
 
     return (
@@ -163,12 +174,38 @@ function ProfileCard({ user, c }: { user: Props['user']; c: any }) {
                         </span>
                     }
                 />
-                {user.created_at && (
-                    <Row
-                        label={c.rows.member_since}
-                        value={new Date(user.created_at).toLocaleDateString()}
-                    />
-                )}
+                <Row
+                    label={c.rows.shipping_address}
+                    value={
+                        shippingAddress ? (
+                            <span className="block max-w-56 leading-relaxed">
+                                {shippingAddress.line && (
+                                    <span className="block">
+                                        {shippingAddress.line}
+                                    </span>
+                                )}
+                                <span className="block">
+                                    {[
+                                        shippingAddress.city,
+                                        shippingAddress.state,
+                                        shippingAddress.zip,
+                                    ]
+                                        .filter(Boolean)
+                                        .join(', ')}
+                                </span>
+                                {shippingAddress.country && (
+                                    <span className="block">
+                                        {shippingAddress.country}
+                                    </span>
+                                )}
+                            </span>
+                        ) : (
+                            <span className="text-neutral-500">
+                                {c.shipping_address_empty}
+                            </span>
+                        )
+                    }
+                />
             </dl>
         </Card>
     );
@@ -238,32 +275,29 @@ function RecentOrdersCard({ orders, c }: { orders: RecentOrder[]; c: any }) {
     );
 }
 
-function AddressCard({ address, c }: { address: Address | null; c: any }) {
+function SupportTicketsCard({ c }: { c: any }) {
     return (
-        <Card title={c.title} icon={<MapPin className="size-4" />}>
-            {!address ? (
-                <EmptyHint>{c.empty_state}</EmptyHint>
-            ) : (
-                <div className="space-y-1 text-sm leading-relaxed text-neutral-700">
-                    {address.name && (
-                        <p className="font-semibold text-neutral-900">
-                            {address.name}
-                        </p>
-                    )}
-                    {address.line && <p>{address.line}</p>}
-                    <p>
-                        {[address.city, address.state, address.zip]
-                            .filter(Boolean)
-                            .join(', ')}
-                    </p>
-                    {address.country && <p>{address.country}</p>}
-                    {address.phone && (
-                        <p className="pt-1 text-xs text-neutral-500">
-                            {c.phone_label} {address.phone}
-                        </p>
-                    )}
-                </div>
-            )}
+        <Card
+            title={c.title}
+            icon={<LifeBuoy className="size-4" />}
+            action={
+                <Link
+                    href="/tickets"
+                    className="inline-flex items-center gap-1 text-sm font-semibold hover:underline"
+                    style={{ color: ACCENT }}
+                >
+                    {c.view_link} <ChevronRight className="size-3.5" />
+                </Link>
+            }
+        >
+            <p className="text-sm text-neutral-600">{c.description}</p>
+            <Link
+                href="/tickets/create"
+                className="mt-4 inline-flex text-sm font-semibold hover:underline"
+                style={{ color: ACCENT }}
+            >
+                {c.new_ticket_link}
+            </Link>
         </Card>
     );
 }
@@ -322,9 +356,14 @@ function AffiliateCard({
                     <Row
                         label={c.rows.referral_code}
                         value={
-                            <code className="rounded bg-neutral-100 px-2 py-0.5 text-xs font-semibold text-neutral-900">
-                                {affiliate.referral_code}
-                            </code>
+                            <a
+                                href={affiliate.referral_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded bg-neutral-100 px-2 py-0.5 text-xs font-semibold break-all text-neutral-900 hover:underline"
+                            >
+                                {affiliate.referral_url}
+                            </a>
                         }
                     />
                     <Row

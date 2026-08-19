@@ -33,6 +33,14 @@ class CreateNewUser implements CreatesNewUsers
                 'password' => $input['password'],
             ]);
 
+            // Automatically enroll in the affiliate program
+            Affiliate::create([
+                'user_id' => $user->id,
+                'referral_code' => Affiliate::generateReferralCode(),
+                'commission_rate' => 10.00,
+                'status' => 'active',
+            ]);
+
             $refCode = request()->cookie('affiliate_ref');
             if ($refCode) {
                 $affiliate = Affiliate::where('referral_code', $refCode)->where('status', 'active')->first();

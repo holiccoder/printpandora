@@ -29,7 +29,7 @@ class Cart
         $cart = $this->all();
         $itemKey = $this->makeItemKey((int) $productId, $options);
 
-        if (!isset($cart[$itemKey])) {
+        if (! isset($cart[$itemKey])) {
             $product = Product::findOrFail($productId);
             $cart[$itemKey] = [
                 'key' => $itemKey,
@@ -64,6 +64,36 @@ class Cart
     public function count(): int
     {
         return count($this->all());
+    }
+
+    /**
+     * Return the cart data needed by the storefront's global cart drawer.
+     *
+     * Keeping this mapping next to the session-backed cart prevents each
+     * page/layout from having to know how cart lines are stored internally.
+     *
+     * @return array{items: array<int, array<string, mixed>>, count: int, subtotal: string}
+     */
+    public function drawerPayload(): array
+    {
+        $items = [];
+
+        foreach ($this->all() as $key => $item) {
+            $items[] = [
+                'id' => (string) ($item['key'] ?? $key),
+                'name' => (string) ($item['name'] ?? ''),
+                'price' => '$'.number_format((float) ($item['price'] ?? 0), 2),
+                'quantity' => (int) ($item['quantity'] ?? 1),
+                'image' => $item['image'] ?? null,
+                'href' => '/'.ltrim((string) ($item['slug'] ?? ''), '/'),
+            ];
+        }
+
+        return [
+            'items' => $items,
+            'count' => $this->count(),
+            'subtotal' => '$'.number_format($this->subtotal(), 2),
+        ];
     }
 
     public function subtotal(): float

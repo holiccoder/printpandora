@@ -59,7 +59,8 @@ export default function Shipping() {
             </p>
             <ul>
                 <li>
-                    <strong>Standard</strong> — 5 to 10 business days. Tracked.
+                    <strong>Standard (4PX)</strong> — 5 to 10 business days.
+                    Tracked.
                 </li>
                 <li>
                     <strong>Fast (DHL Express)</strong> — 2 to 5 business days.
@@ -69,13 +70,13 @@ export default function Shipping() {
 
             <h2>3. Carriers</h2>
             <p>
-                Standard orders use our regular fulfillment carrier. Fast orders
-                are fulfilled through DHL Express:
+                Standard orders are fulfilled through 4PX. Fast orders are
+                fulfilled through DHL Express:
             </p>
             <ul>
                 <li>
-                    <strong>Standard</strong> — Tracked delivery using the
-                    regular fulfillment route.
+                    <strong>Standard</strong> — Tracked 4PX delivery. The 4PX
+                    shipment is created after payment and confirmed by our team.
                 </li>
                 <li>
                     <strong>Fast</strong> — DHL Express shipment created

@@ -92,7 +92,7 @@ class CheckoutController extends Controller
         try {
             $reference = 'cart-'.($request->user()?->id ?? 'guest').'-'.now()->timestamp;
             $shippingMethod = $this->validateShippingMethod($request);
-            $quote = $cart->quote($request->input('customer_email'), true);
+            $quote = $cart->quote($request->user()?->email, true);
             $total = round($quote['total'] + $this->shipping->fee($shippingMethod), 2);
             $result = $paypal->createOrder($total, $reference);
 
@@ -285,6 +285,11 @@ class CheckoutController extends Controller
     protected function validateCheckout(Request $request): array
     {
         $request->merge([
+            // Contact details come from the authenticated customer profile.
+            // Only shipping details remain editable at checkout.
+            'customer_name' => $request->user()?->name,
+            'customer_email' => $request->user()?->email,
+            'customer_phone' => null,
             'shipping_method' => $request->input('shipping_method') ?: $this->shipping->defaultMethod(),
         ]);
 

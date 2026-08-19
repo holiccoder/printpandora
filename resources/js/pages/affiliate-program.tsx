@@ -1,11 +1,16 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { ArrowRight, Cookie, Gift, ShieldCheck } from 'lucide-react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
 export function AffiliateProgram() {
-    const c = useContent('affiliate_program_page');
+    const c = useContent('affiliate_program_page') as any;
+    const { auth } = usePage().props as any;
+    const user = auth?.user;
+
+    const buttonHref = user ? '/settings/affiliate' : c.content.cta_button_href;
+    const buttonText = user ? 'Go to Affiliate Dashboard' : c.content.cta_button_text;
 
     return (
         <StorefrontLayout>
@@ -43,10 +48,10 @@ export function AffiliateProgram() {
                         </p>
                         <div className="mt-10 flex justify-center">
                             <Link
-                                href={c.content.cta_button_href}
+                                href={buttonHref}
                                 className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-6 py-3.5 text-sm font-bold tracking-wider text-neutral-900 uppercase shadow-md transition hover:bg-amber-400"
                             >
-                                {c.content.cta_button_text}
+                                {buttonText}
                                 <ArrowRight className="size-4" />
                             </Link>
                         </div>

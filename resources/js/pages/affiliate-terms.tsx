@@ -2,7 +2,7 @@ import LegalPage from '@/components/legal-page';
 import { useContent } from '@/hooks/use-content';
 
 export function AffiliateTerms() {
-    const c = useContent('affiliate_terms_page');
+    const c = useContent('affiliate_terms_page') as any;
 
     return (
         <LegalPage

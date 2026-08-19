@@ -109,6 +109,26 @@ class SocialAuthController extends Controller
                     'provider_email' => $email,
                 ]);
 
+                // Automatically enroll in the affiliate program
+                \App\Models\Affiliate::create([
+                    'user_id' => $user->id,
+                    'referral_code' => \App\Models\Affiliate::generateReferralCode(),
+                    'commission_rate' => 10.00,
+                    'status' => 'active',
+                ]);
+
+                $refCode = request()->cookie('affiliate_ref');
+                if ($refCode) {
+                    $affiliate = \App\Models\Affiliate::where('referral_code', $refCode)->where('status', 'active')->first();
+                    if ($affiliate) {
+                        \App\Models\AffiliateReferral::create([
+                            'affiliate_id' => $affiliate->id,
+                            'referred_user_id' => $user->id,
+                            'status' => 'registered',
+                        ]);
+                    }
+                }
+
                 return $user;
             });
 

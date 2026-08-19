@@ -798,13 +798,8 @@
     "product_detail_page": {
         "_source_file": "resources/js/pages/shop/show.tsx",
         "accent_color": "#800020",
-        "breadcrumbs": [
-            "Home"
-        ],
-        "feature_chips": [
-            "1 - 2 days Turn Around Time",
-            "Gang Run Printing"
-        ],
+        "breadcrumbs": ["Home"],
+        "feature_chips": ["1 - 2 days Turn Around Time", "Gang Run Printing"],
         "feature_chip_descriptions": [
             "We will deliver your design after 1 - 2 work days",
             "Not recommended for clients with high color accuracy requirements"
@@ -922,11 +917,7 @@
                 }
             ]
         },
-        "quantity_table_headers": [
-            "Quantity",
-            "Per card",
-            "Pack Price"
-        ],
+        "quantity_table_headers": ["Quantity", "Per card", "Pack Price"],
         "save_percentage_label": "Save {n}%",
         "delivery_callout": {
             "title": "Get it by Tue, 16 Jun",
@@ -934,12 +925,7 @@
         },
         "order_summary": {
             "heading": "Your selection",
-            "labels": [
-                "Paper",
-                "Size",
-                "Quantity",
-                "Corners"
-            ],
+            "labels": ["Paper", "Size", "Quantity", "Corners"],
             "total_label": "Total"
         },
         "design_services": {
@@ -1512,23 +1498,6 @@
         "back_to_cart_link": "Back to Cart",
         "page_heading": "Checkout",
         "form_sections": {
-            "contact_information": {
-                "heading": "Contact Information",
-                "fields": {
-                    "name": {
-                        "label": "Name *",
-                        "type": "text"
-                    },
-                    "email": {
-                        "label": "Email *",
-                        "type": "email"
-                    },
-                    "phone": {
-                        "label": "Phone",
-                        "type": "text"
-                    }
-                }
-            },
             "shipping_address": {
                 "heading": "Shipping Address",
                 "fields": {
@@ -1575,12 +1544,8 @@
             },
             "payment_method": {
                 "heading": "Payment Method",
+                "no_methods_message": "No online payment method is currently configured.",
                 "options": [
-                    {
-                        "value": "manual",
-                        "label": "Manual / Pay Later",
-                        "description": "Place the order and arrange payment offline."
-                    },
                     {
                         "value": "paypal",
                         "label": "PayPal",
@@ -1967,7 +1932,7 @@
             "description": "Your InkPavo dashboard - manage orders, designs, and account settings."
         },
         "welcome_heading_template": "Welcome back, {user.name}",
-        "welcome_description": "Manage your orders, profile, address and affiliate program from one place.",
+        "welcome_description": "Manage your orders, profile, shipping address and affiliate program from one place.",
         "cards": {
             "profile": {
                 "title": "Profile",
@@ -1976,10 +1941,11 @@
                     "name": "Name",
                     "email": "Email",
                     "status": "Status",
-                    "member_since": "Member since"
+                    "shipping_address": "Shipping address"
                 },
                 "status_verified": "Email verified",
-                "status_unverified": "Email not verified"
+                "status_unverified": "Email not verified",
+                "shipping_address_empty": "No shipping address on file yet."
             },
             "recent_orders": {
                 "title": "Recent orders",
@@ -1991,10 +1957,11 @@
                 "item_singular": "item",
                 "item_plural": "items"
             },
-            "address": {
-                "title": "Delivery address",
-                "empty_state": "No address on file yet — we'll save your shipping details after your first order.",
-                "phone_label": "Phone:"
+            "support_tickets": {
+                "title": "Support tickets",
+                "view_link": "View tickets",
+                "description": "Get help with an order or ask our support team a question.",
+                "new_ticket_link": "Open a support ticket"
             },
             "affiliate": {
                 "title": "Affiliate program",
@@ -2003,7 +1970,7 @@
                 "empty_state_link": "Join now",
                 "empty_state_suffix": " to start earning commissions.",
                 "rows": {
-                    "referral_code": "Referral code",
+                    "referral_code": "Referral link",
                     "commission_rate": "Commission rate"
                 },
                 "stats": {
@@ -2385,7 +2352,7 @@
         "_source_file": "resources/js/pages/settings/affiliate.tsx",
         "seo": {
             "title": "Affiliate settings",
-            "description": "Manage your InkPavo affiliate account, referral link, and earnings."
+            "description": "Manage your InkPavo affiliate account, referral link, commission history, and PayPal withdrawals."
         },
         "sr_heading": "Affiliate settings",
         "breadcrumb": "Affiliate settings"

@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
+import StorefrontLayout from '@/layouts/storefront-layout';
 
 interface Ticket {
     id: number;
@@ -39,36 +40,11 @@ export default function TicketIndex({ tickets }: Props) {
     const c = useContent('shop_tickets_index_page') as any;
 
     return (
-        <>
+        <StorefrontLayout>
             <SEO title={c.seo_title} />
 
-            <div className="flex min-h-screen flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <header className="w-full border-b border-[#e3e3e0] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]">
-                    <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-                        <Link
-                            href="/"
-                            className="text-lg font-semibold tracking-tight"
-                        >
-                            {c.brand}
-                        </Link>
-                        <nav className="flex items-center gap-4 text-sm">
-                            <Link
-                                href="/shop"
-                                className="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]"
-                            >
-                                {c.nav.shop}
-                            </Link>
-                            <Link
-                                href="/orders"
-                                className="text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]"
-                            >
-                                {c.nav.orders}
-                            </Link>
-                        </nav>
-                    </div>
-                </header>
-
-                <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-12">
+            <section className="bg-neutral-50">
+                <main className="mx-auto w-full max-w-7xl px-4 py-10 lg:py-14">
                     <div className="mb-6 flex items-center justify-between">
                         <h1 className="text-3xl font-semibold tracking-tight">
                             {c.page_heading}
@@ -160,7 +136,7 @@ export default function TicketIndex({ tickets }: Props) {
                         </div>
                     )}
                 </main>
-            </div>
-        </>
+            </section>
+        </StorefrontLayout>
     );
 }

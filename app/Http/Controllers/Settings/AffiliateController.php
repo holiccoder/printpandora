@@ -15,8 +15,17 @@ class AffiliateController extends Controller
     {
         $affiliate = Affiliate::where('user_id', $request->user()->id)->first();
 
+        if (! $affiliate) {
+            $affiliate = Affiliate::create([
+                'user_id' => $request->user()->id,
+                'referral_code' => Affiliate::generateReferralCode(),
+                'commission_rate' => 10.00,
+                'status' => 'active',
+            ]);
+        }
+
         $props = [
-            'isAffiliate' => $affiliate !== null,
+            'isAffiliate' => true,
             'affiliate' => $affiliate ? [
                 'id' => $affiliate->id,
                 'referral_code' => $affiliate->referral_code,
@@ -28,7 +37,7 @@ class AffiliateController extends Controller
                 'referral_url' => route('referral.show', $affiliate->referral_code),
             ] : null,
             'commissions' => $affiliate
-                ? $affiliate->commissions()->with('order')->latest()->limit(20)->get()
+                ? $affiliate->commissions()->with('order')->latest()->get()
                     ->map(fn ($c) => [
                         'id' => $c->id,
                         'amount' => (float) $c->amount,
@@ -50,11 +59,12 @@ class AffiliateController extends Controller
                     ])
                 : [],
             'payouts' => $affiliate
-                ? $affiliate->payouts()->latest()->limit(20)->get()
+                ? $affiliate->payouts()->latest()->get()
                     ->map(fn ($p) => [
                         'id' => $p->id,
                         'amount' => (float) $p->amount,
                         'status' => $p->status,
+                        'payment_method' => $p->payment_method,
                         'created_at' => $p->created_at->toDateTimeString(),
                     ])
                 : [],
@@ -92,8 +102,8 @@ class AffiliateController extends Controller
 
         $validated = $request->validate([
             'amount' => 'required|numeric|min:10|max:'.$pending,
-            'payment_method' => 'required|string|in:paypal,bank_transfer',
-            'payment_details' => 'required|string|max:255',
+            'payment_method' => 'required|string|in:paypal',
+            'payment_details' => 'required|email|max:255',
         ]);
 
         $affiliate->payouts()->create([

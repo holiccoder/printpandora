@@ -6,47 +6,30 @@ import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn, toUrl } from '@/lib/utils';
 import { edit as editAffiliate } from '@/routes/affiliate';
-import { edit as editAppearance } from '@/routes/appearance';
-import { edit } from '@/routes/profile';
-import { edit as editSecurity } from '@/routes/security';
 import type { NavItem } from '@/types';
 
 const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: edit(),
-        icon: null,
-    },
-    {
-        title: 'Security',
-        href: editSecurity(),
-        icon: null,
-    },
-    {
-        title: 'Appearance',
-        href: editAppearance(),
-        icon: null,
-    },
     {
         title: 'Affiliate',
         href: editAffiliate(),
         icon: null,
     },
     {
-        title: 'Support',
-        href: '/tickets',
+        title: 'Withdraw method',
+        href: '/settings/affiliate#withdraw-method',
         icon: null,
     },
 ];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
+    const isAffiliatePage = isCurrentOrParentUrl(editAffiliate());
 
     return (
-        <div className="px-4 py-6">
+        <div className="mx-auto w-full max-w-7xl px-4 py-10 lg:py-14">
             <Heading
                 title="Settings"
-                description="Manage your profile and account settings"
+                description="Manage your affiliate earnings and payouts"
             />
 
             <div className="flex flex-col lg:flex-row lg:space-x-12">
@@ -78,8 +61,18 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
                 <Separator className="my-6 lg:hidden" />
 
-                <div className="flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">
+                <div
+                    className={cn(
+                        'flex-1',
+                        isAffiliatePage ? 'w-full' : 'md:max-w-2xl',
+                    )}
+                >
+                    <section
+                        className={cn(
+                            'space-y-12',
+                            isAffiliatePage ? 'w-full' : 'max-w-xl',
+                        )}
+                    >
                         {children}
                     </section>
                 </div>

@@ -55,12 +55,49 @@ class OrderResource extends Resource
                             ->label('Shipping fee')
                             ->prefix('$')
                             ->disabled(),
+                        Forms\Components\TextInput::make('shipping_weight_grams')
+                            ->label('Parcel weight (g)')
+                            ->numeric()
+                            ->integer()
+                            ->minValue(1),
+                        Forms\Components\TextInput::make('shipping_length_cm')
+                            ->label('Length (cm)')
+                            ->numeric()
+                            ->minValue(0.01),
+                        Forms\Components\TextInput::make('shipping_width_cm')
+                            ->label('Width (cm)')
+                            ->numeric()
+                            ->minValue(0.01),
+                        Forms\Components\TextInput::make('shipping_height_cm')
+                            ->label('Height (cm)')
+                            ->numeric()
+                            ->minValue(0.01),
                         Forms\Components\TextInput::make('tracking_number')
                             ->label('Tracking number')
-                            ->helperText('Enter the DHL waybill after creating the shipment in EShip.'),
+                            ->helperText('4PX and DHL tracking numbers can be entered or synchronized here.'),
                         Forms\Components\TextInput::make('tracking_url')
                             ->label('Tracking URL')
                             ->url(),
+                        Forms\Components\TextInput::make('fourpx_status')
+                            ->label('4PX status')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('fourpx_ref_no')
+                            ->label('4PX reference')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('fourpx_consignment_no')
+                            ->label('4PX consignment number')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('fourpx_logistics_channel_no')
+                            ->label('4PX logistics channel number')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('fourpx_label_url')
+                            ->label('4PX label URL')
+                            ->url()
+                            ->disabled(),
+                        Forms\Components\Textarea::make('fourpx_last_error')
+                            ->label('4PX last error')
+                            ->disabled()
+                            ->columnSpanFull(),
                         Forms\Components\Textarea::make('notes')
                             ->label('备注')
                             ->columnSpanFull(),
@@ -136,6 +173,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('total')->label('订单总计')->money('USD')->sortable(),
                 Tables\Columns\TextColumn::make('shipping_carrier')->label('Carrier')->sortable(),
                 Tables\Columns\TextColumn::make('tracking_number')->label('Tracking')->searchable(),
+                Tables\Columns\TextColumn::make('fourpx_status')->label('4PX status')->sortable(),
                 Tables\Columns\SelectColumn::make('status')
                     ->label('状态')
                     ->options([

@@ -12,6 +12,7 @@ import {
 import { useState } from 'react';
 import AnnouncementBar from '@/components/announcement-bar';
 import { CartDrawer } from '@/components/cart-drawer';
+import type { CartItem } from '@/components/cart-drawer';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -69,6 +70,12 @@ type NavCategory = {
     mega?: MegaMenu;
 };
 
+type GlobalCart = {
+    items: CartItem[];
+    count: number;
+    subtotal: string;
+};
+
 const ACTIVE_GREEN = 'text-[#800020]';
 const INACTIVE_GREY = 'text-neutral-500 hover:text-neutral-900';
 
@@ -78,8 +85,9 @@ export function StorefrontHeader({
     const chrome = useContent('global_chrome');
     const h = chrome.header;
     const page = usePage();
-    const { auth } = page.props as unknown as {
+    const { auth, global_cart: globalCart } = page.props as unknown as {
         auth?: { user?: { name?: string } | null };
+        global_cart?: GlobalCart;
     };
     const user = auth?.user;
 
@@ -292,7 +300,10 @@ export function StorefrontHeader({
                             <User className="size-5 opacity-80" />
                         </Link>
 
-                        <CartDrawer />
+                        <CartDrawer
+                            items={globalCart?.items ?? []}
+                            subtotal={globalCart?.subtotal}
+                        />
                     </div>
                 </div>
 

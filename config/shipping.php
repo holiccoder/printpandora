@@ -8,9 +8,9 @@ return [
     'methods' => [
         'standard' => [
             'label' => env('SHIPPING_STANDARD_LABEL', 'Standard Shipping'),
-            'carrier' => env('SHIPPING_STANDARD_CARRIER', 'Standard'),
+            'carrier' => env('SHIPPING_STANDARD_CARRIER', '4PX'),
             'fee' => (float) env('SHIPPING_STANDARD_RATE', 5.99),
-            'description' => env('SHIPPING_STANDARD_DESCRIPTION', 'Tracked delivery for routine orders.'),
+            'description' => env('SHIPPING_STANDARD_DESCRIPTION', '4PX tracked delivery. Shipment is created after payment.'),
             'estimated_delivery' => env('SHIPPING_STANDARD_ESTIMATE', '5-10 business days'),
         ],
         'dhl_express' => [

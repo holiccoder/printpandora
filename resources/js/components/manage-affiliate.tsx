@@ -29,6 +29,7 @@ type Payout = {
     id: number;
     amount: number;
     status: string;
+    payment_method: string | null;
     created_at: string;
 };
 
@@ -205,111 +206,131 @@ export default function ManageAffiliate({
                 </p>
             </div>
 
-            {affiliate.pending_earnings >= 10 && (
-                <div className="space-y-6">
-                    <Heading
-                        variant="small"
-                        title="Request payout"
-                        description={`You have $${affiliate.pending_earnings.toFixed(2)} available for payout`}
-                    />
+            <div id="withdraw-method" className="scroll-mt-24 space-y-6">
+                <Heading
+                    variant="small"
+                    title="Withdraw method"
+                    description="PayPal is currently the only supported withdrawal method."
+                />
 
-                    {!showPayoutForm ? (
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowPayoutForm(true)}
+                <div className="max-w-md space-y-4 rounded-lg border p-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="payout_method">Withdraw method</Label>
+                        <select
+                            id="payout_method"
+                            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
+                            value={payoutForm.data.payment_method}
+                            disabled
+                            aria-describedby="withdraw-method-help"
                         >
-                            Request payout
-                        </Button>
+                            <option value="paypal">PayPal</option>
+                        </select>
+                        <p
+                            id="withdraw-method-help"
+                            className="text-xs text-muted-foreground"
+                        >
+                            Withdrawals are sent to your PayPal account.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="payout_details">PayPal email</Label>
+                        <Input
+                            id="payout_details"
+                            type="email"
+                            value={payoutForm.data.payment_details}
+                            onChange={(e) =>
+                                payoutForm.setData(
+                                    'payment_details',
+                                    e.target.value,
+                                )
+                            }
+                            placeholder="you@example.com"
+                        />
+                        {payoutForm.errors.payment_details && (
+                            <p className="text-xs text-red-500">
+                                {payoutForm.errors.payment_details}
+                            </p>
+                        )}
+                    </div>
+
+                    {affiliate.pending_earnings >= 10 ? (
+                        !showPayoutForm ? (
+                            <div className="space-y-3">
+                                <p className="text-sm text-muted-foreground">
+                                    ${affiliate.pending_earnings.toFixed(2)} is
+                                    available for withdrawal.
+                                </p>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setShowPayoutForm(true)}
+                                >
+                                    Request payout
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="payout_amount">
+                                        Amount ($)
+                                    </Label>
+                                    <Input
+                                        id="payout_amount"
+                                        type="number"
+                                        step="0.01"
+                                        min="10"
+                                        max={affiliate.pending_earnings}
+                                        value={payoutForm.data.amount}
+                                        onChange={(e) =>
+                                            payoutForm.setData(
+                                                'amount',
+                                                e.target.value,
+                                            )
+                                        }
+                                        placeholder={`Max $${affiliate.pending_earnings.toFixed(2)}`}
+                                    />
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button
+                                        onClick={submitPayout}
+                                        disabled={payoutForm.processing}
+                                    >
+                                        {payoutForm.processing && <Spinner />}
+                                        Submit request
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        onClick={() => {
+                                            setShowPayoutForm(false);
+                                            payoutForm.reset();
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </div>
+                            </div>
+                        )
                     ) : (
-                        <div className="max-w-md space-y-4 rounded-lg border p-4">
-                            <div className="grid gap-2">
-                                <Label htmlFor="payout_amount">
-                                    Amount ($)
-                                </Label>
-                                <Input
-                                    id="payout_amount"
-                                    type="number"
-                                    step="0.01"
-                                    min="10"
-                                    max={affiliate.pending_earnings}
-                                    value={payoutForm.data.amount}
-                                    onChange={(e) =>
-                                        payoutForm.setData(
-                                            'amount',
-                                            e.target.value,
-                                        )
-                                    }
-                                    placeholder={`Max $${affiliate.pending_earnings.toFixed(2)}`}
-                                />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="payout_method">
-                                    Payment method
-                                </Label>
-                                <select
-                                    id="payout_method"
-                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
-                                    value={payoutForm.data.payment_method}
-                                    onChange={(e) =>
-                                        payoutForm.setData(
-                                            'payment_method',
-                                            e.target.value,
-                                        )
-                                    }
-                                >
-                                    <option value="paypal">PayPal</option>
-                                    <option value="bank_transfer">
-                                        Bank transfer
-                                    </option>
-                                </select>
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="payout_details">
-                                    Payment details
-                                </Label>
-                                <Input
-                                    id="payout_details"
-                                    value={payoutForm.data.payment_details}
-                                    onChange={(e) =>
-                                        payoutForm.setData(
-                                            'payment_details',
-                                            e.target.value,
-                                        )
-                                    }
-                                    placeholder="PayPal email or bank account info"
-                                />
-                            </div>
-                            <div className="flex gap-2">
-                                <Button
-                                    onClick={submitPayout}
-                                    disabled={payoutForm.processing}
-                                >
-                                    {payoutForm.processing && <Spinner />}
-                                    Submit request
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => {
-                                        setShowPayoutForm(false);
-                                        payoutForm.reset();
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                            </div>
-                        </div>
+                        <p className="text-sm text-muted-foreground">
+                            You need at least $10.00 in earnings to request a
+                            withdrawal.
+                        </p>
                     )}
                 </div>
-            )}
+            </div>
 
-            {commissions.length > 0 && (
-                <div className="space-y-6">
-                    <Heading
-                        variant="small"
-                        title="Recent commissions"
-                        description="Your latest earned commissions"
-                    />
+            <div className="space-y-6">
+                <Heading
+                    variant="small"
+                    title="Commission history"
+                    description="A record of commissions earned from your referrals"
+                />
 
+                {commissions.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                        No commission activity yet.
+                    </p>
+                ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
@@ -318,7 +339,10 @@ export default function ManageAffiliate({
                                         Order
                                     </th>
                                     <th className="pr-4 pb-2 font-medium text-muted-foreground">
-                                        Amount
+                                        Order total
+                                    </th>
+                                    <th className="pr-4 pb-2 font-medium text-muted-foreground">
+                                        Commission
                                     </th>
                                     <th className="pr-4 pb-2 font-medium text-muted-foreground">
                                         Rate
@@ -337,6 +361,9 @@ export default function ManageAffiliate({
                                         <td className="py-2 pr-4">
                                             #{c.order_id}
                                         </td>
+                                        <td className="py-2 pr-4">
+                                            ${c.order_total.toFixed(2)}
+                                        </td>
                                         <td className="py-2 pr-4 font-medium">
                                             ${c.amount.toFixed(2)}
                                         </td>
@@ -354,8 +381,8 @@ export default function ManageAffiliate({
                             </tbody>
                         </table>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
 
             {referrals.length > 0 && (
                 <div className="space-y-6">
@@ -416,6 +443,9 @@ export default function ManageAffiliate({
                                         Amount
                                     </th>
                                     <th className="pr-4 pb-2 font-medium text-muted-foreground">
+                                        Method
+                                    </th>
+                                    <th className="pr-4 pb-2 font-medium text-muted-foreground">
                                         Status
                                     </th>
                                     <th className="pb-2 font-medium text-muted-foreground">
@@ -428,6 +458,9 @@ export default function ManageAffiliate({
                                     <tr key={p.id} className="border-b">
                                         <td className="py-2 pr-4 font-medium">
                                             ${p.amount.toFixed(2)}
+                                        </td>
+                                        <td className="py-2 pr-4 capitalize">
+                                            {p.payment_method ?? 'PayPal'}
                                         </td>
                                         <td className="py-2 pr-4">
                                             <span

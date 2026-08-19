@@ -59,7 +59,7 @@ declare global {
     }
 }
 
-type PaymentMethod = 'manual' | 'paypal' | 'cryptomus';
+type PaymentMethod = 'paypal' | 'cryptomus';
 
 export default function Checkout({
     cart,
@@ -75,10 +75,7 @@ export default function Checkout({
     cryptomus,
 }: Props) {
     const c = useContent('checkout_page') as any;
-    const { data, setData, processing, errors } = useForm({
-        customer_name: '',
-        customer_email: '',
-        customer_phone: '',
+    const { data, setData, errors } = useForm({
         shipping_address: '',
         shipping_city: '',
         shipping_state: '',
@@ -90,7 +87,9 @@ export default function Checkout({
         notes: '',
     });
 
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('manual');
+    const [paymentMethod] = useState<PaymentMethod | null>(
+        paypal.client_id ? 'paypal' : cryptomus.configured ? 'cryptomus' : null,
+    );
     const [discountInput, setDiscountInput] = useState(discountCode ?? '');
     const [discountError, setDiscountError] = useState<string | null>(null);
 
@@ -238,7 +237,6 @@ export default function Checkout({
                         Accept: 'application/json',
                     },
                     body: JSON.stringify({
-                        customer_email: dataRef.current.customer_email,
                         shipping_method: dataRef.current.shipping_method,
                     }),
                 });
@@ -320,19 +318,6 @@ export default function Checkout({
         };
     }, [paymentMethod, paypalReady, c.error_messages]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (paymentMethod !== 'manual') {
-            return;
-        }
-
-        const form = e.currentTarget as HTMLFormElement;
-        const fd = new FormData(form);
-
-        router.post('/checkout', Object.fromEntries(fd));
-    };
-
     const handleCryptomusSubmit = async () => {
         if (cryptomusLoading) {
             return;
@@ -387,17 +372,9 @@ export default function Checkout({
         }
     };
 
-    const contact = c.form_sections.contact_information;
     const shipping = c.form_sections.shipping_address;
     const shippingMethodSection = c.form_sections.shipping_method;
     const payment = c.form_sections.payment_method;
-    // Cache payment option lookups by `value` so we can read labels/descriptions
-    // without depending on positional ordering.
-    const payOpt = (value: string) =>
-        payment.options.find((o: any) => o.value === value) ?? {};
-    const manualOpt = payOpt('manual');
-    const paypalOpt = payOpt('paypal');
-    const cryptomusOpt = payOpt('cryptomus');
     const summary = c.order_summary_sidebar;
 
     return (
@@ -405,17 +382,12 @@ export default function Checkout({
             <SEO title={c.seo_title} />
 
             <div className="bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <div className="mx-auto w-full max-w-4xl px-4 py-12">
+                <div className="mx-auto w-full max-w-7xl px-4 py-12">
                     <h1 className="mb-8 text-3xl font-semibold tracking-tight">
                         {c.page_heading}
                     </h1>
 
-                    <form
-                        method="post"
-                        action="/checkout"
-                        onSubmit={handleSubmit}
-                        className="grid gap-8 lg:grid-cols-3"
-                    >
+                    <div className="grid gap-8 lg:grid-cols-3">
                         <div className="space-y-6 lg:col-span-2">
                             <div className="rounded-lg border border-[#e3e3e0] bg-white p-6 dark:border-[#3E3E3A] dark:bg-[#161615]">
                                 <h2 className="mb-4 text-xl font-semibold">
@@ -488,75 +460,6 @@ export default function Checkout({
                                             </span>
                                         </div>
                                     ))}
-                                </div>
-                            </div>
-
-                            <div className="rounded-lg border border-[#e3e3e0] bg-white p-6 dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                <h2 className="mb-4 text-lg font-semibold">
-                                    {contact.heading}
-                                </h2>
-                                <div className="grid gap-4 sm:grid-cols-2">
-                                    <div>
-                                        <label className="mb-1 block text-sm font-medium">
-                                            {contact.fields.name.label}
-                                        </label>
-                                        <input
-                                            type={contact.fields.name.type}
-                                            name="customer_name"
-                                            value={data.customer_name}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'customer_name',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full rounded-md border border-[#e3e3e0] bg-white px-3 py-2 text-sm dark:border-[#3E3E3A] dark:bg-[#161615]"
-                                        />
-                                        {errors.customer_name && (
-                                            <p className="mt-1 text-xs text-red-500">
-                                                {errors.customer_name}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <label className="mb-1 block text-sm font-medium">
-                                            {contact.fields.email.label}
-                                        </label>
-                                        <input
-                                            type={contact.fields.email.type}
-                                            name="customer_email"
-                                            value={data.customer_email}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'customer_email',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full rounded-md border border-[#e3e3e0] bg-white px-3 py-2 text-sm dark:border-[#3E3E3A] dark:bg-[#161615]"
-                                        />
-                                        {errors.customer_email && (
-                                            <p className="mt-1 text-xs text-red-500">
-                                                {errors.customer_email}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <label className="mb-1 block text-sm font-medium">
-                                            {contact.fields.phone.label}
-                                        </label>
-                                        <input
-                                            type={contact.fields.phone.type}
-                                            name="customer_phone"
-                                            value={data.customer_phone}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'customer_phone',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full rounded-md border border-[#e3e3e0] bg-white px-3 py-2 text-sm dark:border-[#3E3E3A] dark:bg-[#161615]"
-                                        />
-                                    </div>
                                 </div>
                             </div>
 
@@ -774,98 +677,6 @@ export default function Checkout({
                                     </p>
                                 )}
                             </div>
-
-                            <div className="rounded-lg border border-[#e3e3e0] bg-white p-6 dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                <h2 className="mb-4 text-lg font-semibold">
-                                    {payment.heading}
-                                </h2>
-                                <div className="space-y-3">
-                                    <label className="flex cursor-pointer items-start gap-3 rounded-md border border-[#e3e3e0] p-3 dark:border-[#3E3E3A]">
-                                        <input
-                                            type="radio"
-                                            name="payment_method"
-                                            value="manual"
-                                            checked={paymentMethod === 'manual'}
-                                            onChange={() =>
-                                                setPaymentMethod('manual')
-                                            }
-                                            className="mt-1"
-                                        />
-                                        <div>
-                                            <div className="font-medium">
-                                                {manualOpt.label}
-                                            </div>
-                                            <div className="text-xs text-[#706f6c]">
-                                                {manualOpt.description}
-                                            </div>
-                                        </div>
-                                    </label>
-                                    <label className="flex cursor-pointer items-start gap-3 rounded-md border border-[#e3e3e0] p-3 dark:border-[#3E3E3A]">
-                                        <input
-                                            type="radio"
-                                            name="payment_method"
-                                            value="paypal"
-                                            checked={paymentMethod === 'paypal'}
-                                            onChange={() =>
-                                                setPaymentMethod('paypal')
-                                            }
-                                            className="mt-1"
-                                            disabled={!paypal.client_id}
-                                        />
-                                        <div>
-                                            <div className="font-medium">
-                                                {paypalOpt.label}
-                                                {paypal.mode === 'sandbox' && (
-                                                    <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-amber-800 uppercase dark:bg-amber-900/30 dark:text-amber-300">
-                                                        {
-                                                            paypalOpt.sandbox_badge
-                                                        }
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="text-xs text-[#706f6c]">
-                                                {paypal.client_id
-                                                    ? paypalOpt.description_configured
-                                                    : paypalOpt.description_not_configured}
-                                            </div>
-                                        </div>
-                                    </label>
-                                    {cryptomus.configured && (
-                                        <label className="flex cursor-pointer items-start gap-3 rounded-md border border-[#e3e3e0] p-3 dark:border-[#3E3E3A]">
-                                            <input
-                                                type="radio"
-                                                name="payment_method"
-                                                value="cryptomus"
-                                                checked={
-                                                    paymentMethod ===
-                                                    'cryptomus'
-                                                }
-                                                onChange={() =>
-                                                    setPaymentMethod(
-                                                        'cryptomus',
-                                                    )
-                                                }
-                                                className="mt-1"
-                                            />
-                                            <div>
-                                                <div className="font-medium">
-                                                    {cryptomusOpt.label}
-                                                    {cryptomus.test && (
-                                                        <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-amber-800 uppercase dark:bg-amber-900/30 dark:text-amber-300">
-                                                            {
-                                                                cryptomusOpt.test_badge
-                                                            }
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <div className="text-xs text-[#706f6c]">
-                                                    {cryptomusOpt.description}
-                                                </div>
-                                            </div>
-                                        </label>
-                                    )}
-                                </div>
-                            </div>
                         </div>
 
                         <div>
@@ -951,18 +762,6 @@ export default function Checkout({
                                     <span>${orderTotal.toFixed(2)}</span>
                                 </div>
 
-                                {paymentMethod === 'manual' && (
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="mt-4 w-full rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-                                    >
-                                        {processing
-                                            ? summary.placing_order_button
-                                            : summary.place_order_button}
-                                    </button>
-                                )}
-
                                 {paymentMethod === 'paypal' && (
                                     <div className="mt-4 space-y-2">
                                         {!paypalReady &&
@@ -1011,9 +810,16 @@ export default function Checkout({
                                         </p>
                                     </div>
                                 )}
+
+                                {!paypal.client_id && !cryptomus.configured && (
+                                    <p className="mt-4 text-sm text-[#706f6c]">
+                                        {payment.no_methods_message ??
+                                            'No online payment method is currently configured.'}
+                                    </p>
+                                )}
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </StorefrontLayout>

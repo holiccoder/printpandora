@@ -2,6 +2,7 @@
 import { Link, useForm } from '@inertiajs/react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
+import StorefrontLayout from '@/layouts/storefront-layout';
 
 export default function TicketCreate() {
     const c = useContent('shop_tickets_create_page') as any;
@@ -17,28 +18,11 @@ export default function TicketCreate() {
     };
 
     return (
-        <>
+        <StorefrontLayout>
             <SEO title={c.seo_title} />
 
-            <div className="flex min-h-screen flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <header className="w-full border-b border-[#e3e3e0] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]">
-                    <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-                        <Link
-                            href="/"
-                            className="text-lg font-semibold tracking-tight"
-                        >
-                            {c.brand}
-                        </Link>
-                        <Link
-                            href="/tickets"
-                            className="text-sm text-[#706f6c] hover:text-[#1b1b18]"
-                        >
-                            {c.nav_my_tickets}
-                        </Link>
-                    </div>
-                </header>
-
-                <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-12">
+            <section className="bg-neutral-50">
+                <main className="mx-auto w-full max-w-7xl px-4 py-10 lg:py-14">
                     <Link
                         href="/tickets"
                         className="mb-6 inline-flex items-center gap-1 text-sm text-[#706f6c] hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]"
@@ -175,7 +159,7 @@ export default function TicketCreate() {
                         </button>
                     </form>
                 </main>
-            </div>
-        </>
+            </section>
+        </StorefrontLayout>
     );
 }

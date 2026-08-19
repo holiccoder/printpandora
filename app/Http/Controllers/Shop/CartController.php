@@ -19,7 +19,6 @@ class CartController extends Controller
         return Inertia::render('shop/cart', [
             'cart' => $cart->all(),
             'subtotal' => $quote['subtotal'],
-            'discount' => $quote['code'],
             'discountAmount' => $quote['discount'],
             'total' => $quote['total'],
             'count' => $cart->count(),

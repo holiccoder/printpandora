@@ -35,21 +35,20 @@ class DashboardController extends Controller
             ]);
 
         // We don't have a dedicated addresses table, so the dashboard
-        // surfaces the most recent order's shipping address as the
-        // user's "current" delivery address.
-        $latestAddressOrder = Order::where('user_id', $user->id)
+        // surfaces the most recent order's shipping address.
+        $latestShippingOrder = Order::where('user_id', $user->id)
             ->whereNotNull('shipping_address')
             ->latest()
             ->first();
 
-        $address = $latestAddressOrder ? [
-            'name' => $latestAddressOrder->customer_name,
-            'phone' => $latestAddressOrder->customer_phone,
-            'line' => $latestAddressOrder->shipping_address,
-            'city' => $latestAddressOrder->shipping_city,
-            'state' => $latestAddressOrder->shipping_state,
-            'zip' => $latestAddressOrder->shipping_zip,
-            'country' => $latestAddressOrder->shipping_country,
+        $shippingAddress = $latestShippingOrder ? [
+            'name' => $latestShippingOrder->customer_name,
+            'phone' => $latestShippingOrder->customer_phone,
+            'line' => $latestShippingOrder->shipping_address,
+            'city' => $latestShippingOrder->shipping_city,
+            'state' => $latestShippingOrder->shipping_state,
+            'zip' => $latestShippingOrder->shipping_zip,
+            'country' => $latestShippingOrder->shipping_country,
         ] : null;
 
         $affiliate = Affiliate::where('user_id', $user->id)->first();
@@ -60,10 +59,9 @@ class DashboardController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'email_verified_at' => $user->email_verified_at?->toIso8601String(),
-                'created_at' => $user->created_at?->toIso8601String(),
             ],
             'recentOrders' => $recentOrders,
-            'address' => $address,
+            'shippingAddress' => $shippingAddress,
             'affiliate' => $affiliate ? [
                 'referral_code' => $affiliate->referral_code,
                 'commission_rate' => (float) $affiliate->commission_rate,

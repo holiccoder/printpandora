@@ -19,9 +19,8 @@ import { useContent } from '@/hooks/use-content';
  * All labels and the empty state come from
  * `content/hardcoded-content.json` → `global_chrome.cart_drawer`.
  *
- * The actual cart state isn't wired yet — for now this renders an empty
- * state with a CTA back into the shop. When we plumb cart items in, swap
- * the empty block for a list of CartLine rows and pull totals from props.
+ * Cart items and totals come from the shared Inertia cart payload, so this
+ * drawer stays synchronized with the cart and checkout pages.
  */
 
 export type CartItem = {
