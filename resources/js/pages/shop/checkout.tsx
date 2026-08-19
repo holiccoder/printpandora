@@ -61,6 +61,56 @@ declare global {
 
 type PaymentMethod = 'paypal' | 'cryptomus';
 
+type ShippingAddressField =
+    | 'shipping_address'
+    | 'shipping_city'
+    | 'shipping_state'
+    | 'shipping_zip'
+    | 'shipping_country';
+
+type ShippingErrors = Partial<Record<ShippingAddressField, string>>;
+
+const REQUIRED_SHIPPING_FIELDS: Array<{
+    key: ShippingAddressField;
+    message: string;
+}> = [
+    {
+        key: 'shipping_address',
+        message: 'Please enter your street address.',
+    },
+    {
+        key: 'shipping_city',
+        message: 'Please enter your city.',
+    },
+    {
+        key: 'shipping_state',
+        message: 'Please select your state or province.',
+    },
+    {
+        key: 'shipping_zip',
+        message: 'Please enter your ZIP or postal code.',
+    },
+    {
+        key: 'shipping_country',
+        message: 'Please select your country.',
+    },
+];
+
+const SHIPPING_VALIDATION_MESSAGE =
+    'Please complete the highlighted shipping fields.';
+
+function getMissingShippingErrors(
+    values: Partial<Record<ShippingAddressField, string>>,
+): ShippingErrors {
+    return REQUIRED_SHIPPING_FIELDS.reduce<ShippingErrors>((missing, field) => {
+        if (!values[field.key]?.trim()) {
+            missing[field.key] = field.message;
+        }
+
+        return missing;
+    }, {});
+}
+
 export default function Checkout({
     cart,
     subtotal,
@@ -90,8 +140,28 @@ export default function Checkout({
     const [paymentMethod] = useState<PaymentMethod | null>(
         paypal.client_id ? 'paypal' : cryptomus.configured ? 'cryptomus' : null,
     );
+    const [shippingErrors, setShippingErrors] = useState<ShippingErrors>({});
     const [discountInput, setDiscountInput] = useState(discountCode ?? '');
     const [discountError, setDiscountError] = useState<string | null>(null);
+
+    const clearShippingError = (field: ShippingAddressField) => {
+        setShippingErrors((current) => {
+            if (!current[field]) {
+                return current;
+            }
+
+            const next = { ...current };
+            delete next[field];
+
+            return next;
+        });
+    };
+
+    const shippingFieldClass = (field: ShippingAddressField) =>
+        `w-full rounded-md border bg-white px-3 py-2 text-sm dark:bg-[#161615] ${shippingErrors[field] || errors[field] ? 'border-red-500 ring-1 ring-red-500 dark:border-red-400' : 'border-[#e3e3e0] dark:border-[#3E3E3A]'}`;
+
+    const shippingFieldError = (field: ShippingAddressField) =>
+        shippingErrors[field] ?? errors[field];
 
     const applyDiscount = (e: React.FormEvent) => {
         e.preventDefault();
@@ -229,6 +299,36 @@ export default function Checkout({
 
             createOrder: async () => {
                 setPaypalError(null);
+
+                const missingShippingErrors = getMissingShippingErrors(
+                    dataRef.current,
+                );
+
+                if (Object.keys(missingShippingErrors).length > 0) {
+                    setShippingErrors(missingShippingErrors);
+
+                    const firstMissingField = REQUIRED_SHIPPING_FIELDS.find(
+                        (field) => missingShippingErrors[field.key],
+                    )?.key;
+
+                    if (firstMissingField) {
+                        requestAnimationFrame(() => {
+                            const element = document.querySelector<HTMLElement>(
+                                `[name="${firstMissingField}"]`,
+                            );
+                            element?.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center',
+                            });
+                            element?.focus();
+                        });
+                    }
+
+                    setPaypalError(SHIPPING_VALIDATION_MESSAGE);
+
+                    throw new Error(SHIPPING_VALIDATION_MESSAGE);
+                }
+
                 const res = await fetch('/checkout/paypal/create', {
                     method: 'POST',
                     headers: {
@@ -295,6 +395,11 @@ export default function Checkout({
 
             onError: (err: unknown) => {
                 console.error('PayPal error', err);
+
+                if ((err as Error)?.message === SHIPPING_VALIDATION_MESSAGE) {
+                    return;
+                }
+
                 setPaypalError(c.error_messages.generic_error);
             },
 
@@ -475,17 +580,31 @@ export default function Checkout({
                                             type={shipping.fields.address.type}
                                             name="shipping_address"
                                             value={data.shipping_address}
-                                            onChange={(e) =>
+                                            onChange={(e) => {
                                                 setData(
                                                     'shipping_address',
                                                     e.target.value,
-                                                )
-                                            }
-                                            className="w-full rounded-md border border-[#e3e3e0] bg-white px-3 py-2 text-sm dark:border-[#3E3E3A] dark:bg-[#161615]"
+                                                );
+                                                clearShippingError(
+                                                    'shipping_address',
+                                                );
+                                            }}
+                                            className={shippingFieldClass(
+                                                'shipping_address',
+                                            )}
+                                            aria-invalid={Boolean(
+                                                shippingFieldError(
+                                                    'shipping_address',
+                                                ),
+                                            )}
                                         />
-                                        {errors.shipping_address && (
+                                        {shippingFieldError(
+                                            'shipping_address',
+                                        ) && (
                                             <p className="mt-1 text-xs text-red-500">
-                                                {errors.shipping_address}
+                                                {shippingFieldError(
+                                                    'shipping_address',
+                                                )}
                                             </p>
                                         )}
                                     </div>
@@ -498,17 +617,31 @@ export default function Checkout({
                                                 type={shipping.fields.city.type}
                                                 name="shipping_city"
                                                 value={data.shipping_city}
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     setData(
                                                         'shipping_city',
                                                         e.target.value,
-                                                    )
-                                                }
-                                                className="w-full rounded-md border border-[#e3e3e0] bg-white px-3 py-2 text-sm dark:border-[#3E3E3A] dark:bg-[#161615]"
+                                                    );
+                                                    clearShippingError(
+                                                        'shipping_city',
+                                                    );
+                                                }}
+                                                className={shippingFieldClass(
+                                                    'shipping_city',
+                                                )}
+                                                aria-invalid={Boolean(
+                                                    shippingFieldError(
+                                                        'shipping_city',
+                                                    ),
+                                                )}
                                             />
-                                            {errors.shipping_city && (
+                                            {shippingFieldError(
+                                                'shipping_city',
+                                            ) && (
                                                 <p className="mt-1 text-xs text-red-500">
-                                                    {errors.shipping_city}
+                                                    {shippingFieldError(
+                                                        'shipping_city',
+                                                    )}
                                                 </p>
                                             )}
                                         </div>
@@ -519,13 +652,21 @@ export default function Checkout({
                                             <select
                                                 name="shipping_state"
                                                 value={data.shipping_state}
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     setData(
                                                         'shipping_state',
                                                         e.target.value,
-                                                    )
-                                                }
-                                                className="w-full rounded-md border border-[#e3e3e0] bg-white px-3 py-2 text-sm disabled:opacity-60 dark:border-[#3E3E3A] dark:bg-[#161615]"
+                                                    );
+                                                    clearShippingError(
+                                                        'shipping_state',
+                                                    );
+                                                }}
+                                                className={`${shippingFieldClass('shipping_state')} disabled:opacity-60`}
+                                                aria-invalid={Boolean(
+                                                    shippingFieldError(
+                                                        'shipping_state',
+                                                    ),
+                                                )}
                                             >
                                                 {availableStates.length ===
                                                 0 ? (
@@ -547,6 +688,15 @@ export default function Checkout({
                                                     )
                                                 )}
                                             </select>
+                                            {shippingFieldError(
+                                                'shipping_state',
+                                            ) && (
+                                                <p className="mt-1 text-xs text-red-500">
+                                                    {shippingFieldError(
+                                                        'shipping_state',
+                                                    )}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="grid gap-4 sm:grid-cols-2">
@@ -558,17 +708,31 @@ export default function Checkout({
                                                 type={shipping.fields.zip.type}
                                                 name="shipping_zip"
                                                 value={data.shipping_zip}
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     setData(
                                                         'shipping_zip',
                                                         e.target.value,
-                                                    )
-                                                }
-                                                className="w-full rounded-md border border-[#e3e3e0] bg-white px-3 py-2 text-sm dark:border-[#3E3E3A] dark:bg-[#161615]"
+                                                    );
+                                                    clearShippingError(
+                                                        'shipping_zip',
+                                                    );
+                                                }}
+                                                className={shippingFieldClass(
+                                                    'shipping_zip',
+                                                )}
+                                                aria-invalid={Boolean(
+                                                    shippingFieldError(
+                                                        'shipping_zip',
+                                                    ),
+                                                )}
                                             />
-                                            {errors.shipping_zip && (
+                                            {shippingFieldError(
+                                                'shipping_zip',
+                                            ) && (
                                                 <p className="mt-1 text-xs text-red-500">
-                                                    {errors.shipping_zip}
+                                                    {shippingFieldError(
+                                                        'shipping_zip',
+                                                    )}
                                                 </p>
                                             )}
                                         </div>
@@ -579,12 +743,22 @@ export default function Checkout({
                                             <select
                                                 name="shipping_country"
                                                 value={data.shipping_country}
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     handleCountryChange(
                                                         e.target.value,
-                                                    )
-                                                }
-                                                className="w-full rounded-md border border-[#e3e3e0] bg-white px-3 py-2 text-sm dark:border-[#3E3E3A] dark:bg-[#161615]"
+                                                    );
+                                                    clearShippingError(
+                                                        'shipping_country',
+                                                    );
+                                                }}
+                                                className={shippingFieldClass(
+                                                    'shipping_country',
+                                                )}
+                                                aria-invalid={Boolean(
+                                                    shippingFieldError(
+                                                        'shipping_country',
+                                                    ),
+                                                )}
                                             >
                                                 {countries.map((country) => (
                                                     <option
@@ -595,6 +769,15 @@ export default function Checkout({
                                                     </option>
                                                 ))}
                                             </select>
+                                            {shippingFieldError(
+                                                'shipping_country',
+                                            ) && (
+                                                <p className="mt-1 text-xs text-red-500">
+                                                    {shippingFieldError(
+                                                        'shipping_country',
+                                                    )}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                     <div>
