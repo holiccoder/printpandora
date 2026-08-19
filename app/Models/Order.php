@@ -19,6 +19,7 @@ class Order extends Model
         'payment_method',
         'payment_status',
         'payment_id',
+        'paypal_order_id',
         'total',
         'customer_name',
         'customer_email',

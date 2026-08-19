@@ -237,7 +237,7 @@ export default function Checkout({
                         Accept: 'application/json',
                     },
                     body: JSON.stringify({
-                        shipping_method: dataRef.current.shipping_method,
+                        ...dataRef.current,
                     }),
                 });
                 const json = await res.json().catch(() => ({}));
@@ -263,7 +263,6 @@ export default function Checkout({
                             Accept: 'application/json',
                         },
                         body: JSON.stringify({
-                            ...dataRef.current,
                             paypal_order_id: paypalData.orderID,
                         }),
                     });

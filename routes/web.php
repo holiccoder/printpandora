@@ -119,6 +119,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('tickets/{id}/reply', [TicketController::class, 'reply'])->name('shop.tickets.reply')->whereNumber('id');
 });
 
+// PayPal webhook (public — called by PayPal servers).
+Route::post('checkout/paypal/webhook', [CheckoutController::class, 'paypalWebhook'])
+    ->name('shop.checkout.paypal.webhook');
+
 // Cryptomus webhook (public — called by Cryptomus servers)
 Route::post('checkout/cryptomus/webhook', [CheckoutController::class, 'cryptomusWebhook'])
     ->name('shop.checkout.cryptomus.webhook');

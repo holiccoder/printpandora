@@ -24,6 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->validateCsrfTokens(except: [
+            'checkout/paypal/webhook',
+            'checkout/paypal/webhook/*',
             'checkout/cryptomus/webhook',
             'checkout/cryptomus/webhook/*',
         ]);

@@ -8,12 +8,14 @@ use App\Models\AffiliateCommission;
 use App\Models\AffiliateReferral;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\PayPalWebhookEvent;
 use App\Services\Cart;
 use App\Services\CryptomusService;
 use App\Services\DiscountException;
 use App\Services\DiscountService;
 use App\Services\PayPalService;
 use App\Services\ShippingService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -81,22 +83,42 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Create a PayPal order for the current cart and return its id to the SDK.
+     * Create a pending local order and its corresponding PayPal order.
      */
-    public function paypalCreate(Request $request, Cart $cart, PayPalService $paypal)
+    public function paypalCreate(Request $request, Cart $cart, PayPalService $paypal): JsonResponse
     {
         if ($cart->count() === 0) {
             return response()->json(['error' => 'Your cart is empty.'], 422);
         }
 
-        try {
-            $reference = 'cart-'.($request->user()?->id ?? 'guest').'-'.now()->timestamp;
-            $shippingMethod = $this->validateShippingMethod($request);
-            $quote = $cart->quote($request->user()?->email, true);
-            $total = round($quote['total'] + $this->shipping->fee($shippingMethod), 2);
-            $result = $paypal->createOrder($total, $reference);
+        $validated = $this->validateCheckout($request);
 
-            return response()->json(['id' => $result['id'] ?? null]);
+        try {
+            $quote = $cart->quote($validated['customer_email'], true);
+            $total = round($quote['total'] + $this->shipping->fee($validated['shipping_method']), 2);
+            $reference = 'checkout-'.$request->user()->getAuthIdentifier().'-'.now()->timestamp;
+            $result = $paypal->createOrder($total, $reference);
+            $paypalOrderId = $result['id'] ?? null;
+
+            if (! is_string($paypalOrderId) || $paypalOrderId === '') {
+                throw new \RuntimeException('PayPal did not return an order ID.');
+            }
+
+            $order = $this->placeOrder(
+                $request,
+                $cart,
+                $validated,
+                'paypal',
+                'pending',
+                null,
+                'pending',
+            );
+            $order->update(['paypal_order_id' => $paypalOrderId]);
+
+            return response()->json([
+                'id' => $paypalOrderId,
+                'order_id' => $order->id,
+            ]);
         } catch (DiscountException $e) {
             return response()->json(['error' => $e->getMessage()], 422);
         } catch (Throwable $e) {
@@ -107,22 +129,34 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Capture an approved PayPal order and persist the local Order.
+     * Capture an approved PayPal order and settle its pending local Order.
      */
-    public function paypalCapture(Request $request, Cart $cart, PayPalService $paypal)
+    public function paypalCapture(Request $request, Cart $cart, PayPalService $paypal): JsonResponse
     {
-        if ($cart->count() === 0) {
-            return response()->json(['error' => 'Your cart is empty.'], 422);
+        $paypalOrderId = $request->validate([
+            'paypal_order_id' => 'required|string',
+        ])['paypal_order_id'];
+
+        $order = $this->findPayPalOrder($paypalOrderId, $request->user()?->id);
+
+        if (! $order) {
+            return response()->json(['error' => 'PayPal order was not found.'], 404);
         }
 
-        $validated = $this->validateCheckout($request);
+        if ($order->payment_status === 'paid') {
+            $cart->clear();
 
-        $request->validate([
-            'paypal_order_id' => 'required|string',
-        ]);
+            return response()->json([
+                'redirect' => route('shop.orders.show', $order->id),
+            ]);
+        }
+
+        if (in_array($order->payment_status, ['failed', 'refunded', 'reversed'], true)) {
+            return response()->json(['error' => 'This PayPal order is no longer payable.'], 422);
+        }
 
         try {
-            $capture = $paypal->captureOrder($request->input('paypal_order_id'));
+            $capture = $this->captureApprovedPayPalOrder($paypal, $paypalOrderId);
         } catch (Throwable $e) {
             Log::error('PayPal capture failed', ['error' => $e->getMessage()]);
 
@@ -137,25 +171,111 @@ class CheckoutController extends Controller
             ], 422);
         }
 
-        try {
-            $order = $this->placeOrder(
-                $request,
-                $cart,
-                $validated,
-                'paypal',
-                'paid',
-                $capture['id'] ?? null,
-                'processing',
-            );
-        } catch (DiscountException $exception) {
-            return response()->json(['error' => $exception->getMessage()], 422);
-        }
+        $order = $this->completePayPalOrder($order, $paypal->captureId($capture));
 
         $cart->clear();
 
         return response()->json([
             'redirect' => route('shop.orders.show', $order->id),
         ]);
+    }
+
+    /**
+     * Receive, verify, and idempotently process PayPal webhook events.
+     */
+    public function paypalWebhook(Request $request, PayPalService $paypal): JsonResponse
+    {
+        try {
+            $event = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            return response()->json(['error' => 'Invalid PayPal webhook payload.'], 422);
+        }
+
+        if (! is_array($event)) {
+            return response()->json(['error' => 'Invalid PayPal webhook payload.'], 422);
+        }
+
+        $eventId = $event['id'] ?? null;
+        $eventType = $event['event_type'] ?? null;
+
+        if (! is_string($eventId) || $eventId === '' || ! is_string($eventType) || $eventType === '') {
+            return response()->json(['error' => 'Invalid PayPal webhook payload.'], 422);
+        }
+
+        $webhookId = config('services.paypal.webhook_id');
+        if (! is_string($webhookId) || $webhookId === '') {
+            Log::error('PayPal webhook ID is not configured.');
+
+            return response()->json(['error' => 'PayPal webhook is not configured.'], 503);
+        }
+
+        $headers = [
+            'auth_algo' => $request->header('PAYPAL-AUTH-ALGO'),
+            'cert_url' => $request->header('PAYPAL-CERT-URL'),
+            'transmission_id' => $request->header('PAYPAL-TRANSMISSION-ID'),
+            'transmission_sig' => $request->header('PAYPAL-TRANSMISSION-SIG'),
+            'transmission_time' => $request->header('PAYPAL-TRANSMISSION-TIME'),
+        ];
+
+        try {
+            if (! $paypal->verifyWebhookSignature($headers, $event, $webhookId)) {
+                Log::warning('PayPal webhook signature verification failed', [
+                    'event_id' => $eventId,
+                    'event_type' => $eventType,
+                ]);
+
+                return response()->json(['error' => 'Invalid PayPal webhook signature.'], 401);
+            }
+        } catch (Throwable $e) {
+            Log::error('PayPal webhook verification failed', [
+                'event_id' => $eventId,
+                'event_type' => $eventType,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json(['error' => 'Unable to verify PayPal webhook.'], 503);
+        }
+
+        try {
+            DB::transaction(function () use ($event, $eventId, $eventType, $paypal): void {
+                $storedEvent = PayPalWebhookEvent::query()
+                    ->where('event_id', $eventId)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($storedEvent?->processed_at !== null) {
+                    return;
+                }
+
+                $paypalOrderId = $this->paypalOrderIdFromEvent($event);
+                $paypalCaptureId = $this->paypalCaptureIdFromEvent($event);
+
+                $storedEvent ??= PayPalWebhookEvent::create([
+                    'event_id' => $eventId,
+                    'event_type' => $eventType,
+                    'paypal_order_id' => $paypalOrderId,
+                    'paypal_capture_id' => $paypalCaptureId,
+                    'payload' => $event,
+                ]);
+
+                $order = $this->processPayPalWebhookEvent($event, $paypal);
+
+                $storedEvent->update([
+                    'order_id' => $order?->id,
+                    'processed_at' => now(),
+                ]);
+            });
+        } catch (Throwable $e) {
+            Log::error('PayPal webhook processing failed', [
+                'event_id' => $eventId,
+                'event_type' => $eventType,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json(['error' => 'PayPal webhook processing failed.'], 500);
+        }
+
+        return response()->json(['received' => true]);
     }
 
     /**
@@ -282,6 +402,208 @@ class CheckoutController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /**
+     * @param  array<string, mixed>  $event
+     */
+    protected function processPayPalWebhookEvent(array $event, PayPalService $paypal): ?Order
+    {
+        $eventType = (string) $event['event_type'];
+        $paypalOrderId = $this->paypalOrderIdFromEvent($event);
+        $paypalCaptureId = $this->paypalCaptureIdFromEvent($event);
+        $order = $this->findPayPalOrder($paypalOrderId, null, $paypalCaptureId);
+
+        if (! $order) {
+            Log::warning('PayPal webhook has no matching local order', [
+                'event_id' => $event['id'] ?? null,
+                'event_type' => $eventType,
+                'paypal_order_id' => $paypalOrderId,
+                'paypal_capture_id' => $paypalCaptureId,
+            ]);
+
+            return null;
+        }
+
+        return match ($eventType) {
+            'CHECKOUT.ORDER.APPROVED' => $this->settleApprovedPayPalOrder($order, $paypalOrderId, $paypal),
+            'PAYMENT.CAPTURE.COMPLETED' => $this->settleCompletedPayPalCapture($order, $paypalCaptureId, $event, $paypal),
+            'PAYMENT.CAPTURE.DENIED', 'CHECKOUT.ORDER.DECLINED' => $this->updatePayPalOrderState($order, 'failed', true),
+            'CHECKOUT.PAYMENT-APPROVAL.REVERSED', 'PAYMENT.CAPTURE.REVERSED' => $this->updatePayPalOrderState($order, 'reversed', true),
+            'PAYMENT.CAPTURE.REFUNDED' => $this->updatePayPalOrderState($order, 'refunded', false),
+            default => $order,
+        };
+    }
+
+    protected function settleApprovedPayPalOrder(?Order $order, ?string $paypalOrderId, PayPalService $paypal): ?Order
+    {
+        if (! $order || ! $paypalOrderId || $order->payment_status === 'paid') {
+            return $order;
+        }
+
+        $capture = $this->captureApprovedPayPalOrder($paypal, $paypalOrderId);
+        if (($capture['status'] ?? null) !== 'COMPLETED') {
+            return $order;
+        }
+
+        return $this->completePayPalOrder($order, $paypal->captureId($capture));
+    }
+
+    /**
+     * @param  array<string, mixed>  $event
+     */
+    protected function settleCompletedPayPalCapture(
+        Order $order,
+        ?string $paypalCaptureId,
+        array $event,
+        PayPalService $paypal,
+    ): Order {
+        $this->assertPayPalCaptureMatchesOrder($event, $order, $paypal);
+
+        return $this->completePayPalOrder($order, $paypalCaptureId);
+    }
+
+    /** @return array<string, mixed> */
+    protected function captureApprovedPayPalOrder(PayPalService $paypal, string $paypalOrderId): array
+    {
+        try {
+            return $paypal->captureOrder($paypalOrderId);
+        } catch (Throwable $captureException) {
+            // The browser and the APPROVED webhook can race. If the browser
+            // captured first, read the order and settle it from that result.
+            try {
+                $current = $paypal->showOrder($paypalOrderId);
+            } catch (Throwable) {
+                throw $captureException;
+            }
+
+            if (($current['status'] ?? null) === 'COMPLETED') {
+                return $current;
+            }
+
+            throw $captureException;
+        }
+    }
+
+    protected function completePayPalOrder(Order $order, ?string $captureId): Order
+    {
+        return DB::transaction(function () use ($order, $captureId): Order {
+            $lockedOrder = Order::query()
+                ->lockForUpdate()
+                ->whereKey($order->getKey())
+                ->firstOrFail();
+
+            if ($lockedOrder->payment_method !== 'paypal') {
+                throw new \RuntimeException('The local order is not a PayPal order.');
+            }
+
+            if (! in_array($lockedOrder->payment_status, ['refunded', 'reversed'], true)) {
+                $updates = [
+                    'payment_status' => 'paid',
+                ];
+
+                if ($lockedOrder->status === 'pending') {
+                    $updates['status'] = 'processing';
+                }
+
+                if ($captureId && ! $lockedOrder->payment_id) {
+                    $updates['payment_id'] = $captureId;
+                }
+
+                $lockedOrder->update($updates);
+            }
+
+            return $lockedOrder->fresh();
+        });
+    }
+
+    protected function updatePayPalOrderState(Order $order, string $paymentStatus, bool $cancel): Order
+    {
+        return DB::transaction(function () use ($order, $paymentStatus, $cancel): Order {
+            $lockedOrder = Order::query()
+                ->lockForUpdate()
+                ->whereKey($order->getKey())
+                ->firstOrFail();
+
+            if ($lockedOrder->payment_status === 'paid' && $paymentStatus === 'failed') {
+                return $lockedOrder->fresh();
+            }
+
+            $updates = ['payment_status' => $paymentStatus];
+            if ($cancel && in_array($lockedOrder->status, ['pending', 'processing'], true)) {
+                $updates['status'] = 'cancelled';
+            }
+
+            $lockedOrder->update($updates);
+
+            return $lockedOrder->fresh();
+        });
+    }
+
+    protected function findPayPalOrder(?string $paypalOrderId, ?int $userId = null, ?string $paypalCaptureId = null): ?Order
+    {
+        if (! $paypalOrderId && ! $paypalCaptureId) {
+            return null;
+        }
+
+        return Order::query()
+            ->where('payment_method', 'paypal')
+            ->when($userId !== null, fn ($query) => $query->where('user_id', $userId))
+            ->where(function ($query) use ($paypalOrderId, $paypalCaptureId): void {
+                if ($paypalOrderId) {
+                    $query->where('paypal_order_id', $paypalOrderId);
+                }
+
+                if ($paypalCaptureId) {
+                    $query->orWhere('payment_id', $paypalCaptureId);
+                }
+            })
+            ->first();
+    }
+
+    /**
+     * @param  array<string, mixed>  $event
+     */
+    protected function paypalOrderIdFromEvent(array $event): ?string
+    {
+        $eventType = (string) ($event['event_type'] ?? '');
+        $orderId = str_starts_with($eventType, 'CHECKOUT.ORDER.')
+            || $eventType === 'CHECKOUT.PAYMENT-APPROVAL.REVERSED'
+            ? data_get($event, 'resource.id')
+            : data_get($event, 'resource.supplementary_data.related_ids.order_id');
+
+        return is_string($orderId) && $orderId !== '' ? $orderId : null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $event
+     */
+    protected function paypalCaptureIdFromEvent(array $event): ?string
+    {
+        $captureId = data_get($event, 'resource.id');
+
+        return str_contains((string) ($event['event_type'] ?? ''), 'PAYMENT.CAPTURE.')
+            && is_string($captureId)
+            && $captureId !== ''
+            ? $captureId
+            : null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $event
+     */
+    protected function assertPayPalCaptureMatchesOrder(array $event, Order $order, PayPalService $paypal): void
+    {
+        $amount = data_get($event, 'resource.amount.value');
+        $currency = data_get($event, 'resource.amount.currency_code');
+
+        if ($amount !== null && number_format((float) $amount, 2, '.', '') !== number_format((float) $order->total, 2, '.', '')) {
+            throw new \RuntimeException('PayPal webhook amount does not match the local order.');
+        }
+
+        if ($currency !== null && strtoupper((string) $currency) !== strtoupper($paypal->currency())) {
+            throw new \RuntimeException('PayPal webhook currency does not match the local order.');
+        }
+    }
+
     protected function validateCheckout(Request $request): array
     {
         $request->merge([
@@ -305,13 +627,6 @@ class CheckoutController extends Controller
             'shipping_method' => ['required', Rule::in($this->shipping->codes())],
             'notes' => 'nullable|string',
         ]);
-    }
-
-    protected function validateShippingMethod(Request $request): string
-    {
-        return $request->validate([
-            'shipping_method' => ['required', Rule::in($this->shipping->codes())],
-        ])['shipping_method'];
     }
 
     /**

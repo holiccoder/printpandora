@@ -56,6 +56,8 @@ class PayPalService
 
     /**
      * Create a PayPal order and return its id.
+     *
+     * @return array<string, mixed>
      */
     public function createOrder(float $amount, string $reference): array
     {
@@ -83,6 +85,8 @@ class PayPalService
 
     /**
      * Capture an approved PayPal order.
+     *
+     * @return array<string, mixed>
      */
     public function captureOrder(string $paypalOrderId): array
     {
@@ -97,5 +101,75 @@ class PayPalService
         }
 
         return $response->json();
+    }
+
+    /**
+     * Fetch the current state of a PayPal order.
+     *
+     * @return array<string, mixed>
+     */
+    public function showOrder(string $paypalOrderId): array
+    {
+        $token = $this->accessToken();
+
+        $response = Http::withToken($token)
+            ->acceptJson()
+            ->get($this->baseUrl().'/v2/checkout/orders/'.$paypalOrderId);
+
+        if (! $response->successful()) {
+            throw new RuntimeException('Failed to fetch PayPal order: '.$response->body());
+        }
+
+        return $response->json();
+    }
+
+    /**
+     * Verify a PayPal webhook with PayPal's postback verification endpoint.
+     *
+     * @param  array<string, string|null>  $headers
+     * @param  array<string, mixed>  $event
+     */
+    public function verifyWebhookSignature(array $headers, array $event, string $webhookId): bool
+    {
+        $requiredHeaders = [
+            'auth_algo',
+            'cert_url',
+            'transmission_id',
+            'transmission_sig',
+            'transmission_time',
+        ];
+
+        foreach ($requiredHeaders as $header) {
+            if (empty($headers[$header])) {
+                return false;
+            }
+        }
+
+        $response = Http::withToken($this->accessToken())
+            ->acceptJson()
+            ->post($this->baseUrl().'/v1/notifications/verify-webhook-signature', [
+                'auth_algo' => $headers['auth_algo'],
+                'cert_url' => $headers['cert_url'],
+                'transmission_id' => $headers['transmission_id'],
+                'transmission_sig' => $headers['transmission_sig'],
+                'transmission_time' => $headers['transmission_time'],
+                'webhook_id' => $webhookId,
+                'webhook_event' => $event,
+            ]);
+
+        return $response->successful()
+            && $response->json('verification_status') === 'SUCCESS';
+    }
+
+    /**
+     * Extract the capture ID from a capture response or a shown order.
+     *
+     * @param  array<string, mixed>  $payload
+     */
+    public function captureId(array $payload): ?string
+    {
+        $captureId = data_get($payload, 'purchase_units.0.payments.captures.0.id');
+
+        return is_string($captureId) && $captureId !== '' ? $captureId : null;
     }
 }
