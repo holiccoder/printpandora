@@ -253,6 +253,22 @@ function optionValueCode(value: ProductOptionValue): string {
 /* Page                                                                       */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Prices and other dynamic values must not be machine-translated: Google
+ * Translate localizes punctuation (turning "1.9" into "1。9") and wraps
+ * text nodes in <font> elements, which makes React's in-place text updates
+ * land on detached nodes. translate="no" keeps Translate away entirely;
+ * keying by the rendered string is a belt-and-suspenders remount in case
+ * another translator ignores the attribute.
+ */
+function LiveText({ text, className }: { text: string; className?: string }) {
+    return (
+        <span key={text} className={className} translate="no">
+            {text}
+        </span>
+    );
+}
+
 export default function ShopShow({
     product,
     productOptions,
@@ -1436,7 +1452,7 @@ export default function ShopShow({
                         />
                         {startingPriceText && (
                             <p className="mt-2 text-sm font-semibold text-neutral-900">
-                                {startingPriceText}
+                                <LiveText text={startingPriceText} />
                             </p>
                         )}
 
@@ -2123,27 +2139,19 @@ export default function ShopShow({
                                                                 </label>
                                                             </td>
                                                             <td className="px-4 py-3 text-neutral-500">
-                                                                $
-                                                                {t.pricePerCard.toFixed(
-                                                                    3,
-                                                                )}
+                                                                <LiveText
+                                                                    text={`$${t.pricePerCard.toFixed(3)}`}
+                                                                />
                                                             </td>
                                                             <td className="px-4 py-3 font-semibold text-neutral-900">
-                                                                $
-                                                                {Math.round(
-                                                                    now,
-                                                                ).toFixed(0)}
+                                                                <LiveText
+                                                                    text={`$${Math.round(now).toFixed(0)}`}
+                                                                />
                                                                 <span className="ml-2 font-normal text-neutral-400">
-                                                                    (
-                                                                    <span className="line-through">
-                                                                        $
-                                                                        {Number(
-                                                                            bracketPrice.toFixed(
-                                                                                2,
-                                                                            ),
-                                                                        )}
-                                                                    </span>
-                                                                    )
+                                                                    <LiveText
+                                                                        className="line-through"
+                                                                        text={`($${Number(bracketPrice.toFixed(2))})`}
+                                                                    />
                                                                 </span>
                                                             </td>
                                                         </tr>
@@ -2250,7 +2258,9 @@ export default function ShopShow({
                                                 {summaryLabels[2]}
                                             </dt>
                                             <dd className="text-right font-medium">
-                                                {selectedQty}
+                                                <LiveText
+                                                    text={String(selectedQty)}
+                                                />
                                             </dd>
                                             {selectedDesignService && (
                                                 <>
@@ -2258,7 +2268,9 @@ export default function ShopShow({
                                                         {designFeeLabel}
                                                     </dt>
                                                     <dd className="text-right font-medium">
-                                                        ${designFee}
+                                                        <LiveText
+                                                            text={`$${designFee}`}
+                                                        />
                                                     </dd>
                                                 </>
                                             )}
@@ -2285,7 +2297,9 @@ export default function ShopShow({
                                                 {summaryLabels[2]}
                                             </dt>
                                             <dd className="text-right font-medium">
-                                                {selectedQty}
+                                                <LiveText
+                                                    text={String(selectedQty)}
+                                                />
                                             </dd>
                                             {cornersList.length > 0 && (
                                                 <>
@@ -2345,7 +2359,9 @@ export default function ShopShow({
                                                         {designFeeLabel}
                                                     </dt>
                                                     <dd className="text-right font-medium">
-                                                        ${designFee}
+                                                        <LiveText
+                                                            text={`$${designFee}`}
+                                                        />
                                                     </dd>
                                                 </>
                                             )}
@@ -2361,14 +2377,15 @@ export default function ShopShow({
                                             tier.originalPrice >
                                                 tier.currentPrice && (
                                                 <span className="mr-2 text-sm text-neutral-400 line-through">
-                                                    $
-                                                    {Math.round(
-                                                        fullPrice,
-                                                    ).toFixed(0)}
+                                                    <LiveText
+                                                        text={`$${Math.round(fullPrice).toFixed(0)}`}
+                                                    />
                                                 </span>
                                             )}
                                         <span className="text-2xl font-bold text-neutral-900">
-                                            ${Math.round(finalPrice).toFixed(0)}
+                                            <LiveText
+                                                text={`$${Math.round(finalPrice).toFixed(0)}`}
+                                            />
                                         </span>
                                     </div>
                                 </div>
@@ -2525,16 +2542,20 @@ export default function ShopShow({
                             disabled={added || !hasSelection || !tier}
                             className={`mt-6 h-12 w-full text-base font-semibold text-primary-foreground ${added ? 'bg-primary/90' : 'bg-primary hover:bg-primary/90'}`}
                         >
-                            {added
-                                ? c.added_to_cart_button
-                                : hasSelection && tier
-                                  ? String(
+                            {added ? (
+                                c.added_to_cart_button
+                            ) : hasSelection && tier ? (
+                                <LiveText
+                                    text={String(
                                         c.add_to_cart_button_template,
                                     ).replace(
                                         '{price}',
                                         Math.round(finalPrice).toFixed(0),
-                                    )
-                                  : 'Select options'}
+                                    )}
+                                />
+                            ) : (
+                                'Select options'
+                            )}
                         </Button>
                     </div>
                 </div>

@@ -2,6 +2,7 @@
 import { Link, router, useForm } from '@inertiajs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import SEO from '@/components/seo';
+import { PaymentMethods } from '@/components/payment-methods';
 import { countries, countriesByCode } from '@/data/countries';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
@@ -125,6 +126,8 @@ export default function Checkout({
     cryptomus,
 }: Props) {
     const c = useContent('checkout_page') as any;
+    const paymentMethods =
+        useContent('global_chrome').footer.payment_methods ?? [];
     const { data, setData, errors } = useForm({
         shipping_address: '',
         shipping_city: '',
@@ -966,6 +969,10 @@ export default function Checkout({
                                         <p className="text-[10px] text-[#706f6c]">
                                             {c.paypal_section.disclaimer}
                                         </p>
+                                        <PaymentMethods
+                                            methods={paymentMethods}
+                                            className="flex flex-wrap items-center justify-center gap-2 pt-1"
+                                        />
                                     </div>
                                 )}
 

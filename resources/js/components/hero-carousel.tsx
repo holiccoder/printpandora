@@ -223,15 +223,19 @@ function Slide({
 
     return (
         <div
-            className="relative h-[710px] w-full shrink-0 overflow-hidden md:h-[710px]"
+            className="relative aspect-[3/4] w-full shrink-0 overflow-hidden sm:aspect-[16/10] lg:aspect-[12/5]"
             aria-hidden={hidden}
         >
-            {/* Full-width photo — subtle scale-in when active */}
+            {/* Full-width photo — subtle scale-in when active. From lg up the
+                container matches the 3840x1600 (12:5) source ratio, so the image
+                is never cropped and just scales with the viewport. On small
+                screens a taller ratio leaves room for the copy; object-position
+                keeps the right-of-center subject in frame when cropping. */}
             <img
                 src={slide.image}
                 alt={slide.imageAlt}
                 className={cn(
-                    'absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out',
+                    'absolute inset-0 h-full w-full object-cover object-[68%_center] transition-transform duration-[1200ms] ease-out',
                     active ? 'scale-100' : 'scale-105',
                 )}
                 loading={priority ? 'eager' : 'lazy'}

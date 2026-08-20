@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { PaymentMethods } from '@/components/payment-methods';
 import { useContent } from '@/hooks/use-content';
 import type { FooterSocialLink, NavLink } from '@/types/content';
 
@@ -6,7 +7,7 @@ import type { FooterSocialLink, NavLink } from '@/types/content';
  * Storefront footer — clean white background, dark column headers, and
  * burgundy link text. Mirrors the InkPavo footer reference: Products (split
  * into two link lists), Paper Stocks, About us, Help/Useful links, social
- * icons, and a legal/utility bar at the bottom.
+ * icons, and a legal/utility bar at the bottom with payment method badges.
  *
  * All link lists, column headings, social links, and the copyright/legal
  * links come from `content/hardcoded-content.json` → `global_chrome.footer`.
@@ -118,6 +119,7 @@ export function StorefrontFooter() {
     const chrome = useContent('global_chrome');
     const f = chrome.footer;
     const socialLinks = f.social_links ?? [];
+    const paymentMethods = f.payment_methods ?? [];
 
     return (
         <footer className="border-t border-neutral-100 bg-white">
@@ -181,14 +183,15 @@ export function StorefrontFooter() {
                     aria-hidden
                 />
 
-                {/* Copyright (left) */}
-                <div className="flex flex-col items-center gap-4 pt-8 sm:flex-row sm:justify-start">
+                {/* Copyright (left) + payment method badges (right) */}
+                <div className="flex flex-col items-center gap-4 pt-8 sm:flex-row sm:justify-between">
                     <p className="text-xs text-neutral-500">
                         {f.legal_bar.copyright_text.replace(
                             '{YEAR}',
                             String(new Date().getFullYear()),
                         )}
                     </p>
+                    <PaymentMethods methods={paymentMethods} />
                 </div>
             </div>
         </footer>

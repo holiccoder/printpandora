@@ -156,6 +156,20 @@
     }
 }
 
+@layer utilities {
+    /* Keep the shared content containers fluid on desktop while preserving
+       the full available width on small screens. */
+    .max-w-7xl {
+        max-width: 80vw;
+    }
+
+    @media (max-width: 639px) {
+        .max-w-7xl {
+            max-width: 100%;
+        }
+    }
+}
+
 /* Custom editorial typography and spacing styles for Blog Articles */
 .blog-content {
     font-size: 1.0625rem;

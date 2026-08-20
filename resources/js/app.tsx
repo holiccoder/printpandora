@@ -8,6 +8,30 @@ import StorefrontLayout from '@/layouts/storefront-layout';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+// Chrome's Google Translate mutates React-managed text nodes by wrapping them
+// in <font> elements. When React later removes or inserts around those nodes
+// it can throw NotFoundError and break rendering. These guards make the DOM
+// operations tolerant of nodes that no longer sit where React expects them.
+if (typeof window !== 'undefined' && typeof Node === 'function') {
+    const originalRemoveChild = Node.prototype.removeChild;
+    Node.prototype.removeChild = function (child) {
+        if (child.parentNode !== this) {
+            return child;
+        }
+
+        return originalRemoveChild.call(this, child);
+    } as typeof Node.prototype.removeChild;
+
+    const originalInsertBefore = Node.prototype.insertBefore;
+    Node.prototype.insertBefore = function (newNode, referenceNode) {
+        if (referenceNode && referenceNode.parentNode !== this) {
+            return newNode;
+        }
+
+        return originalInsertBefore.call(this, newNode, referenceNode);
+    } as typeof Node.prototype.insertBefore;
+}
+
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {

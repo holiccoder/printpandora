@@ -122,6 +122,7 @@ export interface FooterContent {
     more_about: NavLink[];
     essential_pages: NavLink[];
     social_links?: FooterSocialLink[];
+    payment_methods?: string[];
     legal_bar: FooterLegalBar;
 }
 
