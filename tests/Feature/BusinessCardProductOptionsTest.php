@@ -552,7 +552,7 @@ class BusinessCardProductOptionsTest extends TestCase
             array_column(data_get($options, 'option_groups.2.values', []), 'code'),
         );
         $this->assertSame(
-            '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j6.png',
+            '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j6.webp',
             data_get($options, 'galleries.7.images.0'),
         );
     }
@@ -681,7 +681,7 @@ class BusinessCardProductOptionsTest extends TestCase
             array_column(data_get($options, 'option_groups.2.values', []), 'code'),
         );
         $this->assertSame(
-            '/images/products/super-business-cards/super-business-cards-rounded-j3-eggshell-texture.png',
+            '/images/products/super-business-cards/super-business-cards-rounded-j3-eggshell-texture.webp',
             data_get($options, 'galleries.7.images.0'),
         );
     }

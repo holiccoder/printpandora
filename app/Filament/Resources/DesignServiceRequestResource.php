@@ -18,6 +18,8 @@ class DesignServiceRequestResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-paint-brush';
 
+    protected static ?int $navigationSort = 40;
+
     protected static ?string $modelLabel = '设计服务申请';
 
     protected static ?string $pluralModelLabel = '设计服务申请';

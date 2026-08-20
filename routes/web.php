@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminAiChatController;
+use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
@@ -128,6 +130,29 @@ Route::post('checkout/cryptomus/webhook', [CheckoutController::class, 'cryptomus
     ->name('shop.checkout.cryptomus.webhook');
 
 require __DIR__.'/settings.php';
+
+// AI support chat (public, rate-limited)
+Route::post('ai/chat', [AiChatController::class, 'store'])
+    ->middleware('throttle:20,1')
+    ->name('ai.chat');
+Route::post('ai/chat/handoff', [AiChatController::class, 'handoff'])
+    ->middleware('throttle:20,1')
+    ->name('ai.chat.handoff');
+Route::post('ai/chat/message', [AiChatController::class, 'message'])
+    ->middleware('throttle:30,1')
+    ->name('ai.chat.message');
+Route::get('ai/chat/poll', [AiChatController::class, 'poll'])
+    ->middleware('throttle:120,1')
+    ->name('ai.chat.poll');
+
+// AI support chat — admin bubble endpoints (Filament, admin guard)
+Route::middleware(['auth:admin'])->prefix('ai/chat/admin')->name('ai.chat.admin.')->group(function () {
+    Route::get('conversations', [AdminAiChatController::class, 'index'])->name('conversations');
+    Route::get('conversations/{conversation}/messages', [AdminAiChatController::class, 'messages'])->name('messages');
+    Route::post('conversations/{conversation}/reply', [AdminAiChatController::class, 'reply'])->name('reply');
+    Route::post('conversations/{conversation}/resolve', [AdminAiChatController::class, 'resolve'])->name('resolve');
+    Route::post('conversations/{conversation}/takeover', [AdminAiChatController::class, 'takeover'])->name('takeover');
+});
 
 // Product detail by slug — placed after all named routes so only truly
 // unmatched single-segment paths (i.e. product slugs) reach it.

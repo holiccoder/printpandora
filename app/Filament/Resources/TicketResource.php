@@ -18,6 +18,8 @@ class TicketResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-ticket';
 
+    protected static ?int $navigationSort = 60;
+
     protected static ?string $modelLabel = '工单';
 
     protected static ?string $pluralModelLabel = '工单';

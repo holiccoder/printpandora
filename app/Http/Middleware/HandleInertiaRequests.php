@@ -54,15 +54,6 @@ class HandleInertiaRequests extends Middleware
             'content' => fn () => app(HardcodedContent::class)->all(),
             // Keep the global storefront drawer in sync with the session cart.
             'global_cart' => fn () => app(Cart::class)->drawerPayload(),
-            'intercom' => [
-                'app_id' => config('intercom.enabled', true) ? config('intercom.app_id') : null,
-                'user' => $request->user() ? [
-                    'id' => $request->user()->getAuthIdentifier(),
-                    'name' => $request->user()->name,
-                    'email' => $request->user()->email,
-                    'created_at' => optional($request->user()->created_at)?->getTimestamp(),
-                ] : null,
-            ],
         ];
     }
 }

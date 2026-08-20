@@ -43,6 +43,8 @@ class ProductResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-bag';
 
+    protected static ?int $navigationSort = 30;
+
     protected static ?string $modelLabel = '产品';
 
     protected static ?string $pluralModelLabel = '产品';

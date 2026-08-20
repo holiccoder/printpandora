@@ -14,7 +14,7 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 // operations tolerant of nodes that no longer sit where React expects them.
 if (typeof window !== 'undefined' && typeof Node === 'function') {
     const originalRemoveChild = Node.prototype.removeChild;
-    Node.prototype.removeChild = function (child) {
+    Node.prototype.removeChild = function (this: Node, child: Node) {
         if (child.parentNode !== this) {
             return child;
         }
@@ -23,7 +23,11 @@ if (typeof window !== 'undefined' && typeof Node === 'function') {
     } as typeof Node.prototype.removeChild;
 
     const originalInsertBefore = Node.prototype.insertBefore;
-    Node.prototype.insertBefore = function (newNode, referenceNode) {
+    Node.prototype.insertBefore = function (
+        this: Node,
+        newNode: Node,
+        referenceNode: Node | null,
+    ) {
         if (referenceNode && referenceNode.parentNode !== this) {
             return newNode;
         }

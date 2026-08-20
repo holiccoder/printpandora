@@ -389,6 +389,32 @@
             }
         }
     },
+    "ai_chat": {
+        "button_label": "Chat with us",
+        "panel_title": "InkPavo Assistant",
+        "panel_subtitle": "Ask about products, pricing, shipping and more.",
+        "greeting": "Hi! I'm the InkPavo assistant. How can I help you today?",
+        "quick_questions": [
+            "What paper stocks do you offer for business cards?",
+            "How long does shipping take?",
+            "Can I get a free sample pack?"
+        ],
+        "input_placeholder": "Type your question...",
+        "send_label": "Send",
+        "thinking": "Thinking...",
+        "error_message": "Sorry, something went wrong. Please try again, or reach out to human support.",
+        "handoff_label": "Talk to a human",
+        "human_mode_notice": "No problem - a human agent will reply right here in this chat. You can also attach files (e.g. your design draft) if needed.",
+        "human_mode_active": "You are chatting with human support.",
+        "admin_name": "Support",
+        "attach_label": "Attach a file",
+        "human_support_heading": "Need a human?",
+        "human_support_authenticated_label": "Create a support ticket",
+        "human_support_authenticated_href": "/shop/tickets/create",
+        "human_support_guest_label": "Contact us",
+        "human_support_guest_href": "/contact",
+        "disclaimer": "AI assistant - answers may be incomplete. For order-specific help, please contact human support."
+    },
     "home_page": {
         "_source_files": [
             "resources/js/pages/home.tsx",
@@ -536,6 +562,12 @@
                     "description": "Rich, tactile cotton stock for a luxurious feel.",
                     "image_url": "/images/home/cotton-luxe.webp",
                     "href": "/luxe-cotton-business-card"
+                },
+                {
+                    "title": "Grand Cotton Business Cards",
+                    "description": "Luxurious cotton stock that makes a statement.",
+                    "image_url": "/images/home/cotton-grand.webp",
+                    "href": "/grand-cotton-business-card"
                 }
             ]
         },

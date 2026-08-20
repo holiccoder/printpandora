@@ -20,6 +20,8 @@ class ProductCategoryResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
+    protected static ?int $navigationSort = 20;
+
     protected static ?string $modelLabel = '产品分类';
 
     protected static ?string $pluralModelLabel = '产品分类';

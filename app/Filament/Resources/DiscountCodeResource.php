@@ -18,6 +18,8 @@ class DiscountCodeResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-ticket';
 
+    protected static ?int $navigationSort = 70;
+
     protected static ?string $modelLabel = '折扣码';
 
     protected static ?string $pluralModelLabel = '折扣码';

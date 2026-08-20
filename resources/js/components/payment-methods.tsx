@@ -60,18 +60,73 @@ export function PaymentIcon({ method }: { method: string }) {
         case 'jcb':
             return (
                 <svg {...common}>
-                    <rect x="6" y="8" width="10" height="16" rx="2" fill="#E21F26" />
-                    <rect x="19" y="8" width="10" height="16" rx="2" fill="#0056A8" />
-                    <rect x="32" y="8" width="10" height="16" rx="2" fill="#009A44" />
-                    <text {...text} x="11" y="19.5" fontSize="8.5" fontWeight="700" fill="#fff">J</text>
-                    <text {...text} x="24" y="19.5" fontSize="8.5" fontWeight="700" fill="#fff">C</text>
-                    <text {...text} x="37" y="19.5" fontSize="8.5" fontWeight="700" fill="#fff">B</text>
+                    <rect
+                        x="6"
+                        y="8"
+                        width="10"
+                        height="16"
+                        rx="2"
+                        fill="#E21F26"
+                    />
+                    <rect
+                        x="19"
+                        y="8"
+                        width="10"
+                        height="16"
+                        rx="2"
+                        fill="#0056A8"
+                    />
+                    <rect
+                        x="32"
+                        y="8"
+                        width="10"
+                        height="16"
+                        rx="2"
+                        fill="#009A44"
+                    />
+                    <text
+                        {...text}
+                        x="11"
+                        y="19.5"
+                        fontSize="8.5"
+                        fontWeight="700"
+                        fill="#fff"
+                    >
+                        J
+                    </text>
+                    <text
+                        {...text}
+                        x="24"
+                        y="19.5"
+                        fontSize="8.5"
+                        fontWeight="700"
+                        fill="#fff"
+                    >
+                        C
+                    </text>
+                    <text
+                        {...text}
+                        x="37"
+                        y="19.5"
+                        fontSize="8.5"
+                        fontWeight="700"
+                        fill="#fff"
+                    >
+                        B
+                    </text>
                 </svg>
             );
         case 'amex':
             return (
                 <svg {...common}>
-                    <rect x="1" y="4" width="46" height="24" rx="3" fill="#2E77BC" />
+                    <rect
+                        x="1"
+                        y="4"
+                        width="46"
+                        height="24"
+                        rx="3"
+                        fill="#2E77BC"
+                    />
                     <text
                         {...text}
                         x="24"

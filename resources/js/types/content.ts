@@ -236,6 +236,11 @@ export interface AboutPageContent {
     description: string;
     body_paragraphs: string[];
     sections: LegalSection[];
+    cards: Array<{
+        title: string;
+        description: string;
+    }>;
+    image_url: string;
     closing_paragraph: string;
     closing_link_text: string;
     closing_link_href: string;
@@ -473,12 +478,36 @@ export interface HomePageContent {
 // Catch-all for any section not yet typed
 // ---------------------------------------------------------------------------
 
+export interface AiChatContent {
+    button_label: string;
+    panel_title: string;
+    panel_subtitle: string;
+    greeting: string;
+    quick_questions: string[];
+    input_placeholder: string;
+    send_label: string;
+    thinking: string;
+    error_message: string;
+    handoff_label: string;
+    human_mode_notice: string;
+    human_mode_active: string;
+    admin_name: string;
+    attach_label: string;
+    human_support_heading: string;
+    human_support_authenticated_label: string;
+    human_support_authenticated_href: string;
+    human_support_guest_label: string;
+    human_support_guest_href: string;
+    disclaimer: string;
+}
+
 /**
  * All recognised section keys. Declare a key here once its interface
  * exists so the discriminated `useContent('section')` overload resolves.
  */
 export interface ContentSections {
     global_chrome: GlobalChromeContent;
+    ai_chat: AiChatContent;
     home_page: HomePageContent;
     blog_index_page: BlogIndexPageContent;
     blog_show_page: BlogShowPageContent;

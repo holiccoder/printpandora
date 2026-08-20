@@ -18,6 +18,8 @@ class OrderResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
 
+    protected static ?int $navigationSort = 10;
+
     protected static ?string $modelLabel = '订单';
 
     protected static ?string $pluralModelLabel = '订单';

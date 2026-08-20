@@ -37,7 +37,7 @@ class MediaLibrary extends Page implements HasForms
 
     protected static string|\UnitEnum|null $navigationGroup = '商城管理';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 80;
 
     protected string $view = 'filament.pages.media-library';
 
