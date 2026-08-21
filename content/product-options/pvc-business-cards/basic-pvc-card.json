@@ -6,7 +6,7 @@
             "name": "Matte",
             "code": "matte",
             "description": "Smooth, non-reflective matte finish.",
-            "swatch_image": "/images/products/pvc/matte-pvc.png",
+            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -54,7 +54,7 @@
             "name": "Gloss",
             "code": "gloss",
             "description": "Shiny and highly reflective gloss finish.",
-            "swatch_image": "/images/products/pvc/gloss-pvc.png",
+            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
             "added_price": [
                 {
                     "pack_size": 50,

@@ -204,6 +204,7 @@
       "name": "Square",
       "code": "square",
       "description": "Sharp and stylish.",
+      "swatch_image": "/images/product-options/business-cards/swatches/square.webp",
       "added_price": [
         {
           "pack_size": 50,
@@ -267,6 +268,7 @@
       "name": "Rounded",
       "code": "rounded",
       "description": "Smooth and rounded.",
+      "swatch_image": "/images/product-options/business-cards/swatches/rounded.webp",
       "added_price": [
         {
           "pack_size": 50,
@@ -1502,7 +1504,7 @@
       "name": "J1 Water Ripple Paper",
       "code": "j1_water_ripple_paper",
       "description": "J1 Water Ripple Paper.",
-      "swatch_image": "/images/products/super-business-cards/super-business-cards-standard-j1-water-ripple-paper.png",
+      "swatch_image": "/images/products/super-business-cards/texture/j1-water-ripple-paper.png",
       "added_price": [
         {
           "pack_size": 50,
@@ -1566,7 +1568,7 @@
       "name": "J2 Cloth Texture Paper",
       "code": "j2_cloth_texture_paper",
       "description": "J2 Cloth Texture Paper.",
-      "swatch_image": "/images/products/super-business-cards/super-business-cards-standard-j2-cloth-texture-paper.png",
+      "swatch_image": "/images/products/super-business-cards/texture/j2-cloth-texture-paper.png",
       "added_price": [
         {
           "pack_size": 50,
@@ -1630,7 +1632,7 @@
       "name": "J3 Eggshell Texture",
       "code": "j3_eggshell_texture",
       "description": "J3 Eggshell Texture.",
-      "swatch_image": "/images/products/super-business-cards/super-business-cards-standard-j3-eggshell-texture.png",
+      "swatch_image": "/images/products/super-business-cards/texture/j3-eggshell-texture.png",
       "added_price": [
         {
           "pack_size": 50,
@@ -1694,7 +1696,7 @@
       "name": "J4 High-Grade Paper",
       "code": "j4_high_grade_paper",
       "description": "J4 High-Grade Paper.",
-      "swatch_image": "/images/products/super-business-cards/super-business-cards-standard-j4-high-grade-paper.png",
+      "swatch_image": "/images/products/super-business-cards/texture/j4-high-grade-paper.png",
       "added_price": [
         {
           "pack_size": 50,
@@ -1758,7 +1760,7 @@
       "name": "J5 Pearlescent Paper",
       "code": "j5_pearlescent_paper",
       "description": "J5 Pearlescent Paper.",
-      "swatch_image": "/images/products/super-business-cards/super-business-cards-standard-j5-pearlescent-paper.png",
+      "swatch_image": "/images/products/super-business-cards/texture/j5-pearlescent-paper.png",
       "added_price": [
         {
           "pack_size": 50,
@@ -1822,7 +1824,7 @@
       "name": "J6 Kraft Paper",
       "code": "j6_kraft_paper",
       "description": "J6 Kraft Paper.",
-      "swatch_image": "/images/products/super-business-cards/super-business-cards-standard-j6-kraft-paper.png",
+      "swatch_image": "/images/products/super-business-cards/texture/j6-kraft-paper.png",
       "added_price": [
         {
           "pack_size": 50,
@@ -1886,7 +1888,7 @@
       "name": "J7 Absorbent Cotton Paper",
       "code": "j7_absorbent_cotton_paper",
       "description": "J7 Absorbent Cotton Paper.",
-      "swatch_image": "/images/products/super-business-cards/super-business-cards-standard-j7-absorbent-cotton-paper.png",
+      "swatch_image": "/images/products/super-business-cards/texture/j7-absorbent-cotton-paper.png",
       "added_price": [
         {
           "pack_size": 50,
@@ -1950,7 +1952,7 @@
       "name": "J8 Pinhole Paper",
       "code": "j8_pinhole_paper",
       "description": "J8 Pinhole Paper.",
-      "swatch_image": "/images/products/super-business-cards/super-business-cards-standard-j8-pinhole-paper.png",
+      "swatch_image": "/images/products/super-business-cards/texture/j8-pinhole-paper.png",
       "added_price": [
         {
           "pack_size": 50,

@@ -6,13 +6,13 @@
             "code": "matte",
             "name": "Matte",
             "description": "Smooth, non-reflective matte finish.",
-            "swatch_image": "/images/products/pvc/matte-pvc.png"
+            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg"
         },
         {
             "code": "gloss",
             "name": "Gloss",
             "description": "Shiny and highly reflective gloss finish.",
-            "swatch_image": "/images/products/pvc/gloss-pvc.png"
+            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg"
         },
         {
             "code": "frosted",

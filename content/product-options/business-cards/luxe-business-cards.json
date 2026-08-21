@@ -204,6 +204,7 @@
       "name": "Square",
       "code": "square",
       "description": "Sharp and stylish.",
+      "swatch_image": "/images/product-options/business-cards/swatches/square.webp",
       "added_price": [
         {
           "pack_size": 50,
@@ -267,6 +268,7 @@
       "name": "Rounded",
       "code": "rounded",
       "description": "Smooth and rounded.",
+      "swatch_image": "/images/product-options/business-cards/swatches/rounded.webp",
       "added_price": [
         {
           "pack_size": 50,

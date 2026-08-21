@@ -267,6 +267,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
 
             foreach ([
                 'classic-quality-business-cards',
+                'classic-solid-business-cards',
                 'basic-pvc-card',
                 'standard-pvc-card',
                 'premium-pvc-card',
@@ -281,7 +282,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
                     $product->forceFill(self::PVC_PRODUCT_DETAILS[$slug])->save();
                 }
 
-                $config = $configuration->canonicalConfig($product);
+                $config = $this->canonicalConfigForProduct($product, $configuration);
                 $pricingScenarios = $configuration->dynamicPricingScenarios($product);
 
                 if ($pricingScenarios !== null) {
@@ -434,5 +435,40 @@ class BusinessCardProductOptionsSeeder extends Seeder
         if ($this->command !== null) {
             $this->command->info('Business-card product option contracts synchronized.');
         }
+    }
+
+    /**
+     * The solid-card product keeps its editable legacy option definition in
+     * the business-cards content directory. Rebuild its canonical database
+     * configuration from that file so seeded products receive the same
+     * options and gallery rules as legacy imports.
+     *
+     * @return array<string, mixed>
+     */
+    private function canonicalConfigForProduct(
+        Product $product,
+        ProductConfigurationService $configuration,
+    ): array {
+        if ($product->slug !== 'classic-solid-business-cards') {
+            return $configuration->canonicalConfig($product);
+        }
+
+        $path = base_path('content/product-options/business-cards/classic-solid-business-cards.json');
+        $contents = file_get_contents($path);
+
+        if ($contents === false) {
+            throw new \RuntimeException("Unable to read {$path}.");
+        }
+
+        $legacyProduct = clone $product;
+        $legacyProduct->setAttribute('product_config', []);
+        $legacyProduct->setAttribute('product_options', json_decode(
+            $contents,
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        ));
+
+        return $configuration->canonicalConfig($legacyProduct);
     }
 }

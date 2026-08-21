@@ -77,7 +77,7 @@ type GlobalCart = {
 };
 
 const ACTIVE_GREEN = 'text-[#800020]';
-const INACTIVE_GREY = 'text-neutral-500 hover:text-neutral-900';
+const INACTIVE_GREY = 'text-neutral-700 hover:text-neutral-950';
 
 export function StorefrontHeader({
     activeCategory,
@@ -315,13 +315,13 @@ export function StorefrontHeader({
                             className="h-12 max-w-none justify-start"
                             delayDuration={100}
                         >
-                            <NavigationMenuList className="flex h-12 items-stretch justify-start gap-0">
+                            <NavigationMenuList className="flex h-12 items-stretch justify-start gap-3">
                                 {navCategories.map((cat) => {
                                     const isActive =
                                         activeCategory != null &&
                                         cat.label === activeCategory;
                                     const triggerCls = cn(
-                                        'relative flex h-12 items-center px-4 text-base font-medium transition-colors first:pl-0',
+                                        'relative flex h-12 items-center px-4 text-sm font-medium transition-colors first:pl-0',
                                         isActive ? ACTIVE_GREEN : INACTIVE_GREY,
                                     );
 

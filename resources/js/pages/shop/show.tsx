@@ -90,7 +90,10 @@ import PaperStockComparisonSection from '@/components/product-detail/paper-stock
 import MoreGoodStuffSection from '@/components/product-detail/more-good-stuff-section';
 import ProductFaqSection from '@/components/product-detail/product-faq-section';
 import LightboxGallery from '@/components/product-detail/lightbox-gallery';
-import type { ProductDetailSections } from '@/types/product-detail';
+import type {
+    ProductDetailSections,
+    ProductFeatureCardContent,
+} from '@/types/product-detail';
 
 interface Product {
     id: number;
@@ -1204,7 +1207,6 @@ export default function ShopShow({
                     : selectedOptions,
             },
             {
-                preserveScroll: true,
                 onFinish: () => setTimeout(() => setAdded(false), 2000),
             },
         );
@@ -1215,6 +1217,13 @@ export default function ShopShow({
     const featureChipDescriptions: string[] = c.feature_chip_descriptions;
     const gangRunTooltip: any = c.gang_run_printing_tooltip;
     const turnaroundTooltip: any = c.turnaround_tooltip;
+    const featureCards = productOptions?.detail_sections?.feature_cards ?? [];
+    const firstFeatureCard: ProductFeatureCardContent = featureCards[0] ?? {};
+    const secondFeatureCard: ProductFeatureCardContent =
+        featureCards[1] ?? {};
+    const firstFeatureCardTooltip = firstFeatureCard.tooltip_content?.trim();
+    const secondFeatureCardTooltip =
+        secondFeatureCard.tooltip_content?.trim();
     const summaryLabels: string[] = c.order_summary.labels;
     const designServicesConfig: any = c.design_services;
     const designFeeLabel: string = c.design_fee_label;
@@ -1270,7 +1279,7 @@ export default function ShopShow({
                             <img
                                 src={activeImage}
                                 alt={product.name}
-                                className={`h-[420px] w-full transform ${isPvcProduct ? 'object-contain' : 'object-cover'} transition-transform duration-500 hover:scale-[1.02] sm:h-[540px] lg:h-[600px]`}
+                                className="h-[420px] w-full transform object-contain transition-transform duration-500 hover:scale-[1.02] sm:h-[540px] lg:h-[650px]"
                             />
                         </div>
                         <div className="mt-3 grid grid-cols-4 gap-2">
@@ -1288,7 +1297,7 @@ export default function ShopShow({
                                     <img
                                         src={src}
                                         alt=""
-                                        className={`aspect-square w-full bg-neutral-100 ${isPvcProduct ? 'object-contain' : 'object-cover'}`}
+                                        className="aspect-square w-full bg-neutral-100 object-contain"
                                     />
                                 </button>
                             ))}
@@ -1320,8 +1329,12 @@ export default function ShopShow({
                                                         <polyline points="12 6 12 12 16 14" />
                                                     </svg>
                                                 }
-                                                label={featureChips[0]}
+                                                label={
+                                                    firstFeatureCard.title ||
+                                                    featureChips[0]
+                                                }
                                                 description={
+                                                    firstFeatureCard.description ||
                                                     featureChipDescriptions[0]
                                                 }
                                             />
@@ -1333,18 +1346,32 @@ export default function ShopShow({
                                     >
                                         <div className="space-y-2 p-1">
                                             <p className="font-semibold">
-                                                {turnaroundTooltip.title}
+                                                {firstFeatureCard.tooltip_title ||
+                                                    turnaroundTooltip.title}
                                             </p>
-                                            {turnaroundTooltip.sections.map(
-                                                (section: any) => (
-                                                    <p key={section.heading}>
-                                                        <span className="font-semibold">
-                                                            {section.heading}
-                                                        </span>
-                                                        <br />
-                                                        {section.body}
-                                                    </p>
-                                                ),
+                                            {firstFeatureCardTooltip ? (
+                                                <div
+                                                    className="space-y-2 [&_ol]:list-decimal [&_ol]:pl-4 [&_p+p]:mt-2 [&_ul]:list-disc [&_ul]:pl-4"
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: firstFeatureCardTooltip,
+                                                    }}
+                                                />
+                                            ) : (
+                                                turnaroundTooltip.sections.map(
+                                                    (section: any) => (
+                                                        <p
+                                                            key={section.heading}
+                                                        >
+                                                            <span className="font-semibold">
+                                                                {
+                                                                    section.heading
+                                                                }
+                                                            </span>
+                                                            <br />
+                                                            {section.body}
+                                                        </p>
+                                                    ),
+                                                )
                                             )}
                                         </div>
                                     </TooltipContent>
@@ -1391,8 +1418,12 @@ export default function ShopShow({
                                                         />
                                                     </svg>
                                                 }
-                                                label={featureChips[1]}
+                                                label={
+                                                    secondFeatureCard.title ||
+                                                    featureChips[1]
+                                                }
                                                 description={
+                                                    secondFeatureCard.description ||
                                                     featureChipDescriptions[1]
                                                 }
                                             />
@@ -1404,29 +1435,45 @@ export default function ShopShow({
                                     >
                                         <div className="space-y-2 p-1">
                                             <p className="font-semibold">
-                                                {gangRunTooltip.title}
+                                                {secondFeatureCard.tooltip_title ||
+                                                    gangRunTooltip.title}
                                             </p>
-                                            <p>{gangRunTooltip.intro}</p>
-                                            <p className="font-semibold">
-                                                {gangRunTooltip.pros_title}
-                                            </p>
-                                            <ul className="list-disc space-y-1 pl-4">
-                                                {gangRunTooltip.pros.map(
-                                                    (pro: string) => (
-                                                        <li key={pro}>{pro}</li>
-                                                    ),
-                                                )}
-                                            </ul>
-                                            <p className="font-semibold">
-                                                {gangRunTooltip.cons_title}
-                                            </p>
-                                            <ul className="list-disc space-y-1 pl-4">
-                                                {gangRunTooltip.cons.map(
-                                                    (con: string) => (
-                                                        <li key={con}>{con}</li>
-                                                    ),
-                                                )}
-                                            </ul>
+                                            {secondFeatureCardTooltip ? (
+                                                <div
+                                                    className="space-y-2 [&_ol]:list-decimal [&_ol]:pl-4 [&_p+p]:mt-2 [&_ul]:list-disc [&_ul]:pl-4"
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: secondFeatureCardTooltip,
+                                                    }}
+                                                />
+                                            ) : (
+                                                <>
+                                                    <p>{gangRunTooltip.intro}</p>
+                                                    <p className="font-semibold">
+                                                        {gangRunTooltip.pros_title}
+                                                    </p>
+                                                    <ul className="list-disc space-y-1 pl-4">
+                                                        {gangRunTooltip.pros.map(
+                                                            (pro: string) => (
+                                                                <li key={pro}>
+                                                                    {pro}
+                                                                </li>
+                                                            ),
+                                                        )}
+                                                    </ul>
+                                                    <p className="font-semibold">
+                                                        {gangRunTooltip.cons_title}
+                                                    </p>
+                                                    <ul className="list-disc space-y-1 pl-4">
+                                                        {gangRunTooltip.cons.map(
+                                                            (con: string) => (
+                                                                <li key={con}>
+                                                                    {con}
+                                                                </li>
+                                                            ),
+                                                        )}
+                                                    </ul>
+                                                </>
+                                            )}
                                         </div>
                                     </TooltipContent>
                                 </Tooltip>
@@ -1532,7 +1579,7 @@ export default function ShopShow({
                             sizes.length > 0 &&
                             !isCottonBusinessCards && (
                                 <OptionGroup label={c.configurator_labels.size}>
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                         {sizes.map((s: any) => {
                                             const shape =
                                                 sizeShapes[s.id] ?? 'rect';
@@ -1592,12 +1639,7 @@ export default function ShopShow({
                                 label={c.configurator_labels.paper_finish}
                             >
                                 <div
-                                    className={`grid gap-3 ${
-                                        finishes.length % 3 === 0 ||
-                                        finishes.length > 2
-                                            ? 'grid-cols-1 sm:grid-cols-3'
-                                            : 'grid-cols-2'
-                                    }`}
+                                    className="grid grid-cols-2 gap-3 sm:grid-cols-4"
                                 >
                                     {finishes.map((f: any) => (
                                         <ChoiceTile
@@ -1634,7 +1676,7 @@ export default function ShopShow({
 
                         {!usesDynamicOptions && cornersList.length > 0 && (
                             <OptionGroup label={c.configurator_labels.corners}>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                     {cornersList.map((cn: any) => {
                                         const isImageSwatch =
                                             typeof cn.swatch === 'string' &&
@@ -1702,7 +1744,7 @@ export default function ShopShow({
 
                         {!usesDynamicOptions && textures.length > 0 && (
                             <OptionGroup label="Texture">
-                                <div className="grid grid-cols-3 gap-3">
+                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                     {textures.map((t: any) => (
                                         <ChoiceTile
                                             key={t.id}
@@ -1745,7 +1787,7 @@ export default function ShopShow({
                             <div className="mt-6">
                                 {isCottonBusinessCards ? (
                                     <OptionGroup label="With NFC">
-                                        <div className="grid grid-cols-2 gap-3">
+                                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                             {specialFinishes.map((f: any) => (
                                                 <ChoiceTile
                                                     key={f.id}
@@ -1833,7 +1875,7 @@ export default function ShopShow({
 
                                         {foilTab === 'hot' ||
                                         !supportsColdFoil ? (
-                                            <div className="grid grid-cols-3 gap-3">
+                                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                                 {specialFinishes.map(
                                                     (f: any) => {
                                                         const glossLimited =
@@ -1884,7 +1926,7 @@ export default function ShopShow({
                                                 )}
                                             </div>
                                         ) : (
-                                            <div className="grid grid-cols-3 gap-3">
+                                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                                 {COLD_FOIL_OPTIONS.map(
                                                     (f: any) => (
                                                         <ChoiceTile
@@ -1929,7 +1971,7 @@ export default function ShopShow({
                         {!usesDynamicOptions &&
                             specialFinishOnSidesList.length > 0 && (
                                 <OptionGroup label="Special finish on sides">
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                         {specialFinishOnSidesList.map(
                                             (s: any) => (
                                                 <ChoiceTile
@@ -1976,7 +2018,7 @@ export default function ShopShow({
 
                         {!usesDynamicOptions && embossingList.length > 0 && (
                             <OptionGroup label="Embossing">
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                     {embossingList.map((e: any) => (
                                         <ChoiceTile
                                             key={e.id}
@@ -2016,7 +2058,7 @@ export default function ShopShow({
                         {!usesDynamicOptions &&
                             embossingOrSignaturePanelList.length > 0 && (
                                 <OptionGroup label="Embossing or Signature Panel">
-                                    <div className="grid grid-cols-3 gap-3">
+                                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                         {embossingOrSignaturePanelList.map(
                                             (e: any) => (
                                                 <ChoiceTile
@@ -2510,7 +2552,6 @@ export default function ShopShow({
                                 setDesignModal(open ? 'design-for-you' : null)
                             }
                             title="Design for you"
-                            description="Tell us about your brand and what you need — our designers will create the artwork for you."
                             productOptions={c.design_form_product_options}
                             designServices={designServicesConfig?.options}
                             designServicesHeading={
@@ -2708,7 +2749,7 @@ function DynamicOptionGroups({
                                 </div>
                             </div>
                         )}
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                             {values.map((value) => {
                                 const code = optionValueCode(value);
                                 const selectedValue = selected[group.key];
@@ -2828,7 +2869,7 @@ function ChoiceTile({
             type="button"
             disabled={disabled}
             onClick={onClick}
-            className={`rounded-md border-2 p-3 text-left transition-colors ${
+            className={`rounded-md border-2 p-2 text-left transition-colors ${
                 disabled
                     ? 'cursor-not-allowed border-neutral-100 bg-neutral-50 opacity-50'
                     : active
@@ -3032,7 +3073,7 @@ function DesignServiceFormModal({
     open: boolean;
     onOpenChange: (open: boolean) => void;
     title: string;
-    description: string;
+    description?: string;
     productOptions?: string[];
     designServices?: DesignServiceOption[];
     designServicesHeading?: string;
@@ -3056,7 +3097,9 @@ function DesignServiceFormModal({
             <DialogContent className="sm:max-w-7xl">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>{description}</DialogDescription>
+                    {description && (
+                        <DialogDescription>{description}</DialogDescription>
+                    )}
                 </DialogHeader>
 
                 <div className="mt-4">

@@ -516,8 +516,20 @@ class PricingService
         )));
         sort($quantities);
 
-        $roundedProcess = $this->findProcess($scenario['processes'] ?? [], '圆角');
-        $foilProcess = $this->findProcess($scenario['processes'] ?? [], ['烫金', 'nfc']);
+        $roundedProcess = $this->findProcess($scenario['processes'] ?? [], [
+            'rounded_corners',
+            'rounded',
+            '圆角',
+            '鍦嗚',
+        ]);
+        $foilProcess = $this->findProcess($scenario['processes'] ?? [], [
+            'special_finish',
+            'foil',
+            'nfc',
+            '烫金',
+            '立体uv/冷烫/热烫单面',
+            '鐑噾',
+        ]);
 
         $printCodeProcess = $this->findProcess($scenario['processes'] ?? [], [
             'print_code',
@@ -526,8 +538,8 @@ class PricingService
             '鎵撶爜',
         ]);
 
-        $rounded = $cornersIndex === 1 && $roundedProcess !== null;
-        $foiled = $specialFinishIndex > 0 && $foilProcess !== null;
+        $rounded = $roundedProcess !== null && $this->processIsSelected($roundedProcess, $options);
+        $foiled = $foilProcess !== null && $this->processIsSelected($foilProcess, $options);
         $printCodeSelected = $printCodeProcess !== null && $this->processIsSelected($printCodeProcess, $options);
 
         return array_map(function ($qty) use ($scenario, $rounded, $foiled, $printCodeSelected, $roundedProcess, $foilProcess, $printCodeProcess) {

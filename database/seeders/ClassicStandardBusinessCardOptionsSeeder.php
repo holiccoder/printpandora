@@ -77,7 +77,7 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                             $existing,
                             'paper_finish',
                             'matte',
-                            '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
+                            '/images/product-options/business-cards/laminates/matte-526x251.jpg',
                         ),
                         ['description' => 'With a smooth feel. Shine-free so no glare.'],
                     ),
@@ -86,7 +86,7 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                             $existing,
                             'paper_finish',
                             'gloss',
-                            '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
+                            '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
                         ),
                         ['description' => 'Eye-catchingly shiny. Makes color photos pop.'],
                     ),
@@ -215,6 +215,10 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                 ['one_side', 'both_sides'],
             ),
         ];
+
+        $normalizedProduct = clone $product;
+        $normalizedProduct->setAttribute('product_config', $config);
+        $config = $configuration->canonicalConfig($normalizedProduct);
 
         $product->forceFill(['product_config' => $config])->save();
 

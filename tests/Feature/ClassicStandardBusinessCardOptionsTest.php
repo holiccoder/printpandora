@@ -97,11 +97,11 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
             data_get($product->product_config, 'options.sizes.values.2.swatch_image'),
         );
         $this->assertSame(
-            '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
+            '/images/product-options/business-cards/laminates/matte-526x251.jpg',
             data_get($product->product_config, 'options.paper_finish.values.0.swatch_image'),
         );
         $this->assertSame(
-            '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
+            '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
             data_get($product->product_config, 'options.paper_finish.values.1.swatch_image'),
         );
         $this->assertSame(

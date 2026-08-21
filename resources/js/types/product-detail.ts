@@ -72,7 +72,15 @@ export interface FaqContent {
     items: FaqItem[];
 }
 
+export interface ProductFeatureCardContent {
+    title?: string;
+    description?: string;
+    tooltip_title?: string;
+    tooltip_content?: string;
+}
+
 export interface ProductDetailSections {
+    feature_cards?: ProductFeatureCardContent[];
     design_specifications?: DesignSpecificationContent;
     design_service_banner?: DesignServiceBannerContent;
     paper_stocks?: PaperStockContent;

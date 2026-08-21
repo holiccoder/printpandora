@@ -47,6 +47,33 @@ class ProductConfigurationService
     ];
 
     /**
+     * Foil option images are shared across business-card products. The
+     * source artwork lives with the classic solid card product, but the
+     * storefront should show the same primary image wherever the same foil
+     * option is available.
+     *
+     * @var array<string, string>
+     */
+    private const SHARED_BUSINESS_CARD_FOIL_IMAGES = [
+        'black_gold' => '/images/products/classic-solid/user-hot-black-gold.png',
+        'blue_gold' => '/images/products/classic-solid/user-hot-blue-gold.png',
+        'bright_gold' => '/images/products/classic-solid/user-hot-bright-gold.png',
+        'bright_silver' => '/images/products/classic-solid/user-hot-bright-silver.png',
+        'green_gold' => '/images/products/classic-solid/user-hot-green-gold.png',
+        'matte_gold' => '/images/products/classic-solid/user-hot-matte-gold.png',
+        'matte_silver' => '/images/products/classic-solid/user-hot-matte-silver.png',
+        'red_gold' => '/images/products/classic-solid/user-hot-red-gold.png',
+        'rose_gold' => '/images/products/classic-solid/user-hot-rose-gold.png',
+        'cold_matte_gold' => '/images/products/classic-solid/user-cold-matte-gold.png',
+        'cold_matte_silver' => '/images/products/classic-solid/user-cold-matte-silver.png',
+        'cold_bright_gold' => '/images/products/classic-solid/user-cold-bright-gold.png',
+        'cold_bright_silver' => '/images/products/classic-solid/user-cold-bright-silver.png',
+        'cold_red_gold' => '/images/products/classic-solid/user-cold-red-gold.png',
+        'cold_green_gold' => '/images/products/classic-solid/user-cold-green-gold.png',
+        'cold_blue_gold' => '/images/products/classic-solid/user-cold-blue-gold.png',
+    ];
+
+    /**
      * Return the state used by the Filament configuration form.
      *
      * Detail sections are deliberately removed from the form state. They
@@ -135,6 +162,9 @@ class ProductConfigurationService
                     'rules' => $this->resourcePricingRulesFromCanonical($config),
                 ],
                 'faq' => is_array($config['faq'] ?? null) ? array_values($config['faq']) : [],
+                'detail_sections' => [
+                    'feature_cards' => $this->resourceFeatureCardsFromCanonical($config),
+                ],
             ],
         ];
     }
@@ -168,6 +198,7 @@ class ProductConfigurationService
             'media' => $resource['media'] ?? [],
             'pricing' => $resource['pricing'] ?? [],
             'faq' => $resource['faq'] ?? [],
+            'detail_sections' => $resource['detail_sections'] ?? [],
         ];
     }
 
@@ -241,6 +272,17 @@ class ProductConfigurationService
             $config['faq'] = array_values(is_array($state['faq']) ? $state['faq'] : []);
         }
 
+        if (array_key_exists('detail_sections', $state)) {
+            $existingDetails = is_array($existing['detail_sections'] ?? null)
+                ? $existing['detail_sections']
+                : [];
+            $stateDetails = is_array($state['detail_sections'] ?? null)
+                ? $state['detail_sections']
+                : [];
+
+            $config['detail_sections'] = array_replace($existingDetails, $stateDetails);
+        }
+
         $config = $this->normalizeCanonicalConfig($config, $product);
 
         $product->forceFill([
@@ -288,6 +330,12 @@ class ProductConfigurationService
             $config = $this->normalizeCanonicalConfig($product->product_config ?? [], $product);
 
             $config['options'] = $this->normalizeProductSpecificOptions($config['options'], $product);
+            $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
+                is_array($config['media']['gallery_rules'] ?? null)
+                    ? $config['media']['gallery_rules']
+                    : [],
+                $config['options'],
+            );
 
             return $config;
         }
@@ -397,6 +445,133 @@ class ProductConfigurationService
         }
 
         return $values;
+    }
+
+    /**
+     * Return the two image-adjacent feature cards for the Product resource.
+     * Existing products fall back to the current global product-detail copy so
+     * the new fields are immediately useful when an administrator opens them.
+     *
+     * @param  array<string, mixed>  $config
+     * @return array<int, array<string, string>>
+     */
+    private function resourceFeatureCardsFromCanonical(array $config): array
+    {
+        $stored = data_get($config, 'detail_sections.feature_cards', []);
+        $stored = is_array($stored) ? array_values($stored) : [];
+        $defaults = $this->defaultFeatureCards();
+        $cards = [];
+
+        for ($index = 0; $index < 2; $index++) {
+            $storedCard = is_array($stored[$index] ?? null) ? $stored[$index] : [];
+            $defaultCard = $defaults[$index] ?? [
+                'title' => '',
+                'description' => '',
+                'tooltip_title' => '',
+                'tooltip_content' => '',
+            ];
+
+            $cards[] = [
+                'title' => array_key_exists('title', $storedCard)
+                    ? (string) $storedCard['title']
+                    : $defaultCard['title'],
+                'description' => array_key_exists('description', $storedCard)
+                    ? (string) $storedCard['description']
+                    : $defaultCard['description'],
+                'tooltip_title' => array_key_exists('tooltip_title', $storedCard)
+                    ? (string) $storedCard['tooltip_title']
+                    : $defaultCard['tooltip_title'],
+                'tooltip_content' => array_key_exists('tooltip_content', $storedCard)
+                    ? (string) $storedCard['tooltip_content']
+                    : $defaultCard['tooltip_content'],
+            ];
+        }
+
+        return $cards;
+    }
+
+    /**
+     * @return array<int, array<string, string>>
+     */
+    private function defaultFeatureCards(): array
+    {
+        $content = $this->content->section('product_detail_page', []);
+        $chips = is_array($content['feature_chips'] ?? null) ? $content['feature_chips'] : [];
+        $descriptions = is_array($content['feature_chip_descriptions'] ?? null)
+            ? $content['feature_chip_descriptions']
+            : [];
+        $turnaround = is_array($content['turnaround_tooltip'] ?? null)
+            ? $content['turnaround_tooltip']
+            : [];
+        $gangRun = is_array($content['gang_run_printing_tooltip'] ?? null)
+            ? $content['gang_run_printing_tooltip']
+            : [];
+
+        return [
+            [
+                'title' => (string) ($chips[0] ?? ''),
+                'description' => (string) ($descriptions[0] ?? ''),
+                'tooltip_title' => (string) ($turnaround['title'] ?? ''),
+                'tooltip_content' => $this->tooltipHtmlFromSections($turnaround),
+            ],
+            [
+                'title' => (string) ($chips[1] ?? ''),
+                'description' => (string) ($descriptions[1] ?? ''),
+                'tooltip_title' => (string) ($gangRun['title'] ?? ''),
+                'tooltip_content' => $this->tooltipHtmlFromGangRun($gangRun),
+            ],
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $tooltip
+     */
+    private function tooltipHtmlFromSections(array $tooltip): string
+    {
+        $html = '';
+
+        foreach ($tooltip['sections'] ?? [] as $section) {
+            if (! is_array($section)) {
+                continue;
+            }
+
+            $heading = htmlspecialchars((string) ($section['heading'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $body = htmlspecialchars((string) ($section['body'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $html .= "<p><strong>{$heading}</strong><br>{$body}</p>";
+        }
+
+        return $html;
+    }
+
+    /**
+     * @param  array<string, mixed>  $tooltip
+     */
+    private function tooltipHtmlFromGangRun(array $tooltip): string
+    {
+        $html = '';
+        $intro = htmlspecialchars((string) ($tooltip['intro'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+        if ($intro !== '') {
+            $html .= "<p>{$intro}</p>";
+        }
+
+        foreach (['pros', 'cons'] as $key) {
+            $title = htmlspecialchars((string) ($tooltip[$key.'_title'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $items = is_array($tooltip[$key] ?? null) ? $tooltip[$key] : [];
+
+            if ($title !== '') {
+                $html .= "<p><strong>{$title}</strong></p>";
+            }
+
+            if ($items !== []) {
+                $html .= '<ul>'.implode('', array_map(
+                    fn (mixed $item): string => '<li>'.htmlspecialchars((string) $item, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8').'</li>',
+                    $items,
+                )).'</ul>';
+            }
+        }
+
+        return $html;
     }
 
     /**
@@ -1540,6 +1715,10 @@ class ProductConfigurationService
         $config['media']['gallery_rules'] = is_array($config['media']['gallery_rules'] ?? null)
             ? array_values($config['media']['gallery_rules'])
             : [];
+        $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
+            $config['media']['gallery_rules'],
+            $config['options'],
+        );
         $config['pricing'] = array_replace([
             'mode' => 'fixed_tiers',
             'currency' => 'USD',
@@ -1549,8 +1728,92 @@ class ProductConfigurationService
             'rules' => [],
         ], is_array($config['pricing'] ?? null) ? $config['pricing'] : []);
         $config['faq'] = is_array($config['faq'] ?? null) ? array_values($config['faq']) : [];
+        $config['detail_sections'] = is_array($config['detail_sections'] ?? null)
+            ? $config['detail_sections']
+            : [];
+
+        if (array_key_exists('feature_cards', $config['detail_sections'])) {
+            $cards = is_array($config['detail_sections']['feature_cards'] ?? null)
+                ? $config['detail_sections']['feature_cards']
+                : [];
+
+            $config['detail_sections']['feature_cards'] = array_values(array_map(
+                static fn (mixed $card): array => [
+                    'title' => is_array($card) ? (string) ($card['title'] ?? '') : '',
+                    'description' => is_array($card) ? (string) ($card['description'] ?? '') : '',
+                    'tooltip_title' => is_array($card) ? (string) ($card['tooltip_title'] ?? '') : '',
+                    'tooltip_content' => is_array($card) ? (string) ($card['tooltip_content'] ?? '') : '',
+                ],
+                array_slice($cards, 0, 2),
+            ));
+        }
 
         return $config;
+    }
+
+    /**
+     * Add the shared foil image rules only for foil values the product
+     * actually exposes. Existing rules for those values are replaced so an
+     * older product configuration cannot override the shared artwork.
+     *
+     * @param  array<int, mixed>  $rules
+     * @param  array<string, mixed>  $options
+     * @return array<int, array<string, mixed>>
+     */
+    private function withSharedBusinessCardFoilGalleryRules(array $rules, array $options): array
+    {
+        $specialFinishValues = data_get($options, 'special_finish.values', []);
+
+        if (! is_array($specialFinishValues)) {
+            return array_values(array_filter($rules, is_array(...)));
+        }
+
+        $availableCodes = [];
+
+        foreach ($specialFinishValues as $value) {
+            if (is_array($value) && filled($value['code'] ?? null)) {
+                $availableCodes[$this->normalizedRuleValue($value['code'])] = true;
+            }
+        }
+
+        $sharedRules = [];
+        $sharedCodes = [];
+
+        foreach (self::SHARED_BUSINESS_CARD_FOIL_IMAGES as $code => $image) {
+            $normalizedCode = $this->normalizedRuleValue($code);
+
+            if (! isset($availableCodes[$normalizedCode])) {
+                continue;
+            }
+
+            $sharedCodes[$normalizedCode] = true;
+            $sharedRules[] = [
+                'id' => "shared-foil-{$code}",
+                'match' => ['special_finish' => $code],
+                'images' => [$image],
+                'primary' => $image,
+            ];
+        }
+
+        if ($sharedRules === []) {
+            return array_values(array_filter($rules, is_array(...)));
+        }
+
+        $remainingRules = array_values(array_filter(
+            $rules,
+            function (mixed $rule) use ($sharedCodes): bool {
+                if (! is_array($rule)) {
+                    return false;
+                }
+
+                $match = $rule['match'] ?? [];
+                $specialFinish = is_array($match) ? ($match['special_finish'] ?? null) : null;
+
+                return ! isset($sharedCodes[$this->normalizedRuleValue($specialFinish)]);
+            },
+        ));
+
+        return [...$remainingRules, ...$sharedRules];
     }
 
     /**
@@ -1623,7 +1886,7 @@ class ProductConfigurationService
                 [
                     'label' => 'Matte',
                     'description' => 'With a smooth feel. Shine-free so no glare.',
-                    'swatch_image' => '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
+                    'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
                 ],
             ),
             array_replace(
@@ -1631,7 +1894,7 @@ class ProductConfigurationService
                 [
                     'label' => 'Gloss',
                     'description' => 'Eye-catchingly shiny. Makes color photos pop.',
-                    'swatch_image' => '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
+                    'swatch_image' => '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
                 ],
             ),
             array_replace(
@@ -1724,16 +1987,40 @@ class ProductConfigurationService
                 [
                     'label' => $texture['label'],
                     'description' => '',
-                    'swatch_image' => '',
+                    'swatch_image' => $texture['swatch_image'],
                 ],
             ),
             [
-                ['code' => 'pin_hole_paper', 'label' => 'Pin-hole Paper'],
-                ['code' => 'water_ripple_paper', 'label' => 'Water Ripple Paper'],
-                ['code' => 'linen_paper', 'label' => 'Linen Paper'],
-                ['code' => 'eggshell_paper', 'label' => 'Eggshell Paper'],
-                ['code' => 'white_cardstock', 'label' => 'White Cardstock'],
-                ['code' => 'pearlized_paper', 'label' => 'Pearlized Paper'],
+                [
+                    'code' => 'pin_hole_paper',
+                    'label' => 'Pin-hole Paper',
+                    'swatch_image' => '/images/products/classic-special-business-cards/texture/pin-hole-paper.png',
+                ],
+                [
+                    'code' => 'water_ripple_paper',
+                    'label' => 'Water Ripple Paper',
+                    'swatch_image' => '/images/products/classic-special-business-cards/texture/water-ripple-paper.png',
+                ],
+                [
+                    'code' => 'linen_paper',
+                    'label' => 'Linen Paper',
+                    'swatch_image' => '/images/products/classic-special-business-cards/texture/linen-paper.png',
+                ],
+                [
+                    'code' => 'eggshell_paper',
+                    'label' => 'Eggshell Paper',
+                    'swatch_image' => '/images/products/classic-special-business-cards/texture/eggshell-paper.png',
+                ],
+                [
+                    'code' => 'white_cardstock',
+                    'label' => 'White Cardstock',
+                    'swatch_image' => '/images/products/classic-special-business-cards/texture/white-cardstock.png',
+                ],
+                [
+                    'code' => 'pearlized_paper',
+                    'label' => 'Pearlized Paper',
+                    'swatch_image' => '/images/products/classic-special-business-cards/texture/pearlized-paper.png',
+                ],
             ],
         );
 
@@ -1855,7 +2142,11 @@ class ProductConfigurationService
         }
 
         if (
-            str_contains($name, '激光雕刻')
+            str_contains($name, '立体uv')
+            || str_contains($name, '立体UV')
+            || str_contains($name, '冷烫')
+            || str_contains($name, '热烫')
+            || str_contains($name, '激光雕刻')
             || str_contains($name, '彩印')
             || str_contains($name, '镀色')
             || str_contains($normalizedName, 'special finish')
@@ -1896,10 +2187,10 @@ class ProductConfigurationService
                 ],
             ],
             'classic-solid-business-cards' => [
-                'dir' => '350g白卡',
+                'dir' => '640g铜版纸',
                 'files' => [
-                    'rectangle' => '350g白卡.json',
-                    'square' => '350g白卡-正方形.json',
+                    'rectangle' => '640g铜版纸.json',
+                    'square' => '640g铜版纸-正方形.json',
                 ],
             ],
             'basic-cotton-business-card' => [

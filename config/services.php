@@ -52,6 +52,13 @@ return [
         'test' => env('CRYPTOMUS_TEST', true),
     ],
 
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'bot_username' => env('TELEGRAM_BOT_USERNAME'),
+        'webhook_secret' => env('TELEGRAM_WEBHOOK_SECRET'),
+        'timeout' => (int) env('TELEGRAM_TIMEOUT', 10),
+    ],
+
     'four_px' => [
         'enabled' => (bool) env('FOURPX_ENABLED', false),
         'environment' => env('FOURPX_ENVIRONMENT', 'test'),

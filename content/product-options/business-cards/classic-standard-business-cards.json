@@ -332,7 +332,7 @@
             "name": "Square",
             "code": "square",
             "description": "Sharp and Stylish",
-            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M6.5 6.5V15h3V9.5h29v29H33v3h8.5v-35h-35zm3 27.5h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8z\"></path></svg>",
+      "swatch_image": "/images/product-options/business-cards/swatches/square.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -396,7 +396,7 @@
             "name": "Rounded",
             "code": "rounded",
             "description": "",
-            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M9.5 34h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8zM8 6.5H6.5V15h3V9.537A30.542 30.542 0 0 1 38.463 38.5H33v3h8.5V40A33.538 33.538 0 0 0 8 6.5z\"></path></svg>",
+      "swatch_image": "/images/product-options/business-cards/swatches/rounded.webp",
             "added_price": [
                 {
                     "pack_size": 50,

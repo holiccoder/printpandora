@@ -5,12 +5,14 @@
     {
       "name": "Square",
       "code": "square",
-      "description": "Sharp and clean"
+      "description": "Sharp and clean",
+      "swatch_image": "/images/product-options/business-cards/swatches/square.webp"
     },
     {
       "name": "Rounded",
       "code": "rounded",
-      "description": "Smooth and rounded"
+      "description": "Smooth and rounded",
+      "swatch_image": "/images/product-options/business-cards/swatches/rounded.webp"
     }
   ],
   "quantity_price_table": [

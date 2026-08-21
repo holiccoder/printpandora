@@ -146,7 +146,7 @@
             "name": "Matte",
             "code": "matte",
             "description": "With a smooth feel. Shine-free so no glare.",
-            "swatch_image": "/images/product-options/business-cards/swatches/matte-paper-finish.webp",
+            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -210,7 +210,7 @@
             "name": "Gloss",
             "code": "gloss",
             "description": "Eye-catchingly shiny. Makes color photos pop.",
-            "swatch_image": "/images/product-options/business-cards/swatches/gloss-paper-finish.webp",
+            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
             "added_price": [
                 {
                     "pack_size": 50,

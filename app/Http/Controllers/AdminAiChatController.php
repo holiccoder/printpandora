@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\AiChatConversation;
+use App\Services\TelegramBotService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Throwable;
 
 /**
  * Admin-side endpoints for the human-support chat bubble inside Filament.
@@ -20,23 +22,26 @@ class AdminAiChatController extends Controller
     public function index(): JsonResponse
     {
         $conversations = AiChatConversation::query()
-            ->with(['user:id,name,email', 'messages' => fn ($query) => $query->latest('id')->limit(1)])
+            ->with(['user:id,name,email', 'latestMessage'])
             ->withCount('messages')
             ->orderByRaw("case when mode = 'human' then 0 else 1 end")
             ->orderByDesc('updated_at')
             ->limit(50)
             ->get()
-            ->map(function (AiChatConversation $conversation) {
-                $last = $conversation->messages->first();
+            ->map(function (AiChatConversation $conversation): array {
+                $last = $conversation->latestMessage;
 
                 return [
                     'id' => $conversation->id,
                     'mode' => $conversation->mode,
-                    'customer' => $conversation->user?->email
-                        ?? 'Guest '.substr($conversation->session_id, 0, 8),
+                    'customer' => $conversation->user
+                        ? $conversation->user->email
+                        : 'Guest '.substr($conversation->session_id, 0, 8),
                     'messages_count' => $conversation->messages_count,
                     'waiting' => $conversation->mode === 'human' && $last?->role === 'user',
-                    'last_message' => $last?->content ?: ($last?->attachment_name ?? ''),
+                    'last_message' => $last
+                        ? ($last->content ?: ($last->attachment_name ?? ''))
+                        : '',
                     'last_message_at' => $last?->created_at?->toIso8601String(),
                     'human_requested_at' => $conversation->human_requested_at?->toIso8601String(),
                 ];
@@ -74,8 +79,11 @@ class AdminAiChatController extends Controller
     /**
      * Reply to the customer as human support.
      */
-    public function reply(AiChatConversation $conversation, Request $request): JsonResponse
-    {
+    public function reply(
+        AiChatConversation $conversation,
+        Request $request,
+        TelegramBotService $telegram,
+    ): JsonResponse {
         $validator = Validator::make($request->all(), [
             'message' => ['required', 'string', 'max:2000'],
         ]);
@@ -84,9 +92,25 @@ class AdminAiChatController extends Controller
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
+        $text = trim($request->input('message'));
+
+        if ($text === '') {
+            return response()->json(['message' => 'The reply cannot be empty.'], 422);
+        }
+
+        try {
+            $telegramMessage = $telegram->sendToConversation($conversation, $text);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'The reply could not be delivered through Telegram.',
+            ], 502);
+        }
+
         $message = $conversation->messages()->create([
             'role' => 'admin',
-            'content' => trim($request->input('message')),
+            'content' => $text,
         ]);
 
         $conversation->touch();
@@ -98,6 +122,8 @@ class AdminAiChatController extends Controller
                 'content' => $message->content,
                 'created_at' => $message->created_at?->toIso8601String(),
             ],
+            'telegram_delivered' => $telegramMessage !== null,
+            'telegram_message_id' => $telegramMessage['message_id'] ?? null,
         ], 201);
     }
 

@@ -15,6 +15,13 @@ return [
 
     'enabled' => env('AI_CHAT_ENABLED', true),
 
+    // Bearer token for the external support-chat client API. Keep this value
+    // server-side and rotate it if it is ever exposed.
+    'api_token' => env('AI_CHAT_API_TOKEN'),
+
+    // Lifetime of one-time Telegram conversation-link tokens, in minutes.
+    'telegram_link_ttl' => (int) env('AI_CHAT_TELEGRAM_LINK_TTL', 30),
+
     // Chat provider/model. DeepSeek is supported for chat replies, but has no
     // embeddings API — knowledge indexing/retrieval always uses the embedding
     // provider below (openai by default), regardless of this setting.

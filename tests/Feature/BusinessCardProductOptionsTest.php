@@ -292,6 +292,67 @@ class BusinessCardProductOptionsTest extends TestCase
         );
     }
 
+    public function test_classic_solid_uses_the_imported_640g_pricing_files(): void
+    {
+        $businessCards = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        Product::create([
+            'name' => 'Classic Solid Business Cards',
+            'slug' => 'classic-solid-business-cards',
+            'product_category_id' => $businessCards->id,
+        ]);
+
+        (new BusinessCardProductOptionsSeeder)->run();
+
+        $product = Product::where('slug', 'classic-solid-business-cards')->firstOrFail();
+        $config = $product->product_config;
+
+        $this->assertSame('rule_based', data_get($config, 'pricing.mode'));
+        $this->assertSame(0.6, data_get($config, 'pricing.scenarios.rectangle.base_price_per_card'));
+        $this->assertSame(0.8, data_get($config, 'pricing.scenarios.square.base_price_per_card'));
+        $this->assertSame(200, data_get($config, 'pricing.scenarios.rectangle.start_quantity'));
+        $this->assertSame(
+            ['rounded_corners', 'special_finish'],
+            data_get($config, 'pricing.scenarios.rectangle.processes.*.code'),
+        );
+
+        $pricing = app(PricingService::class);
+
+        $this->assertSame(
+            120.0,
+            $pricing->calculate($product->id, [
+                'quantity' => '200',
+                'sizes' => 'standard',
+                'paper_finish' => 'matte',
+                'corners' => 'square',
+                'special_finish' => 'no_special_finish',
+            ]),
+        );
+        $this->assertSame(
+            145.0,
+            $pricing->calculate($product->id, [
+                'quantity' => '500',
+                'sizes' => 'standard',
+                'paper_finish' => 'matte',
+                'corners' => 'rounded',
+                'special_finish' => 'black_gold',
+            ]),
+        );
+        $this->assertSame(
+            170.0,
+            $pricing->calculate($product->id, [
+                'quantity' => '500',
+                'sizes' => 'square',
+                'paper_finish' => 'matte',
+                'corners' => 'rounded',
+                'special_finish' => 'black_gold',
+            ]),
+        );
+    }
+
     public function test_legacy_products_are_normalized_to_the_same_contract(): void
     {
         $category = new ProductCategory([
@@ -501,7 +562,7 @@ class BusinessCardProductOptionsTest extends TestCase
         $this->assertSame('Keep this design spec', data_get($config, 'detail_sections.design_specifications.heading'));
 
         $rules = data_get($config, 'media.gallery_rules');
-        $this->assertCount(9, $rules);
+        $this->assertCount(18, $rules);
         $this->assertSame(
             ['sizes' => 'standard', 'texture' => 'inkpavo_j4'],
             data_get($rules, '4.match'),
@@ -630,7 +691,20 @@ class BusinessCardProductOptionsTest extends TestCase
         $this->assertSame('Keep this design spec', data_get($config, 'detail_sections.design_specifications.heading'));
 
         $rules = data_get($config, 'media.gallery_rules');
-        $this->assertCount(17, $rules);
+        $this->assertSame(
+            [
+                '/images/products/super-business-cards/texture/j1-water-ripple-paper.png',
+                '/images/products/super-business-cards/texture/j2-cloth-texture-paper.png',
+                '/images/products/super-business-cards/texture/j3-eggshell-texture.png',
+                '/images/products/super-business-cards/texture/j4-high-grade-paper.png',
+                '/images/products/super-business-cards/texture/j5-pearlescent-paper.png',
+                '/images/products/super-business-cards/texture/j6-kraft-paper.png',
+                '/images/products/super-business-cards/texture/j7-absorbent-cotton-paper.png',
+                '/images/products/super-business-cards/texture/j8-pinhole-paper.png',
+            ],
+            data_get($config, 'options.texture.values.*.swatch_image'),
+        );
+        $this->assertCount(26, $rules);
         $this->assertSame(
             ['sizes' => 'standard', 'corners' => 'rounded', 'texture' => 'j5_pearlescent_paper'],
             data_get($rules, '10.match'),

@@ -39,10 +39,24 @@ class FilamentSettingsTest extends TestCase
             'InkPavo - your go-to solution for printing, customization, and on-demand production.',
             data_get($component->get('data'), 'homepage.seo.page_description'),
         );
-        $this->assertCount(9, $slides);
+        $this->assertCount(10, $slides);
         $this->assertSame(
             "MADE TO BE\nREMEMBERED",
             data_get($slides, array_key_first($slides).'.headline'),
+        );
+        $this->assertStringContainsString(
+            '/images/home/homepage-carousel-01.webp',
+            (string) json_encode(
+                data_get($slides, array_key_first($slides).'.image_url'),
+                JSON_UNESCAPED_SLASHES,
+            ),
+        );
+        $this->assertStringContainsString(
+            '/images/home/homepage-carousel-10.webp',
+            (string) json_encode(
+                data_get($slides, array_key_last($slides).'.image_url'),
+                JSON_UNESCAPED_SLASHES,
+            ),
         );
     }
 

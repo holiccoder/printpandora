@@ -174,3 +174,7 @@ Do not use `LiveDataSeeder` to synchronize a populated production database: it t
 - Your project root is bind-mounted into the container at `/var/www/html`, so changes you make locally appear inside the container immediately.
 - `vendor/` and `node_modules/` are stored in Docker named volumes instead of being synced from Windows. This keeps file-watching and dependency installs fast.
 - The SQLite database (`database/database.sqlite`) and uploaded images (`public/images/product-options/uploads/`) live inside the bind-mounted project, so they persist across container restarts.
+
+## External support chat API and Telegram
+
+See the complete [External Support Chat API and Telegram Bot manual](docs/telegram-chat-api.md).

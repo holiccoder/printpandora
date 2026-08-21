@@ -52,13 +52,13 @@
             "name": "Matte",
             "code": "matte",
             "description": "With a smooth feel. Shine-free so no glare.",
-            "swatch_image": "/images/product-options/business-cards/swatches/matte-paper-finish.webp"
+            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg"
         },
         {
             "name": "Gloss",
             "code": "gloss",
             "description": "Eye-catchingly shiny. Makes color photos pop.",
-            "swatch_image": "/images/product-options/business-cards/swatches/gloss-paper-finish.webp"
+            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg"
         },
         {
             "name": "3D UV",
@@ -86,37 +86,37 @@
             "name": "Pin-hole Paper",
             "code": "pin_hole_paper",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/products/classic-special-business-cards/texture/pin-hole-paper.png"
         },
         {
             "name": "Water Ripple Paper",
             "code": "water_ripple_paper",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/products/classic-special-business-cards/texture/water-ripple-paper.png"
         },
         {
             "name": "Linen Paper",
             "code": "linen_paper",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/products/classic-special-business-cards/texture/linen-paper.png"
         },
         {
             "name": "Eggshell Paper",
             "code": "eggshell_paper",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/products/classic-special-business-cards/texture/eggshell-paper.png"
         },
         {
             "name": "White Cardstock",
             "code": "white_cardstock",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/products/classic-special-business-cards/texture/white-cardstock.png"
         },
         {
             "name": "Pearlized Paper",
             "code": "pearlized_paper",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/products/classic-special-business-cards/texture/pearlized-paper.png"
         }
     ],
     "special_finish": [
@@ -224,8 +224,7 @@
             "images": [
                 "/images/classic-special-business-cards/default03.png",
                 "/images/classic-special-business-cards/default02.png",
-                "/images/classic-special-business-cards/default01.png",
-                "/images/classic-special-business-cards/default04.png"
+                "/images/classic-special-business-cards/default01.png"
             ]
         },
         {
@@ -239,8 +238,7 @@
             "images": [
                 "/images/classic-special-business-cards/default01.png",
                 "/images/classic-special-business-cards/default02.png",
-                "/images/classic-special-business-cards/default03.png",
-                "/images/classic-special-business-cards/default04.png"
+                "/images/classic-special-business-cards/default03.png"
             ]
         },
         {
@@ -254,8 +252,7 @@
             "images": [
                 "/images/classic-special-business-cards/default01.png",
                 "/images/classic-special-business-cards/default02.png",
-                "/images/classic-special-business-cards/default03.png",
-                "/images/classic-special-business-cards/default04.png"
+                "/images/classic-special-business-cards/default03.png"
             ]
         },
         {
@@ -269,8 +266,7 @@
             "images": [
                 "/images/classic-special-business-cards/default01.png",
                 "/images/classic-special-business-cards/default02.png",
-                "/images/classic-special-business-cards/default03.png",
-                "/images/classic-special-business-cards/default04.png"
+                "/images/classic-special-business-cards/default03.png"
             ]
         },
         {
@@ -284,8 +280,7 @@
             "images": [
                 "/images/classic-special-business-cards/default01.png",
                 "/images/classic-special-business-cards/default02.png",
-                "/images/classic-special-business-cards/default03.png",
-                "/images/classic-special-business-cards/default04.png"
+                "/images/classic-special-business-cards/default03.png"
             ]
         },
         {
@@ -299,8 +294,7 @@
             "images": [
                 "/images/classic-special-business-cards/default01.png",
                 "/images/classic-special-business-cards/default02.png",
-                "/images/classic-special-business-cards/default03.png",
-                "/images/classic-special-business-cards/default04.png"
+                "/images/classic-special-business-cards/default03.png"
             ]
         },
         {
@@ -314,8 +308,7 @@
             "images": [
                 "/images/classic-special-business-cards/default01.png",
                 "/images/classic-special-business-cards/default02.png",
-                "/images/classic-special-business-cards/default03.png",
-                "/images/classic-special-business-cards/default04.png"
+                "/images/classic-special-business-cards/default03.png"
             ]
         },
         {
@@ -329,8 +322,7 @@
             "images": [
                 "/images/classic-special-business-cards/default01.png",
                 "/images/classic-special-business-cards/default02.png",
-                "/images/classic-special-business-cards/default03.png",
-                "/images/classic-special-business-cards/default04.png"
+                "/images/classic-special-business-cards/default03.png"
             ]
         },
         {
@@ -344,8 +336,7 @@
             "images": [
                 "/images/classic-special-business-cards/default01.png",
                 "/images/classic-special-business-cards/default02.png",
-                "/images/classic-special-business-cards/default03.png",
-                "/images/classic-special-business-cards/default04.png"
+                "/images/classic-special-business-cards/default03.png"
             ]
         },
         {
@@ -359,8 +350,7 @@
             "images": [
                 "/images/classic-special-business-cards/default01.png",
                 "/images/classic-special-business-cards/default02.png",
-                "/images/classic-special-business-cards/default03.png",
-                "/images/classic-special-business-cards/default04.png"
+                "/images/classic-special-business-cards/default03.png"
             ]
         }
     ],

@@ -4,7 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property int $id
+ * @property int $conversation_id
+ * @property string $role
+ * @property string $content
+ * @property string|null $attachment_path
+ * @property string|null $attachment_name
+ * @property Carbon|null $created_at
+ */
 class AiChatMessage extends Model
 {
     public const UPDATED_AT = null;
@@ -23,10 +34,11 @@ class AiChatMessage extends Model
     public function attachmentUrl(): ?string
     {
         return $this->attachment_path
-            ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->attachment_path)
+            ? Storage::disk('public')->url($this->attachment_path)
             : null;
     }
 
+    /** @return BelongsTo<AiChatConversation, $this> */
     public function conversation(): BelongsTo
     {
         return $this->belongsTo(AiChatConversation::class, 'conversation_id');

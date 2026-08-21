@@ -75,6 +75,17 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
             ],
             data_get($product->product_config, 'options.texture.values.*.code'),
         );
+        $this->assertSame(
+            [
+                '/images/products/classic-special-business-cards/texture/pin-hole-paper.png',
+                '/images/products/classic-special-business-cards/texture/water-ripple-paper.png',
+                '/images/products/classic-special-business-cards/texture/linen-paper.png',
+                '/images/products/classic-special-business-cards/texture/eggshell-paper.png',
+                '/images/products/classic-special-business-cards/texture/white-cardstock.png',
+                '/images/products/classic-special-business-cards/texture/pearlized-paper.png',
+            ],
+            data_get($product->product_config, 'options.texture.values.*.swatch_image'),
+        );
         $this->assertArrayNotHasKey('print_code', $product->product_config['options']);
         $this->assertArrayNotHasKey('drill', $product->product_config['options']);
     }

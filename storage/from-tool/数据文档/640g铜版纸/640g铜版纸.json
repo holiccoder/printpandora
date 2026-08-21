@@ -1,0 +1,58 @@
+{
+  "packageName": "640g铜版纸 长方形",
+  "basePrice": 0.6,
+  "startQuantity": 200,
+  "paperRates": {
+    "100": 43.33,
+    "200": 66.67,
+    "500": 71.67,
+    "1000": 73.33,
+    "2000": 75,
+    "3000": 76.67,
+    "4000": 78.33,
+    "5000": 80,
+    "10000": 81.67
+  },
+  "processes": [
+    {
+      "name": "圆角",
+      "markup": 0.14,
+      "rates": {
+        "100": 50,
+        "200": 75,
+        "500": 78.57,
+        "1000": 80,
+        "2000": 81.43,
+        "3000": 84.29,
+        "4000": 85,
+        "5000": 85.71,
+        "10000": 87.14
+      }
+    },
+    {
+      "name": "立体uv/冷烫/热烫单面",
+      "markup": 0.4,
+      "rates": {
+        "100": 50,
+        "200": 75,
+        "500": 77.5,
+        "1000": 80,
+        "2000": 80,
+        "3000": 82.5,
+        "4000": 82.5,
+        "5000": 85,
+        "10000": 85
+      }
+    }
+  ],
+  "rows": [
+    {"quantity": 200, "preUnitPrice": 1.14, "unitPrice": 0.335, "totalPrice": 66.996, "effectiveDiscountRate": 70.6158},
+    {"quantity": 500, "preUnitPrice": 1.14, "unitPrice": 0.29, "totalPrice": 144.991, "effectiveDiscountRate": 74.563},
+    {"quantity": 1000, "preUnitPrice": 1.14, "unitPrice": 0.268, "totalPrice": 268.02, "effectiveDiscountRate": 76.4895},
+    {"quantity": 2000, "preUnitPrice": 1.14, "unitPrice": 0.256, "totalPrice": 511.996, "effectiveDiscountRate": 77.544},
+    {"quantity": 3000, "preUnitPrice": 1.14, "unitPrice": 0.232, "totalPrice": 695.922, "effectiveDiscountRate": 79.6514},
+    {"quantity": 4000, "preUnitPrice": 1.14, "unitPrice": 0.221, "totalPrice": 884.08, "effectiveDiscountRate": 80.6123},
+    {"quantity": 5000, "preUnitPrice": 1.14, "unitPrice": 0.2, "totalPrice": 1000.03, "effectiveDiscountRate": 82.4556},
+    {"quantity": 10000, "preUnitPrice": 1.14, "unitPrice": 0.188, "totalPrice": 1879.84, "effectiveDiscountRate": 83.5102}
+  ]
+}

@@ -285,6 +285,12 @@
             ]
         },
         {
+            "name": "3D UV",
+            "code": "uv",
+            "description": "Raised gloss highlights with a dimensional feel.",
+            "swatch_image": "/images/product-options/uv-swatch.png"
+        },
+        {
             "name": "Starry Film",
             "code": "starry_film",
             "description": "Enchanting glittering star effects",
@@ -475,70 +481,6 @@
                     "price_per_card": 0
                 }
             ]
-        },
-        {
-            "name": "Anti-scratch Matte Film",
-            "code": "anti_scratch_matte_film",
-            "description": "Highly durable scuff-resistant matte laminate",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
         }
     ],
     "corners": [
@@ -546,7 +488,7 @@
             "name": "Square",
             "code": "square",
             "description": "Sharp and Stylish",
-            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M6.5 6.5V15h3V9.5h29v29H33v3h8.5v-35h-35zm3 27.5h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8z\"></path></svg>",
+            "swatch_image": "/images/product-options/business-cards/swatches/square.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -610,7 +552,7 @@
             "name": "Rounded",
             "code": "rounded",
             "description": "",
-            "swatch_image": "<svg class=\"-large tile-radio-button__icon svg-icon\" viewBox=\"0 0 48 48\"><path d=\"M9.5 34h-3v7.5H15v-3H9.5V34zm-3-14h3v9h-3zM20 38.5h8v3h-8zM8 6.5H6.5V15h3V9.537A30.542 30.542 0 0 1 38.463 38.5H33v3h8.5V40A33.538 33.538 0 0 0 8 6.5z\"></path></svg>",
+            "swatch_image": "/images/product-options/business-cards/swatches/rounded.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -1439,6 +1381,48 @@
                     "price_per_card": 0
                 }
             ]
+        },
+        {
+            "name": "Cold Matte Gold",
+            "code": "cold_matte_gold",
+            "description": "Cold matte gold foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/matte-gold.png"
+        },
+        {
+            "name": "Cold Matte Silver",
+            "code": "cold_matte_silver",
+            "description": "Cold matte silver foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/matte-silver.png"
+        },
+        {
+            "name": "Cold Bright Gold",
+            "code": "cold_bright_gold",
+            "description": "Cold bright gold foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/bright-gold.png"
+        },
+        {
+            "name": "Cold Bright Silver",
+            "code": "cold_bright_silver",
+            "description": "Cold bright silver foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/bright-silver.png"
+        },
+        {
+            "name": "Cold Red Gold",
+            "code": "cold_red_gold",
+            "description": "Cold red gold foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/red-gold.png"
+        },
+        {
+            "name": "Cold Green Gold",
+            "code": "cold_green_gold",
+            "description": "Cold green gold foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/green-gold.png"
+        },
+        {
+            "name": "Cold Blue Gold",
+            "code": "cold_blue_gold",
+            "description": "Cold blue gold foil",
+            "swatch_image": "/images/product-options/business-cards/swatches/cold/blue-gold.png"
         }
     ],
     "print_code": [
@@ -1726,74 +1710,234 @@
             "is_default": true,
             "match": {},
             "images": [
-                "/images/products/classic-solid/matte-default-01.jpg",
-                "/images/products/classic-solid/matte-default-02.png",
-                "/images/products/classic-solid/matte-default-03.png",
-                "/images/products/classic-solid/matte-default-04.png"
+                "/images/products/classic-solid/user-matte-default-01.png",
+                "/images/products/classic-solid/user-matte-default-02.png",
+                "/images/products/classic-solid/user-matte-default-03.png",
+                "/images/products/classic-solid/user-matte-default-04.png"
             ]
         },
         {
             "id": "matte_square_dutch",
             "match": {
-                "sizes": "Standard",
                 "paper_finish": "Matte",
                 "corners": "Square",
-                "texture": "Dutch White Cardstock",
                 "special_finish": "no special finish"
             },
             "images": [
-                "/images/products/classic-solid/matte-square.png",
-                "/images/products/classic-solid/matte-default-02.png",
-                "/images/products/classic-solid/matte-default-03.png",
-                "/images/products/classic-solid/matte-default-04.png"
+                "/images/products/classic-solid/user-matte-square.png"
             ]
         },
         {
             "id": "matte_rounded_dutch",
             "match": {
-                "sizes": "Standard",
                 "paper_finish": "Matte",
                 "corners": "Rounded",
-                "texture": "Dutch White Cardstock",
                 "special_finish": "no special finish"
             },
             "images": [
-                "/images/products/classic-solid/matte-rounded.png",
-                "/images/products/classic-solid/matte-default-02.png",
-                "/images/products/classic-solid/matte-default-03.png",
-                "/images/products/classic-solid/matte-default-04.png"
+                "/images/products/classic-solid/user-matte-rounded.png"
             ]
         },
         {
             "id": "gloss_rounded_dutch",
             "match": {
-                "sizes": "Standard",
                 "paper_finish": "Gloss",
                 "corners": "Rounded",
-                "texture": "Dutch White Cardstock",
                 "special_finish": "no special finish"
             },
             "images": [
-                "/images/products/classic-solid/gloss-rounded.png",
-                "/images/products/classic-solid/matte-default-02.png",
-                "/images/products/classic-solid/matte-default-03.png",
-                "/images/products/classic-solid/matte-default-04.png"
+                "/images/products/classic-solid/user-gloss-rounded.png"
             ]
         },
         {
             "id": "gloss_square_dutch",
             "match": {
-                "sizes": "Standard",
                 "paper_finish": "Gloss",
                 "corners": "Square",
-                "texture": "Dutch White Cardstock",
                 "special_finish": "no special finish"
             },
             "images": [
-                "/images/products/classic-solid/gloss-square.png",
-                "/images/products/classic-solid/matte-default-02.png",
-                "/images/products/classic-solid/matte-default-03.png",
-                "/images/products/classic-solid/matte-default-04.png"
+                "/images/products/classic-solid/user-gloss-square.png"
+            ]
+        },
+        {
+            "id": "cold-matte-gold",
+            "match": {
+                "special_finish": "cold_matte_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-cold-matte-gold.png"
+            ]
+        },
+        {
+            "id": "cold-matte-silver",
+            "match": {
+                "special_finish": "cold_matte_silver"
+            },
+            "images": [
+                "/images/products/classic-solid/user-cold-matte-silver.png"
+            ]
+        },
+        {
+            "id": "cold-bright-gold",
+            "match": {
+                "special_finish": "cold_bright_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-cold-bright-gold.png"
+            ]
+        },
+        {
+            "id": "cold-bright-silver",
+            "match": {
+                "special_finish": "cold_bright_silver"
+            },
+            "images": [
+                "/images/products/classic-solid/user-cold-bright-silver.png"
+            ]
+        },
+        {
+            "id": "cold-red-gold",
+            "match": {
+                "special_finish": "cold_red_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-cold-red-gold.png"
+            ]
+        },
+        {
+            "id": "cold-green-gold",
+            "match": {
+                "special_finish": "cold_green_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-cold-green-gold.png"
+            ]
+        },
+        {
+            "id": "cold-blue-gold",
+            "match": {
+                "special_finish": "cold_blue_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-cold-blue-gold.png"
+            ]
+        },
+        {
+            "id": "hot-matte-silver",
+            "match": {
+                "special_finish": "matte_silver"
+            },
+            "images": [
+                "/images/products/classic-solid/user-hot-matte-silver.png"
+            ]
+        },
+        {
+            "id": "hot-black-gold",
+            "match": {
+                "special_finish": "black_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-hot-black-gold.png"
+            ]
+        },
+        {
+            "id": "hot-red-gold",
+            "match": {
+                "special_finish": "red_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-hot-red-gold.png"
+            ]
+        },
+        {
+            "id": "hot-blue-gold",
+            "match": {
+                "special_finish": "blue_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-hot-blue-gold.png"
+            ]
+        },
+        {
+            "id": "hot-bright-gold",
+            "match": {
+                "special_finish": "bright_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-hot-bright-gold.png"
+            ]
+        },
+        {
+            "id": "hot-bright-silver",
+            "match": {
+                "special_finish": "bright_silver"
+            },
+            "images": [
+                "/images/products/classic-solid/user-hot-bright-silver.png"
+            ]
+        },
+        {
+            "id": "hot-green-gold",
+            "match": {
+                "special_finish": "green_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-hot-green-gold.png"
+            ]
+        },
+        {
+            "id": "hot-rose-gold",
+            "match": {
+                "special_finish": "rose_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-hot-rose-gold.png"
+            ]
+        },
+        {
+            "id": "hot-matte-gold",
+            "match": {
+                "special_finish": "matte_gold"
+            },
+            "images": [
+                "/images/products/classic-solid/user-hot-matte-gold.png"
+            ]
+        },
+        {
+            "id": "3d-uv",
+            "match": {
+                "paper_finish": "uv"
+            },
+            "images": [
+                "/images/products/classic-solid/user-3d-uv.png"
+            ]
+        },
+        {
+            "id": "starry-film",
+            "match": {
+                "paper_finish": "starry_film"
+            },
+            "images": [
+                "/images/products/classic-solid/user-starry-film.png"
+            ]
+        },
+        {
+            "id": "soft-touch-film",
+            "match": {
+                "paper_finish": "soft_touch_film"
+            },
+            "images": [
+                "/images/products/classic-solid/user-soft-touch-film.png"
+            ]
+        },
+        {
+            "id": "holo-film",
+            "match": {
+                "paper_finish": "holo_film"
+            },
+            "images": [
+                "/images/products/classic-solid/user-holo-film.png"
             ]
         },
         {
@@ -1858,8 +2002,7 @@
                 "special_finish": "no special finish"
             },
             "images": [
-                "/images/product-options/business-cards/galleries/classic-gloss-square-1.jpg",
-                "/images/product-options/business-cards/galleries/classic-gloss-square-2.jpg"
+                "/images/products/classic-solid/user-gloss-square.png"
             ]
         },
         {
@@ -1871,9 +2014,7 @@
                 "special_finish": "no special finish"
             },
             "images": [
-                "/images/product-options/business-cards/galleries/classic-gloss-1.jpg",
-                "/images/product-options/business-cards/galleries/classic-gloss-2.jpg",
-                "/images/product-options/business-cards/galleries/classic-gloss-3.jpg"
+                "/images/products/classic-solid/user-gloss.png"
             ]
         },
         {
@@ -1885,8 +2026,7 @@
                 "special_finish": "no special finish"
             },
             "images": [
-                "/images/product-options/business-cards/galleries/classic-matte-rounded-1.jpg",
-                "/images/product-options/business-cards/galleries/classic-matte-rounded-2.jpg"
+                "/images/products/classic-solid/user-matte-rounded.png"
             ]
         },
         {
@@ -1898,9 +2038,7 @@
                 "special_finish": "no special finish"
             },
             "images": [
-                "/images/product-options/business-cards/galleries/classic-matte-1.jpg",
-                "/images/product-options/business-cards/galleries/classic-matte-2.jpg",
-                "/images/product-options/business-cards/galleries/classic-matte-3.jpg"
+                "/images/products/classic-solid/user-matte-square.png"
             ]
         },
         {
@@ -1912,8 +2050,7 @@
                 "special_finish": "no special finish"
             },
             "images": [
-                "/images/product-options/business-cards/galleries/classic-square-1.jpg",
-                "/images/product-options/business-cards/galleries/classic-square-2.jpg"
+                "/images/products/classic-solid/user-matte-square.png"
             ]
         }
     ],

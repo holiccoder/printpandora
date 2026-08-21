@@ -135,6 +135,50 @@ class ProductResource extends Resource
                                             ->columnSpanFull(),
                                     ]),
                             ]),
+                        Tab::make('feature-cards')
+                            ->label('Feature Cards')
+                            ->icon('heroicon-o-information-circle')
+                            ->schema([
+                                Section::make('Cards below product image')
+                                    ->description('Customize the two information cards shown below the product image. Leave a field blank to use the storefront default.')
+                                    ->schema([
+                                        Fieldset::make('Card 1')
+                                            ->schema([
+                                                TextInput::make('product_config.detail_sections.feature_cards.0.title')
+                                                    ->label('Title')
+                                                    ->maxLength(255),
+                                                Textarea::make('product_config.detail_sections.feature_cards.0.description')
+                                                    ->label('Description')
+                                                    ->rows(2)
+                                                    ->maxLength(1000),
+                                                TextInput::make('product_config.detail_sections.feature_cards.0.tooltip_title')
+                                                    ->label('Tooltip title')
+                                                    ->maxLength(255),
+                                                RichEditor::make('product_config.detail_sections.feature_cards.0.tooltip_content')
+                                                    ->label('Tooltip content')
+                                                    ->columnSpanFull(),
+                                            ])
+                                            ->columns(2),
+                                        Fieldset::make('Card 2')
+                                            ->schema([
+                                                TextInput::make('product_config.detail_sections.feature_cards.1.title')
+                                                    ->label('Title')
+                                                    ->maxLength(255),
+                                                Textarea::make('product_config.detail_sections.feature_cards.1.description')
+                                                    ->label('Description')
+                                                    ->rows(2)
+                                                    ->maxLength(1000),
+                                                TextInput::make('product_config.detail_sections.feature_cards.1.tooltip_title')
+                                                    ->label('Tooltip title')
+                                                    ->maxLength(255),
+                                                RichEditor::make('product_config.detail_sections.feature_cards.1.tooltip_content')
+                                                    ->label('Tooltip content')
+                                                    ->columnSpanFull(),
+                                            ])
+                                            ->columns(2),
+                                    ])
+                                    ->columns(1),
+                            ]),
                         Tab::make('options')
                             ->label('选项')
                             ->icon('heroicon-o-adjustments-horizontal')

@@ -352,12 +352,12 @@ final class BusinessCardOptionCatalog
             self::value($options, 'paper_finish', 'matte', [
                 'label' => 'Matte',
                 'description' => 'With a smooth feel. Shine-free so no glare.',
-                'swatch_image' => '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
+                'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
             ]),
             self::value($options, 'paper_finish', 'gloss', [
                 'label' => 'Gloss',
                 'description' => 'Eye-catchingly shiny. Makes color photos pop.',
-                'swatch_image' => '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
+                'swatch_image' => '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
             ]),
             self::value($options, 'paper_finish', 'uv', [
                 'label' => '3D UV',
@@ -377,12 +377,12 @@ final class BusinessCardOptionCatalog
             self::value($options, 'paper_finish', 'matte', [
                 'label' => 'Matte',
                 'description' => 'Smooth, non-reflective matte finish.',
-                'swatch_image' => '/images/products/pvc/matte-pvc.png',
+                'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
             ]),
             self::value($options, 'paper_finish', 'gloss', [
                 'label' => 'Gloss',
                 'description' => 'Shiny and highly reflective gloss finish.',
-                'swatch_image' => '/images/products/pvc/gloss-pvc.png',
+                'swatch_image' => '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
             ]),
             self::value($options, 'paper_finish', 'frosted', [
                 'label' => 'Frosted Glass',
@@ -588,7 +588,7 @@ final class BusinessCardOptionCatalog
             fn (array $texture): array => self::value($options, 'texture', $texture['code'], [
                 'label' => $texture['label'],
                 'description' => $texture['label'].'.',
-                'swatch_image' => '/images/products/super-business-cards/super-business-cards-standard-'.str_replace('_', '-', $texture['code']).'.png',
+                'swatch_image' => '/images/products/super-business-cards/texture/'.str_replace('_', '-', $texture['code']).'.png',
             ]),
             $textures,
         );

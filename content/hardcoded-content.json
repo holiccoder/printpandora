@@ -439,8 +439,8 @@
                     "subheadline": "Exquisite letterpress craftsmanship that turns every connection into a lasting impression.",
                     "cta_text": "EXPLORE COLLECTION",
                     "cta_href": "/shop",
-                    "image_url": "/images/home/homepage-carousel-01.jpg",
-                    "alt": "White textured business cards with gold foil accents in a warm interior setting",
+                    "image_url": "/images/home/homepage-carousel-01.webp",
+                    "alt": "Premium black business cards with custom reflective lettering on a dark textured surface",
                     "features": [
                         {
                             "icon": "card",
@@ -464,8 +464,8 @@
                     "subheadline": "Thicker than your average card, with finishes that turn first impressions into lasting ones.",
                     "cta_text": "Shop business cards",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/homepage-carousel-02.jpg",
-                    "alt": "Minimal white embossed business cards in a brushed metal holder on a warm stone surface"
+                    "image_url": "/images/home/homepage-carousel-02.webp",
+                    "alt": "Premium business cards arranged in a styled studio scene"
                 },
                 {
                     "eyebrow": "LETTERPRESS CLASSICS",
@@ -473,8 +473,8 @@
                     "subheadline": "Deep impression letterpress cards that demand to be held and felt.",
                     "cta_text": "DISCOVER LETTERPRESS",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/homepage-carousel-03.jpg",
-                    "alt": "Modern blue-edged white business cards with the SUNEAGLE brand on a dark stone desk"
+                    "image_url": "/images/home/homepage-carousel-03.webp",
+                    "alt": "Custom business cards displayed in a premium print setting"
                 },
                 {
                     "eyebrow": "METALLIC FOIL STAMPING",
@@ -482,8 +482,8 @@
                     "subheadline": "Add brilliant gold, silver, or copper foil accents that catch the light and command attention.",
                     "cta_text": "EXPLORE FOIL SHINE",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/homepage-carousel-04.jpg",
-                    "alt": "Luxurious black business cards with silver foil MOKE lettering on a dark wood surface"
+                    "image_url": "/images/home/homepage-carousel-04.webp",
+                    "alt": "Foil-finished business cards arranged on a dark surface"
                 },
                 {
                     "eyebrow": "100% PURE COTTON",
@@ -491,8 +491,8 @@
                     "subheadline": "Naturally textured, sustainably sourced cotton stock that feels exceptionally soft yet durable.",
                     "cta_text": "SHOP COTTON CARDS",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/homepage-carousel-05.jpg",
-                    "alt": "Elegant white embossed A.CREATE business cards on a light marble surface"
+                    "image_url": "/images/home/homepage-carousel-05.webp",
+                    "alt": "Elegant custom business cards in a premium styled scene"
                 },
                 {
                     "eyebrow": "CUSTOM DIE-CUT SHAPES",
@@ -500,8 +500,8 @@
                     "subheadline": "Choose from rounded corners, custom circles, or unique geometric silhouettes to define your brand.",
                     "cta_text": "EXPLORE SHAPES",
                     "cta_href": "/shop?cat=business-cards",
-                    "image_url": "/images/home/homepage-carousel-06.jpg",
-                    "alt": "Warm beige Location Makeover business cards with gold foil accents on a travertine surface"
+                    "image_url": "/images/home/homepage-carousel-06.webp",
+                    "alt": "Custom printed business cards with premium finishing details"
                 },
                 {
                     "eyebrow": "CUSTOM STICKERS & LABELS",
@@ -509,8 +509,8 @@
                     "subheadline": "Waterproof, scratch-resistant vinyl stickers and elegant product labels with precision die-cutting.",
                     "cta_text": "DESIGN STICKERS",
                     "cta_href": "/shop?cat=stickers-and-labels",
-                    "image_url": "/images/home/homepage-carousel-07.jpg",
-                    "alt": "Playful rounded olo memento business cards in a boutique retail setting"
+                    "image_url": "/images/home/homepage-carousel-07.webp",
+                    "alt": "Distinctive business card designs arranged in a boutique setting"
                 },
                 {
                     "eyebrow": "BUSINESS MARKETING KIT",
@@ -519,7 +519,7 @@
                     "cta_text": "SHOP MARKETING KIT",
                     "cta_href": "/shop?cat=flyers-and-brochures",
                     "image_url": "/images/home/homepage-carousel-08.webp",
-                    "alt": "Invitations, postcards, folded cards, and envelopes arranged on a neutral surface"
+                    "alt": "Premium printed cards arranged on a neutral surface"
                 },
                 {
                     "eyebrow": "POSTCARDS & ART PRINTS",
@@ -528,7 +528,16 @@
                     "cta_text": "EXPLORE POSTCARDS",
                     "cta_href": "/shop?cat=postcards",
                     "image_url": "/images/home/homepage-carousel-09.webp",
-                    "alt": "Postcards and thank-you cards arranged in warm sunlight with a presentation box"
+                    "alt": "Custom business cards arranged in warm natural light"
+                },
+                {
+                    "eyebrow": "PREMIUM BUSINESS CARDS",
+                    "headline": "YOUR BRAND,\nIN YOUR HAND",
+                    "subheadline": "Make every introduction memorable with custom business cards made for your brand.",
+                    "cta_text": "SHOP BUSINESS CARDS",
+                    "cta_href": "/shop?cat=business-cards",
+                    "image_url": "/images/home/homepage-carousel-10.webp",
+                    "alt": "Premium custom business cards displayed in a refined studio scene"
                 }
             ]
         },
