@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\AiChatChannel;
 use App\Models\AiChatConversation;
 use App\Services\TelegramBotService;
+use App\Services\TelegramSupportBridge;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class TelegramWebhookController extends Controller
 {
-    public function __invoke(Request $request, TelegramBotService $telegram): JsonResponse
-    {
+    public function __invoke(
+        Request $request,
+        TelegramBotService $telegram,
+        TelegramSupportBridge $telegramSupport,
+    ): JsonResponse {
         $secret = (string) config('services.telegram.webhook_secret');
         $providedSecret = (string) $request->header('X-Telegram-Bot-Api-Secret-Token');
 
@@ -34,6 +38,13 @@ class TelegramWebhookController extends Controller
         }
 
         $chatId = (string) $chat['id'];
+
+        if ($telegramSupport->isSupportChat($chatId)) {
+            $telegramSupport->handleOperatorReply($updateId, $message);
+
+            return response()->json(['ok' => true]);
+        }
+
         $channel = $telegram->channelForChat($chatId);
 
         // Telegram retries webhook deliveries after failures. Ignore an

@@ -57,6 +57,11 @@ return [
         'bot_username' => env('TELEGRAM_BOT_USERNAME'),
         'webhook_secret' => env('TELEGRAM_WEBHOOK_SECRET'),
         'timeout' => (int) env('TELEGRAM_TIMEOUT', 10),
+        'support_chat_id' => env('TELEGRAM_SUPPORT_CHAT_ID'),
+        'support_user_ids' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('TELEGRAM_SUPPORT_USER_IDS', '')),
+        ))),
     ],
 
     'four_px' => [

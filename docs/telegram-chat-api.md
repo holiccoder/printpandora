@@ -35,6 +35,12 @@ TELEGRAM_BOT_USERNAME=your_bot_username_without_at_sign
 TELEGRAM_WEBHOOK_SECRET=generate_a_long_random_value
 TELEGRAM_TIMEOUT=10
 
+# Internal operator chat for website human-support notifications.
+# Use a private admin chat ID or a Telegram supergroup ID (usually starts with -100).
+TELEGRAM_SUPPORT_CHAT_ID=
+# Comma-separated Telegram user IDs allowed to reply to support notifications.
+TELEGRAM_SUPPORT_USER_IDS=
+
 # Lifetime of a website-to-Telegram linking URL, in minutes.
 AI_CHAT_TELEGRAM_LINK_TTL=30
 ```
@@ -87,6 +93,24 @@ Official references:
 - [Telegram Bot API](https://core.telegram.org/bots/api)
 - [Telegram webhooks and `setWebhook`](https://core.telegram.org/bots/api#setwebhook)
 - [Telegram deep linking](https://core.telegram.org/bots/features#deep-linking)
+
+## Website customer messages in an operator Telegram chat
+
+When a website conversation is in human mode, each customer message is sent
+to TELEGRAM_SUPPORT_CHAT_ID. The notification contains the numeric website
+conversation ID. An operator must reply to that exact Telegram notification
+message; the webhook uses the reply_to_message.message_id to route the reply
+back to the matching website conversation.
+
+Only Telegram users listed in TELEGRAM_SUPPORT_USER_IDS can send operator
+replies. This allows one Telegram group to handle many conversations without
+mixing messages. The website frontend receives the saved administrator message
+through its existing conversation polling flow.
+
+This bridge is intentionally enabled for human-support messages only. AI-mode
+messages continue to receive their DeepSeek/OpenAI response in the website
+chat. A customer can be switched to human mode through the existing handoff
+flow.
 
 ## External admin API
 

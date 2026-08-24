@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Ai\Agents\CustomerSupportAgent;
 use App\Models\AiChatConversation;
 use App\Services\AiKnowledgeRetriever;
+use App\Services\TelegramSupportBridge;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -119,7 +120,7 @@ class AiChatController extends Controller
      * Post a plain customer message (human mode), optionally with an
      * attachment such as a design draft or a screenshot.
      */
-    public function message(Request $request): JsonResponse
+    public function message(Request $request, TelegramSupportBridge $telegramSupport): JsonResponse
     {
         abort_unless(config('aichat.enabled', true), 404);
 
@@ -165,6 +166,9 @@ class AiChatController extends Controller
         ]);
 
         $conversation->touch();
+        if ($conversation->mode === 'human') {
+            $telegramSupport->notifyCustomerMessage($conversation, $message);
+        }
 
         return response()->json(['message' => $this->serializeMessage($message)], 201);
     }

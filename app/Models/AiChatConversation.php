@@ -51,6 +51,12 @@ class AiChatConversation extends Model
         return $this->hasMany(AiChatChannel::class, 'conversation_id');
     }
 
+    /** @return HasMany<AiChatTelegramMessage, $this> */
+    public function telegramMessages(): HasMany
+    {
+        return $this->hasMany(AiChatTelegramMessage::class, 'conversation_id');
+    }
+
     /** @return HasOne<AiChatMessage, $this> */
     public function latestMessage(): HasOne
     {

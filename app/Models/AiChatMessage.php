@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
@@ -42,5 +43,11 @@ class AiChatMessage extends Model
     public function conversation(): BelongsTo
     {
         return $this->belongsTo(AiChatConversation::class, 'conversation_id');
+    }
+
+    /** @return HasMany<AiChatTelegramMessage, $this> */
+    public function telegramMessages(): HasMany
+    {
+        return $this->hasMany(AiChatTelegramMessage::class, 'ai_chat_message_id');
     }
 }
