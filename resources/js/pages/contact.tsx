@@ -89,10 +89,10 @@ export default function Contact() {
                                 label="Email"
                                 value={
                                     <a
-                                        href="mailto:hello@inkpavo.com"
+                                        href="mailto:support@inkpavo.com"
                                         className="text-[#800020] hover:underline"
                                     >
-                                        hello@inkpavo.com
+                                        support@inkpavo.com
                                     </a>
                                 }
                             />

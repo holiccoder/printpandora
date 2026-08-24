@@ -79,8 +79,8 @@ class Settings extends Page implements HasForms
                     ? ($storedGeneral['site_name'] ?? 'InkPavo')
                     : 'InkPavo',
                 'support_email' => is_array($storedGeneral)
-                    ? ($storedGeneral['support_email'] ?? '')
-                    : '',
+                    ? ($storedGeneral['support_email'] ?? 'support@inkpavo.com')
+                    : 'support@inkpavo.com',
             ],
             'homepage' => [
                 'seo' => [

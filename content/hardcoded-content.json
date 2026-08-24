@@ -1847,8 +1847,8 @@
             },
             {
                 "heading": "5. Your rights",
-                "body": "Depending on where you live, you may have rights to access, correct, or delete the personal information we hold about you, to object to certain processing, or to receive your data in a portable format. To exercise any of these rights, email privacy@inkpavo.com.",
-                "email_link": "privacy@inkpavo.com"
+                "body": "Depending on where you live, you may have rights to access, correct, or delete the personal information we hold about you, to object to certain processing, or to receive your data in a portable format. To exercise any of these rights, email support@inkpavo.com.",
+                "email_link": "support@inkpavo.com"
             },
             {
                 "heading": "6. Data retention",
@@ -1868,8 +1868,8 @@
             },
             {
                 "heading": "10. Contact",
-                "body": "Questions about this Privacy Policy? Email privacy@inkpavo.com or visit our contact page.",
-                "email_link": "privacy@inkpavo.com",
+                "body": "Questions about this Privacy Policy? Email support@inkpavo.com or visit our contact page.",
+                "email_link": "support@inkpavo.com",
                 "contact_link_text": "contact page",
                 "contact_link_href": "/contact"
             }
@@ -1916,8 +1916,8 @@
             },
             {
                 "heading": "9. Contact",
-                "body": "Questions about these Terms? Email legal@inkpavo.com or visit our contact page.",
-                "email_link": "legal@inkpavo.com",
+                "body": "Questions about these Terms? Email support@inkpavo.com or visit our contact page.",
+                "email_link": "support@inkpavo.com",
                 "contact_link_text": "contact page",
                 "contact_link_href": "/contact"
             }
