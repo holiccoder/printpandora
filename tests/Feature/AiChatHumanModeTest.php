@@ -32,6 +32,30 @@ class AiChatHumanModeTest extends TestCase
             'session_id' => $sessionId,
             'mode' => 'human',
         ]);
+
+        $this->postJson('/ai/chat/message', [
+            'session_id' => $sessionId,
+            'message' => 'I still need help.',
+        ])->assertCreated();
+
+        $this->getJson("/ai/chat/poll?session_id={$sessionId}&after_id=0")
+            ->assertOk()
+            ->assertJsonPath('mode', 'human');
+    }
+
+    public function test_handoff_remains_available_when_ai_replies_are_disabled(): void
+    {
+        config()->set('aichat.enabled', false);
+        $sessionId = $this->sessionId();
+
+        $this->postJson('/ai/chat/handoff', ['session_id' => $sessionId])
+            ->assertOk()
+            ->assertJson(['mode' => 'human']);
+
+        $this->assertDatabaseHas('ai_chat_conversations', [
+            'session_id' => $sessionId,
+            'mode' => 'human',
+        ]);
     }
 
     public function test_ai_endpoint_rejects_messages_in_human_mode(): void

@@ -140,6 +140,8 @@ export function AiChatWidget() {
     };
 
     const requestHuman = async () => {
+        setFailed(false);
+
         try {
             const response = await fetch('/ai/chat/handoff', {
                 method: 'POST',
@@ -150,13 +152,15 @@ export function AiChatWidget() {
                 body: JSON.stringify({ session_id: getSessionId() }),
             });
 
-            if (response.ok) {
-                setMode('human');
-                appendMessage({
-                    role: 'assistant',
-                    content: c.human_mode_notice,
-                });
+            if (!response.ok) {
+                throw new Error(`Handoff failed (${response.status})`);
             }
+
+            setMode('human');
+            appendMessage({
+                role: 'assistant',
+                content: c.human_mode_notice,
+            });
         } catch {
             setFailed(true);
         }

@@ -87,8 +87,6 @@ class AiChatController extends Controller
      */
     public function handoff(Request $request): JsonResponse
     {
-        abort_unless(config('aichat.enabled', true), 404);
-
         $validator = Validator::make($request->all(), [
             'session_id' => ['required', 'uuid'],
         ]);
@@ -122,8 +120,6 @@ class AiChatController extends Controller
      */
     public function message(Request $request, TelegramSupportBridge $telegramSupport): JsonResponse
     {
-        abort_unless(config('aichat.enabled', true), 404);
-
         $validator = Validator::make($request->all(), [
             'session_id' => ['required', 'uuid'],
             'message' => ['nullable', 'string', 'max:1000'],
@@ -178,8 +174,6 @@ class AiChatController extends Controller
      */
     public function poll(Request $request): JsonResponse
     {
-        abort_unless(config('aichat.enabled', true), 404);
-
         $validator = Validator::make($request->query->all(), [
             'session_id' => ['required', 'uuid'],
             'after_id' => ['nullable', 'integer', 'min:0'],

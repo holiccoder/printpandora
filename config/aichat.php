@@ -13,6 +13,8 @@ return [
     |
     */
 
+    // Controls AI-generated replies. Human-support handoff and polling remain
+    // available so customers can still reach an agent without an AI provider.
     'enabled' => env('AI_CHAT_ENABLED', true),
 
     // Bearer token for the external support-chat client API. Keep this value
