@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->authGuard('admin')
             ->authPasswordBroker('admins')
             ->colors([
-                'primary' => Color::hex('#1e3a5f'),
+                'primary' => Color::hex('#800020'),
             ])
             ->navigationGroups([
                 '商城管理',

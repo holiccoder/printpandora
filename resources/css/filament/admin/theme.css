@@ -2,3 +2,23 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+
+/* Keep primary Filament actions consistent with the brand color. */
+.fi-btn.fi-color-primary:not(.fi-outlined) {
+    --bg: #800020;
+    --text: #ffffff;
+    --hover-bg: #66001a;
+    --hover-text: #ffffff;
+    --dark-bg: #800020;
+    --dark-text: #ffffff;
+    --dark-hover-bg: #66001a;
+    --dark-hover-text: #ffffff;
+
+    background-color: #800020;
+    color: #ffffff;
+}
+
+.fi-btn.fi-color-primary:not(.fi-outlined):is(:hover, :focus-visible) {
+    background-color: #66001a;
+    color: #ffffff;
+}
