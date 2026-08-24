@@ -313,6 +313,7 @@ export interface HeroSlide {
     cta_href: string;
     image_url: string;
     alt: string;
+    text_tone?: 'light' | 'dark';
     features?: Array<{
         icon: string;
         title: string;

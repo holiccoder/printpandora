@@ -441,6 +441,7 @@
                     "cta_href": "/shop",
                     "image_url": "/images/home/homepage-carousel-01.webp",
                     "alt": "Premium black business cards with custom reflective lettering on a dark textured surface",
+                    "text_tone": "light",
                     "features": [
                         {
                             "icon": "card",
@@ -465,7 +466,8 @@
                     "cta_text": "Shop business cards",
                     "cta_href": "/shop?cat=business-cards",
                     "image_url": "/images/home/homepage-carousel-02.webp",
-                    "alt": "Premium business cards arranged in a styled studio scene"
+                    "alt": "Premium business cards arranged in a styled studio scene",
+                    "text_tone": "dark"
                 },
                 {
                     "eyebrow": "LETTERPRESS CLASSICS",
@@ -474,7 +476,8 @@
                     "cta_text": "DISCOVER LETTERPRESS",
                     "cta_href": "/shop?cat=business-cards",
                     "image_url": "/images/home/homepage-carousel-03.webp",
-                    "alt": "Custom business cards displayed in a premium print setting"
+                    "alt": "Custom business cards displayed in a premium print setting",
+                    "text_tone": "dark"
                 },
                 {
                     "eyebrow": "METALLIC FOIL STAMPING",
@@ -483,7 +486,8 @@
                     "cta_text": "EXPLORE FOIL SHINE",
                     "cta_href": "/shop?cat=business-cards",
                     "image_url": "/images/home/homepage-carousel-04.webp",
-                    "alt": "Foil-finished business cards arranged on a dark surface"
+                    "alt": "Foil-finished business cards arranged on a dark surface",
+                    "text_tone": "dark"
                 },
                 {
                     "eyebrow": "100% PURE COTTON",
@@ -492,7 +496,8 @@
                     "cta_text": "SHOP COTTON CARDS",
                     "cta_href": "/shop?cat=business-cards",
                     "image_url": "/images/home/homepage-carousel-05.webp",
-                    "alt": "Elegant custom business cards in a premium styled scene"
+                    "alt": "Elegant custom business cards in a premium styled scene",
+                    "text_tone": "dark"
                 },
                 {
                     "eyebrow": "CUSTOM DIE-CUT SHAPES",
@@ -501,7 +506,8 @@
                     "cta_text": "EXPLORE SHAPES",
                     "cta_href": "/shop?cat=business-cards",
                     "image_url": "/images/home/homepage-carousel-06.webp",
-                    "alt": "Custom printed business cards with premium finishing details"
+                    "alt": "Custom printed business cards with premium finishing details",
+                    "text_tone": "light"
                 },
                 {
                     "eyebrow": "CUSTOM STICKERS & LABELS",
@@ -510,7 +516,8 @@
                     "cta_text": "DESIGN STICKERS",
                     "cta_href": "/shop?cat=stickers-and-labels",
                     "image_url": "/images/home/homepage-carousel-07.webp",
-                    "alt": "Distinctive business card designs arranged in a boutique setting"
+                    "alt": "Distinctive business card designs arranged in a boutique setting",
+                    "text_tone": "dark"
                 },
                 {
                     "eyebrow": "BUSINESS MARKETING KIT",
@@ -519,7 +526,8 @@
                     "cta_text": "SHOP MARKETING KIT",
                     "cta_href": "/shop?cat=flyers-and-brochures",
                     "image_url": "/images/home/homepage-carousel-08.webp",
-                    "alt": "Premium printed cards arranged on a neutral surface"
+                    "alt": "Premium printed cards arranged on a neutral surface",
+                    "text_tone": "dark"
                 },
                 {
                     "eyebrow": "POSTCARDS & ART PRINTS",
@@ -528,7 +536,8 @@
                     "cta_text": "EXPLORE POSTCARDS",
                     "cta_href": "/shop?cat=postcards",
                     "image_url": "/images/home/homepage-carousel-09.webp",
-                    "alt": "Custom business cards arranged in warm natural light"
+                    "alt": "Custom business cards arranged in warm natural light",
+                    "text_tone": "dark"
                 },
                 {
                     "eyebrow": "PREMIUM BUSINESS CARDS",
@@ -537,7 +546,8 @@
                     "cta_text": "SHOP BUSINESS CARDS",
                     "cta_href": "/shop?cat=business-cards",
                     "image_url": "/images/home/homepage-carousel-10.webp",
-                    "alt": "Premium custom business cards displayed in a refined studio scene"
+                    "alt": "Premium custom business cards displayed in a refined studio scene",
+                    "text_tone": "dark"
                 }
             ]
         },

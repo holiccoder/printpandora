@@ -12,6 +12,8 @@ export type HeroSlideFeature = {
     description: string;
 };
 
+export type HeroTextTone = 'light' | 'dark';
+
 export type HeroSlide = {
     eyebrow?: string;
     headline: string;
@@ -21,6 +23,7 @@ export type HeroSlide = {
     image: string;
     imageAlt: string;
     features?: HeroSlideFeature[];
+    textTone?: HeroTextTone;
 };
 
 type Props = {
@@ -39,6 +42,7 @@ function mapSlide(s: ContentSlide): HeroSlide {
         image: s.image_url,
         imageAlt: s.alt,
         features: s.features as HeroSlideFeature[] | undefined,
+        textTone: s.text_tone ?? 'dark',
     };
 }
 
@@ -130,6 +134,7 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
     const goTo = (i: number) => setIndex(((i % total) + total) % total);
     const prev = () => goTo(index - 1);
     const next = () => goTo(index + 1);
+    const activeTextTone = items[index]?.textTone ?? 'dark';
 
     return (
         <section
@@ -188,8 +193,18 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
                                 className={cn(
                                     'h-[3px] rounded-full transition-all',
                                     i === index
-                                        ? 'w-10 bg-neutral-900'
-                                        : 'w-8 bg-neutral-400/70 hover:bg-neutral-600',
+                                        ? cn(
+                                              'w-10',
+                                              activeTextTone === 'light'
+                                                  ? 'bg-white'
+                                                  : 'bg-neutral-900',
+                                          )
+                                        : cn(
+                                              'w-8',
+                                              activeTextTone === 'light'
+                                                  ? 'bg-white/60 hover:bg-white'
+                                                  : 'bg-neutral-400/70 hover:bg-neutral-600',
+                                          ),
                                 )}
                             />
                         ))}
@@ -203,7 +218,7 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
 /** Fade + slide-up; pair with inline transitionDelay for staggered enter. */
 function enterClass(active: boolean) {
     return cn(
-        'transition-all duration-700 ease-out will-change-transform',
+        'transition-[opacity,transform] duration-700 ease-out',
         active ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0',
     );
 }
@@ -220,6 +235,7 @@ function Slide({
     priority: boolean;
 }) {
     const hasFeatures = slide.features && slide.features.length > 0;
+    const lightText = slide.textTone === 'light';
 
     return (
         <div
@@ -243,6 +259,16 @@ function Slide({
                 decoding="async"
             />
 
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 left-0 z-0 w-[85%] md:w-[60%]"
+                style={{
+                    background: lightText
+                        ? 'linear-gradient(to right, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.28) 58%, transparent 100%)'
+                        : 'linear-gradient(to right, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.32) 58%, transparent 100%)',
+                }}
+            />
+
             {/* Copy on the photo */}
             <div className="relative z-10 flex h-full flex-col">
                 <div className="flex flex-1 flex-col justify-end px-6 md:justify-center md:px-12 lg:px-20">
@@ -257,12 +283,22 @@ function Slide({
                                     transitionDelay: active ? '80ms' : '0ms',
                                 }}
                             >
-                                <p className="text-xs font-semibold tracking-[0.15em] text-[#C9A96A] uppercase">
+                                <p
+                                    className={cn(
+                                        'text-xs font-semibold tracking-[0.15em] uppercase',
+                                        lightText
+                                            ? 'text-[#F4D7A0]'
+                                            : 'text-[#800020]',
+                                    )}
+                                >
                                     {slide.eyebrow}
                                 </p>
                                 <span
                                     className={cn(
-                                        'h-px origin-left bg-[#C9A96A]/40 transition-transform duration-700 ease-out',
+                                        'h-px origin-left transition-transform duration-700 ease-out',
+                                        lightText
+                                            ? 'bg-[#F4D7A0]/50'
+                                            : 'bg-[#800020]/30',
                                         active ? 'scale-x-100' : 'scale-x-0',
                                     )}
                                     style={{
@@ -275,7 +311,10 @@ function Slide({
                         )}
                         <h2
                             className={cn(
-                                'font-serif text-4xl leading-tight font-bold whitespace-pre-line text-[#800020] md:text-5xl lg:text-[3.25rem]',
+                                'font-serif text-4xl leading-tight font-bold whitespace-pre-line md:text-5xl lg:text-[3.25rem]',
+                                lightText
+                                    ? 'text-white drop-shadow-sm'
+                                    : 'text-[#800020]',
                                 enterClass(active),
                             )}
                             style={{
@@ -286,7 +325,10 @@ function Slide({
                         </h2>
                         <p
                             className={cn(
-                                'mt-4 text-base leading-relaxed text-[#2A2A28]/80 md:text-lg',
+                                'mt-4 text-base leading-relaxed md:text-lg',
+                                lightText
+                                    ? 'text-white/85'
+                                    : 'text-[#2A2A28]/80',
                                 enterClass(active),
                             )}
                             style={{
@@ -317,14 +359,24 @@ function Slide({
                 {hasFeatures && (
                     <div
                         className={cn(
-                            'hidden border-t border-[#800020]/10 md:block',
+                            'hidden border-t md:block',
+                            lightText
+                                ? 'border-white/20'
+                                : 'border-[#800020]/10',
                             enterClass(active),
                         )}
                         style={{
                             transitionDelay: active ? '580ms' : '0ms',
                         }}
                     >
-                        <div className="grid max-w-3xl grid-cols-3 divide-x divide-[#800020]/10">
+                        <div
+                            className={cn(
+                                'grid max-w-3xl grid-cols-3 divide-x',
+                                lightText
+                                    ? 'divide-white/20'
+                                    : 'divide-[#800020]/10',
+                            )}
+                        >
                             {slide.features!.map((f, fi) => (
                                 <div
                                     key={f.title}
@@ -338,14 +390,35 @@ function Slide({
                                             : '0ms',
                                     }}
                                 >
-                                    <span className="shrink-0 text-[#800020]">
+                                    <span
+                                        className={cn(
+                                            'shrink-0',
+                                            lightText
+                                                ? 'text-white'
+                                                : 'text-[#800020]',
+                                        )}
+                                    >
                                         <FeatureIcon icon={f.icon} />
                                     </span>
                                     <div>
-                                        <p className="text-[11px] font-bold tracking-wider text-[#800020] uppercase">
+                                        <p
+                                            className={cn(
+                                                'text-[11px] font-bold tracking-wider uppercase',
+                                                lightText
+                                                    ? 'text-white'
+                                                    : 'text-[#800020]',
+                                            )}
+                                        >
                                             {f.title}
                                         </p>
-                                        <p className="text-xs text-[#2A2A28]/70">
+                                        <p
+                                            className={cn(
+                                                'text-xs',
+                                                lightText
+                                                    ? 'text-white/75'
+                                                    : 'text-[#2A2A28]/70',
+                                            )}
+                                        >
                                             {f.description}
                                         </p>
                                     </div>
