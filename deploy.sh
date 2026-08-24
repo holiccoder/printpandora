@@ -10,6 +10,8 @@ PROJECT_DIR="/www/wwwroot/www.inkpavo.com"
 PHP_BIN="php"                                   # 宝塔多版本 PHP 时写绝对路径: /www/server/php/84/bin/php
 COMPOSER_BIN="composer"
 NPM_BIN="npm"
+WEB_USER="www"
+WEB_GROUP="www"
 RELOAD_FPM_CMD="/etc/init.d/php-fpm-84 reload"  # 对应 PHP 8.4
 # -------------------------------------------------------
 
@@ -55,6 +57,41 @@ $PHP_BIN artisan db:seed --class=BusinessCardProductOptionsSeeder --force
 echo "==> 6/6 重建配置 / 路由 / 视图与优化缓存"
 $PHP_BIN artisan optimize
 $PHP_BIN artisan view:cache
+
+echo "==> 7/7 Fix Laravel runtime directory permissions"
+mkdir -p "$PROJECT_DIR/storage/logs" "$PROJECT_DIR/bootstrap/cache"
+
+if [ "$(id -u)" -eq 0 ]; then
+    chown -R "${WEB_USER}:${WEB_GROUP}" \
+        "$PROJECT_DIR/storage" \
+        "$PROJECT_DIR/bootstrap/cache"
+
+    find "$PROJECT_DIR/storage" "$PROJECT_DIR/bootstrap/cache" \
+        -type d -exec chmod 775 {} \;
+    find "$PROJECT_DIR/storage" "$PROJECT_DIR/bootstrap/cache" \
+        -type f -exec chmod 664 {} \;
+else
+    sudo chown -R "${WEB_USER}:${WEB_GROUP}" \
+        "$PROJECT_DIR/storage" \
+        "$PROJECT_DIR/bootstrap/cache"
+
+    sudo find "$PROJECT_DIR/storage" "$PROJECT_DIR/bootstrap/cache" \
+        -type d -exec chmod 775 {} \;
+    sudo find "$PROJECT_DIR/storage" "$PROJECT_DIR/bootstrap/cache" \
+        -type f -exec chmod 664 {} \;
+fi
+
+if command -v sudo >/dev/null 2>&1; then
+    if ! sudo -u "$WEB_USER" test -w "$PROJECT_DIR/storage/logs"; then
+        echo "storage/logs is not writable by ${WEB_USER}" >&2
+        exit 1
+    fi
+else
+    if ! su -s /bin/sh "$WEB_USER" -c "test -w '$PROJECT_DIR/storage/logs'"; then
+        echo "storage/logs is not writable by ${WEB_USER}" >&2
+        exit 1
+    fi
+fi
 
 # 若启用队列工作进程，取消下一行注释:
 # $PHP_BIN artisan queue:restart
