@@ -8,6 +8,7 @@ use App\Models\AiChatTelegramMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -322,6 +323,20 @@ class TelegramChatApiTest extends TestCase
         $this->assertDatabaseMissing('ai_chat_telegram_messages', [
             'conversation_id' => $conversation->id,
         ]);
+    }
+
+    public function test_telegram_mapping_indexes_use_mysql_safe_names(): void
+    {
+        $indexNames = collect(Schema::getIndexes('ai_chat_telegram_messages'))
+            ->pluck('name');
+
+        $this->assertContains('tg_update_unique', $indexNames);
+        $this->assertContains('tg_chat_message_unique', $indexNames);
+        $this->assertContains('tg_conversation_direction_index', $indexNames);
+        $this->assertContains('ai_chat_telegram_messages_message_direction_unique', $indexNames);
+        $this->assertTrue($indexNames->every(
+            fn (string $name): bool => strlen($name) <= 64,
+        ));
     }
 
     public function test_webhook_requires_telegram_secret(): void
