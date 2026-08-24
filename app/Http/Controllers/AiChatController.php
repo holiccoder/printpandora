@@ -188,7 +188,8 @@ class AiChatController extends Controller
             ->first();
 
         if (! $conversation) {
-            return response()->json(['mode' => 'ai', 'messages' => []]);
+            return response()->json(['mode' => 'ai', 'messages' => []])
+                ->header('Cache-Control', 'no-store, private');
         }
 
         $messages = $conversation->messages()
@@ -201,7 +202,7 @@ class AiChatController extends Controller
         return response()->json([
             'mode' => $conversation->mode,
             'messages' => $messages,
-        ]);
+        ])->header('Cache-Control', 'no-store, private');
     }
 
     /**

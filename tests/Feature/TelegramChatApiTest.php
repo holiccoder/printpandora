@@ -248,6 +248,84 @@ class TelegramChatApiTest extends TestCase
         ]);
     }
 
+    public function test_operator_reply_is_available_to_the_website_polling_endpoint(): void
+    {
+        $conversation = $this->conversation();
+
+        $this->postJson('/ai/chat/message', [
+            'session_id' => $conversation->session_id,
+            'message' => 'Please help me with this order.',
+        ])->assertCreated();
+
+        $customerMessage = $conversation->messages()->latest('id')->firstOrFail();
+        $notification = $conversation->telegramMessages()
+            ->where('direction', AiChatTelegramMessage::NOTIFICATION)
+            ->firstOrFail();
+
+        $this->withHeader('X-Telegram-Bot-Api-Secret-Token', 'test-webhook-secret')
+            ->postJson('/api/telegram/webhook', [
+                'update_id' => 403,
+                'message' => [
+                    'message_id' => 903,
+                    'from' => ['id' => 777, 'username' => 'agent'],
+                    'chat' => ['id' => -1001234567890, 'type' => 'supergroup'],
+                    'text' => 'I am checking that for you now.',
+                    'reply_to_message' => [
+                        'message_id' => $notification->telegram_message_id,
+                    ],
+                ],
+            ])
+            ->assertOk()
+            ->assertJson(['ok' => true]);
+
+        $this->getJson("/ai/chat/poll?session_id={$conversation->session_id}&after_id={$customerMessage->id}")
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'no-store, private')
+            ->assertJsonPath('mode', 'human')
+            ->assertJsonPath('messages.0.role', 'admin')
+            ->assertJsonPath('messages.0.content', 'I am checking that for you now.');
+    }
+
+    public function test_operator_reply_can_fall_back_to_the_conversation_id_in_notification_text(): void
+    {
+        $conversation = $this->conversation();
+
+        $this->postJson('/ai/chat/message', [
+            'session_id' => $conversation->session_id,
+            'message' => 'Please help me with this order.',
+        ])->assertCreated();
+
+        $notification = $conversation->telegramMessages()
+            ->where('direction', AiChatTelegramMessage::NOTIFICATION)
+            ->firstOrFail();
+        $notificationMessageId = $notification->telegram_message_id;
+        $notification->delete();
+
+        $this->withHeader('X-Telegram-Bot-Api-Secret-Token', 'test-webhook-secret')
+            ->postJson('/api/telegram/webhook', [
+                'update_id' => 404,
+                'message' => [
+                    'message_id' => 904,
+                    'from' => ['id' => 777, 'username' => 'agent'],
+                    'chat' => ['id' => -1001234567890, 'type' => 'supergroup'],
+                    'text' => 'I am checking that for you now.',
+                    'reply_to_message' => [
+                        'message_id' => $notificationMessageId,
+                        'chat' => ['id' => -1001234567890, 'type' => 'supergroup'],
+                        'text' => "Website support #{$conversation->id}\nCustomer: Guest",
+                    ],
+                ],
+            ])
+            ->assertOk()
+            ->assertJson(['ok' => true]);
+
+        $this->assertDatabaseHas('ai_chat_messages', [
+            'conversation_id' => $conversation->id,
+            'role' => 'admin',
+            'content' => 'I am checking that for you now.',
+        ]);
+    }
+
     public function test_duplicate_operator_update_is_not_added_twice(): void
     {
         $conversation = $this->conversation();

@@ -110,18 +110,24 @@ class TelegramSupportBridge
             ->where('direction', AiChatTelegramMessage::NOTIFICATION)
             ->first();
 
-        if (! $notification) {
+        $conversation = $notification?->conversation()->first()
+            ?? $this->conversationFromReplyMessage($chatId, $message);
+
+        if (! $conversation) {
             return;
         }
 
-        DB::transaction(function () use ($notification, $text, $chatId, $updateId, $operatorMessageId): void {
+        DB::transaction(function () use ($conversation, $text, $chatId, $updateId, $operatorMessageId): void {
             if (AiChatTelegramMessage::query()
                 ->where('telegram_update_id', $updateId)
                 ->exists()) {
                 return;
             }
 
-            $conversation = $notification->conversation()->lockForUpdate()->first();
+            $conversation = AiChatConversation::query()
+                ->whereKey($conversation->getKey())
+                ->lockForUpdate()
+                ->first();
 
             if (! $conversation) {
                 return;
@@ -142,6 +148,32 @@ class TelegramSupportBridge
                 'direction' => AiChatTelegramMessage::OPERATOR_REPLY,
             ]);
         });
+    }
+
+    /**
+     * Recover the conversation from the stable identifier in the original
+     * Telegram notification when its mapping row is unavailable.
+     *
+     * @param array<string, mixed> $message
+     */
+    private function conversationFromReplyMessage(string $chatId, array $message): ?AiChatConversation
+    {
+        $replyToMessage = data_get($message, 'reply_to_message', []);
+
+        if (! is_array($replyToMessage)
+            || (string) data_get($replyToMessage, 'chat.id', '') !== $chatId) {
+            return null;
+        }
+
+        $replyText = trim((string) ($replyToMessage['text'] ?? $replyToMessage['caption'] ?? ''));
+
+        if (preg_match('/(?:^|\R)Website support #(\d+)\b/', $replyText, $matches) !== 1) {
+            return null;
+        }
+
+        return AiChatConversation::query()
+            ->whereKey((int) $matches[1])
+            ->first();
     }
 
     private function supportChatId(): ?string

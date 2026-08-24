@@ -13,6 +13,7 @@ type ChatMessage = {
 
 const SESSION_STORAGE_KEY = 'ai_chat_session_id';
 const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+let fallbackSessionId: string | null = null;
 
 function getSessionId(): string {
     try {
@@ -27,7 +28,12 @@ function getSessionId(): string {
 
         return id;
     } catch {
-        return crypto.randomUUID();
+        // Private browsing and restrictive storage policies can make
+        // localStorage unavailable. Keep one in-memory ID for the lifetime
+        // of this page so polling and sends still address the same chat.
+        fallbackSessionId ??= crypto.randomUUID();
+
+        return fallbackSessionId;
     }
 }
 
@@ -63,6 +69,8 @@ export function AiChatWidget() {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const lastIdRef = useRef(0);
     const loadedRef = useRef(false);
+    const pollAbortRef = useRef<AbortController | null>(null);
+    const handoffPendingRef = useRef(false);
 
     useEffect(() => {
         scrollRef.current?.scrollTo({
@@ -80,20 +88,31 @@ export function AiChatWidget() {
         let cancelled = false;
 
         const poll = async () => {
+            if (handoffPendingRef.current) {
+                return;
+            }
+
+            pollAbortRef.current?.abort();
+            const controller = new AbortController();
+            pollAbortRef.current = controller;
+
             try {
                 const params = new URLSearchParams({
                     session_id: getSessionId(),
                     after_id: String(lastIdRef.current),
                 });
-                const response = await fetch(`/ai/chat/poll?${params}`);
+                const response = await fetch(`/ai/chat/poll?${params}`, {
+                    cache: 'no-store',
+                    signal: controller.signal,
+                });
 
-                if (!response.ok || cancelled) {
+                if (!response.ok || cancelled || controller.signal.aborted) {
                     return;
                 }
 
                 const data = await response.json();
 
-                if (cancelled) {
+                if (cancelled || controller.signal.aborted) {
                     return;
                 }
 
@@ -102,8 +121,10 @@ export function AiChatWidget() {
                 const incoming = (data.messages ?? []) as ChatMessage[];
 
                 if (incoming.length > 0) {
-                    lastIdRef.current =
-                        incoming[incoming.length - 1].id ?? lastIdRef.current;
+                    lastIdRef.current = Math.max(
+                        lastIdRef.current,
+                        incoming[incoming.length - 1].id ?? 0,
+                    );
                     setMessages((current) => {
                         const known = new Set(
                             current.map((m) => m.id).filter(Boolean),
@@ -119,6 +140,10 @@ export function AiChatWidget() {
                 loadedRef.current = true;
             } catch {
                 // Polling failures are silent — the next tick retries.
+            } finally {
+                if (pollAbortRef.current === controller) {
+                    pollAbortRef.current = null;
+                }
             }
         };
 
@@ -127,6 +152,8 @@ export function AiChatWidget() {
 
         return () => {
             cancelled = true;
+            pollAbortRef.current?.abort();
+            pollAbortRef.current = null;
             window.clearInterval(timer);
         };
     }, [open]);
@@ -141,6 +168,9 @@ export function AiChatWidget() {
 
     const requestHuman = async () => {
         setFailed(false);
+        handoffPendingRef.current = true;
+        pollAbortRef.current?.abort();
+        pollAbortRef.current = null;
 
         try {
             const response = await fetch('/ai/chat/handoff', {
@@ -163,6 +193,8 @@ export function AiChatWidget() {
             });
         } catch {
             setFailed(true);
+        } finally {
+            handoffPendingRef.current = false;
         }
     };
 
