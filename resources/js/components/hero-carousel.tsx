@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react';
 import { useContent } from '@/hooks/use-content';
 import { cn } from '@/lib/utils';
 
-import type { HeroSlide as ContentSlide } from '@/types/content';
+import type {
+    HeroMemberOffer,
+    HeroSlide as ContentSlide,
+} from '@/types/content';
 
 export type HeroSlideFeature = {
     icon: string;
@@ -24,6 +27,7 @@ export type HeroSlide = {
     imageAlt: string;
     features?: HeroSlideFeature[];
     textTone?: HeroTextTone;
+    offer?: HeroMemberOffer;
 };
 
 type Props = {
@@ -43,6 +47,7 @@ function mapSlide(s: ContentSlide): HeroSlide {
         imageAlt: s.alt,
         features: s.features as HeroSlideFeature[] | undefined,
         textTone: s.text_tone ?? 'dark',
+        offer: s.offer,
     };
 }
 
@@ -104,6 +109,178 @@ function FeatureIcon({ icon }: { icon: string }) {
         default:
             return null;
     }
+}
+
+function MemberOfferIcon({ icon }: { icon: string }) {
+    const cls = 'size-5';
+
+    switch (icon) {
+        case 'user-plus':
+            return (
+                <svg
+                    className={cls}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                >
+                    <path d="M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="8.5" cy="7" r="4" />
+                    <path d="M19 8v6M22 11h-6" />
+                </svg>
+            );
+        case 'arrow-right':
+            return (
+                <svg
+                    className={cls}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                >
+                    <path d="M5 12h14" />
+                    <path d="m13 6 6 6-6 6" />
+                </svg>
+            );
+        case 'tag':
+            return (
+                <svg
+                    className={cls}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                >
+                    <path d="M20.59 13.41 11 3.83V3H4v7h.83l9.59 9.59a2 2 0 0 0 2.83 0l3.34-3.35a2 2 0 0 0 0-2.83Z" />
+                    <circle
+                        cx="7.5"
+                        cy="6.5"
+                        r=".75"
+                        fill="currentColor"
+                        stroke="none"
+                    />
+                </svg>
+            );
+        default:
+            return null;
+    }
+}
+
+function MemberOfferCopy({
+    offer,
+    active,
+    hidden,
+}: {
+    offer: HeroMemberOffer;
+    active: boolean;
+    hidden: boolean;
+}) {
+    return (
+        <div className="max-w-xl pb-7 md:pb-0">
+            <p
+                className={cn(
+                    'text-xs font-semibold tracking-[0.2em] text-[#C9A96A] uppercase',
+                    enterClass(active),
+                )}
+                style={{ transitionDelay: active ? '80ms' : '0ms' }}
+            >
+                {offer.pretitle}
+            </p>
+
+            <h2
+                className={cn(
+                    'mt-3 font-sans text-4xl leading-tight font-semibold tracking-[0.08em] text-white drop-shadow-sm sm:text-5xl',
+                    enterClass(active),
+                )}
+                style={{ transitionDelay: active ? '160ms' : '0ms' }}
+            >
+                {offer.headline}
+            </h2>
+
+            <div
+                className={cn(
+                    'mt-3 flex items-baseline gap-3 text-white',
+                    enterClass(active),
+                )}
+                style={{ transitionDelay: active ? '240ms' : '0ms' }}
+            >
+                <span className="text-xl font-medium">
+                    {offer.discount_label}
+                </span>
+                <span className="text-4xl leading-none font-bold tracking-tight text-[#C9A96A] sm:text-5xl">
+                    {offer.discount}
+                </span>
+            </div>
+
+            <div
+                className={cn(
+                    'mt-5 border-t border-[#C9A96A]/80 pt-4',
+                    enterClass(active),
+                )}
+                style={{ transitionDelay: active ? '320ms' : '0ms' }}
+            >
+                <p className="text-sm leading-relaxed text-white/90 sm:text-base">
+                    {offer.description}
+                </p>
+            </div>
+
+            <div
+                className={cn('mt-5', enterClass(active))}
+                style={{ transitionDelay: active ? '400ms' : '0ms' }}
+            >
+                {offer.steps.map((step, stepIndex) => (
+                    <div key={step.number} className="relative pb-2 last:pb-0">
+                        <div className="relative z-10 flex min-h-9 items-center gap-3">
+                            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[#C9A96A]/80 text-[#C9A96A]">
+                                <MemberOfferIcon icon={step.icon} />
+                            </span>
+                            <p className="text-sm leading-relaxed text-white sm:text-base">
+                                <span className="mr-3 text-xs font-semibold tracking-[0.12em] text-[#C9A96A]">
+                                    {step.number}
+                                </span>
+                                {step.label}
+                            </p>
+                        </div>
+                        {stepIndex < offer.steps.length - 1 && (
+                            <span
+                                aria-hidden="true"
+                                className="absolute top-9 bottom-0 left-[1.125rem] w-px bg-[#C9A96A]/55"
+                            />
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            <p
+                className={cn('mt-4 text-xs text-white/75', enterClass(active))}
+                style={{ transitionDelay: active ? '520ms' : '0ms' }}
+            >
+                {offer.terms}
+            </p>
+
+            <div
+                className={cn(enterClass(active))}
+                style={{ transitionDelay: active ? '600ms' : '0ms' }}
+            >
+                <Link
+                    href={offer.cta_href}
+                    tabIndex={hidden ? -1 : undefined}
+                    className="mt-5 inline-flex items-center justify-center rounded-md bg-[#C9A96A] px-7 py-3 text-sm font-bold text-[#2A2114] shadow-sm transition hover:bg-[#D8BB82] focus-visible:ring-2 focus-visible:ring-[#C9A96A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2A2114] focus-visible:outline-none"
+                >
+                    {offer.cta_text}
+                </Link>
+            </div>
+        </div>
+    );
 }
 
 export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
@@ -234,12 +411,18 @@ function Slide({
     active: boolean;
     priority: boolean;
 }) {
-    const hasFeatures = slide.features && slide.features.length > 0;
+    const hasFeatures =
+        !slide.offer && slide.features && slide.features.length > 0;
     const lightText = slide.textTone === 'light';
 
     return (
         <div
-            className="relative aspect-[3/4] w-full shrink-0 overflow-hidden sm:aspect-[16/10] lg:aspect-[12/5]"
+            className={cn(
+                'relative w-full shrink-0 overflow-hidden',
+                slide.offer
+                    ? 'min-h-[560px] sm:aspect-[16/10] sm:min-h-0 lg:aspect-[12/5]'
+                    : 'aspect-[3/4] sm:aspect-[16/10] lg:aspect-[12/5]',
+            )}
             aria-hidden={hidden}
         >
             {/* Full-width photo — subtle scale-in when active. From lg up the
@@ -259,100 +442,114 @@ function Slide({
                 decoding="async"
             />
 
-            <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-y-0 left-0 z-0 w-[85%] md:w-[60%]"
-                style={{
-                    background: lightText
-                        ? 'linear-gradient(to right, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.28) 58%, transparent 100%)'
-                        : 'linear-gradient(to right, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.32) 58%, transparent 100%)',
-                }}
-            />
+            {!slide.offer && (
+                <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-y-0 left-0 z-0 w-[85%] md:w-[60%]"
+                    style={{
+                        background: lightText
+                            ? 'linear-gradient(to right, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.28) 58%, transparent 100%)'
+                            : 'linear-gradient(to right, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.32) 58%, transparent 100%)',
+                    }}
+                />
+            )}
 
             {/* Copy on the photo */}
             <div className="relative z-10 flex h-full flex-col">
                 <div className="flex flex-1 flex-col justify-end px-6 md:justify-center md:px-12 lg:px-20">
-                    <div className="max-w-md pb-6 md:pb-0">
-                        {slide.eyebrow && (
-                            <div
-                                className={cn(
-                                    'mb-4 flex items-center gap-3',
-                                    enterClass(active),
-                                )}
-                                style={{
-                                    transitionDelay: active ? '80ms' : '0ms',
-                                }}
-                            >
-                                <p
+                    {slide.offer ? (
+                        <MemberOfferCopy
+                            offer={slide.offer}
+                            active={active}
+                            hidden={hidden}
+                        />
+                    ) : (
+                        <div className="max-w-md pb-6 md:pb-0">
+                            {slide.eyebrow && (
+                                <div
                                     className={cn(
-                                        'text-xs font-semibold tracking-[0.15em] uppercase',
-                                        lightText
-                                            ? 'text-[#F4D7A0]'
-                                            : 'text-[#800020]',
-                                    )}
-                                >
-                                    {slide.eyebrow}
-                                </p>
-                                <span
-                                    className={cn(
-                                        'h-px origin-left transition-transform duration-700 ease-out',
-                                        lightText
-                                            ? 'bg-[#F4D7A0]/50'
-                                            : 'bg-[#800020]/30',
-                                        active ? 'scale-x-100' : 'scale-x-0',
+                                        'mb-4 flex items-center gap-3',
+                                        enterClass(active),
                                     )}
                                     style={{
                                         transitionDelay: active
-                                            ? '200ms'
+                                            ? '80ms'
                                             : '0ms',
                                     }}
-                                />
-                            </div>
-                        )}
-                        <h2
-                            className={cn(
-                                'font-serif text-4xl leading-tight font-bold whitespace-pre-line md:text-5xl lg:text-[3.25rem]',
-                                lightText
-                                    ? 'text-white drop-shadow-sm'
-                                    : 'text-[#800020]',
-                                enterClass(active),
+                                >
+                                    <p
+                                        className={cn(
+                                            'text-xs font-semibold tracking-[0.15em] uppercase',
+                                            lightText
+                                                ? 'text-[#F4D7A0]'
+                                                : 'text-[#800020]',
+                                        )}
+                                    >
+                                        {slide.eyebrow}
+                                    </p>
+                                    <span
+                                        className={cn(
+                                            'h-px origin-left transition-transform duration-700 ease-out',
+                                            lightText
+                                                ? 'bg-[#F4D7A0]/50'
+                                                : 'bg-[#800020]/30',
+                                            active
+                                                ? 'scale-x-100'
+                                                : 'scale-x-0',
+                                        )}
+                                        style={{
+                                            transitionDelay: active
+                                                ? '200ms'
+                                                : '0ms',
+                                        }}
+                                    />
+                                </div>
                             )}
-                            style={{
-                                transitionDelay: active ? '180ms' : '0ms',
-                            }}
-                        >
-                            {slide.headline}
-                        </h2>
-                        <p
-                            className={cn(
-                                'mt-4 text-base leading-relaxed md:text-lg',
-                                lightText
-                                    ? 'text-white/85'
-                                    : 'text-[#2A2A28]/80',
-                                enterClass(active),
-                            )}
-                            style={{
-                                transitionDelay: active ? '320ms' : '0ms',
-                            }}
-                        >
-                            {slide.subheadline}
-                        </p>
-                        <div
-                            className={cn(enterClass(active))}
-                            style={{
-                                transitionDelay: active ? '460ms' : '0ms',
-                            }}
-                        >
-                            <Link
-                                href={slide.ctaHref}
-                                tabIndex={hidden ? -1 : undefined}
-                                className="mt-8 inline-flex items-center justify-center gap-2 rounded-sm bg-[#800020] px-6 py-3 text-sm font-semibold tracking-wider text-white uppercase shadow-sm transition hover:bg-[#800020]/90 focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none"
+                            <h2
+                                className={cn(
+                                    'font-serif text-4xl leading-tight font-bold whitespace-pre-line md:text-5xl lg:text-[3.25rem]',
+                                    lightText
+                                        ? 'text-white drop-shadow-sm'
+                                        : 'text-[#800020]',
+                                    enterClass(active),
+                                )}
+                                style={{
+                                    transitionDelay: active ? '180ms' : '0ms',
+                                }}
                             >
-                                {slide.ctaLabel}
-                                <ArrowRight className="size-4" />
-                            </Link>
+                                {slide.headline}
+                            </h2>
+                            <p
+                                className={cn(
+                                    'mt-4 text-base leading-relaxed md:text-lg',
+                                    lightText
+                                        ? 'text-white/85'
+                                        : 'text-[#2A2A28]/80',
+                                    enterClass(active),
+                                )}
+                                style={{
+                                    transitionDelay: active ? '320ms' : '0ms',
+                                }}
+                            >
+                                {slide.subheadline}
+                            </p>
+                            <div
+                                className={cn(enterClass(active))}
+                                style={{
+                                    transitionDelay: active ? '460ms' : '0ms',
+                                }}
+                            >
+                                <Link
+                                    href={slide.ctaHref}
+                                    tabIndex={hidden ? -1 : undefined}
+                                    className="mt-8 inline-flex items-center justify-center gap-2 rounded-sm bg-[#800020] px-6 py-3 text-sm font-semibold tracking-wider text-white uppercase shadow-sm transition hover:bg-[#800020]/90 focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none"
+                                >
+                                    {slide.ctaLabel}
+                                    <ArrowRight className="size-4" />
+                                </Link>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Features strip */}

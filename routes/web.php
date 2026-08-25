@@ -90,6 +90,9 @@ Route::get('blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 // Shop
 Route::get('shop', [ProductController::class, 'index'])->name('shop.index');
 Route::inertia('/business-cards', 'shop/business-cards')->name('shop.business-cards');
+Route::get('business-cards/{slug}', [ProductController::class, 'show'])
+    ->where('slug', '[a-z0-9-]+')
+    ->name('shop.business-card.show');
 
 // Referral
 Route::get('ref/{code}', [ReferralController::class, 'show'])->name('referral.show');

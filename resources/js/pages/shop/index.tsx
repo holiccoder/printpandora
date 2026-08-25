@@ -3,6 +3,7 @@ import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { isPvcProductSlug } from '@/lib/product-images';
+import { productHref } from '@/lib/product-routes';
 
 interface Product {
     id: number;
@@ -97,7 +98,7 @@ export default function ShopIndex({
                             {filtered.map((product) => (
                                 <Link
                                     key={product.id}
-                                    href={`/${product.slug}`}
+                                    href={productHref(product.slug)}
                                     className="group block overflow-hidden rounded-lg border border-[#e3e3e0] bg-white transition-shadow hover:shadow-md dark:border-[#3E3E3A] dark:bg-[#161615]"
                                 >
                                     <div className="aspect-square overflow-hidden bg-neutral-100 dark:bg-neutral-800">

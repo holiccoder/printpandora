@@ -1,12 +1,13 @@
 // Content sourced from `content/hardcoded-content.json` via useContent('checkout_page').
 import { Link, router, useForm } from '@inertiajs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import SEO from '@/components/seo';
 import { PaymentMethods } from '@/components/payment-methods';
+import SEO from '@/components/seo';
 import { countries, countriesByCode } from '@/data/countries';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { isPvcProductSlug } from '@/lib/product-images';
+import { productHref } from '@/lib/product-routes';
 
 interface CartItem {
     key: string;
@@ -508,7 +509,7 @@ export default function Checkout({
                                             className="flex items-center gap-4"
                                         >
                                             <Link
-                                                href={`/${item.slug}`}
+                                                href={productHref(item.slug)}
                                                 className="block h-16 w-16 shrink-0 overflow-hidden rounded bg-neutral-100 dark:bg-neutral-800"
                                             >
                                                 {item.image ? (
@@ -539,7 +540,9 @@ export default function Checkout({
                                             </Link>
                                             <div className="min-w-0 flex-1">
                                                 <Link
-                                                    href={`/${item.slug}`}
+                                                    href={productHref(
+                                                        item.slug,
+                                                    )}
                                                     className="text-base font-semibold hover:text-amber-600"
                                                 >
                                                     {item.name}

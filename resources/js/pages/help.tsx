@@ -75,7 +75,7 @@ export default function Help() {
     }, [query, c.popular_questions.questions]);
 
     return (
-        <StorefrontLayout>
+        <StorefrontLayout activeCategory="Help & FAQs">
             <SEO title={c.seo.title} description={c.seo.description} />
 
             {/* Hero */}

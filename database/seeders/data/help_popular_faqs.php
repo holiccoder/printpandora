@@ -1,0 +1,49 @@
+<?php
+
+return [
+    [
+        'question' => 'How quickly can my business cards be delivered?',
+        'answer' => <<<'HTML'
+<p>At InkPavo, production time for business cards depends on the paper and finishes you choose. The fastest production time is 2-3 business days; orders with special finishes take 5-7 business days; metal business cards require 15-20 business days to complete production.</p>
+<p>Please place your order before 6:00 p.m. Beijing time, Monday through Saturday.</p>
+<p>Delivery time depends on your country and shipping method. The fastest shipping option can deliver in 3-7 business days, while standard shipping takes 10-18 business days. Please see our <a href="/shipping">Shipping &amp; Delivery page</a> for details.</p>
+HTML,
+    ],
+    [
+        'question' => 'Which business card sizes do you offer?',
+        'answer' => <<<'HTML'
+<p>We offer the following business card sizes:</p>
+<ol>
+    <li>Paper cards: Standard (3.5 in x 2.0 in) and square (2.56 in x 2.56 in).</li>
+    <li>PVC cards: Finished size 3.37 x 2.13 in only, with rounded corners.</li>
+    <li>Metal cards: 89 x 51, 85 x 54, and 80 x 50.</li>
+</ol>
+<p>For custom sizes, please contact our online customer support team.</p>
+HTML,
+    ],
+    [
+        'question' => 'Why choose InkPavo business cards?',
+        'answer' => <<<'HTML'
+<p>InkPavo&apos;s online printing service supports small-batch, personalized orders for businesses and individuals around the world.</p>
+<ul>
+    <li>A wide range of paper stocks and other materials.</li>
+    <li>A wide range of finishes, quantities, and sizes.</li>
+</ul>
+HTML,
+    ],
+    [
+        'question' => 'About design files',
+        'answer' => <<<'HTML'
+<p>You can design your business cards yourself, use one of our templates, provide a template for us to customize, or choose a dedicated one-on-one design service. Visit our <a href="/business-card-design-service">Business Card Design Service</a> page for details.</p>
+<p>Our team manually checks every file to make sure it meets the requirements of your selected materials and finishes.</p>
+HTML,
+    ],
+    [
+        'question' => 'What is the difference between matte, gloss, and soft-touch business cards?',
+        'answer' => <<<'HTML'
+<p>Matte business cards have a non-reflective surface and can be written on with a marker.</p>
+<p>Gloss business cards reflect light and have a bright shine that enhances colors and depth, making images look more vivid.</p>
+<p>Soft-touch business cards have a soft, matte, luxurious velvet-like coating that feels smooth and inviting.</p>
+HTML,
+    ],
+];

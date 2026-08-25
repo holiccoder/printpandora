@@ -31,7 +31,7 @@ export default function BusinessCardDesignService() {
     const [selectedService, setSelectedService] = useState('');
 
     return (
-        <StorefrontLayout>
+        <StorefrontLayout activeCategory="Design Service">
             <SEO
                 title={c.seo.title ?? 'Business Card Design Service'}
                 description={c.seo.description}

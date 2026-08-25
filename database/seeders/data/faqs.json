@@ -2,61 +2,51 @@
     {
         "id": 1,
         "category_id": 4,
-        "question": "What file formats do you accept?",
-        "answer": "<p>We recommend print-ready PDFs with bleed. We also accept AI, EPS, SVG, and high-resolution PNG/JPG files.</p>",
+        "question": "How quickly can my business cards be delivered?",
+        "answer": "<p>At InkPavo, production time for business cards depends on the paper and finishes you choose. The fastest production time is 2-3 business days; orders with special finishes take 5-7 business days; metal business cards require 15-20 business days to complete production.</p>\n<p>Please place your order before 6:00 p.m. Beijing time, Monday through Saturday.</p>\n<p>Delivery time depends on your country and shipping method. The fastest shipping option can deliver in 3-7 business days, while standard shipping takes 10-18 business days. Please see our <a href=\"/shipping\">Shipping &amp; Delivery page</a> for details.</p>",
         "sort_order": 0,
         "is_published": 1,
         "created_at": "2026-08-13 02:35:40",
-        "updated_at": "2026-08-13 02:35:40"
+        "updated_at": "2026-08-26 00:00:00"
     },
     {
         "id": 2,
         "category_id": 4,
-        "question": "How long does production take?",
-        "answer": "<p>Most orders are produced within 1–2 business days after artwork approval. Shipping time depends on your selected delivery method.</p>",
+        "question": "Which business card sizes do you offer?",
+        "answer": "<p>We offer the following business card sizes:</p>\n<ol>\n    <li>Paper cards: Standard (3.5 in x 2.0 in) and square (2.56 in x 2.56 in).</li>\n    <li>PVC cards: Finished size 3.37 x 2.13 in only, with rounded corners.</li>\n    <li>Metal cards: 89 x 51, 85 x 54, and 80 x 50.</li>\n</ol>\n<p>For custom sizes, please contact our online customer support team.</p>",
         "sort_order": 1,
         "is_published": 1,
         "created_at": "2026-08-13 02:35:40",
-        "updated_at": "2026-08-13 02:35:40"
+        "updated_at": "2026-08-26 00:00:00"
     },
     {
         "id": 3,
         "category_id": 4,
-        "question": "What is your minimum order quantity?",
-        "answer": "<p>Minimum order quantities vary by product. Many business card products start at 50 pieces; gang-run products typically start at 200 copies per design.</p>",
+        "question": "Why choose InkPavo business cards?",
+        "answer": "<p>InkPavo&apos;s online printing service supports small-batch, personalized orders for businesses and individuals around the world.</p>\n<ul>\n    <li>A wide range of paper stocks and other materials.</li>\n    <li>A wide range of finishes, quantities, and sizes.</li>\n</ul>",
         "sort_order": 2,
         "is_published": 1,
         "created_at": "2026-08-13 02:35:40",
-        "updated_at": "2026-08-13 02:35:40"
+        "updated_at": "2026-08-26 00:00:00"
     },
     {
         "id": 4,
         "category_id": 4,
-        "question": "Do you offer design services?",
-        "answer": "<p>Yes. We offer free vector typesetting for print customers, template layouts, and custom original design. Visit our Business Card Design Service page to get started.</p>",
+        "question": "About design files",
+        "answer": "<p>You can design your business cards yourself, use one of our templates, provide a template for us to customize, or choose a dedicated one-on-one design service. Visit our <a href=\"/business-card-design-service\">Business Card Design Service</a> page for details.</p>\n<p>Our team manually checks every file to make sure it meets the requirements of your selected materials and finishes.</p>",
         "sort_order": 3,
         "is_published": 1,
         "created_at": "2026-08-13 02:35:40",
-        "updated_at": "2026-08-13 02:35:40"
+        "updated_at": "2026-08-26 00:00:00"
     },
     {
         "id": 5,
         "category_id": 4,
-        "question": "Can I track my order?",
-        "answer": "<p>Once your order ships, you will receive a tracking link by email. You can also view order status in your dashboard.</p>",
+        "question": "What is the difference between matte, gloss, and soft-touch business cards?",
+        "answer": "<p>Matte business cards have a non-reflective surface and can be written on with a marker.</p>\n<p>Gloss business cards reflect light and have a bright shine that enhances colors and depth, making images look more vivid.</p>\n<p>Soft-touch business cards have a soft, matte, luxurious velvet-like coating that feels smooth and inviting.</p>",
         "sort_order": 4,
         "is_published": 1,
         "created_at": "2026-08-13 02:35:40",
-        "updated_at": "2026-08-13 02:35:40"
-    },
-    {
-        "id": 6,
-        "category_id": 4,
-        "question": "What is your refund policy?",
-        "answer": "<p>If you're not satisfied with the print quality due to a production error, contact us within 14 days. We'll reprint or refund eligible orders.</p>",
-        "sort_order": 5,
-        "is_published": 1,
-        "created_at": "2026-08-13 02:35:40",
-        "updated_at": "2026-08-13 02:35:40"
+        "updated_at": "2026-08-26 00:00:00"
     }
 ]

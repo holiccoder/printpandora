@@ -56,7 +56,7 @@ export default function HelpArticle({ article, related }: Props) {
     const minutes = readingTimeMinutes(article.body);
 
     return (
-        <StorefrontLayout>
+        <StorefrontLayout activeCategory="Help & FAQs">
             <SEO
                 title={`${article.title} — Help Center`}
                 description={description}
@@ -121,7 +121,7 @@ export default function HelpArticle({ article, related }: Props) {
                     )}
 
                     <div
-                        className="prose prose-neutral mt-10 max-w-none"
+                        className="help-article-content mt-10 max-w-none"
                         dangerouslySetInnerHTML={{ __html: article.body }}
                     />
 

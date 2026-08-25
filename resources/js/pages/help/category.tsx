@@ -45,7 +45,7 @@ export default function HelpCategory({ category, articles, faqs }: Props) {
         category.description ?? `Browse ${category.name} articles and FAQs.`;
 
     return (
-        <StorefrontLayout>
+        <StorefrontLayout activeCategory="Help & FAQs">
             <SEO
                 title={`${category.name} — Help Center`}
                 description={pageDescription}
@@ -130,7 +130,7 @@ export default function HelpCategory({ category, articles, faqs }: Props) {
                                         {item.question}
                                     </h3>
                                     <div
-                                        className="prose prose-sm mt-2 max-w-none text-neutral-600"
+                                        className="help-faq-content mt-2 max-w-none"
                                         dangerouslySetInnerHTML={{
                                             __html: item.answer,
                                         }}

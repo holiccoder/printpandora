@@ -135,7 +135,7 @@ export default function HelpIndex({ categories, faqs }: Props) {
     }, [faqs, q]);
 
     return (
-        <StorefrontLayout>
+        <StorefrontLayout activeCategory="Help & FAQs">
             <SEO title={c.seo.title} description={c.seo.description} />
 
             {/* Hero */}
@@ -217,24 +217,24 @@ export default function HelpIndex({ categories, faqs }: Props) {
 
             {/* Popular questions */}
             <section className="bg-white">
-                <div className="mx-auto max-w-3xl px-4 py-12 lg:py-16">
+                <div className="mx-auto max-w-5xl px-4 py-12 lg:py-16">
                     <h2 className="text-center font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
                         {c.popular_questions.heading}
                     </h2>
 
                     {filteredFaqs.length > 0 ? (
-                        <ul className="mt-8 divide-y divide-neutral-100 rounded-xl border border-neutral-200 bg-white">
+                        <ul className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
                             {filteredFaqs.map((item) => (
                                 <li
                                     key={item.id}
                                     id={`faq-${item.id}`}
-                                    className="p-5"
+                                    className="w-full rounded-xl border border-neutral-200 bg-white p-5"
                                 >
                                     <h3 className="text-base font-bold text-neutral-900">
                                         {item.question}
                                     </h3>
                                     <div
-                                        className="prose prose-sm mt-2 max-w-none text-neutral-600"
+                                        className="help-faq-content mt-2 max-w-none"
                                         dangerouslySetInnerHTML={{
                                             __html: item.answer,
                                         }}

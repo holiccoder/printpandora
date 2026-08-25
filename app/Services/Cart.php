@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Support\BusinessCardRoutes;
 use Illuminate\Session\SessionManager;
 
 class Cart
@@ -79,13 +80,15 @@ class Cart
         $items = [];
 
         foreach ($this->all() as $key => $item) {
+            $slug = (string) ($item['slug'] ?? '');
+
             $items[] = [
                 'id' => (string) ($item['key'] ?? $key),
                 'name' => (string) ($item['name'] ?? ''),
                 'price' => '$'.number_format((float) ($item['price'] ?? 0), 2),
                 'quantity' => (int) ($item['quantity'] ?? 1),
                 'image' => $item['image'] ?? null,
-                'href' => '/'.ltrim((string) ($item['slug'] ?? ''), '/'),
+                'href' => BusinessCardRoutes::hrefForProductSlug($slug),
             ];
         }
 

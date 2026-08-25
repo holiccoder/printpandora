@@ -41,8 +41,12 @@ class FilamentSettingsTest extends TestCase
         );
         $this->assertCount(10, $slides);
         $this->assertSame(
-            "MADE TO BE\nREMEMBERED",
+            'New Registered Users',
             data_get($slides, array_key_first($slides).'.headline'),
+        );
+        $this->assertSame(
+            'NEW MEMBER OFFER',
+            data_get($slides, array_key_first($slides).'.offer.pretitle'),
         );
         $this->assertStringContainsString(
             '/images/home/homepage-carousel-01.webp',
@@ -88,8 +92,8 @@ class FilamentSettingsTest extends TestCase
             data_get($stored, 'homepage.hero_carousel.slides.0.headline'),
         );
         $this->assertSame(
-            'card',
-            data_get($stored, 'homepage.hero_carousel.slides.0.features.0.icon'),
+            'NEW MEMBER OFFER',
+            data_get($stored, 'homepage.hero_carousel.slides.0.offer.pretitle'),
         );
 
         $content = app(HardcodedContent::class);

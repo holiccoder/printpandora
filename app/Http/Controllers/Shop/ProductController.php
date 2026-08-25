@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductConfigurationService;
 use App\Services\ProductImageService;
+use App\Support\BusinessCardRoutes;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -55,9 +56,10 @@ class ProductController extends Controller
 
     public function show(string $slug, ProductImageService $imageService): InertiaResponse|SymfonyResponse
     {
+        $productSlug = BusinessCardRoutes::productSlugForSegment($slug) ?? $slug;
         $product = Product::with('category')
             ->where('is_active', true)
-            ->where('slug', $slug)
+            ->where('slug', $productSlug)
             ->first();
 
         // Unknown slugs render the Inertia 404 page instead of Laravel's
@@ -68,6 +70,14 @@ class ProductController extends Controller
             return Inertia::render('errors/not-found')
                 ->toResponse(request())
                 ->setStatusCode(404);
+        }
+
+        if (request()->routeIs('shop.show')) {
+            $canonicalPath = BusinessCardRoutes::pathForProductSlug($productSlug);
+
+            if ($canonicalPath !== null) {
+                return redirect()->to($canonicalPath, 301);
+            }
         }
 
         if ($image = $imageService->featuredImageUrl($product)) {

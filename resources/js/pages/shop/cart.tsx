@@ -4,6 +4,7 @@ import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { isPvcProductSlug } from '@/lib/product-images';
+import { productHref } from '@/lib/product-routes';
 
 interface CartItem {
     key: string;
@@ -105,7 +106,7 @@ export default function Cart({
                                         </div>
                                         <div className="min-w-0 flex-1">
                                             <Link
-                                                href={`/${item.slug}`}
+                                                href={productHref(item.slug)}
                                                 className="font-semibold hover:text-amber-600"
                                             >
                                                 {item.name}

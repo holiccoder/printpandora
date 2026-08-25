@@ -305,6 +305,22 @@ export interface SeoMeta {
     robots?: string;
 }
 
+export interface HeroMemberOffer {
+    pretitle: string;
+    headline: string;
+    discount_label: string;
+    discount: string;
+    description: string;
+    steps: Array<{
+        number: string;
+        label: string;
+        icon: string;
+    }>;
+    terms: string;
+    cta_text: string;
+    cta_href: string;
+}
+
 export interface HeroSlide {
     eyebrow?: string;
     headline: string;
@@ -314,6 +330,7 @@ export interface HeroSlide {
     image_url: string;
     alt: string;
     text_tone?: 'light' | 'dark';
+    offer?: HeroMemberOffer;
     features?: Array<{
         icon: string;
         title: string;
