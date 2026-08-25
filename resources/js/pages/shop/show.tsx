@@ -1241,7 +1241,7 @@ export default function ShopShow({
 
             {/* breadcrumbs */}
             <nav aria-label="Breadcrumb" className="bg-white">
-                <ol className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-sm text-neutral-500">
+                <ol className="product-detail-container mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-sm text-neutral-500">
                     <li>
                         <Link href="/" className="hover:text-neutral-900">
                             {breadcrumbs[0]}
@@ -1263,7 +1263,7 @@ export default function ShopShow({
 
             {/* 1. configurator */}
             <section className="bg-white">
-                <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 lg:grid-cols-2">
+                <div className="product-detail-container mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 lg:grid-cols-2">
                     {/* gallery */}
                     <div className="lg:sticky lg:top-[10px] lg:self-start">
                         <div

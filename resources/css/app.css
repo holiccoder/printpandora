@@ -168,6 +168,13 @@
             max-width: 100%;
         }
     }
+
+    /* Keep the product detail content comfortably centered on 4K displays. */
+    @media (min-width: 2560px) {
+        .product-detail-container {
+            max-width: 60vw;
+        }
+    }
 }
 
 /* Custom editorial typography and spacing styles for Blog Articles */
