@@ -315,7 +315,10 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
 
     return (
         <section
-            className={cn('relative w-full overflow-hidden', className)}
+            className={cn(
+                'home-hero-carousel relative w-full overflow-hidden',
+                className,
+            )}
             aria-roledescription="carousel"
             aria-label={home.hero_carousel.aria_label}
             onMouseEnter={() => setPaused(true)}

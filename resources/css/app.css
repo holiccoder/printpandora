@@ -172,7 +172,13 @@
     /* Keep the product detail content comfortably centered on 4K displays. */
     @media (min-width: 2560px) {
         .product-detail-container {
-            max-width: 60vw;
+            max-width: 70vw;
+        }
+
+        /* Keep the home carousel centered at 70% on wide displays. */
+        .home-hero-carousel {
+            width: 70%;
+            margin-inline: auto;
         }
     }
 }
