@@ -1070,10 +1070,11 @@ class ProductConfigurationService
     /**
      * Apply the centrally maintained business-card detail sections. A shared
      * design specification is used only when the product does not define one;
-     * product-specific dimensions and downloads remain authoritative. FAQ and
-     * cross-sell content are also preserved. Eligibility follows the Business
-     * Cards category hierarchy so direct products and descendants share the
-     * same section contract.
+     * product-specific dimensions and downloads remain authoritative. FAQ
+     * content remains product-specific while the shared cross-sell sections
+     * use the centrally maintained storefront content. Eligibility follows
+     * the Business Cards category hierarchy so direct products and descendants
+     * share the same section contract.
      *
      * @param  array<string, mixed>  $options
      * @return array<string, mixed>
@@ -1104,7 +1105,7 @@ class ProductConfigurationService
             $details['design_specifications'] = $shared['design_specifications'];
         }
 
-        foreach (['design_service_banner', 'paper_stocks'] as $key) {
+        foreach (['design_service_banner', 'paper_stocks', 'more_good_stuff'] as $key) {
             if (is_array($shared[$key] ?? null)) {
                 $details[$key] = $shared[$key];
             }

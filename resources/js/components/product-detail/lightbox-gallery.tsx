@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 interface LightboxGalleryProps {
     open: boolean;
     onClose: () => void;
     images: string[];
     initialIndex: number;
+    showThumbnails?: boolean;
 }
 
 export default function LightboxGallery({
@@ -13,37 +15,45 @@ export default function LightboxGallery({
     onClose,
     images,
     initialIndex,
+    showThumbnails = true,
 }: LightboxGalleryProps) {
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
-    // Sync state when lightbox opens or initialIndex changes
+    // Disable background scrolling while the lightbox is open.
     useEffect(() => {
-        if (open) {
-            setCurrentIndex(initialIndex);
-            // Disable background scrolling when modal is open
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
+        document.body.style.overflow = open ? 'hidden' : '';
+
         return () => {
             document.body.style.overflow = '';
         };
-    }, [open, initialIndex]);
+    }, [open]);
 
     // Handle slide controls
-    const handlePrev = (e?: React.MouseEvent) => {
-        e?.stopPropagation();
-        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-    };
+    const handlePrev = useCallback(
+        (e?: MouseEvent) => {
+            e?.stopPropagation();
+            setCurrentIndex((prev) =>
+                prev === 0 ? images.length - 1 : prev - 1,
+            );
+        },
+        [images.length],
+    );
 
-    const handleNext = (e?: React.MouseEvent) => {
-        e?.stopPropagation();
-        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-    };
+    const handleNext = useCallback(
+        (e?: MouseEvent) => {
+            e?.stopPropagation();
+            setCurrentIndex((prev) =>
+                prev === images.length - 1 ? 0 : prev + 1,
+            );
+        },
+        [images.length],
+    );
 
     // Keyboard navigation
     useEffect(() => {
-        if (!open) return;
+        if (!open) {
+            return;
+        }
 
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'ArrowLeft') {
@@ -56,12 +66,15 @@ export default function LightboxGallery({
         };
 
         window.addEventListener('keydown', handleKeyDown);
+
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [open, images]);
+    }, [handleNext, handlePrev, onClose, open]);
 
-    if (!open) return null;
+    if (!open) {
+        return null;
+    }
 
     return (
         <div
@@ -122,30 +135,32 @@ export default function LightboxGallery({
             </div>
 
             {/* Bottom Bar: Thumbnail previews */}
-            <div
-                className="absolute inset-x-0 bottom-6 flex items-center justify-center gap-3 px-4"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {images.map((src, idx) => (
-                    <button
-                        key={src}
-                        type="button"
-                        onClick={() => setCurrentIndex(idx)}
-                        className={`relative h-14 w-14 overflow-hidden rounded-md border-2 transition-all duration-200 md:h-16 md:w-16 ${
-                            currentIndex === idx
-                                ? 'scale-105 border-white shadow-md shadow-white/10'
-                                : 'border-transparent opacity-50 hover:scale-102 hover:opacity-100'
-                        }`}
-                        aria-label={`View image ${idx + 1}`}
-                    >
-                        <img
-                            src={src}
-                            alt=""
-                            className="h-full w-full object-cover"
-                        />
-                    </button>
-                ))}
-            </div>
+            {showThumbnails && (
+                <div
+                    className="absolute inset-x-0 bottom-6 flex items-center justify-center gap-3 px-4"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {images.map((src, idx) => (
+                        <button
+                            key={src}
+                            type="button"
+                            onClick={() => setCurrentIndex(idx)}
+                            className={`relative h-14 w-14 overflow-hidden rounded-md border-2 transition-all duration-200 md:h-16 md:w-16 ${
+                                currentIndex === idx
+                                    ? 'scale-105 border-white shadow-md shadow-white/10'
+                                    : 'border-transparent opacity-50 hover:scale-102 hover:opacity-100'
+                            }`}
+                            aria-label={`View image ${idx + 1}`}
+                        >
+                            <img
+                                src={src}
+                                alt=""
+                                className="h-full w-full object-cover"
+                            />
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

@@ -155,7 +155,7 @@ class ProductConfigurationServiceTest extends TestCase
                         'items' => [],
                     ],
                     'more_good_stuff' => [
-                        'heading' => 'Keep this cross-sell content',
+                        'heading' => 'Stale cross-sell content',
                     ],
                     'faq' => [
                         'heading' => 'Keep this FAQ content',
@@ -181,8 +181,26 @@ class ProductConfigurationServiceTest extends TestCase
         );
         $this->assertCount(4, data_get($options, 'detail_sections.paper_stocks.items'));
         $this->assertSame(
-            'Keep this cross-sell content',
+            [
+                '/images/product-detail/paper-stocks/premium-paper.webp',
+                '/images/product-detail/paper-stocks/luxury-paper.webp',
+                '/images/product-detail/paper-stocks/pvc-card.webp',
+                '/images/product-detail/paper-stocks/paper-stock-four.webp',
+            ],
+            data_get($options, 'detail_sections.paper_stocks.items.*.image_url'),
+        );
+        $this->assertSame(
+            'Even more good stuff',
             data_get($options, 'detail_sections.more_good_stuff.heading'),
+        );
+        $this->assertSame(
+            [
+                '/images/product-detail/even-more/even-more-one.webp',
+                '/images/product-detail/even-more/stickers.webp',
+                '/images/product-detail/even-more/postcards.webp',
+                '/images/product-detail/even-more/folded-brochure.webp',
+            ],
+            data_get($options, 'detail_sections.more_good_stuff.items.*.image_url'),
         );
         $this->assertSame('Keep this FAQ content', data_get($options, 'detail_sections.faq.heading'));
     }

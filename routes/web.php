@@ -10,6 +10,7 @@ use App\Http\Controllers\DesignServiceRequestController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\ShowcaseController;
 use App\Http\Controllers\Shop\CartController;
 use App\Http\Controllers\Shop\CheckoutController;
 use App\Http\Controllers\Shop\OrderController;
@@ -39,6 +40,7 @@ Route::post('/business-card-design-service', [DesignServiceRequestController::cl
 Route::inertia('/postcards', 'postcards')->name('postcards');
 Route::inertia('/stickers-and-labels', 'stickers-and-labels')->name('stickers-and-labels');
 Route::inertia('/flyers-and-brochures', 'flyers-and-brochures')->name('flyers-and-brochures');
+Route::get('/showcases', [ShowcaseController::class, 'index'])->name('showcases');
 
 // Contact
 Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');

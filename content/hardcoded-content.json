@@ -75,6 +75,10 @@
                 {
                     "label": "Help & FAQs",
                     "href": "/help"
+                },
+                {
+                    "label": "Showcases",
+                    "href": "/showcases"
                 }
             ],
             "business_cards_mega_menu": {
@@ -262,6 +266,10 @@
                 {
                     "label": "Affiliate program",
                     "href": "/affiliate-program"
+                },
+                {
+                    "label": "Showcases",
+                    "href": "/showcases"
                 }
             ],
             "essential_pages": [
@@ -1105,7 +1113,7 @@
                             "id": "cotton",
                             "name": "Cotton Business Cards",
                             "price": "50 cards from $33.00",
-                            "image_url": "/images/product-detail/paper-stocks/cotton-business-cards.png",
+                            "image_url": "/images/product-detail/paper-stocks/premium-paper.webp",
                             "href": "/business-cards/classic-cotton",
                             "cta": "Shop Cotton Business Cards ›",
                             "features": [
@@ -1120,7 +1128,7 @@
                             "id": "super",
                             "name": "Super Business Cards",
                             "price": "50 cards from $33.00",
-                            "image_url": "/images/product-detail/paper-stocks/super-business-cards.png",
+                            "image_url": "/images/product-detail/paper-stocks/luxury-paper.webp",
                             "href": "/super-business-cards",
                             "cta": "Shop Super Business Cards ›",
                             "features": [
@@ -1135,7 +1143,7 @@
                             "id": "luxe",
                             "name": "Luxe Business Cards",
                             "price": "50 cards from $43.00",
-                            "image_url": "/images/product-detail/paper-stocks/luxe-business-cards.png",
+                            "image_url": "/images/product-detail/paper-stocks/pvc-card.webp",
                             "href": "/luxe-business-cards",
                             "cta": "Shop Luxe Business Cards ›",
                             "features": [
@@ -1150,7 +1158,7 @@
                             "id": "classic",
                             "name": "Classic Business Cards",
                             "price": "50 cards from $23.00",
-                            "image_url": "/images/product-detail/paper-stocks/original-business-cards.png",
+                            "image_url": "/images/product-detail/paper-stocks/paper-stock-four.webp",
                             "href": "/classic-business-cards",
                             "cta": "Shop Classic Business Cards ›",
                             "features": [
@@ -1160,6 +1168,39 @@
                                 "Quality and value",
                                 "FSC® Certified"
                             ]
+                        }
+                    ]
+                },
+                "more_good_stuff": {
+                    "heading": "Even more good stuff",
+                    "items": [
+                        {
+                            "id": "original-postcards",
+                            "name": "Original Postcards",
+                            "image_url": "/images/product-detail/even-more/even-more-one.webp",
+                            "href": "/postcards",
+                            "link_label": "Original Postcards →"
+                        },
+                        {
+                            "id": "super-postcards",
+                            "name": "Super Postcards",
+                            "image_url": "/images/product-detail/even-more/stickers.webp",
+                            "href": "/postcards",
+                            "link_label": "Super Postcards →"
+                        },
+                        {
+                            "id": "premium-flyers",
+                            "name": "Premium Flyers",
+                            "image_url": "/images/product-detail/even-more/postcards.webp",
+                            "href": "/flyers-and-brochures",
+                            "link_label": "Premium Flyers →"
+                        },
+                        {
+                            "id": "brochures",
+                            "name": "Brochures",
+                            "image_url": "/images/product-detail/even-more/folded-brochure.webp",
+                            "href": "/flyers-and-brochures",
+                            "link_label": "Brochures →"
                         }
                     ]
                 }
