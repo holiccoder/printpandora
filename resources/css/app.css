@@ -175,14 +175,6 @@
             max-width: 60vw;
         }
     }
-
-    /* Use a centered 70% content width on 4K and larger displays. */
-    @media (min-width: 3840px) {
-        .max-w-7xl,
-        .product-detail-container {
-            max-width: 70vw;
-        }
-    }
 }
 
 /* Custom editorial typography and spacing styles for Blog Articles */
