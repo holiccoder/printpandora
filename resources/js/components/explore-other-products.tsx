@@ -9,14 +9,14 @@ export function ExploreOtherProducts() {
             image_url: '/images/home/explore-business-cards.webp',
         },
         {
-            title: 'shop postcards',
-            href: '/postcards',
-            image_url: '/images/home/explore-postcards.webp',
-        },
-        {
             title: 'shop flyers and brochures',
             href: '/flyers-and-brochures',
             image_url: '/images/home/explore-flyers.webp',
+        },
+        {
+            title: 'shop postcards',
+            href: '/postcards',
+            image_url: '/images/home/explore-postcards.webp',
         },
         {
             title: 'shop stickers and labels',
