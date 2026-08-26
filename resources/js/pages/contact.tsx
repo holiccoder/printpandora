@@ -40,7 +40,7 @@ export default function Contact() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post('/contact', {
+        post('/contact-us', {
             preserveScroll: true,
             onSuccess: () => reset('subject', 'message'),
         });
@@ -265,7 +265,7 @@ export default function Contact() {
                                 <p className="text-xs text-neutral-500">
                                     By submitting this form, you agree to our{' '}
                                     <a
-                                        href="/privacy"
+                                        href="/privacy-policy"
                                         className="text-[#800020] underline-offset-2 hover:underline"
                                     >
                                         privacy policy

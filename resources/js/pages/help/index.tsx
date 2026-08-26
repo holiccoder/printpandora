@@ -182,7 +182,7 @@ export default function HelpIndex({ categories, faqs }: Props) {
                         {filteredCategories.map((category) => (
                             <Link
                                 key={category.id}
-                                href={`/help/categories/${category.slug}`}
+                                href={`/faq-and-help-center/categories/${category.slug}`}
                                 className="group rounded-xl border border-neutral-200 bg-white p-6 transition-shadow hover:shadow-md"
                             >
                                 <div

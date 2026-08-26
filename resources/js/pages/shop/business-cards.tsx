@@ -138,7 +138,7 @@ export default function BusinessCardsLanding() {
                         </p>
                         <div className="mt-8">
                             <Link
-                                href="/shop?cat=business-cards"
+                                href="/business-cards"
                                 className="inline-flex items-center gap-2 rounded-md bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                             >
                                 {c.hero.cta}
@@ -203,8 +203,7 @@ export default function BusinessCardsLanding() {
                     <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                         {sections.shop_by_paper.items.map(
                             (paper: any, i: number) => {
-                                const href =
-                                    paperHrefs[i] ?? '/shop?cat=business-cards';
+                                const href = paperHrefs[i] ?? '/business-cards';
 
                                 return (
                                     <li key={paper.name} className="group">
@@ -256,8 +255,7 @@ export default function BusinessCardsLanding() {
                     <ul className="grid grid-cols-1 gap-8 sm:grid-cols-3">
                         {sections.shop_by_size.items.map(
                             (size: any, i: number) => {
-                                const href =
-                                    sizeHrefs[i] ?? '/shop?cat=business-cards';
+                                const href = sizeHrefs[i] ?? '/business-cards';
 
                                 return (
                                     <li key={size.name} className="group">
@@ -368,7 +366,7 @@ export default function BusinessCardsLanding() {
                                 }
                             </p>
                             <Link
-                                href="/shop?cat=business-cards"
+                                href="/business-cards"
                                 className="mt-5 inline-flex w-fit items-center gap-2 rounded-md border border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                             >
                                 {
@@ -455,7 +453,7 @@ export default function BusinessCardsLanding() {
                             {sections.why_inkpavo.body}
                         </p>
                         <Link
-                            href="/about"
+                            href="/about-inkpavo"
                             className="mt-6 inline-flex w-fit items-center gap-2 rounded-md border border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                         >
                             {sections.why_inkpavo.cta}

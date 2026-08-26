@@ -122,7 +122,7 @@ export default function Help() {
                         {c.categories.map((category: any) => (
                             <Link
                                 key={category.id}
-                                href={`/help#${category.id}`}
+                                href={`/faq-and-help-center#${category.id}`}
                                 className="group rounded-xl border border-neutral-200 bg-white p-6 transition-shadow hover:shadow-md"
                             >
                                 <div

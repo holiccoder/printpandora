@@ -22,16 +22,16 @@ use Inertia\Inertia;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Static information pages
-Route::inertia('/about', 'about')->name('about');
-Route::inertia('/terms', 'terms')->name('terms');
-Route::inertia('/privacy', 'privacy')->name('privacy');
+Route::inertia('/about-inkpavo', 'about')->name('about');
+Route::inertia('/terms-and-conditions', 'terms')->name('terms');
+Route::inertia('/privacy-policy', 'privacy')->name('privacy');
 Route::inertia('/affiliate-program', 'affiliate-program')->name('affiliate-program');
 Route::inertia('/affiliate-program-terms-and-conditions', 'affiliate-terms')->name('affiliate-terms');
-Route::inertia('/shipping', 'shipping')->name('shipping');
-Route::inertia('/shipping-calculator', 'shipping-calculator')->name('shipping.calculator');
-Route::get('/help', [HelpController::class, 'index'])->name('help');
-Route::get('/help/categories/{slug}', [HelpController::class, 'category'])->name('help.category');
-Route::get('/help/articles/{slug}', [HelpController::class, 'article'])->name('help.article');
+Route::inertia('/shipping-policy', 'shipping')->name('shipping');
+Route::inertia('/shipping-and-cost-calculator', 'shipping-calculator')->name('shipping.calculator');
+Route::get('/faq-and-help-center', [HelpController::class, 'index'])->name('help');
+Route::get('/faq-and-help-center/categories/{slug}', [HelpController::class, 'category'])->name('help.category');
+Route::get('/faq-and-help-center/articles/{slug}', [HelpController::class, 'article'])->name('help.article');
 Route::inertia('/sample-packs', 'sample-packs')->name('shop.sample-packs');
 Route::inertia('/business-card-sample-pack', 'business-card-sample-pack')->name('shop.business-card-sample-pack');
 Route::inertia('/free-sample-pack', 'free-sample-pack')->name('shop.free-sample-pack');
@@ -43,8 +43,8 @@ Route::inertia('/flyers-and-brochures', 'flyers-and-brochures')->name('flyers-an
 Route::get('/showcases', [ShowcaseController::class, 'index'])->name('showcases');
 
 // Contact
-Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::get('/contact-us', [ContactController::class, 'create'])->name('contact.create');
+Route::post('/contact-us', [ContactController::class, 'store'])->name('contact.store');
 
 // Social authentication
 Route::get('auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])

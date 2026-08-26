@@ -217,7 +217,7 @@ export default function BusinessCardSamplePack() {
                             title="InkPavo business plans"
                             description="Pro designers, special discounts, and more — on tap. So you can look the part, without doing it all yourself."
                             linkText="More plans"
-                            linkHref="/contact"
+                            linkHref="/contact-us"
                         />
                     </div>
                 </div>

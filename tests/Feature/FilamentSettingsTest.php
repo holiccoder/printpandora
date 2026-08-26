@@ -113,7 +113,7 @@ class FilamentSettingsTest extends TestCase
                             'headline' => 'Only saved slide',
                             'subheadline' => 'Saved description',
                             'cta_text' => 'Read more',
-                            'cta_href' => '/about',
+                            'cta_href' => '/about-inkpavo',
                             'image_url' => '/images/home/home-banner1.png',
                             'alt' => 'Saved banner',
                         ],

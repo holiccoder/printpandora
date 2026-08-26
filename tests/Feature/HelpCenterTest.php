@@ -56,7 +56,7 @@ class HelpCenterTest extends TestCase
     {
         $this->seed(HelpCenterSeeder::class);
 
-        $response = $this->get('/help');
+        $response = $this->get('/faq-and-help-center');
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
@@ -72,7 +72,7 @@ class HelpCenterTest extends TestCase
     {
         $this->seed(HelpCenterSeeder::class);
 
-        $response = $this->get('/help');
+        $response = $this->get('/faq-and-help-center');
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
@@ -104,7 +104,7 @@ class HelpCenterTest extends TestCase
             $category->publishedArticles()->pluck('slug')->all(),
         );
 
-        $response = $this->get('/help/categories/getting-started-with-inkpavo');
+        $response = $this->get('/faq-and-help-center/categories/getting-started-with-inkpavo');
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
@@ -135,7 +135,7 @@ class HelpCenterTest extends TestCase
             $category->publishedArticles()->pluck('slug')->all(),
         );
 
-        $response = $this->get('/help/categories/account-and-orders');
+        $response = $this->get('/faq-and-help-center/categories/account-and-orders');
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page

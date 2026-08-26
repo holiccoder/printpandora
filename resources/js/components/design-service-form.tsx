@@ -286,7 +286,7 @@ export default function DesignServiceForm({
                 >
                     I agree with{' '}
                     <a
-                        href="/terms"
+                        href="/terms-and-conditions"
                         className="text-primary hover:underline"
                         onClick={(e) => e.stopPropagation()}
                     >

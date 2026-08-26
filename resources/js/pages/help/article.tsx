@@ -75,7 +75,7 @@ export default function HelpArticle({ article, related }: Props) {
                         <ol className="flex flex-wrap items-center gap-2">
                             <li>
                                 <Link
-                                    href="/help"
+                                    href="/faq-and-help-center"
                                     className="hover:text-neutral-900"
                                 >
                                     Help Center
@@ -84,7 +84,7 @@ export default function HelpArticle({ article, related }: Props) {
                             <li aria-hidden="true">/</li>
                             <li>
                                 <Link
-                                    href={`/help/categories/${article.category.slug}`}
+                                    href={`/faq-and-help-center/categories/${article.category.slug}`}
                                     className="hover:text-neutral-900"
                                 >
                                     {article.category.name}
@@ -128,7 +128,7 @@ export default function HelpArticle({ article, related }: Props) {
                     <div className="mt-10">
                         <Button asChild variant="outline">
                             <Link
-                                href={`/help/categories/${article.category.slug}`}
+                                href={`/faq-and-help-center/categories/${article.category.slug}`}
                             >
                                 ← Back to {article.category.name}
                             </Link>
@@ -147,7 +147,7 @@ export default function HelpArticle({ article, related }: Props) {
                             {related.map((item) => (
                                 <Link
                                     key={item.id}
-                                    href={`/help/articles/${item.slug}`}
+                                    href={`/faq-and-help-center/articles/${item.slug}`}
                                     className="group block rounded-xl border border-neutral-200 bg-white p-5 transition-shadow hover:shadow-md"
                                 >
                                     <h3 className="text-base font-bold text-neutral-900 group-hover:text-[#800020]">

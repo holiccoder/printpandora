@@ -237,9 +237,9 @@ const designServiceFees: Record<string, number> = {
 };
 
 const businessBlockHrefs = [
-    '/shop?cat=business-services',
-    '/shop?cat=business-services',
-    '/contact',
+    '/business-card-design-service',
+    '/business-card-design-service',
+    '/contact-us',
 ];
 
 function optionValueCode(value: ProductOptionValue): string {

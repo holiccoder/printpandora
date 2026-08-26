@@ -321,14 +321,14 @@ export default function SamplePacks() {
                             title="Letterpress Business Cards"
                             description="Twelve debossed designs, pressed into layers of textured Mohawk Superfine paper. The kind of card that fingers can't leave alone."
                             linkText="Get in touch"
-                            linkHref="/contact"
+                            linkHref="/contact-us"
                         />
                         <FeatureBlock
                             image="https://picsum.photos/seed/business-collab/800/500"
                             title="InkPavo business plans"
                             description="Pro designers, special discounts, and more — on tap. Everything you need to look the part, without doing it all yourself."
                             linkText="More plans"
-                            linkHref="/contact"
+                            linkHref="/contact-us"
                         />
                     </div>
                 </div>

@@ -303,7 +303,7 @@ export default function FreeSamplePack() {
                             it exactly right.
                         </p>
                         <Link
-                            href="/contact"
+                            href="/contact-us"
                             className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold"
                             style={{ color: ACCENT }}
                         >

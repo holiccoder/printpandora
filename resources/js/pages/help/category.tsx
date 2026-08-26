@@ -66,7 +66,9 @@ export default function HelpCategory({ category, articles, faqs }: Props) {
                     )}
                     <div className="mt-6">
                         <Button asChild variant="outline">
-                            <Link href="/help">← Back to Help Center</Link>
+                            <Link href="/faq-and-help-center">
+                                ← Back to Help Center
+                            </Link>
                         </Button>
                     </div>
                 </div>
@@ -83,7 +85,7 @@ export default function HelpCategory({ category, articles, faqs }: Props) {
                             {articles.map((article) => (
                                 <Link
                                     key={article.id}
-                                    href={`/help/articles/${article.slug}`}
+                                    href={`/faq-and-help-center/articles/${article.slug}`}
                                     className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition-shadow hover:shadow-md"
                                 >
                                     {article.featured_image && (

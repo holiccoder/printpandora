@@ -420,6 +420,24 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                                 const hasChildren = !!link.children?.length;
                                 const isActive =
                                     hoveredLink?.label === link.label;
+                                const linkClassName = cn(
+                                    'group flex items-center justify-between rounded-sm py-1 text-sm text-neutral-700 hover:text-[#800020]',
+                                    isActive && 'text-[#800020]',
+                                );
+                                const linkContent = (
+                                    <>
+                                        <span>{link.label}</span>
+                                        {hasChildren && (
+                                            <ChevronRight
+                                                className={cn(
+                                                    'size-4 text-neutral-400 group-hover:text-[#800020]',
+                                                    isActive &&
+                                                        'text-[#800020]',
+                                                )}
+                                            />
+                                        )}
+                                    </>
+                                );
 
                                 return (
                                     <li
@@ -428,24 +446,22 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                                             setHoveredLink(link)
                                         }
                                     >
-                                        <Link
-                                            href={link.href}
-                                            className={cn(
-                                                'group flex items-center justify-between rounded-sm py-1 text-sm text-neutral-700 hover:text-[#800020]',
-                                                isActive && 'text-[#800020]',
-                                            )}
-                                        >
-                                            <span>{link.label}</span>
-                                            {hasChildren && (
-                                                <ChevronRight
-                                                    className={cn(
-                                                        'size-4 text-neutral-400 group-hover:text-[#800020]',
-                                                        isActive &&
-                                                            'text-[#800020]',
-                                                    )}
-                                                />
-                                            )}
-                                        </Link>
+                                        {hasChildren ? (
+                                            <span
+                                                className={linkClassName}
+                                                aria-expanded={isActive}
+                                                aria-haspopup="true"
+                                            >
+                                                {linkContent}
+                                            </span>
+                                        ) : (
+                                            <Link
+                                                href={link.href}
+                                                className={linkClassName}
+                                            >
+                                                {linkContent}
+                                            </Link>
+                                        )}
                                     </li>
                                 );
                             })}
@@ -644,16 +660,53 @@ function MobileNav({
                                     <ul className="bg-neutral-50 pb-2">
                                         {cat.mega.groups
                                             .flatMap((g) => g.links)
-                                            .map((link) => (
-                                                <li key={link.label}>
-                                                    <Link
-                                                        href={link.href}
-                                                        className="block px-6 py-2 text-sm text-neutral-600 hover:text-[#800020]"
-                                                    >
-                                                        {link.label}
-                                                    </Link>
-                                                </li>
-                                            ))}
+                                            .map((link) => {
+                                                const hasChildren =
+                                                    !!link.children?.length;
+
+                                                return (
+                                                    <li key={link.label}>
+                                                        {hasChildren ? (
+                                                            <>
+                                                                <span className="block px-6 py-2 text-sm font-medium text-neutral-700">
+                                                                    {link.label}
+                                                                </span>
+                                                                <ul className="pb-1">
+                                                                    {link.children!.map(
+                                                                        (
+                                                                            sub,
+                                                                        ) => (
+                                                                            <li
+                                                                                key={
+                                                                                    sub.label
+                                                                                }
+                                                                            >
+                                                                                <Link
+                                                                                    href={
+                                                                                        sub.href
+                                                                                    }
+                                                                                    className="block px-10 py-1 text-sm text-neutral-600 hover:text-[#800020]"
+                                                                                >
+                                                                                    {
+                                                                                        sub.label
+                                                                                    }
+                                                                                </Link>
+                                                                            </li>
+                                                                        ),
+                                                                    )}
+                                                                </ul>
+                                                            </>
+                                                        ) : (
+                                                            <Link
+                                                                href={link.href}
+                                                                className="block px-6 py-2 text-sm text-neutral-600 hover:text-[#800020]"
+                                                            >
+                                                                {link.label}
+                                                            </Link>
+                                                        )}
+                                                    </li>
+                                                );
+                                            })}
                                     </ul>
                                 )}
                             </div>

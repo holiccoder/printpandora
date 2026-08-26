@@ -50,7 +50,7 @@
             "top_navigation": [
                 {
                     "label": "Business Cards",
-                    "href": "/shop?cat=business-cards"
+                    "href": "/business-cards"
                 },
                 {
                     "label": "Postcards",
@@ -74,7 +74,7 @@
                 },
                 {
                     "label": "Help & FAQs",
-                    "href": "/help"
+                    "href": "/faq-and-help-center"
                 },
                 {
                     "label": "Showcases",
@@ -95,7 +95,7 @@
                         "links": [
                             {
                                 "label": "Cotton Business Cards",
-                                "href": "/cotton-business-cards",
+                                "href": "#",
                                 "children": [
                                     {
                                         "label": "Basic Cotton Business Card",
@@ -129,7 +129,7 @@
                             },
                             {
                                 "label": "PVC Business Cards",
-                                "href": "/pvc-business-cards",
+                                "href": "#",
                                 "children": [
                                     {
                                         "label": "Basic PVC Card",
@@ -147,7 +147,7 @@
                             },
                             {
                                 "label": "Metal Business Cards",
-                                "href": "/shop?cat=metal-business-cards",
+                                "href": "#",
                                 "children": [
                                     {
                                         "label": "Classic Metal Business Cards",
@@ -165,7 +165,7 @@
                             },
                             {
                                 "label": "Classic Business Cards",
-                                "href": "/classic-business-cards",
+                                "href": "#",
                                 "children": [
                                     {
                                         "label": "Classic Standard Business Cards",
@@ -222,12 +222,12 @@
                 "logo_url": "/images/footer-logo.png",
                 "intro": "InkPavo has over 20 years of offline printing experience and 15 years of online printing services, we have developed a precise understanding of the core needs of individual consumers, corporate clients, advertising agencies, and designers — and we provide tailored solutions for each group.",
                 "more_link_label": "More about InkPavo",
-                "more_link_href": "/about"
+                "more_link_href": "/about-inkpavo"
             },
             "products_services": [
                 {
                     "label": "Business cards",
-                    "href": "/shop?cat=business-cards"
+                    "href": "/business-cards"
                 },
                 {
                     "label": "Postcards",
@@ -249,7 +249,7 @@
             "more_about": [
                 {
                     "label": "Contact us",
-                    "href": "/contact"
+                    "href": "/contact-us"
                 },
                 {
                     "label": "Blog",
@@ -257,11 +257,11 @@
                 },
                 {
                     "label": "FAQ and Help Center",
-                    "href": "/help"
+                    "href": "/faq-and-help-center"
                 },
                 {
                     "label": "About InkPavo",
-                    "href": "/about"
+                    "href": "/about-inkpavo"
                 },
                 {
                     "label": "Affiliate program",
@@ -275,11 +275,11 @@
             "essential_pages": [
                 {
                     "label": "Privacy policy",
-                    "href": "/privacy"
+                    "href": "/privacy-policy"
                 },
                 {
                     "label": "Terms and conditions",
-                    "href": "/terms"
+                    "href": "/terms-and-conditions"
                 },
                 {
                     "label": "Sitemap",
@@ -287,11 +287,11 @@
                 },
                 {
                     "label": "Shipping and cost calculator",
-                    "href": "/shipping-calculator"
+                    "href": "/shipping-and-cost-calculator"
                 },
                 {
                     "label": "Shipping policy",
-                    "href": "/shipping"
+                    "href": "/shipping-policy"
                 }
             ],
             "social_links": [
@@ -339,11 +339,11 @@
                 "legal_links": [
                     {
                         "label": "Terms & Conditions",
-                        "href": "/terms"
+                        "href": "/terms-and-conditions"
                     },
                     {
                         "label": "Privacy Policy",
-                        "href": "/privacy"
+                        "href": "/privacy-policy"
                     },
                     {
                         "label": "Sitemap",
@@ -358,19 +358,19 @@
             "default_messages": [
                 {
                     "text": "Free standard shipping on orders over $50",
-                    "href": "/shipping"
+                    "href": "/shipping-policy"
                 },
                 {
                     "text": "New: FSC® certified Business Cards now available",
-                    "href": "/shop?cat=business-cards"
+                    "href": "/business-cards"
                 },
                 {
                     "text": "20% off your first order — use code WELCOME20",
-                    "href": "/shop"
+                    "href": "/business-cards"
                 },
                 {
                     "text": "Need help? Chat with our print experts 24/7",
-                    "href": "/contact"
+                    "href": "/contact-us"
                 }
             ]
         },
@@ -420,7 +420,7 @@
         "human_support_authenticated_label": "Create a support ticket",
         "human_support_authenticated_href": "/shop/tickets/create",
         "human_support_guest_label": "Contact us",
-        "human_support_guest_href": "/contact",
+        "human_support_guest_href": "/contact-us",
         "disclaimer": "AI assistant - answers may be incomplete. For order-specific help, please contact human support."
     },
     "home_page": {
@@ -482,7 +482,7 @@
                     "headline": "Classic Business Cards, designed to be remembered",
                     "subheadline": "Thicker than your average card, with finishes that turn first impressions into lasting ones.",
                     "cta_text": "Shop business cards",
-                    "cta_href": "/shop?cat=business-cards",
+                    "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-02.webp",
                     "alt": "Premium business cards arranged in a styled studio scene",
                     "text_tone": "dark"
@@ -492,7 +492,7 @@
                     "headline": "UNMISTAKABLE\nTACTILITY",
                     "subheadline": "Deep impression letterpress cards that demand to be held and felt.",
                     "cta_text": "DISCOVER LETTERPRESS",
-                    "cta_href": "/shop?cat=business-cards",
+                    "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-03.webp",
                     "alt": "Custom business cards displayed in a premium print setting",
                     "text_tone": "dark"
@@ -502,7 +502,7 @@
                     "headline": "SHINE FROM THE\nFIRST SECOND",
                     "subheadline": "Add brilliant gold, silver, or copper foil accents that catch the light and command attention.",
                     "cta_text": "EXPLORE FOIL SHINE",
-                    "cta_href": "/shop?cat=business-cards",
+                    "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-04.webp",
                     "alt": "Foil-finished business cards arranged on a dark surface",
                     "text_tone": "dark"
@@ -512,7 +512,7 @@
                     "headline": "SOFTNESS MEETS\nSTRENGTH",
                     "subheadline": "Naturally textured, sustainably sourced cotton stock that feels exceptionally soft yet durable.",
                     "cta_text": "SHOP COTTON CARDS",
-                    "cta_href": "/shop?cat=business-cards",
+                    "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-05.webp",
                     "alt": "Elegant custom business cards in a premium styled scene",
                     "text_tone": "dark"
@@ -522,7 +522,7 @@
                     "headline": "BREAK OUT OF\nTHE RECTANGLE",
                     "subheadline": "Choose from rounded corners, custom circles, or unique geometric silhouettes to define your brand.",
                     "cta_text": "EXPLORE SHAPES",
-                    "cta_href": "/shop?cat=business-cards",
+                    "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-06.webp",
                     "alt": "Custom printed business cards with premium finishing details",
                     "text_tone": "light"
@@ -562,7 +562,7 @@
                     "headline": "YOUR BRAND,\nIN YOUR HAND",
                     "subheadline": "Make every introduction memorable with custom business cards made for your brand.",
                     "cta_text": "SHOP BUSINESS CARDS",
-                    "cta_href": "/shop?cat=business-cards",
+                    "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-10.webp",
                     "alt": "Premium custom business cards displayed in a refined studio scene",
                     "text_tone": "dark"
@@ -574,7 +574,7 @@
             "headline": "Exquisite Cotton Business Cards,\nDesigned to Be Remembered",
             "description": "Discover our range of premium cotton business cards, crafted with exceptional materials and finishes.",
             "cta_text": "VIEW ALL PRODUCTS",
-            "cta_href": "/shop",
+            "cta_href": "/business-cards",
             "cards": [
                 {
                     "title": "Basic Cotton Business Cards",
@@ -840,7 +840,7 @@
             ],
             "legal_text": "By submitting, unless you tell us otherwise, you'll receive marketing emails from us. You can opt out at any time — see our privacy policy for details.",
             "legal_link_text": "privacy policy",
-            "legal_link_href": "/privacy",
+            "legal_link_href": "/privacy-policy",
             "submit_label": "Submit",
             "submit_label_processing": "Submitting…",
             "success_message": "Thanks — we'll be in touch soon."
@@ -1730,7 +1730,7 @@
         "image_url": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80",
         "closing_paragraph": "Have an idea, a question, or a story to share? Get in touch — we'd love to hear from you.",
         "closing_link_text": "Get in touch",
-        "closing_link_href": "/contact"
+        "closing_link_href": "/contact-us"
     },
     "affiliate_program_page": {
         "_source_file": "resources/js/pages/affiliate-program.tsx",
@@ -1786,7 +1786,7 @@
         ],
         "closing_paragraph": "For any questions regarding these terms, please contact our support team.",
         "closing_link_text": "Contact Support",
-        "closing_link_href": "/contact"
+        "closing_link_href": "/contact-us"
     },
     "help_center_page": {
         "_source_file": "resources/js/pages/help.tsx",
@@ -1854,7 +1854,7 @@
             "heading": "Still need help?",
             "description": "Our support team is available Monday–Friday, 9 AM–5 PM PST.",
             "button_label": "Contact us",
-            "button_href": "/contact"
+            "button_href": "/contact-us"
         }
     },
     "privacy_page": {
@@ -1926,7 +1926,7 @@
                 "body": "Questions about this Privacy Policy? Email support@inkpavo.com or visit our contact page.",
                 "email_link": "support@inkpavo.com",
                 "contact_link_text": "contact page",
-                "contact_link_href": "/contact"
+                "contact_link_href": "/contact-us"
             }
         ]
     },
@@ -1974,7 +1974,7 @@
                 "body": "Questions about these Terms? Email support@inkpavo.com or visit our contact page.",
                 "email_link": "support@inkpavo.com",
                 "contact_link_text": "contact page",
-                "contact_link_href": "/contact"
+                "contact_link_href": "/contact-us"
             }
         ]
     },
@@ -1999,14 +1999,14 @@
             },
             {
                 "label": "Contact Support",
-                "href": "/contact"
+                "href": "/contact-us"
             }
         ],
         "quick_links_heading": "Popular pages",
         "quick_links": [
             {
                 "label": "Shop Business Cards",
-                "href": "/shop?cat=business-cards"
+                "href": "/business-cards"
             },
             {
                 "label": "Shop Postcards",
@@ -2018,7 +2018,7 @@
             },
             {
                 "label": "Help & FAQs",
-                "href": "/help"
+                "href": "/faq-and-help-center"
             }
         ]
     },

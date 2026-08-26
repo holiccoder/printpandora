@@ -26,9 +26,15 @@ function LinkList({ links }: { links: NavLink[] }) {
         <ul className="space-y-2">
             {links.map((link) => (
                 <li key={link.label}>
-                    <Link href={link.href} className={`text-sm ${TEAL}`}>
-                        {link.label}
-                    </Link>
+                    {link.href === '/sitemap.xml' ? (
+                        <a href={link.href} className={`text-sm ${TEAL}`}>
+                            {link.label}
+                        </a>
+                    ) : (
+                        <Link href={link.href} className={`text-sm ${TEAL}`}>
+                            {link.label}
+                        </Link>
+                    )}
                 </li>
             ))}
         </ul>
