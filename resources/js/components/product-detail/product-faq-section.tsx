@@ -10,7 +10,7 @@ export default function ProductFaqSection({ content }: ProductFaqSectionProps) {
 
     return (
         <section className="border-t border-neutral-200 bg-neutral-100 py-12 lg:py-16">
-            <div className="mx-auto max-w-7xl px-4">
+            <div className="product-detail-container mx-auto max-w-7xl px-4">
                 <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl md:text-left">
                     {heading}
                 </h2>

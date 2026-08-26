@@ -14,7 +14,7 @@ export default function PaperStockComparisonSection({
 
     return (
         <section className="bg-white py-12 lg:py-16">
-            <div className="mx-auto max-w-7xl px-4">
+            <div className="product-detail-container mx-auto max-w-7xl px-4">
                 <header className="mx-auto mb-12 max-w-3xl text-center">
                     <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl">
                         {heading}

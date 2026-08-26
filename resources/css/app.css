@@ -175,9 +175,10 @@
             max-width: 70vw;
         }
 
-        /* Keep the home carousel centered at 70% on wide displays. */
-        .home-hero-carousel {
-            width: 70%;
+        /* Keep the home media sections centered at 80% on wide displays. */
+        .home-hero-carousel,
+        .home-sample-pack-banner {
+            width: 80%;
             margin-inline: auto;
         }
     }

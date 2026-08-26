@@ -16,7 +16,7 @@ type Props = {
 /**
  * Two-column promo banner: a dark, moody text panel on the left with a
  * white ghost-button CTA, paired with a brightly-lit lifestyle photo on
- * the right. Designed to sit full-bleed underneath other hero content.
+ * the right. It is centered on wide home-page displays.
  *
  * Defaults come from `content/hardcoded-content.json` →
  * `home_page.sample_pack_banner`.
@@ -41,7 +41,7 @@ export default function SamplePackBanner({
     return (
         <section
             className={cn(
-                'relative grid w-full grid-cols-1 overflow-hidden bg-[#1d130f] md:h-[420px] md:grid-cols-2',
+                'home-sample-pack-banner relative grid w-full grid-cols-1 overflow-hidden bg-[#1d130f] md:h-[420px] md:grid-cols-2',
                 className,
             )}
             aria-label={h}

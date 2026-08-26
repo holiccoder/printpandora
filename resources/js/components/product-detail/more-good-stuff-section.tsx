@@ -14,7 +14,7 @@ export default function MoreGoodStuffSection({
 
     return (
         <section className="bg-[#f9f8f6] py-12 lg:py-16">
-            <div className="mx-auto max-w-7xl px-4">
+            <div className="product-detail-container mx-auto max-w-7xl px-4">
                 <header className="mb-10 text-center">
                     <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl">
                         {heading}

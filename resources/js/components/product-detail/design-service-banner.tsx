@@ -15,7 +15,7 @@ export default function DesignServiceBanner({
 
     return (
         <section className="overflow-hidden bg-[#F5F0E8] py-12 lg:py-16">
-            <div className="mx-auto max-w-7xl px-4">
+            <div className="product-detail-container mx-auto max-w-7xl px-4">
                 <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
                     {/* Left: Content */}
                     <div className="mx-auto max-w-xl space-y-5 text-center lg:mx-0 lg:text-left">
