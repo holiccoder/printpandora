@@ -79,7 +79,7 @@ export default function Showcases({ showcases }: Props) {
                                                     openLightbox(index)
                                                 }
                                                 className="group block w-full cursor-zoom-in text-left focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none"
-                                                aria-label={`View ${alt}`}
+                                                aria-label={`Open ${alt}`}
                                             >
                                                 <div className="aspect-[4/3] overflow-hidden bg-neutral-100">
                                                     <img
@@ -89,11 +89,6 @@ export default function Showcases({ showcases }: Props) {
                                                         decoding="async"
                                                         className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
                                                     />
-                                                </div>
-                                                <div className="flex justify-end px-4 py-4">
-                                                    <span className="text-xs font-semibold tracking-wide text-[#800020] uppercase">
-                                                        View
-                                                    </span>
                                                 </div>
                                             </button>
 
