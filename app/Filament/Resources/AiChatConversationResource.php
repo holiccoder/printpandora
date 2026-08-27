@@ -63,7 +63,10 @@ class AiChatConversationResource extends Resource
                                     ->badge()
                                     ->color(fn (string $state) => $state === 'user' ? 'primary' : 'gray')
                                     ->formatStateUsing(fn (string $state) => $state === 'user' ? '客户' : 'AI'),
-                                TextEntry::make('content')->label('内容'),
+                                TextEntry::make('admin_content')->label('内容'),
+                                TextEntry::make('admin_translation_label')
+                                    ->label('Translation')
+                                    ->placeholder('—'),
                                 TextEntry::make('created_at')->dateTime()->label('时间'),
                             ])
                             ->columns(3)
@@ -88,7 +91,7 @@ class AiChatConversationResource extends Resource
                 Tables\Columns\TextColumn::make('messages_count')
                     ->counts('messages')
                     ->label('消息数'),
-                Tables\Columns\TextColumn::make('latestMessage.content')
+                Tables\Columns\TextColumn::make('latestMessage.admin_content')
                     ->label('最近消息')
                     ->limit(20)
                     ->toggleable(),

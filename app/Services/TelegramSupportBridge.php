@@ -13,6 +13,7 @@ class TelegramSupportBridge
 {
     public function __construct(
         protected TelegramBotService $telegram,
+        protected AiChatTranslationService $translation,
     ) {}
 
     public function isSupportChat(string $chatId): bool
@@ -117,7 +118,16 @@ class TelegramSupportBridge
             return;
         }
 
-        DB::transaction(function () use ($conversation, $text, $chatId, $updateId, $operatorMessageId): void {
+        $translationAttributes = $this->translation->attributesFor('admin', $text);
+
+        DB::transaction(function () use (
+            $conversation,
+            $text,
+            $translationAttributes,
+            $chatId,
+            $updateId,
+            $operatorMessageId,
+        ): void {
             if (AiChatTelegramMessage::query()
                 ->where('telegram_update_id', $updateId)
                 ->exists()) {
@@ -136,6 +146,7 @@ class TelegramSupportBridge
             $adminMessage = $conversation->messages()->create([
                 'role' => 'admin',
                 'content' => $text,
+                ...$translationAttributes,
             ]);
             $conversation->touch();
 
@@ -154,7 +165,7 @@ class TelegramSupportBridge
      * Recover the conversation from the stable identifier in the original
      * Telegram notification when its mapping row is unavailable.
      *
-     * @param array<string, mixed> $message
+     * @param  array<string, mixed>  $message
      */
     private function conversationFromReplyMessage(string $chatId, array $message): ?AiChatConversation
     {
@@ -203,7 +214,7 @@ class TelegramSupportBridge
         $customer = $conversation->user
             ? $conversation->user->email
             : 'Guest '.substr((string) $conversation->session_id, 0, 8);
-        $content = trim((string) $message->content);
+        $content = trim($message->contentForAdmin());
 
         if ($content === '') {
             $content = $message->attachment_name
@@ -211,8 +222,12 @@ class TelegramSupportBridge
                 : '[Empty customer message]';
         }
 
+        $translationLabel = $message->isTranslatedForAdmin()
+            ? "\n(AI translated)"
+            : '';
+
         return Str::limit(
-            "Website support #{$conversation->getKey()}\nCustomer: {$customer}\n\n{$content}\n\nReply to this message to respond.",
+            "Website support #{$conversation->getKey()}\nCustomer: {$customer}\n\n{$content}{$translationLabel}\n\nReply to this message to respond.",
             3900,
             '…',
         );

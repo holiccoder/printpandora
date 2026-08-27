@@ -41,6 +41,7 @@
         #ai-admin-bubble .aib-msg.admin { background: #800020; color: #fff; margin-left: auto; }
         #ai-admin-bubble .aib-msg.assistant { background: #eef2f7; color: #555; }
         #ai-admin-bubble .aib-msg .aib-who { font-size: 10px; font-weight: 700; opacity: .7; margin-bottom: 2px; text-transform: uppercase; }
+        #ai-admin-bubble .aib-msg .aib-translation { font-size: 10px; font-weight: 700; opacity: .7; margin-top: 4px; }
         #ai-admin-bubble .aib-msg img { max-height: 120px; border-radius: 6px; margin-top: 4px; }
         #ai-admin-bubble .aib-input {
             display: flex; gap: 6px; padding: 8px; border-top: 1px solid #f0f0f0;
@@ -130,7 +131,9 @@
                         (c.mode === 'human' ? '人工' : 'AI') + '</span>' +
                         (c.waiting ? '<span class="aib-waiting">待回复</span>' : '') +
                         '</div>' +
-                        '<div style="color:#888;font-size:12px;margin-top:2px">' + esc(c.last_message || '(附件)') + '</div>' +
+                        '<div style="color:#888;font-size:12px;margin-top:2px">' + esc(c.last_message || '(附件)') +
+                        (c.last_message_is_translated ? '<div class="aib-translation">' + esc(c.last_message_translation_label || 'AI translated') + '</div>' : '') +
+                        '</div>' +
                         '</button>';
                 }).join('');
 
@@ -151,7 +154,10 @@
                             ? '<a href="' + esc(m.attachment_url) + '" target="_blank"><img src="' + esc(m.attachment_url) + '"></a>'
                             : '<a href="' + esc(m.attachment_url) + '" target="_blank" style="font-size:12px;text-decoration:underline">📎 ' + esc(m.attachment_name || '附件') + '</a>';
                     }
-                    return '<div class="aib-msg ' + m.role + '"><div class="aib-who">' + who + '</div>' + esc(m.content) + att + '</div>';
+                    var translation = m.is_translated
+                        ? '<div class="aib-translation">' + esc(m.translation_label || 'AI translated') + '</div>'
+                        : '';
+                    return '<div class="aib-msg ' + m.role + '"><div class="aib-who">' + who + '</div>' + esc(m.content) + translation + att + '</div>';
                 }).join('');
 
                 box.insertAdjacentHTML('beforeend', html);

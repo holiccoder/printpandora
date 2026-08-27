@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Ai\Agents\CustomerSupportAgent;
 use App\Models\AiChatConversation;
+use App\Models\AiChatMessage;
+use App\Services\AiChatTranslationService;
 use App\Services\AiKnowledgeRetriever;
 use App\Services\TelegramSupportBridge;
 use Illuminate\Http\JsonResponse;
@@ -15,8 +17,11 @@ use Laravel\Ai\Streaming\Events\TextDelta;
 
 class AiChatController extends Controller
 {
-    public function store(Request $request, AiKnowledgeRetriever $retriever): StreamableAgentResponse|JsonResponse
-    {
+    public function store(
+        Request $request,
+        AiKnowledgeRetriever $retriever,
+        AiChatTranslationService $translation,
+    ): StreamableAgentResponse|JsonResponse {
         abort_unless(config('aichat.enabled', true), 404);
 
         // The app renders exceptions as JSON only for api/* routes, so validate
@@ -62,6 +67,7 @@ class AiChatController extends Controller
         $conversation->messages()->create([
             'role' => 'user',
             'content' => $message,
+            ...$translation->attributesFor('user', $message),
         ]);
 
         $knowledge = $retriever->retrieve($message);
@@ -118,8 +124,11 @@ class AiChatController extends Controller
      * Post a plain customer message (human mode), optionally with an
      * attachment such as a design draft or a screenshot.
      */
-    public function message(Request $request, TelegramSupportBridge $telegramSupport): JsonResponse
-    {
+    public function message(
+        Request $request,
+        TelegramSupportBridge $telegramSupport,
+        AiChatTranslationService $translation,
+    ): JsonResponse {
         $validator = Validator::make($request->all(), [
             'session_id' => ['required', 'uuid'],
             'message' => ['nullable', 'string', 'max:1000'],
@@ -157,6 +166,7 @@ class AiChatController extends Controller
         $message = $conversation->messages()->create([
             'role' => 'user',
             'content' => $text,
+            ...$translation->attributesFor('user', $text),
             'attachment_path' => $attachmentPath,
             'attachment_name' => $attachmentName,
         ]);
@@ -208,12 +218,14 @@ class AiChatController extends Controller
     /**
      * @return array<string, mixed>
      */
-    protected function serializeMessage($message): array
+    protected function serializeMessage(AiChatMessage $message): array
     {
         return [
             'id' => $message->id,
             'role' => $message->role,
-            'content' => $message->content,
+            'content' => $message->contentForCustomer(),
+            'is_translated' => $message->isTranslatedForCustomer(),
+            'translation_label' => $message->translationLabelForCustomer(),
             'attachment_url' => $message->attachmentUrl(),
             'attachment_name' => $message->attachment_name,
             'created_at' => $message->created_at?->toIso8601String(),

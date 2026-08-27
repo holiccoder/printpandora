@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\AiChatConversation;
+use App\Models\AiChatMessage;
+use App\Services\AiChatTranslationService;
 use App\Services\TelegramBotService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -40,8 +42,10 @@ class AdminAiChatController extends Controller
                     'messages_count' => $conversation->messages_count,
                     'waiting' => $conversation->mode === 'human' && $last?->role === 'user',
                     'last_message' => $last
-                        ? ($last->content ?: ($last->attachment_name ?? ''))
+                        ? ($last->contentForAdmin() ?: ($last->attachment_name ?? ''))
                         : '',
+                    'last_message_is_translated' => $last?->isTranslatedForAdmin() ?? false,
+                    'last_message_translation_label' => $last?->translationLabelForAdmin(),
                     'last_message_at' => $last?->created_at?->toIso8601String(),
                     'human_requested_at' => $conversation->human_requested_at?->toIso8601String(),
                 ];
@@ -63,14 +67,7 @@ class AdminAiChatController extends Controller
             ->where('id', '>', (int) $request->query('after_id', 0))
             ->oldest('id')
             ->get()
-            ->map(fn ($message) => [
-                'id' => $message->id,
-                'role' => $message->role,
-                'content' => $message->content,
-                'attachment_url' => $message->attachmentUrl(),
-                'attachment_name' => $message->attachment_name,
-                'created_at' => $message->created_at?->toIso8601String(),
-            ])
+            ->map(fn (AiChatMessage $message) => $this->serializeMessage($message))
             ->values();
 
         return response()->json(['messages' => $messages]);
@@ -83,6 +80,7 @@ class AdminAiChatController extends Controller
         AiChatConversation $conversation,
         Request $request,
         TelegramBotService $telegram,
+        AiChatTranslationService $translation,
     ): JsonResponse {
         $validator = Validator::make($request->all(), [
             'message' => ['required', 'string', 'max:2000'],
@@ -98,8 +96,11 @@ class AdminAiChatController extends Controller
             return response()->json(['message' => 'The reply cannot be empty.'], 422);
         }
 
+        $translationAttributes = $translation->attributesFor('admin', $text);
+        $customerText = $translationAttributes['translated_content'] ?? $text;
+
         try {
-            $telegramMessage = $telegram->sendToConversation($conversation, $text);
+            $telegramMessage = $telegram->sendToConversation($conversation, $customerText);
         } catch (Throwable $exception) {
             report($exception);
 
@@ -111,20 +112,35 @@ class AdminAiChatController extends Controller
         $message = $conversation->messages()->create([
             'role' => 'admin',
             'content' => $text,
+            ...$translationAttributes,
         ]);
 
         $conversation->touch();
 
         return response()->json([
             'message' => [
-                'id' => $message->id,
-                'role' => 'admin',
-                'content' => $message->content,
-                'created_at' => $message->created_at?->toIso8601String(),
+                ...$this->serializeMessage($message),
+                'customer_content' => $message->contentForCustomer(),
+                'customer_is_translated' => $message->isTranslatedForCustomer(),
             ],
             'telegram_delivered' => $telegramMessage !== null,
             'telegram_message_id' => $telegramMessage['message_id'] ?? null,
         ], 201);
+    }
+
+    /** @return array<string, mixed> */
+    protected function serializeMessage(AiChatMessage $message): array
+    {
+        return [
+            'id' => $message->id,
+            'role' => $message->role,
+            'content' => $message->contentForAdmin(),
+            'is_translated' => $message->isTranslatedForAdmin(),
+            'translation_label' => $message->translationLabelForAdmin(),
+            'attachment_url' => $message->attachmentUrl(),
+            'attachment_name' => $message->attachment_name,
+            'created_at' => $message->created_at?->toIso8601String(),
+        ];
     }
 
     /**

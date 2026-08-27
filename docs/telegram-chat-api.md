@@ -43,6 +43,9 @@ TELEGRAM_SUPPORT_USER_IDS=
 
 # Lifetime of a website-to-Telegram linking URL, in minutes.
 AI_CHAT_TELEGRAM_LINK_TTL=30
+
+# Optional bidirectional English/Chinese translation for support messages.
+AI_CHAT_TRANSLATION_ENABLED=false
 ```
 
 Do not commit these values or expose `TELEGRAM_BOT_TOKEN` to a browser or
@@ -53,6 +56,13 @@ php artisan config:clear
 ```
 
 In production, use `php artisan config:cache` after verifying the values.
+
+When `AI_CHAT_TRANSLATION_ENABLED=true`, English customer messages are stored
+with a Chinese AI translation for administrators, and Chinese administrator
+replies are stored with an English AI translation for customers. The original
+message remains available as the source text, and translated messages are
+marked `AI translated` in the chat interfaces and API responses. The same
+directional behavior is used for Telegram customer messages and replies.
 
 ## Create and configure the Telegram bot
 

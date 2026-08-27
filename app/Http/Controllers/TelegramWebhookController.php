@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AiChatChannel;
 use App\Models\AiChatConversation;
+use App\Services\AiChatTranslationService;
 use App\Services\TelegramBotService;
 use App\Services\TelegramSupportBridge;
 use Illuminate\Http\JsonResponse;
@@ -16,6 +17,7 @@ class TelegramWebhookController extends Controller
         Request $request,
         TelegramBotService $telegram,
         TelegramSupportBridge $telegramSupport,
+        AiChatTranslationService $translation,
     ): JsonResponse {
         $secret = (string) config('services.telegram.webhook_secret');
         $providedSecret = (string) $request->header('X-Telegram-Bot-Api-Secret-Token');
@@ -102,9 +104,11 @@ class TelegramWebhookController extends Controller
         }
 
         $conversation = $channel->conversation;
+        $content = $text !== '' ? $text : '[Telegram attachment received]';
         $conversation->messages()->create([
             'role' => 'user',
-            'content' => $text !== '' ? $text : '[Telegram attachment received]',
+            'content' => $content,
+            ...($text !== '' ? $translation->attributesFor('user', $content) : []),
         ]);
         $conversation->touch();
         $this->markUpdate($channel, $updateId, $userId, $username);

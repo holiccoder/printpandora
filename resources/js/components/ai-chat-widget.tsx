@@ -7,6 +7,8 @@ type ChatMessage = {
     id?: number;
     role: 'user' | 'assistant' | 'admin';
     content: string;
+    is_translated?: boolean;
+    translation_label?: string | null;
     attachment_url?: string | null;
     attachment_name?: string | null;
 };
@@ -466,6 +468,12 @@ export function AiChatWidget() {
                                     </p>
                                 )}
                                 {message.content}
+                                {message.is_translated && (
+                                    <p className="mt-1 text-[10px] font-semibold opacity-70">
+                                        {message.translation_label ??
+                                            'AI translated'}
+                                    </p>
+                                )}
                                 {renderAttachment(message)}
                             </div>
                         ))}

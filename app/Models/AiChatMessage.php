@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Storage;
  * @property int $conversation_id
  * @property string $role
  * @property string $content
+ * @property string|null $translated_content
+ * @property string|null $translation_target
  * @property string|null $attachment_path
  * @property string|null $attachment_name
  * @property Carbon|null $created_at
@@ -25,9 +27,72 @@ class AiChatMessage extends Model
         'conversation_id',
         'role',
         'content',
+        'translated_content',
+        'translation_target',
         'attachment_path',
         'attachment_name',
     ];
+
+    public const TRANSLATION_LABEL = 'AI translated';
+
+    public function contentForAdmin(): string
+    {
+        return $this->isTranslatedForAdmin()
+            ? (string) $this->translated_content
+            : (string) $this->content;
+    }
+
+    public function contentForCustomer(): string
+    {
+        return $this->isTranslatedForCustomer()
+            ? (string) $this->translated_content
+            : (string) $this->content;
+    }
+
+    public function isTranslatedForAdmin(): bool
+    {
+        return $this->role === 'user' && $this->hasTranslation();
+    }
+
+    public function isTranslatedForCustomer(): bool
+    {
+        return $this->role === 'admin' && $this->hasTranslation();
+    }
+
+    public function hasTranslation(): bool
+    {
+        return trim((string) $this->translated_content) !== '';
+    }
+
+    public function translationLabelForAdmin(): ?string
+    {
+        return $this->isTranslatedForAdmin() ? self::TRANSLATION_LABEL : null;
+    }
+
+    public function translationLabelForCustomer(): ?string
+    {
+        return $this->isTranslatedForCustomer() ? self::TRANSLATION_LABEL : null;
+    }
+
+    public function getAdminContentAttribute(): string
+    {
+        return $this->contentForAdmin();
+    }
+
+    public function getCustomerContentAttribute(): string
+    {
+        return $this->contentForCustomer();
+    }
+
+    public function getAdminTranslationLabelAttribute(): ?string
+    {
+        return $this->translationLabelForAdmin();
+    }
+
+    public function getCustomerTranslationLabelAttribute(): ?string
+    {
+        return $this->translationLabelForCustomer();
+    }
 
     /**
      * Public URL of the uploaded attachment, if any.

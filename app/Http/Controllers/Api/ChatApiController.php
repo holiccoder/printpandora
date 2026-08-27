@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AiChatConversation;
 use App\Models\AiChatMessage;
+use App\Services\AiChatTranslationService;
 use App\Services\TelegramBotService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -54,6 +55,7 @@ class ChatApiController extends Controller
         AiChatConversation $conversation,
         Request $request,
         TelegramBotService $telegram,
+        AiChatTranslationService $translation,
     ): JsonResponse {
         $validated = $request->validate([
             'message' => ['required', 'string', 'max:2000'],
@@ -64,8 +66,11 @@ class ChatApiController extends Controller
             return response()->json(['message' => 'The reply cannot be empty.'], 422);
         }
 
+        $translationAttributes = $translation->attributesFor('admin', $text);
+        $customerText = $translationAttributes['translated_content'] ?? $text;
+
         try {
-            $telegramMessage = $telegram->sendToConversation($conversation, $text);
+            $telegramMessage = $telegram->sendToConversation($conversation, $customerText);
         } catch (Throwable $exception) {
             report($exception);
 
@@ -77,11 +82,14 @@ class ChatApiController extends Controller
         $message = $conversation->messages()->create([
             'role' => 'admin',
             'content' => $text,
+            ...$translationAttributes,
         ]);
         $conversation->touch();
 
         return response()->json([
             'message' => $this->serializeMessage($message),
+            'customer_content' => $message->contentForCustomer(),
+            'customer_is_translated' => $message->isTranslatedForCustomer(),
             'telegram_delivered' => $telegramMessage !== null,
             'telegram_message_id' => $telegramMessage['message_id'] ?? null,
         ], 201);
@@ -138,8 +146,10 @@ class ChatApiController extends Controller
             'messages_count' => $conversation->messages_count,
             'waiting' => $conversation->mode === 'human' && $last?->role === 'user',
             'last_message' => $last
-                ? ($last->content ?: ($last->attachment_name ?? ''))
+                ? ($last->contentForAdmin() ?: ($last->attachment_name ?? ''))
                 : '',
+            'last_message_is_translated' => $last?->isTranslatedForAdmin() ?? false,
+            'last_message_translation_label' => $last?->translationLabelForAdmin(),
             'last_message_at' => $last?->created_at?->toIso8601String(),
             'telegram' => [
                 'connected' => $telegram?->external_chat_id !== null,
@@ -156,7 +166,9 @@ class ChatApiController extends Controller
         return [
             'id' => $message->id,
             'role' => $message->role,
-            'content' => $message->content,
+            'content' => $message->contentForAdmin(),
+            'is_translated' => $message->isTranslatedForAdmin(),
+            'translation_label' => $message->translationLabelForAdmin(),
             'attachment_url' => $message->attachmentUrl(),
             'attachment_name' => $message->attachment_name,
             'created_at' => $message->created_at?->toIso8601String(),

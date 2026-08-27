@@ -17,6 +17,13 @@ return [
     // available so customers can still reach an agent without an AI provider.
     'enabled' => env('AI_CHAT_ENABLED', true),
 
+    // When enabled, English customer messages are translated to Chinese for
+    // support agents, and Chinese agent replies are translated to English for
+    // customers. The original message is always retained as the source text.
+    'translation' => [
+        'enabled' => env('AI_CHAT_TRANSLATION_ENABLED', false),
+    ],
+
     // Bearer token for the external support-chat client API. Keep this value
     // server-side and rotate it if it is ever exposed.
     'api_token' => env('AI_CHAT_API_TOKEN'),
