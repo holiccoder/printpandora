@@ -13,6 +13,8 @@ NPM_BIN="npm"
 WEB_USER="www"
 WEB_GROUP="www"
 RELOAD_FPM_CMD="/etc/init.d/php-fpm-84 reload"  # 对应 PHP 8.4
+# Ensure we use a modern Node.js version (Vite requires Node.js 20.19+ or 22.12+)
+export PATH="/www/server/nodejs/v24.17.0/bin:$PATH"
 # -------------------------------------------------------
 
 cd "$PROJECT_DIR"
