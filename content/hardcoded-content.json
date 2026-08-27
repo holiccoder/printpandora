@@ -2516,7 +2516,7 @@
             "body": "From classic 4×6 mailers to large show cards — rich paper stocks, vivid color, and finishes that make your message feel worth holding onto.",
             "cta": "Browse postcard sizes",
             "cta_href": "#series",
-            "image_url": "/images/home/product-postcards.png",
+            "image_url": "/images/products/postcards/hero.png",
             "image_alt": "Stack of custom printed postcards"
         },
         "series": {
@@ -2528,35 +2528,35 @@
                     "name": "Standard 4\"×6\"",
                     "blurb": "The classic mailer size — perfect for promotions, thank-yous, and event invites.",
                     "price_from": "from $29",
-                    "image_url": "/images/home/product-postcards.png",
+                    "image_url": "/images/products/postcards/card.png",
                     "href": "/postcards"
                 },
                 {
                     "name": "Square 4.72\"",
                     "blurb": "A modern square that stands out in the mail and on display.",
                     "price_from": "from $32",
-                    "image_url": "/images/home/card-die-cut.png",
+                    "image_url": "/images/products/postcards/postcard-2.png",
                     "href": "/postcards"
                 },
                 {
                     "name": "Medium 5\"×7\"",
                     "blurb": "More room for photography and copy — ideal for portfolios and announcements.",
                     "price_from": "from $36",
-                    "image_url": "/images/home/hero-marketing-materials.png",
+                    "image_url": "/images/products/postcards/postcard-4.png",
                     "href": "/postcards"
                 },
                 {
                     "name": "Large 6\"×9\"",
                     "blurb": "Maximum impact for menus, real estate, and campaign pieces.",
                     "price_from": "from $42",
-                    "image_url": "/images/home/product-premium-cards.png",
+                    "image_url": "/images/products/postcards/vertical-card.png",
                     "href": "/postcards"
                 },
                 {
                     "name": "Rack Cards",
                     "blurb": "Tall display cards for counters, booths, and brochure racks.",
                     "price_from": "from $34",
-                    "image_url": "/images/home/product-flyers.png",
+                    "image_url": "/images/products/postcards/postcard-1.png",
                     "href": "/postcards"
                 }
             ]
@@ -2646,7 +2646,7 @@
             "body": "Die-cut shapes, durable vinyl, and clean paper labels — built for packaging, events, and everyday brand moments.",
             "cta": "Browse sticker styles",
             "cta_href": "#series",
-            "image_url": "/images/home/product-stickers-labels.png",
+            "image_url": "/images/products/stickers/hero.png",
             "image_alt": "Custom die-cut stickers and labels"
         },
         "series": {
@@ -2658,42 +2658,42 @@
                     "name": "Die-Cut Stickers",
                     "blurb": "Cut to your artwork outline for a custom silhouette that pops.",
                     "price_from": "from $24",
-                    "image_url": "/images/home/product-stickers-labels.png",
+                    "image_url": "/images/products/stickers/sticker-die-cut.png",
                     "href": "/stickers-and-labels"
                 },
                 {
                     "name": "Circle Stickers",
                     "blurb": "Classic rounds for seals, packaging, and event favors.",
                     "price_from": "from $18",
-                    "image_url": "/images/home/card-foil-stamped.png",
+                    "image_url": "/images/products/stickers/sticker-circle.png",
                     "href": "/stickers-and-labels"
                 },
                 {
                     "name": "Rectangle Labels",
                     "blurb": "Clean rectangles for product labels, address, and branding.",
                     "price_from": "from $18",
-                    "image_url": "/images/home/product-classic-cards.png",
+                    "image_url": "/images/products/stickers/sticker-rectangle.png",
                     "href": "/stickers-and-labels"
                 },
                 {
                     "name": "Square Stickers",
                     "blurb": "Balanced squares for logos, QR codes, and social stickers.",
                     "price_from": "from $18",
-                    "image_url": "/images/home/card-debossed.png",
+                    "image_url": "/images/products/stickers/sticker-square.png",
                     "href": "/stickers-and-labels"
                 },
                 {
                     "name": "Vinyl Stickers",
                     "blurb": "Durable vinyl for outdoor use, water bottles, and high-wear spots.",
                     "price_from": "from $28",
-                    "image_url": "/images/home/product-pvc-cards.png",
+                    "image_url": "/images/products/stickers/sticker-vinyl.png",
                     "href": "/stickers-and-labels"
                 },
                 {
                     "name": "Matte Paper Labels",
                     "blurb": "Soft matte paper for elegant packaging and stationery accents.",
                     "price_from": "from $16",
-                    "image_url": "/images/home/product-cotton-cards.png",
+                    "image_url": "/images/products/stickers/sticker-matte-paper.png",
                     "href": "/stickers-and-labels"
                 }
             ]
@@ -2783,7 +2783,7 @@
             "body": "High-impact flyers and fold-out brochures for events, menus, and brand stories — vivid color on stocks that feel professional.",
             "cta": "Browse formats",
             "cta_href": "#series",
-            "image_url": "/images/home/product-flyers.png",
+            "image_url": "/images/products/flyers/hero.png",
             "image_alt": "Printed flyers and tri-fold brochures"
         },
         "series": {
@@ -2795,42 +2795,42 @@
                     "name": "US Letter Flyers",
                     "blurb": "8.5\"×11\" workhorses for handouts, posters, and storefronts.",
                     "price_from": "from $39",
-                    "image_url": "/images/home/product-flyers.png",
+                    "image_url": "/images/products/flyers/flyer-us-letter.png",
                     "href": "/flyer-printing-1000"
                 },
                 {
                     "name": "Half Page Flyers",
                     "blurb": "Compact handouts that still leave room for a strong headline.",
                     "price_from": "from $29",
-                    "image_url": "/images/home/hero-marketing-materials.png",
+                    "image_url": "/images/products/flyers/flyer-half-page.png",
                     "href": "/flyers-and-brochures"
                 },
                 {
                     "name": "Long Flyers",
                     "blurb": "Tall, narrow formats for menus, programs, and rack displays.",
                     "price_from": "from $32",
-                    "image_url": "/images/home/product-postcards.png",
+                    "image_url": "/images/products/flyers/flyer-long.png",
                     "href": "/flyers-and-brochures"
                 },
                 {
                     "name": "Square Flyers",
                     "blurb": "Eye-catching square layouts for invites and modern brand pieces.",
                     "price_from": "from $34",
-                    "image_url": "/images/home/card-letterpress.png",
+                    "image_url": "/images/products/flyers/flyer-square.png",
                     "href": "/flyers-and-brochures"
                 },
                 {
                     "name": "Tri-Fold Brochures",
                     "blurb": "Classic three-panel storytelling for services, tours, and menus.",
                     "price_from": "from $49",
-                    "image_url": "/images/home/product-premium-cards.png",
+                    "image_url": "/images/products/flyers/brochure-tri-fold.png",
                     "href": "/tri-fold-brochure-500"
                 },
                 {
                     "name": "Bi-Fold Brochures",
                     "blurb": "Simple four-panel fold for clean product or program overviews.",
                     "price_from": "from $45",
-                    "image_url": "/images/home/product-business-cards.png",
+                    "image_url": "/images/products/flyers/brochure-bi-fold.png",
                     "href": "/flyers-and-brochures"
                 }
             ]
