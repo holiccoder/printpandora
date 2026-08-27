@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\User;
 use App\Services\Cart;
+use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -62,23 +63,34 @@ class PayPalAsyncOrderTest extends TestCase
             $this->checkoutData(),
         )->assertOk();
 
-        Http::fake([
-            'https://api-m.sandbox.paypal.com/v1/oauth2/token' => Http::response([
-                'access_token' => 'sandbox-access-token',
-            ]),
-            'https://api-m.sandbox.paypal.com/v2/checkout/orders/PAYPAL-ORDER-1/capture' => Http::response([
-                'id' => 'PAYPAL-ORDER-1',
-                'status' => 'COMPLETED',
-                'purchase_units' => [[
-                    'payments' => [
-                        'captures' => [[
-                            'id' => 'PAYPAL-CAPTURE-1',
-                            'status' => 'COMPLETED',
-                        ]],
-                    ],
-                ]],
-            ]),
-        ]);
+        $captureRequestBody = null;
+
+        Http::fake(function (HttpRequest $request) use (&$captureRequestBody) {
+            if (str_ends_with($request->url(), '/v1/oauth2/token')) {
+                return Http::response([
+                    'access_token' => 'sandbox-access-token',
+                ]);
+            }
+
+            if (str_ends_with($request->url(), '/v2/checkout/orders/PAYPAL-ORDER-1/capture')) {
+                $captureRequestBody = $request->body();
+
+                return Http::response([
+                    'id' => 'PAYPAL-ORDER-1',
+                    'status' => 'COMPLETED',
+                    'purchase_units' => [[
+                        'payments' => [
+                            'captures' => [[
+                                'id' => 'PAYPAL-CAPTURE-1',
+                                'status' => 'COMPLETED',
+                            ]],
+                        ],
+                    ]],
+                ]);
+            }
+
+            return Http::response([], 404);
+        });
 
         $response = $this->actingAs($user)->postJson(
             route('shop.checkout.paypal.capture'),
@@ -94,6 +106,7 @@ class PayPalAsyncOrderTest extends TestCase
             'paypal_order_id' => 'PAYPAL-ORDER-1',
             'payment_id' => 'PAYPAL-CAPTURE-1',
         ]);
+        $this->assertSame('{}', $captureRequestBody);
         $this->assertSame(0, app(Cart::class)->count());
     }
 
