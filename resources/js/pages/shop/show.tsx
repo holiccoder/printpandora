@@ -2568,8 +2568,7 @@ export default function ShopShow({
                     {productOptions.detail_sections.design_specifications && (
                         <DesignSpecificationsSection
                             content={
-                                productOptions.detail_sections
-                                    .design_specifications
+                                c?.shared_detail_sections?.business_cards?.design_specifications
                             }
                         />
                     )}
