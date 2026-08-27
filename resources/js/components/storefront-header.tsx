@@ -134,16 +134,8 @@ export function StorefrontHeader({
                     Desktop uses equal-width side tracks so the search box is
                     geometrically centered against the whole header. */}
                 <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-center lg:gap-6">
-                    {/* left track: mobile menu + logo */}
+                    {/* left track: logo */}
                     <div className="flex min-w-0 items-center gap-4 lg:justify-self-start">
-                        {/* mobile menu */}
-                        <div className="lg:hidden">
-                            <MobileNav
-                                activeCategory={activeCategory}
-                                navCategories={navCategories}
-                            />
-                        </div>
-
                         {/* logo */}
                         <Link
                             href={home()}
@@ -304,6 +296,14 @@ export function StorefrontHeader({
                             items={globalCart?.items ?? []}
                             subtotal={globalCart?.subtotal}
                         />
+
+                        {/* mobile menu */}
+                        <div className="lg:hidden">
+                            <MobileNav
+                                activeCategory={activeCategory}
+                                navCategories={navCategories}
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -598,7 +598,7 @@ function MobileNav({
                     <Menu className="size-5" />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-80 overflow-y-auto p-0">
+            <SheetContent side="right" className="w-80 overflow-y-auto p-0">
                 <SheetHeader className="border-b px-4 py-3">
                     <SheetTitle className="text-left">
                         <img

@@ -1068,31 +1068,31 @@
                     },
                     "downloads": [
                         {
-                            "id": "photoshop",
-                            "label": "Photoshop",
-                            "extension": ".psd",
-                            "href": "/templates/template.psd",
-                            "color": "#2563eb"
+                            "id": "pdf",
+                            "label": "PDF",
+                            "extension": ".pdf",
+                            "href": "/templates/pdf.zip",
+                            "color": "#dc2626"
                         },
                         {
                             "id": "illustrator",
                             "label": "Illustrator",
                             "extension": ".ai",
-                            "href": "/templates/template.ai",
+                            "href": "/templates/ai.zip",
                             "color": "#f97316"
                         },
                         {
                             "id": "indesign",
                             "label": "InDesign",
                             "extension": ".indd",
-                            "href": "/templates/template.indd",
+                            "href": "/templates/indd.zip",
                             "color": "#ec4899"
                         },
                         {
                             "id": "jpeg",
                             "label": "Jpeg",
                             "extension": ".jpg",
-                            "href": "/templates/template.jpg",
+                            "href": "/templates/jpg.zip",
                             "color": "#0f766e"
                         }
                     ]

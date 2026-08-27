@@ -16,7 +16,7 @@ interface CreateTicketModalProps {
 
 export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModalProps) {
     const c = useContent('shop_tickets_create_page') as any;
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, transform } = useForm({
         subject: '',
         message: '',
         priority: 'medium',
@@ -31,11 +31,16 @@ export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModal
     }, [isOpen, reset]);
 
     const submit = () => {
-        post('/tickets', {
-            onSuccess: () => {
-                onClose();
-            },
-        });
+        transform((data) => ({
+            ...data,
+            order_id:
+                data.order_id && data.order_id.trim() !== ''
+                    ? isNaN(Number(data.order_id))
+                        ? data.order_id
+                        : Number(data.order_id)
+                    : null,
+        }));
+        post('/tickets');
     };
 
     return (
@@ -107,6 +112,11 @@ export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModal
                                 {c.priority_options.high}
                             </option>
                         </select>
+                        {errors.priority && (
+                            <p className="mt-1 text-sm text-red-600">
+                                {errors.priority}
+                            </p>
+                        )}
                     </div>
 
                     <div>
@@ -126,6 +136,11 @@ export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModal
                             className="w-full rounded-lg border border-[#e3e3e0] bg-white px-4 py-2.5 text-sm dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-neutral-100 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
                             placeholder={c.placeholders.order_id}
                         />
+                        {errors.order_id && (
+                            <p className="mt-1 text-sm text-red-600">
+                                {errors.order_id}
+                            </p>
+                        )}
                     </div>
 
                     <div>
