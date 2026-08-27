@@ -66,7 +66,7 @@ class HelpCenterSeeder extends Seeder
                     'category_id' => $category->id,
                     'title' => $data['title'],
                     'body' => $data['body'],
-                    'excerpt' => $data['excerpt'] ?? strip_tags($data['body']),
+                    'excerpt' => $data['excerpt'] ?? \Illuminate\Support\Str::limit(strip_tags($data['body']), 200),
                     'is_published' => true,
                     'published_at' => now()->subDays($total - $index),
                     'sort_order' => $index,
