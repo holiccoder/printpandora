@@ -210,7 +210,7 @@ export default function BusinessCardSamplePack() {
                             title="Letterpress Business Cards"
                             description="Twelve debossed designs, pressed into layers of textured paper. The kind of card that fingers can’t leave alone."
                             linkText="Explore letterpress"
-                            linkHref="/luxe-business-cards"
+                            linkHref="/business-cards/luxe"
                         />
                         <FeatureCard
                             image="https://picsum.photos/seed/business-collab/800/500"

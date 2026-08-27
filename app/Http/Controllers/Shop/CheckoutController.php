@@ -147,7 +147,7 @@ class CheckoutController extends Controller
             $cart->clear();
 
             return response()->json([
-                'redirect' => route('shop.orders.show', $order->id),
+                'redirect' => route('shop.checkout.thank-you', $order->id),
             ]);
         }
 
@@ -176,7 +176,7 @@ class CheckoutController extends Controller
         $cart->clear();
 
         return response()->json([
-            'redirect' => route('shop.orders.show', $order->id),
+            'redirect' => route('shop.checkout.thank-you', $order->id),
         ]);
     }
 

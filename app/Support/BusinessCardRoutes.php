@@ -15,6 +15,8 @@ final class BusinessCardRoutes
         'premium-cotton-business-card' => 'premium-cotton',
         'luxe-cotton-business-card' => 'luxe-cotton',
         'grand-cotton-business-card' => 'grand-cotton',
+        'super-business-cards' => 'super',
+        'luxe-business-cards' => 'luxe',
         'basic-pvc-card' => 'basic-pvc',
         'standard-pvc-card' => 'standard-pvc',
         'premium-pvc-card' => 'premium-pvc',

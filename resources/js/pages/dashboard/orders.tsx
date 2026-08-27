@@ -67,7 +67,7 @@ export default function DashboardOrders({ orders }: Props) {
                             <div className="px-6 py-12 text-center text-sm text-neutral-600">
                                 {c.empty_state_prefix}
                                 <Link
-                                    href="/shop"
+                                    href="/business-cards"
                                     className="font-semibold hover:underline"
                                     style={{ color: ACCENT }}
                                 >

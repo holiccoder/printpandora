@@ -182,6 +182,8 @@ class Settings extends Page implements HasForms
                                                     ->required()
                                                     ->maxLength(500),
                                                 static::bannerUpload(),
+                                                static::bannerUpload('mobile_image_url')
+                                                    ->label('Mobile banner image'),
                                                 TextInput::make('alt')
                                                     ->label('横幅替代文本')
                                                     ->required()
@@ -225,6 +227,12 @@ class Settings extends Page implements HasForms
                 continue;
             }
 
+            foreach (['image_url', 'mobile_image_url'] as $imageKey) {
+                if (array_key_exists($imageKey, $slide)) {
+                    $slide[$imageKey] = static::normaliseFileUploadValue($slide[$imageKey]);
+                }
+            }
+
             $originalIndex = filter_var($slide['original_index'] ?? null, FILTER_VALIDATE_INT);
             $baseSlide = is_int($originalIndex) && is_array($currentSlides[$originalIndex] ?? null)
                 ? $currentSlides[$originalIndex]
@@ -255,9 +263,18 @@ class Settings extends Page implements HasForms
         return 'full';
     }
 
-    protected static function bannerUpload(): FileUpload
+    private static function normaliseFileUploadValue(mixed $value): mixed
     {
-        return FileUpload::make('image_url')
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        return array_values($value)[0] ?? null;
+    }
+
+    protected static function bannerUpload(string $name = 'image_url'): FileUpload
+    {
+        return FileUpload::make($name)
             ->label('横幅图片')
             ->image()
             ->acceptedFileTypes(ProductImagePolicy::ALLOWED_MIME_TYPES)

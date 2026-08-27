@@ -121,11 +121,11 @@
                             },
                             {
                                 "label": "Super Business Cards",
-                                "href": "/super-business-cards"
+                                "href": "/business-cards/super"
                             },
                             {
                                 "label": "Luxe Business Cards",
-                                "href": "/luxe-business-cards"
+                                "href": "/business-cards/luxe"
                             },
                             {
                                 "label": "PVC Business Cards",
@@ -207,7 +207,7 @@
                         "title": "Original Business Cards",
                         "description": "Thicker than your average card, Original Business Cards set a new standard for 'standard' business cards.",
                         "cta_label": "Shop Original Business Cards",
-                        "cta_href": "/shop/original-business-cards"
+                        "cta_href": "/business-cards/classic-standard"
                     }
                 ]
             }
@@ -383,7 +383,7 @@
                 "heading": "Your cart is empty",
                 "description": "Looks like you haven't added anything yet. Start with our most popular print products.",
                 "cta_label": "Continue shopping",
-                "cta_href": "/shop"
+                "cta_href": "/business-cards"
             },
             "quantity_label_prefix": "Qty",
             "footer": {
@@ -418,7 +418,7 @@
         "attach_label": "Attach a file",
         "human_support_heading": "Need a human?",
         "human_support_authenticated_label": "Create a support ticket",
-        "human_support_authenticated_href": "/shop/tickets/create",
+        "human_support_authenticated_href": "/tickets/create",
         "human_support_guest_label": "Contact us",
         "human_support_guest_href": "/contact-us",
         "disclaimer": "AI assistant - answers may be incomplete. For order-specific help, please contact human support."
@@ -447,7 +447,8 @@
                     "subheadline": "Register and log in to your account to enjoy an exclusive offer on your first order.",
                     "cta_text": "Register Now",
                     "cta_href": "/register",
-                    "image_url": "/images/home/homepage-carousel-01.webp",
+                    "image_url": "/images/home/homepage-carousel-01.png",
+                    "mobile_image_url": "/images/home/mobile-banners/01-mobile.png",
                     "alt": "Premium black business cards with custom reflective lettering on a dark textured surface",
                     "text_tone": "light",
                     "offer": {
@@ -484,6 +485,7 @@
                     "cta_text": "Shop business cards",
                     "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-02.webp",
+                    "mobile_image_url": "/images/home/mobile-banners/02-mobile.png",
                     "alt": "Premium business cards arranged in a styled studio scene",
                     "text_tone": "dark"
                 },
@@ -494,6 +496,7 @@
                     "cta_text": "DISCOVER LETTERPRESS",
                     "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-03.webp",
+                    "mobile_image_url": "/images/home/mobile-banners/03-mobile.png",
                     "alt": "Custom business cards displayed in a premium print setting",
                     "text_tone": "dark"
                 },
@@ -504,6 +507,7 @@
                     "cta_text": "EXPLORE FOIL SHINE",
                     "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-04.webp",
+                    "mobile_image_url": "/images/home/mobile-banners/04-mobile.png",
                     "alt": "Foil-finished business cards arranged on a dark surface",
                     "text_tone": "dark"
                 },
@@ -514,6 +518,7 @@
                     "cta_text": "SHOP COTTON CARDS",
                     "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-05.webp",
+                    "mobile_image_url": "/images/home/mobile-banners/05-mobile.png",
                     "alt": "Elegant custom business cards in a premium styled scene",
                     "text_tone": "dark"
                 },
@@ -524,6 +529,7 @@
                     "cta_text": "EXPLORE SHAPES",
                     "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-06.webp",
+                    "mobile_image_url": "/images/home/mobile-banners/06-mobile.png",
                     "alt": "Custom printed business cards with premium finishing details",
                     "text_tone": "light"
                 },
@@ -532,8 +538,9 @@
                     "headline": "STICK YOUR BRAND\nEVERYWHERE",
                     "subheadline": "Waterproof, scratch-resistant vinyl stickers and elegant product labels with precision die-cutting.",
                     "cta_text": "DESIGN STICKERS",
-                    "cta_href": "/shop?cat=stickers-and-labels",
+                    "cta_href": "/stickers-and-labels",
                     "image_url": "/images/home/homepage-carousel-07.webp",
+                    "mobile_image_url": "/images/home/mobile-banners/07-mobile.png",
                     "alt": "Distinctive business card designs arranged in a boutique setting",
                     "text_tone": "dark"
                 },
@@ -542,8 +549,9 @@
                     "headline": "YOUR BUSINESS\nIN FULL COLOR",
                     "subheadline": "Premium flyers, brochures, and catalogs crafted to turn casual readers into loyal customers.",
                     "cta_text": "SHOP MARKETING KIT",
-                    "cta_href": "/shop?cat=flyers-and-brochures",
+                    "cta_href": "/flyers-and-brochures",
                     "image_url": "/images/home/homepage-carousel-08.webp",
+                    "mobile_image_url": "/images/home/mobile-banners/08-mobile.png",
                     "alt": "Premium printed cards arranged on a neutral surface",
                     "text_tone": "dark"
                 },
@@ -552,8 +560,9 @@
                     "headline": "MAIL THAT MAKES\nTHEM SMILE",
                     "subheadline": "Exquisite postcards, thank you notes, and heavy art prints with gorgeous finishes.",
                     "cta_text": "EXPLORE POSTCARDS",
-                    "cta_href": "/shop?cat=postcards",
+                    "cta_href": "/postcards",
                     "image_url": "/images/home/homepage-carousel-09.webp",
+                    "mobile_image_url": "/images/home/mobile-banners/09-mobile.png",
                     "alt": "Custom business cards arranged in warm natural light",
                     "text_tone": "dark"
                 },
@@ -564,6 +573,7 @@
                     "cta_text": "SHOP BUSINESS CARDS",
                     "cta_href": "/business-cards",
                     "image_url": "/images/home/homepage-carousel-10.webp",
+                    "mobile_image_url": "/images/home/mobile-banners/10-mobile.png",
                     "alt": "Premium custom business cards displayed in a refined studio scene",
                     "text_tone": "dark"
                 }
@@ -855,16 +865,6 @@
             "heading": "May also interest you"
         }
     },
-    "shop_index_page": {
-        "_source_file": "resources/js/pages/shop/index.tsx",
-        "seo": {
-            "title": "Shop",
-            "description": "Browse our printing products."
-        },
-        "page_heading": "Shop",
-        "all_button_label": "All ({count})",
-        "empty_state": "No products found."
-    },
     "product_detail_page": {
         "_source_file": "resources/js/pages/shop/show.tsx",
         "accent_color": "#800020",
@@ -990,8 +990,8 @@
         "quantity_table_headers": ["Quantity", "Per card", "Pack Price"],
         "save_percentage_label": "Save {n}%",
         "delivery_callout": {
-            "title": "Get it by Tue, 16 Jun",
-            "subtitle": "Order before 12pm Mon–Fri for next-day delivery on selected products."
+            "title": "With Standard Shipping, receive your order by {date}.",
+            "subtitle": "With Fast Shipping, receive your order by {date}."
         },
         "order_summary": {
             "heading": "Your selection",
@@ -1129,7 +1129,7 @@
                             "name": "Super Business Cards",
                             "price": "50 cards from $33.00",
                             "image_url": "/images/product-detail/paper-stocks/luxury-paper.webp",
-                            "href": "/super-business-cards",
+                            "href": "/business-cards/super",
                             "cta": "Shop Super Business Cards ›",
                             "features": [
                                 "18pt thickness",
@@ -1144,7 +1144,7 @@
                             "name": "Luxe Business Cards",
                             "price": "50 cards from $43.00",
                             "image_url": "/images/product-detail/paper-stocks/pvc-card.webp",
-                            "href": "/luxe-business-cards",
+                            "href": "/business-cards/luxe",
                             "cta": "Shop Luxe Business Cards ›",
                             "features": [
                                 "32pt thickness",
@@ -1995,7 +1995,7 @@
             },
             {
                 "label": "Browse Shop",
-                "href": "/shop"
+                "href": "/business-cards"
             },
             {
                 "label": "Contact Support",
@@ -2010,11 +2010,11 @@
             },
             {
                 "label": "Shop Postcards",
-                "href": "/shop?cat=postcards"
+                "href": "/postcards"
             },
             {
                 "label": "View All Products",
-                "href": "/shop"
+                "href": "/business-cards"
             },
             {
                 "label": "Help & FAQs",
@@ -2166,6 +2166,27 @@
         "track_package_label": "Track package",
         "qty_label": "Qty:",
         "total_label": "Total:"
+    },
+    "shop_thank_you_page": {
+        "_source_file": "resources/js/pages/shop/thank-you.tsx",
+        "seo_title": "Thank you for your order",
+        "eyebrow": "Order confirmed",
+        "heading": "Thank you for your order!",
+        "intro": "Your payment was successful and your order is now being prepared.",
+        "order_label_prefix": "Order #",
+        "delivery_heading": "Your delivery estimate",
+        "dispatch_label": "Estimated dispatch",
+        "delivery_label": "Estimated delivery",
+        "method_label": "Shipping method",
+        "carrier_label": "Carrier",
+        "transit_label": "Transit estimate",
+        "estimate_note": "These dates are estimates and may change slightly after artwork approval and production scheduling.",
+        "contact_heading": "Need help with your order?",
+        "contact_body": "If you have any questions, our support team is happy to help.",
+        "contact_link": "Contact support",
+        "orders_link": "View all orders",
+        "redirect_prefix": "You will be redirected to your orders in",
+        "redirect_suffix": "seconds."
     },
     "shop_tickets_index_page": {
         "_source_file": "resources/js/pages/shop/tickets/index.tsx",
@@ -2494,35 +2515,35 @@
                     "blurb": "The classic mailer size — perfect for promotions, thank-yous, and event invites.",
                     "price_from": "from $29",
                     "image_url": "/images/home/product-postcards.png",
-                    "href": "/shop?cat=postcards"
+                    "href": "/postcards"
                 },
                 {
                     "name": "Square 4.72\"",
                     "blurb": "A modern square that stands out in the mail and on display.",
                     "price_from": "from $32",
                     "image_url": "/images/home/card-die-cut.png",
-                    "href": "/shop?cat=postcards"
+                    "href": "/postcards"
                 },
                 {
                     "name": "Medium 5\"×7\"",
                     "blurb": "More room for photography and copy — ideal for portfolios and announcements.",
                     "price_from": "from $36",
                     "image_url": "/images/home/hero-marketing-materials.png",
-                    "href": "/shop?cat=postcards"
+                    "href": "/postcards"
                 },
                 {
                     "name": "Large 6\"×9\"",
                     "blurb": "Maximum impact for menus, real estate, and campaign pieces.",
                     "price_from": "from $42",
                     "image_url": "/images/home/product-premium-cards.png",
-                    "href": "/shop?cat=postcards"
+                    "href": "/postcards"
                 },
                 {
                     "name": "Rack Cards",
                     "blurb": "Tall display cards for counters, booths, and brochure racks.",
                     "price_from": "from $34",
                     "image_url": "/images/home/product-flyers.png",
-                    "href": "/shop?cat=postcards"
+                    "href": "/postcards"
                 }
             ]
         },
@@ -2624,42 +2645,42 @@
                     "blurb": "Cut to your artwork outline for a custom silhouette that pops.",
                     "price_from": "from $24",
                     "image_url": "/images/home/product-stickers-labels.png",
-                    "href": "/shop?cat=stickers-labels"
+                    "href": "/stickers-and-labels"
                 },
                 {
                     "name": "Circle Stickers",
                     "blurb": "Classic rounds for seals, packaging, and event favors.",
                     "price_from": "from $18",
                     "image_url": "/images/home/card-foil-stamped.png",
-                    "href": "/shop?cat=stickers-labels"
+                    "href": "/stickers-and-labels"
                 },
                 {
                     "name": "Rectangle Labels",
                     "blurb": "Clean rectangles for product labels, address, and branding.",
                     "price_from": "from $18",
                     "image_url": "/images/home/product-classic-cards.png",
-                    "href": "/shop?cat=stickers-labels"
+                    "href": "/stickers-and-labels"
                 },
                 {
                     "name": "Square Stickers",
                     "blurb": "Balanced squares for logos, QR codes, and social stickers.",
                     "price_from": "from $18",
                     "image_url": "/images/home/card-debossed.png",
-                    "href": "/shop?cat=stickers-labels"
+                    "href": "/stickers-and-labels"
                 },
                 {
                     "name": "Vinyl Stickers",
                     "blurb": "Durable vinyl for outdoor use, water bottles, and high-wear spots.",
                     "price_from": "from $28",
                     "image_url": "/images/home/product-pvc-cards.png",
-                    "href": "/shop?cat=stickers-labels"
+                    "href": "/stickers-and-labels"
                 },
                 {
                     "name": "Matte Paper Labels",
                     "blurb": "Soft matte paper for elegant packaging and stationery accents.",
                     "price_from": "from $16",
                     "image_url": "/images/home/product-cotton-cards.png",
-                    "href": "/shop?cat=stickers-labels"
+                    "href": "/stickers-and-labels"
                 }
             ]
         },
@@ -2768,21 +2789,21 @@
                     "blurb": "Compact handouts that still leave room for a strong headline.",
                     "price_from": "from $29",
                     "image_url": "/images/home/hero-marketing-materials.png",
-                    "href": "/shop?cat=flyers"
+                    "href": "/flyers-and-brochures"
                 },
                 {
                     "name": "Long Flyers",
                     "blurb": "Tall, narrow formats for menus, programs, and rack displays.",
                     "price_from": "from $32",
                     "image_url": "/images/home/product-postcards.png",
-                    "href": "/shop?cat=flyers"
+                    "href": "/flyers-and-brochures"
                 },
                 {
                     "name": "Square Flyers",
                     "blurb": "Eye-catching square layouts for invites and modern brand pieces.",
                     "price_from": "from $34",
                     "image_url": "/images/home/card-letterpress.png",
-                    "href": "/shop?cat=flyers"
+                    "href": "/flyers-and-brochures"
                 },
                 {
                     "name": "Tri-Fold Brochures",
@@ -2796,7 +2817,7 @@
                     "blurb": "Simple four-panel fold for clean product or program overviews.",
                     "price_from": "from $45",
                     "image_url": "/images/home/product-business-cards.png",
-                    "href": "/shop?cat=flyers"
+                    "href": "/flyers-and-brochures"
                 }
             ]
         },

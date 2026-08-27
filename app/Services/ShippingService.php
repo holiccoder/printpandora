@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use Carbon\CarbonImmutable;
+use DateTimeInterface;
 use InvalidArgumentException;
 
 class ShippingService
 {
     /**
-     * @return array<int, array{code: string, label: string, carrier: string, fee: float, description: string, estimated_delivery: string}>
+     * @return array<int, array{code: string, label: string, carrier: string, fee: float, description: string, estimated_delivery: string, max_business_days: int}>
      */
     public function methods(): array
     {
@@ -30,6 +32,7 @@ class ShippingService
                 'fee' => round((float) ($method['fee'] ?? 0), 2),
                 'description' => (string) ($method['description'] ?? ''),
                 'estimated_delivery' => (string) ($method['estimated_delivery'] ?? ''),
+                'max_business_days' => max(0, (int) ($method['max_business_days'] ?? 0)),
             ];
         }
 
@@ -54,7 +57,7 @@ class ShippingService
     }
 
     /**
-     * @return array{code: string, label: string, carrier: string, fee: float, description: string, estimated_delivery: string}
+     * @return array{code: string, label: string, carrier: string, fee: float, description: string, estimated_delivery: string, max_business_days: int}
      */
     public function get(string $code): array
     {
@@ -70,5 +73,16 @@ class ShippingService
     public function fee(string $code): float
     {
         return $this->get($code)['fee'];
+    }
+
+    public function latestDeliveryDate(string $code, ?DateTimeInterface $from = null): CarbonImmutable
+    {
+        $start = $from === null
+            ? CarbonImmutable::now()
+            : CarbonImmutable::instance($from);
+
+        return $start
+            ->startOfDay()
+            ->addWeekdays($this->get($code)['max_business_days']);
     }
 }

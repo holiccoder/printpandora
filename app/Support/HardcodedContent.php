@@ -140,13 +140,19 @@ class HardcodedContent
         $resolver = app(ProductImageResolver::class);
 
         foreach ($slides as $index => $slide) {
-            if (! is_array($slide) || ! is_string($slide['image_url'] ?? null)) {
+            if (! is_array($slide)) {
                 continue;
             }
 
-            $content['home_page']['hero_carousel']['slides'][$index]['image_url'] = $resolver->url(
-                $slide['image_url'],
-            );
+            foreach (['image_url', 'mobile_image_url'] as $imageKey) {
+                if (! is_string($slide[$imageKey] ?? null)) {
+                    continue;
+                }
+
+                $content['home_page']['hero_carousel']['slides'][$index][$imageKey] = $resolver->url(
+                    $slide[$imageKey],
+                );
+            }
         }
 
         return $content;

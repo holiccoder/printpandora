@@ -4,58 +4,21 @@ namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Models\ProductCategory;
 use App\Services\ProductConfigurationService;
 use App\Services\ProductImageService;
+use App\Services\ShippingService;
 use App\Support\BusinessCardRoutes;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ProductController extends Controller
 {
-    public function index(Request $request, ProductImageService $imageService): InertiaResponse
-    {
-        $selectedCategory = $request->string('cat')->toString();
-        $productQuery = Product::with('category')
-            ->where('is_active', true)
-            ->latest();
-
-        if ($selectedCategory !== '') {
-            $category = ProductCategory::query()
-                ->where('slug', $selectedCategory)
-                ->first();
-
-            if ($category) {
-                $productQuery->whereIn('product_category_id', [
-                    $category->getKey(),
-                    ...$category->descendantIds(),
-                ]);
-            }
-        }
-
-        $products = $productQuery->simplePaginate(12)->withQueryString();
-
-        $products->getCollection()->transform(function (Product $product) use ($imageService): Product {
-            if ($image = $imageService->featuredImageUrl($product)) {
-                $product->setAttribute('featured_image', $image);
-            }
-
-            return $product;
-        });
-
-        $categories = ProductCategory::withCount('products')->get();
-
-        return Inertia::render('shop/index', [
-            'products' => $products,
-            'categories' => $categories,
-            'selectedCategory' => $selectedCategory !== '' ? $selectedCategory : null,
-        ]);
-    }
-
-    public function show(string $slug, ProductImageService $imageService): InertiaResponse|SymfonyResponse
-    {
+    public function show(
+        string $slug,
+        ProductImageService $imageService,
+        ShippingService $shippingService,
+    ): InertiaResponse|SymfonyResponse {
         $productSlug = BusinessCardRoutes::productSlugForSegment($slug) ?? $slug;
         $product = Product::with('category')
             ->where('is_active', true)
@@ -84,10 +47,20 @@ class ProductController extends Controller
             $product->setAttribute('featured_image', $image);
         }
 
+        $deliveryEstimateStart = now();
+
         return Inertia::render('shop/show', [
             'product' => $product,
             'productOptions' => $this->loadProductOptions($product),
             'fallbackGalleryImages' => $imageService->fallbackGalleryImages($product),
+            'deliveryEstimates' => [
+                'standard' => $shippingService
+                    ->latestDeliveryDate('standard', $deliveryEstimateStart)
+                    ->format('D, j M'),
+                'fast' => $shippingService
+                    ->latestDeliveryDate('dhl_express', $deliveryEstimateStart)
+                    ->format('D, j M'),
+            ],
         ]);
     }
 

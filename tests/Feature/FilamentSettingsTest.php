@@ -34,6 +34,9 @@ class FilamentSettingsTest extends TestCase
         $component = Livewire::test(SettingsPage::class);
         $slides = data_get($component->get('data'), 'homepage.hero_carousel.slides', []);
 
+        $this->assertStringContainsString('mobile_image_url', $component->html());
+        $this->assertStringContainsString('Mobile banner image', $component->html());
+
         $this->assertSame('Welcome', data_get($component->get('data'), 'homepage.seo.page_title'));
         $this->assertSame(
             'InkPavo - your go-to solution for printing, customization, and on-demand production.',
@@ -49,11 +52,17 @@ class FilamentSettingsTest extends TestCase
             data_get($slides, array_key_first($slides).'.offer.pretitle'),
         );
         $this->assertStringContainsString(
-            '/images/home/homepage-carousel-01.webp',
+            '/images/home/homepage-carousel-01.png',
             (string) json_encode(
                 data_get($slides, array_key_first($slides).'.image_url'),
                 JSON_UNESCAPED_SLASHES,
             ),
+        );
+        $mobileImageState = data_get($slides, array_key_first($slides).'.mobile_image_url');
+        $this->assertIsArray($mobileImageState);
+        $this->assertSame(
+            '/images/home/mobile-banners/01-mobile.png',
+            array_values($mobileImageState)[0] ?? null,
         );
         $this->assertStringContainsString(
             '/images/home/homepage-carousel-10.webp',
@@ -76,7 +85,11 @@ class FilamentSettingsTest extends TestCase
             ->set('data.homepage.seo.page_description', 'A custom homepage description for search engines.')
             ->set("data.homepage.hero_carousel.slides.{$slideKey}.headline", 'A SAVED HOMEPAGE')
             ->set("data.homepage.hero_carousel.slides.{$slideKey}.cta_text", 'SHOP NOW')
-            ->set("data.homepage.hero_carousel.slides.{$slideKey}.cta_href", '/shop')
+            ->set("data.homepage.hero_carousel.slides.{$slideKey}.cta_href", '/business-cards')
+            ->set(
+                "data.homepage.hero_carousel.slides.{$slideKey}.mobile_image_url",
+                ['custom-mobile' => '/images/home/custom-mobile.png'],
+            )
             ->call('save')
             ->assertHasNoErrors();
 
@@ -94,6 +107,10 @@ class FilamentSettingsTest extends TestCase
         $this->assertSame(
             'NEW MEMBER OFFER',
             data_get($stored, 'homepage.hero_carousel.slides.0.offer.pretitle'),
+        );
+        $this->assertSame(
+            '/images/home/custom-mobile.png',
+            data_get($stored, 'homepage.hero_carousel.slides.0.mobile_image_url'),
         );
 
         $content = app(HardcodedContent::class);

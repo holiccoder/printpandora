@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
+import StorefrontLayout from '@/layouts/storefront-layout';
 import { isPvcProductSlug } from '@/lib/product-images';
 
 interface OrderItem {
@@ -63,25 +64,8 @@ export default function OrderShow({ order }: Props) {
         <>
             <SEO title={`${c.seo_title_prefix}${order.id}`} />
 
-            <div className="flex min-h-screen flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <header className="w-full border-b border-[#e3e3e0] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]">
-                    <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-                        <Link
-                            href="/"
-                            className="text-lg font-semibold tracking-tight"
-                        >
-                            {c.brand}
-                        </Link>
-                        <Link
-                            href="/orders"
-                            className="text-sm text-[#706f6c] hover:text-[#1b1b18]"
-                        >
-                            {c.nav_my_orders}
-                        </Link>
-                    </div>
-                </header>
-
-                <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-12">
+            <StorefrontLayout>
+                <div className="mx-auto w-full max-w-4xl px-4 py-12">
                     <Link
                         href="/orders"
                         className="mb-6 inline-flex items-center gap-1 text-sm text-[#706f6c] hover:text-[#1b1b18]"
@@ -256,8 +240,8 @@ export default function OrderShow({ order }: Props) {
                             )}
                         </div>
                     </div>
-                </main>
-            </div>
+                </div>
+            </StorefrontLayout>
         </>
     );
 }

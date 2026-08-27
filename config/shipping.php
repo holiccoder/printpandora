@@ -12,6 +12,7 @@ return [
             'fee' => (float) env('SHIPPING_STANDARD_RATE', 5.99),
             'description' => env('SHIPPING_STANDARD_DESCRIPTION', '4PX tracked delivery. Shipment is created after payment.'),
             'estimated_delivery' => env('SHIPPING_STANDARD_ESTIMATE', '5-10 business days'),
+            'max_business_days' => (int) env('SHIPPING_STANDARD_MAX_BUSINESS_DAYS', 10),
         ],
         'dhl_express' => [
             'label' => env('SHIPPING_DHL_LABEL', 'Fast Shipping (DHL Express)'),
@@ -19,6 +20,7 @@ return [
             'fee' => (float) env('SHIPPING_DHL_RATE', 14.99),
             'description' => env('SHIPPING_DHL_DESCRIPTION', 'Fast tracked delivery. DHL shipment will be created manually after payment.'),
             'estimated_delivery' => env('SHIPPING_DHL_ESTIMATE', '2-5 business days'),
+            'max_business_days' => (int) env('SHIPPING_DHL_MAX_BUSINESS_DAYS', 5),
         ],
     ],
 ];

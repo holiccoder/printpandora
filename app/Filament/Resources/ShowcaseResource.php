@@ -19,28 +19,32 @@ class ShowcaseResource extends Resource
 
     protected static ?int $navigationSort = 45;
 
-    protected static ?string $modelLabel = 'Showcase';
+    protected static ?string $modelLabel = '案例';
 
-    protected static ?string $pluralModelLabel = 'Showcases';
+    protected static ?string $pluralModelLabel = '案例';
+
+    protected static ?string $navigationLabel = '案例';
+
+    protected static string|\UnitEnum|null $navigationGroup = '博客管理';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('image_name')
-                    ->label('Image name')
+                    ->label('图片名称')
                     ->nullable()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('link')
-                    ->label('Link')
+                    ->label('链接')
                     ->nullable()
                     ->maxLength(255)
-                    ->helperText('Optional link associated with this showcase.'),
+                    ->helperText('此案例的可选链接。'),
                 Forms\Components\TextInput::make('image_url')
-                    ->label('Image URL')
+                    ->label('图片地址')
                     ->required()
                     ->maxLength(255)
-                    ->helperText('Use a public URL or a path such as /images/showcases/example.webp.'),
+                    ->helperText('请输入公开图片 URL，或类似 /images/showcases/example.webp 的路径。'),
             ]);
     }
 
@@ -49,29 +53,29 @@ class ShowcaseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')
-                    ->label('Image')
+                    ->label('图片')
                     ->getStateUsing(fn (Showcase $record): string => str_starts_with($record->image_url, 'http://') || str_starts_with($record->image_url, 'https://')
                         ? $record->image_url
                         : url($record->image_url))
                     ->checkFileExistence(false)
                     ->square(),
                 Tables\Columns\TextColumn::make('image_name')
-                    ->label('Image name')
+                    ->label('图片名称')
                     ->searchable()
                     ->sortable()
                     ->placeholder('—'),
                 Tables\Columns\TextColumn::make('link')
-                    ->label('Link')
+                    ->label('链接')
                     ->searchable()
                     ->limit(40)
                     ->placeholder('—'),
                 Tables\Columns\TextColumn::make('image_url')
-                    ->label('Image URL')
+                    ->label('图片地址')
                     ->searchable()
                     ->limit(45)
                     ->copyable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('创建时间')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

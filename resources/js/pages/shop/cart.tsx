@@ -65,7 +65,7 @@ export default function Cart({
                                 {c.empty_state}
                             </p>
                             <Link
-                                href="/shop"
+                                href="/business-cards"
                                 className="font-medium text-amber-600 hover:text-amber-700"
                             >
                                 {c.empty_state_cta}

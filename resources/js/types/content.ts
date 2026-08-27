@@ -328,6 +328,7 @@ export interface HeroSlide {
     cta_text: string;
     cta_href: string;
     image_url: string;
+    mobile_image_url?: string;
     alt: string;
     text_tone?: 'light' | 'dark';
     offer?: HeroMemberOffer;
@@ -437,13 +438,6 @@ export interface BlogShowPageContent {
     };
 }
 
-export interface ShopIndexPageContent {
-    seo: SeoMeta;
-    page_heading: string;
-    all_button_label: string;
-    empty_state: string;
-}
-
 export interface HomePageContent {
     seo: SeoMeta;
     hero_carousel: {
@@ -519,6 +513,27 @@ export interface AiChatContent {
     disclaimer: string;
 }
 
+export interface ShopThankYouPageContent {
+    seo_title: string;
+    eyebrow: string;
+    heading: string;
+    intro: string;
+    order_label_prefix: string;
+    delivery_heading: string;
+    dispatch_label: string;
+    delivery_label: string;
+    method_label: string;
+    carrier_label: string;
+    transit_label: string;
+    estimate_note: string;
+    contact_heading: string;
+    contact_body: string;
+    contact_link: string;
+    orders_link: string;
+    redirect_prefix: string;
+    redirect_suffix: string;
+}
+
 /**
  * All recognised section keys. Declare a key here once its interface
  * exists so the discriminated `useContent('section')` overload resolves.
@@ -529,13 +544,13 @@ export interface ContentSections {
     home_page: HomePageContent;
     blog_index_page: BlogIndexPageContent;
     blog_show_page: BlogShowPageContent;
-    shop_index_page: ShopIndexPageContent;
     privacy_page: PrivacyPageContent;
     terms_page: TermsPageContent;
     not_found_page: NotFoundPageContent;
     about_page: AboutPageContent;
     help_center_page: HelpCenterPageContent;
     design_service_page: DesignServicePageContent;
+    shop_thank_you_page: ShopThankYouPageContent;
     // untuned sections fall through to unknown
 }
 

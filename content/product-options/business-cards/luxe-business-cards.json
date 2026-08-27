@@ -1298,7 +1298,7 @@
           "name": "Super Business Cards",
           "price": "50 cards from $33.00",
           "image_url": "/images/product-detail/paper-stocks/super-business-cards.png",
-          "href": "/super-business-cards",
+          "href": "/business-cards/super",
           "cta": "Shop Super Business Cards ›",
           "features": [
             "18pt thickness",
@@ -1313,7 +1313,7 @@
           "name": "Luxe Business Cards",
           "price": "50 cards from $43.00",
           "image_url": "/images/product-detail/paper-stocks/luxe-business-cards.png",
-          "href": "/luxe-business-cards",
+          "href": "/business-cards/luxe",
           "cta": "Shop Luxe Business Cards ›",
           "features": [
             "32pt thickness",

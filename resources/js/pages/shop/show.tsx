@@ -17,12 +17,6 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { computeDynamicTiers } from '@/lib/pricing';
@@ -195,6 +189,10 @@ interface Props {
     product: Product;
     productOptions?: ProductOptions;
     fallbackGalleryImages?: string[];
+    deliveryEstimates: {
+        standard: string;
+        fast: string;
+    };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -242,6 +240,22 @@ const businessBlockHrefs = [
     '/contact-us',
 ];
 
+function productCategoryHref(categorySlug: string): string {
+    switch (categorySlug) {
+        case 'postcards':
+            return '/postcards';
+        case 'stickers-and-labels':
+        case 'stickers-labels':
+            return '/stickers-and-labels';
+        case 'flyers':
+        case 'flyers-brochures':
+        case 'flyers-and-brochures':
+            return '/flyers-and-brochures';
+        default:
+            return '/business-cards';
+    }
+}
+
 function optionValueCode(value: ProductOptionValue): string {
     return (
         value.code?.trim() ||
@@ -276,6 +290,7 @@ export default function ShopShow({
     product,
     productOptions,
     fallbackGalleryImages,
+    deliveryEstimates,
 }: Props) {
     const c = useContent('product_detail_page') as any;
     const isPvcProduct =
@@ -1219,11 +1234,9 @@ export default function ShopShow({
     const turnaroundTooltip: any = c.turnaround_tooltip;
     const featureCards = productOptions?.detail_sections?.feature_cards ?? [];
     const firstFeatureCard: ProductFeatureCardContent = featureCards[0] ?? {};
-    const secondFeatureCard: ProductFeatureCardContent =
-        featureCards[1] ?? {};
+    const secondFeatureCard: ProductFeatureCardContent = featureCards[1] ?? {};
     const firstFeatureCardTooltip = firstFeatureCard.tooltip_content?.trim();
-    const secondFeatureCardTooltip =
-        secondFeatureCard.tooltip_content?.trim();
+    const secondFeatureCardTooltip = secondFeatureCard.tooltip_content?.trim();
     const summaryLabels: string[] = c.order_summary.labels;
     const designServicesConfig: any = c.design_services;
     const designFeeLabel: string = c.design_fee_label;
@@ -1250,7 +1263,7 @@ export default function ShopShow({
                     <ChevronRight className="size-3.5" />
                     <li>
                         <Link
-                            href={`/shop?cat=${product.category.slug}`}
+                            href={productCategoryHref(product.category.slug)}
                             className="hover:text-neutral-900"
                         >
                             {product.category.name}
@@ -1303,181 +1316,124 @@ export default function ShopShow({
                             ))}
                         </div>
                         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
+                            <FeatureChip
+                                icon={
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="1.6"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="size-10 text-[#800020]"
+                                    >
+                                        <circle cx="12" cy="12" r="10" />
+                                        <polyline points="12 6 12 12 16 14" />
+                                    </svg>
+                                }
+                                label={
+                                    firstFeatureCard.title || featureChips[0]
+                                }
+                                description={
+                                    firstFeatureCard.description ||
+                                    featureChipDescriptions[0]
+                                }
+                                detailTitle={
+                                    firstFeatureCard.tooltip_title ||
+                                    turnaroundTooltip.title
+                                }
+                                details={
+                                    firstFeatureCardTooltip ? (
                                         <div
-                                            tabIndex={0}
-                                            className="rounded-lg focus-visible:ring-2 focus-visible:ring-[#800020]/40 focus-visible:outline-none"
-                                        >
-                                            <FeatureChip
-                                                icon={
-                                                    <svg
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="1.6"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        className="size-10 text-[#800020]"
-                                                    >
-                                                        <circle
-                                                            cx="12"
-                                                            cy="12"
-                                                            r="10"
-                                                        />
-                                                        <polyline points="12 6 12 12 16 14" />
-                                                    </svg>
-                                                }
-                                                label={
-                                                    firstFeatureCard.title ||
-                                                    featureChips[0]
-                                                }
-                                                description={
-                                                    firstFeatureCard.description ||
-                                                    featureChipDescriptions[0]
-                                                }
-                                            />
-                                        </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent
-                                        side="top"
-                                        className="max-w-[min(20rem,calc(100vw-2rem))] bg-neutral-900 text-white"
+                                            dangerouslySetInnerHTML={{
+                                                __html: firstFeatureCardTooltip,
+                                            }}
+                                        />
+                                    ) : (
+                                        turnaroundTooltip.sections.map(
+                                            (section: any) => (
+                                                <p key={section.heading}>
+                                                    <span className="font-semibold">
+                                                        {section.heading}
+                                                    </span>
+                                                    <br />
+                                                    {section.body}
+                                                </p>
+                                            ),
+                                        )
+                                    )
+                                }
+                            />
+                            <FeatureChip
+                                icon={
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="1.6"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="size-10 text-[#800020]"
                                     >
-                                        <div className="space-y-2 p-1">
+                                        <rect
+                                            x="3"
+                                            y="6"
+                                            width="18"
+                                            height="14"
+                                            rx="2"
+                                        />
+                                        <path d="M3 10h18" />
+                                        <path d="M7 6V4h10v2" />
+                                        <circle cx="7" cy="14" r="1" />
+                                        <circle cx="11" cy="14" r="1" />
+                                        <circle cx="15" cy="14" r="1" />
+                                    </svg>
+                                }
+                                label={
+                                    secondFeatureCard.title || featureChips[1]
+                                }
+                                description={
+                                    secondFeatureCard.description ||
+                                    featureChipDescriptions[1]
+                                }
+                                detailTitle={
+                                    secondFeatureCard.tooltip_title ||
+                                    gangRunTooltip.title
+                                }
+                                details={
+                                    secondFeatureCardTooltip ? (
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: secondFeatureCardTooltip,
+                                            }}
+                                        />
+                                    ) : (
+                                        <>
+                                            <p>{gangRunTooltip.intro}</p>
                                             <p className="font-semibold">
-                                                {firstFeatureCard.tooltip_title ||
-                                                    turnaroundTooltip.title}
+                                                {gangRunTooltip.pros_title}
                                             </p>
-                                            {firstFeatureCardTooltip ? (
-                                                <div
-                                                    className="space-y-2 [&_ol]:list-decimal [&_ol]:pl-4 [&_p+p]:mt-2 [&_ul]:list-disc [&_ul]:pl-4"
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: firstFeatureCardTooltip,
-                                                    }}
-                                                />
-                                            ) : (
-                                                turnaroundTooltip.sections.map(
-                                                    (section: any) => (
-                                                        <p
-                                                            key={section.heading}
-                                                        >
-                                                            <span className="font-semibold">
-                                                                {
-                                                                    section.heading
-                                                                }
-                                                            </span>
-                                                            <br />
-                                                            {section.body}
-                                                        </p>
+                                            <ul className="list-disc space-y-1 pl-4">
+                                                {gangRunTooltip.pros.map(
+                                                    (pro: string) => (
+                                                        <li key={pro}>{pro}</li>
                                                     ),
-                                                )
-                                            )}
-                                        </div>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <div>
-                                            <FeatureChip
-                                                icon={
-                                                    <svg
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="1.6"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        className="size-10 text-[#800020]"
-                                                    >
-                                                        <rect
-                                                            x="3"
-                                                            y="6"
-                                                            width="18"
-                                                            height="14"
-                                                            rx="2"
-                                                        />
-                                                        <path d="M3 10h18" />
-                                                        <path d="M7 6V4h10v2" />
-                                                        <circle
-                                                            cx="7"
-                                                            cy="14"
-                                                            r="1"
-                                                        />
-                                                        <circle
-                                                            cx="11"
-                                                            cy="14"
-                                                            r="1"
-                                                        />
-                                                        <circle
-                                                            cx="15"
-                                                            cy="14"
-                                                            r="1"
-                                                        />
-                                                    </svg>
-                                                }
-                                                label={
-                                                    secondFeatureCard.title ||
-                                                    featureChips[1]
-                                                }
-                                                description={
-                                                    secondFeatureCard.description ||
-                                                    featureChipDescriptions[1]
-                                                }
-                                            />
-                                        </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent
-                                        side="top"
-                                        className="max-w-xs bg-neutral-900 text-white"
-                                    >
-                                        <div className="space-y-2 p-1">
+                                                )}
+                                            </ul>
                                             <p className="font-semibold">
-                                                {secondFeatureCard.tooltip_title ||
-                                                    gangRunTooltip.title}
+                                                {gangRunTooltip.cons_title}
                                             </p>
-                                            {secondFeatureCardTooltip ? (
-                                                <div
-                                                    className="space-y-2 [&_ol]:list-decimal [&_ol]:pl-4 [&_p+p]:mt-2 [&_ul]:list-disc [&_ul]:pl-4"
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: secondFeatureCardTooltip,
-                                                    }}
-                                                />
-                                            ) : (
-                                                <>
-                                                    <p>{gangRunTooltip.intro}</p>
-                                                    <p className="font-semibold">
-                                                        {gangRunTooltip.pros_title}
-                                                    </p>
-                                                    <ul className="list-disc space-y-1 pl-4">
-                                                        {gangRunTooltip.pros.map(
-                                                            (pro: string) => (
-                                                                <li key={pro}>
-                                                                    {pro}
-                                                                </li>
-                                                            ),
-                                                        )}
-                                                    </ul>
-                                                    <p className="font-semibold">
-                                                        {gangRunTooltip.cons_title}
-                                                    </p>
-                                                    <ul className="list-disc space-y-1 pl-4">
-                                                        {gangRunTooltip.cons.map(
-                                                            (con: string) => (
-                                                                <li key={con}>
-                                                                    {con}
-                                                                </li>
-                                                            ),
-                                                        )}
-                                                    </ul>
-                                                </>
-                                            )}
-                                        </div>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                                            <ul className="list-disc space-y-1 pl-4">
+                                                {gangRunTooltip.cons.map(
+                                                    (con: string) => (
+                                                        <li key={con}>{con}</li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        </>
+                                    )
+                                }
+                            />
                         </div>
                     </div>
 
@@ -1638,9 +1594,7 @@ export default function ShopShow({
                             <OptionGroup
                                 label={c.configurator_labels.paper_finish}
                             >
-                                <div
-                                    className="grid grid-cols-2 gap-3 sm:grid-cols-4"
-                                >
+                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                     {finishes.map((f: any) => (
                                         <ChoiceTile
                                             key={f.id}
@@ -2232,10 +2186,16 @@ export default function ShopShow({
                             </span>
                             <div>
                                 <p className="font-semibold text-neutral-900">
-                                    {c.delivery_callout.title}
+                                    {c.delivery_callout.title.replace(
+                                        '{date}',
+                                        deliveryEstimates.standard,
+                                    )}
                                 </p>
                                 <p className="text-neutral-600">
-                                    {c.delivery_callout.subtitle}
+                                    {c.delivery_callout.subtitle.replace(
+                                        '{date}',
+                                        deliveryEstimates.fast,
+                                    )}
                                 </p>
                             </div>
                         </div>
@@ -2663,22 +2623,44 @@ function FeatureChip({
     icon,
     label,
     description,
+    detailTitle,
+    details,
 }: {
     icon: React.ReactNode;
     label: string;
     description?: string;
+    detailTitle?: string;
+    details?: React.ReactNode;
 }) {
     return (
-        <div className="flex gap-3 rounded-lg border border-neutral-200 bg-white p-4">
-            <span className="mt-0.5 shrink-0">{icon}</span>
-            <div>
-                <p className="text-sm font-bold text-neutral-900">{label}</p>
-                {description && (
-                    <p className="mt-1 text-xs leading-relaxed text-neutral-500">
-                        {description}
+        <div className="flex h-full flex-col rounded-lg border border-neutral-200 bg-white p-4">
+            <div className="flex gap-3">
+                <span className="mt-0.5 shrink-0">{icon}</span>
+                <div className="min-w-0">
+                    <p className="text-sm font-bold text-neutral-900">
+                        {label}
                     </p>
-                )}
+                    {description && (
+                        <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+                            {description}
+                        </p>
+                    )}
+                </div>
             </div>
+            {(detailTitle || details) && (
+                <div className="mt-4 border-t border-neutral-100 pt-3">
+                    {detailTitle && (
+                        <p className="text-xs font-semibold text-neutral-700">
+                            {detailTitle}
+                        </p>
+                    )}
+                    {details && (
+                        <div className="mt-1 text-xs leading-relaxed text-neutral-600 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-4 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-4">
+                            {details}
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
@@ -2758,8 +2740,7 @@ function DynamicOptionGroups({
                                         ? Array.isArray(selectedValue) &&
                                           selectedValue.includes(code)
                                         : selectedValue === code;
-                                const active =
-                                    isSelected && hasInteracted;
+                                const active = isSelected && hasInteracted;
                                 const swatch = value.swatch_image;
                                 const isCustomSize =
                                     group.key === 'sizes' && code === 'custom';

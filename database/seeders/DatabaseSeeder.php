@@ -352,6 +352,7 @@ HTML,
         // Replay the live-data snapshot last so `db:seed` reproduces it exactly.
         // Regenerate the snapshot any time with: php artisan db:export-seeders
         $this->call(LiveDataSeeder::class);
+        $this->call(DiscountCodeSeeder::class);
         $this->call(ProductNavigationCategorySeeder::class);
         $this->call(LetterpressBlogSeeder::class);
         $this->call(ClassicStandardBusinessCardOptionsSeeder::class);

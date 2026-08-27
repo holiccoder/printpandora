@@ -12,6 +12,11 @@ class BusinessCardRoutesTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_shop_index_is_no_longer_available(): void
+    {
+        $this->get('/shop')->assertNotFound();
+    }
+
     public function test_public_business_card_path_loads_the_existing_product(): void
     {
         $category = ProductCategory::create([

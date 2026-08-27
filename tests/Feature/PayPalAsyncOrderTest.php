@@ -97,7 +97,7 @@ class PayPalAsyncOrderTest extends TestCase
             ['paypal_order_id' => 'PAYPAL-ORDER-1'],
         );
 
-        $response->assertOk()->assertJsonPath('redirect', route('shop.orders.show', 1));
+        $response->assertOk()->assertJsonPath('redirect', route('shop.checkout.thank-you', 1));
 
         $this->assertDatabaseHas('orders', [
             'payment_method' => 'paypal',

@@ -24,11 +24,6 @@ class TicketController extends Controller
         ]);
     }
 
-    public function create(): Response
-    {
-        return Inertia::render('shop/tickets/create');
-    }
-
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([

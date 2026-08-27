@@ -230,7 +230,7 @@ function RecentOrdersCard({ orders, c }: { orders: RecentOrder[]; c: any }) {
                 <EmptyHint>
                     {c.empty_state_prefix}
                     <Link
-                        href="/shop"
+                        href="/business-cards"
                         className="font-semibold hover:underline"
                         style={{ color: ACCENT }}
                     >

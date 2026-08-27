@@ -89,8 +89,7 @@ Route::get('sitemap.xml', function () {
 Route::get('blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
-// Shop
-Route::get('shop', [ProductController::class, 'index'])->name('shop.index');
+// Product catalog
 Route::inertia('/business-cards', 'shop/business-cards')->name('shop.business-cards');
 Route::get('business-cards/{slug}', [ProductController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
@@ -115,12 +114,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('checkout/cryptomus/create', [CheckoutController::class, 'cryptomusCreate'])->name('shop.checkout.cryptomus.create');
 
     // Orders
+    Route::get('thank-you/{id}', [OrderController::class, 'thankYou'])
+        ->whereNumber('id')
+        ->name('shop.checkout.thank-you');
     Route::get('orders', [OrderController::class, 'index'])->name('shop.orders.index');
     Route::get('orders/{id}', [OrderController::class, 'show'])->name('shop.orders.show')->whereNumber('id');
 
     // Support tickets
     Route::get('tickets', [TicketController::class, 'index'])->name('shop.tickets.index');
-    Route::get('tickets/create', [TicketController::class, 'create'])->name('shop.tickets.create');
     Route::post('tickets', [TicketController::class, 'store'])->name('shop.tickets.store');
     Route::get('tickets/{id}', [TicketController::class, 'show'])->name('shop.tickets.show')->whereNumber('id');
     Route::post('tickets/{id}/reply', [TicketController::class, 'reply'])->name('shop.tickets.reply')->whereNumber('id');

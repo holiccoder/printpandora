@@ -29,27 +29,27 @@ const heroCollageClasses = [
 ];
 
 const paperHrefs = [
-    '/shop/original-business-cards',
-    '/shop/super-business-cards',
-    '/shop/luxe-business-cards',
-    '/shop/cotton-business-cards',
+    '/business-cards/classic-standard',
+    '/business-cards/super',
+    '/business-cards/luxe',
+    '/business-cards/classic-cotton',
 ];
 
 const sizeHrefs = [
-    '/shop/original-business-cards',
-    '/shop/square-business-cards',
-    '/shop/square-business-cards',
+    '/business-cards/classic-standard',
+    '/business-cards',
+    '/business-cards',
 ];
 
-const finishHref = '/shop?cat=business-cards';
-const designHref = '/shop?cat=business-cards';
+const finishHref = '/business-cards';
+const designHref = '/business-cards';
 const designIcons = [Pencil, Upload, Globe];
 const perkIcons = [ShieldCheck, Leaf, Truck];
 const crossSellHrefs = [
-    '/shop/notebooks-journals',
-    '/shop/greeting-cards',
-    '/shop?cat=stickers-labels',
-    '/shop/business-card-holders',
+    '/postcards',
+    '/postcards',
+    '/stickers-and-labels',
+    '/business-cards',
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -553,7 +553,8 @@ export default function BusinessCardsLanding() {
                     <ul className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                         {sections.cross_sell.items.map(
                             (item: any, i: number) => {
-                                const href = crossSellHrefs[i] ?? '/shop';
+                                const href =
+                                    crossSellHrefs[i] ?? '/business-cards';
 
                                 return (
                                     <li key={item.name} className="group">

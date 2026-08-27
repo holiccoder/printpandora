@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useState, useEffect } from 'react';
+import { usePage, router } from '@inertiajs/react';
 import AiChatWidget from '@/components/ai-chat-widget';
 import StorefrontFooter from '@/components/storefront-footer';
 import StorefrontHeader from '@/components/storefront-header';
+import CreateTicketModal from '@/components/create-ticket-modal';
 
 type Props = {
     children: ReactNode;
@@ -21,12 +23,49 @@ type Props = {
  * `content/hardcoded-content.json` without any props from here.
  */
 export default function StorefrontLayout({ children, activeCategory }: Props) {
+    const { auth } = usePage().props as any;
+    const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+
+    useEffect(() => {
+        const handleGlobalClick = (e: MouseEvent) => {
+            let target = e.target as HTMLElement | null;
+            while (target && target.tagName !== 'A') {
+                target = target.parentElement;
+            }
+
+            if (target && target instanceof HTMLAnchorElement) {
+                const href = target.getAttribute('href');
+                if (href === '/tickets/create' || href?.endsWith('/tickets/create')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (auth?.user) {
+                        setIsTicketModalOpen(true);
+                    } else {
+                        router.visit('/login?redirect=/tickets');
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('click', handleGlobalClick, true);
+        return () => {
+            document.removeEventListener('click', handleGlobalClick, true);
+        };
+    }, [auth]);
+
     return (
         <div className="flex min-h-screen flex-col bg-white text-neutral-900">
             <StorefrontHeader activeCategory={activeCategory} />
             <main className="flex-1">{children}</main>
             <StorefrontFooter />
             <AiChatWidget />
+            {auth?.user && (
+                <CreateTicketModal
+                    isOpen={isTicketModalOpen}
+                    onClose={() => setIsTicketModalOpen(false)}
+                />
+            )}
         </div>
     );
 }

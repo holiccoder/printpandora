@@ -4,6 +4,8 @@ const BUSINESS_CARD_PRODUCT_PATHS: Record<string, string> = {
     'premium-cotton-business-card': '/business-cards/premium-cotton',
     'luxe-cotton-business-card': '/business-cards/luxe-cotton',
     'grand-cotton-business-card': '/business-cards/grand-cotton',
+    'super-business-cards': '/business-cards/super',
+    'luxe-business-cards': '/business-cards/luxe',
     'basic-pvc-card': '/business-cards/basic-pvc',
     'standard-pvc-card': '/business-cards/standard-pvc',
     'premium-pvc-card': '/business-cards/premium-pvc',
