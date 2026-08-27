@@ -868,8 +868,13 @@
     "product_detail_page": {
         "_source_file": "resources/js/pages/shop/show.tsx",
         "accent_color": "#800020",
-        "breadcrumbs": ["Home"],
-        "feature_chips": ["1 - 2 days Turn Around Time", "Gang Run Printing"],
+        "breadcrumbs": [
+            "Home"
+        ],
+        "feature_chips": [
+            "1 - 2 days Turn Around Time",
+            "Gang Run Printing"
+        ],
         "feature_chip_descriptions": [
             "We will deliver your design after 1 - 2 work days",
             "Not recommended for clients with high color accuracy requirements"
@@ -987,7 +992,11 @@
                 }
             ]
         },
-        "quantity_table_headers": ["Quantity", "Per card", "Pack Price"],
+        "quantity_table_headers": [
+            "Quantity",
+            "Per card",
+            "Pack Price"
+        ],
         "save_percentage_label": "Save {n}%",
         "delivery_callout": {
             "title": "With Standard Shipping, receive your order by {date}.",
@@ -995,7 +1004,12 @@
         },
         "order_summary": {
             "heading": "Your selection",
-            "labels": ["Paper", "Size", "Quantity", "Corners"],
+            "labels": [
+                "Paper",
+                "Size",
+                "Quantity",
+                "Corners"
+            ],
             "total_label": "Total"
         },
         "design_services": {

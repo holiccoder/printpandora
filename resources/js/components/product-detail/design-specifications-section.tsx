@@ -283,7 +283,8 @@ export default function DesignSpecificationsSection({
                                                         {item.label} Template
                                                     </h4>
                                                     <p className="text-xs text-neutral-400">
-                                                        Adobe {item.label}{' '}
+                                                        {['illustrator', 'indesign', 'photoshop'].includes(item.id) ? 'Adobe ' : ''}
+                                                        {item.label}{' '}
                                                         format ({item.extension}
                                                         )
                                                     </p>
