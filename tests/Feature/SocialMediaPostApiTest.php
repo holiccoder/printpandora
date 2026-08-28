@@ -44,4 +44,20 @@ class SocialMediaPostApiTest extends TestCase
             'status' => 'draft',
         ]);
     }
+
+    public function test_can_create_platform_specific_content(): void
+    {
+        $response = $this->postJson('/api/v1/social-media-posts', [
+            'content' => 'Default post copy',
+            'platforms' => ['facebook', 'x'],
+            'platform_contents' => [
+                'facebook' => 'Facebook-specific copy',
+                'x' => 'Short copy for X',
+            ],
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('data.platform_contents.facebook', 'Facebook-specific copy')
+            ->assertJsonPath('data.platform_contents.x', 'Short copy for X');
+    }
 }

@@ -30,6 +30,8 @@ class SocialMediaPostApiController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'nullable|string|max:255',
             'content' => 'required|string|max:5000',
+            'platform_contents' => 'nullable|array',
+            'platform_contents.*' => 'nullable|string|max:5000',
             'platforms' => 'required|array',
             'platforms.*' => 'string|in:facebook,pinterest,instagram,x,youtube,linkedin',
             'scheduled_at' => 'nullable|date',
@@ -76,6 +78,8 @@ class SocialMediaPostApiController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'nullable|string|max:255',
             'content' => 'nullable|string|max:5000',
+            'platform_contents' => 'nullable|array',
+            'platform_contents.*' => 'nullable|string|max:5000',
             'platforms' => 'nullable|array',
             'platforms.*' => 'string|in:facebook,pinterest,instagram,x,youtube,linkedin',
             'scheduled_at' => 'nullable|date',

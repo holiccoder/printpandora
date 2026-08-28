@@ -9,6 +9,7 @@ class SocialMediaPost extends Model
     protected $fillable = [
         'title',
         'content',
+        'platform_contents',
         'platforms',
         'scheduled_at',
         'status',
@@ -20,6 +21,7 @@ class SocialMediaPost extends Model
     {
         return [
             'platforms' => 'array',
+            'platform_contents' => 'array',
             'media_urls' => 'array',
             'scheduled_at' => 'datetime',
             'published_at' => 'datetime',
