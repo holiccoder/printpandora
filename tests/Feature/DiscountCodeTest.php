@@ -94,12 +94,12 @@ class DiscountCodeTest extends TestCase
         ])->assertRedirect();
 
         $order = Order::firstOrFail();
-        $this->assertSame('77.09', $order->total);
+        $this->assertSame('213.10', $order->total);
         $this->assertDatabaseHas('discount_redemptions', [
             'order_id' => $order->id,
             'code' => 'CHECKOUT10',
             'discount_amount' => '7.90',
-            'total' => '77.09',
+            'total' => '213.10',
         ]);
         $this->assertSame(1, DiscountCode::firstOrFail()->usage_count);
     }
@@ -153,11 +153,34 @@ class DiscountCodeTest extends TestCase
 
         $this->assertSame('dhl_express', $order->shipping_method);
         $this->assertSame('DHL', $order->shipping_carrier);
-        $this->assertSame('14.99', $order->shipping_fee);
+        $this->assertSame('201.00', $order->shipping_fee);
         $this->assertEquals(
-            (float) $order->items->sum('subtotal') + 14.99,
+            (float) $order->items->sum('subtotal') + 201.00,
             (float) $order->total,
         );
+    }
+
+    public function test_standard_shipping_uses_the_destination_country_rate(): void
+    {
+        $user = User::factory()->create();
+        $product = $this->makeProduct();
+        $cart = app(Cart::class);
+        $cart->add($product->id);
+
+        $this->actingAs($user)->post(route('shop.checkout.store'), [
+            'shipping_address' => '1 Main Street',
+            'shipping_city' => 'Toronto',
+            'shipping_state' => 'ON',
+            'shipping_zip' => 'M5V 2T6',
+            'shipping_country' => 'CA',
+            'shipping_method' => 'standard',
+        ])->assertRedirect();
+
+        $order = Order::firstOrFail();
+
+        $this->assertSame('CA', $order->shipping_country);
+        $this->assertSame('114.00', $order->shipping_fee);
+        $this->assertSame('114.00', $order->total);
     }
 
     public function test_global_and_per_customer_limits_are_enforced(): void

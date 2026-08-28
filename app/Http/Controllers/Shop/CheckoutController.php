@@ -37,7 +37,8 @@ class CheckoutController extends Controller
 
         $quote = $cart->quote();
         $defaultShippingMethod = $this->shipping->defaultMethod();
-        $shippingFee = $this->shipping->fee($defaultShippingMethod);
+        $defaultCountry = $this->shipping->defaultCountry();
+        $shippingFee = $this->shipping->fee($defaultShippingMethod, $defaultCountry);
 
         return Inertia::render('shop/checkout', [
             'cart' => $cart->all(),
@@ -46,7 +47,9 @@ class CheckoutController extends Controller
             'itemsTotal' => $quote['total'],
             'total' => round($quote['total'] + $shippingFee, 2),
             'shippingFee' => $shippingFee,
-            'shippingMethods' => $this->shipping->methods(),
+            'shippingMethods' => $this->shipping->methods($defaultCountry),
+            'shippingRateBasisWeightKg' => $this->shipping->rateBasisWeightKg(),
+            'defaultShippingCountry' => $defaultCountry,
             'defaultShippingMethod' => $defaultShippingMethod,
             'discountCode' => $quote['code'],
             'paypal' => [
@@ -95,7 +98,10 @@ class CheckoutController extends Controller
 
         try {
             $quote = $cart->quote($validated['customer_email'], true);
-            $total = round($quote['total'] + $this->shipping->fee($validated['shipping_method']), 2);
+            $total = round($quote['total'] + $this->shipping->fee(
+                $validated['shipping_method'],
+                $validated['shipping_country'],
+            ), 2);
             $reference = 'checkout-'.$request->user()->getAuthIdentifier().'-'.now()->timestamp;
             $result = $paypal->createOrder($total, $reference);
             $paypalOrderId = $result['id'] ?? null;
@@ -641,7 +647,10 @@ class CheckoutController extends Controller
         ?string $paymentId,
         string $orderStatus = 'pending',
     ): Order {
-        $shipping = $this->shipping->get($validated['shipping_method']);
+        $shipping = $this->shipping->get(
+            $validated['shipping_method'],
+            $validated['shipping_country'],
+        );
 
         return DB::transaction(function () use ($validated, $cart, $request, $paymentMethod, $paymentStatus, $paymentId, $orderStatus, $shipping) {
             $quote = $cart->quote($validated['customer_email'], true);

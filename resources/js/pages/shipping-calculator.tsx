@@ -26,6 +26,7 @@ const COUNTRIES = [
     { value: 'CA', label: 'Canada' },
     { value: 'GB', label: 'United Kingdom' },
     { value: 'AU', label: 'Australia' },
+    { value: 'NZ', label: 'New Zealand' },
     { value: 'DE', label: 'Germany' },
     { value: 'FR', label: 'France' },
     { value: 'JP', label: 'Japan' },
@@ -42,7 +43,7 @@ const RATES: Record<
         {
             method: 'Standard Shipping',
             price: 5.99,
-            days: '5-10 business days',
+            days: '7-12 business days',
             note: ' 4PX semi-automatic fulfillment',
         },
         {

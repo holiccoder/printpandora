@@ -37,6 +37,7 @@ interface ShippingMethod {
     label: string;
     carrier: string;
     fee: number;
+    country_rates?: Record<string, number>;
     description: string;
     estimated_delivery: string;
 }
@@ -49,6 +50,8 @@ interface Props {
     total: number;
     shippingFee: number;
     shippingMethods: ShippingMethod[];
+    shippingRateBasisWeightKg: number;
+    defaultShippingCountry: string;
     defaultShippingMethod: string;
     discountCode: string | null;
     paypal: PaypalConfig;
@@ -121,6 +124,8 @@ export default function Checkout({
     total,
     shippingFee,
     shippingMethods,
+    shippingRateBasisWeightKg,
+    defaultShippingCountry,
     defaultShippingMethod,
     discountCode,
     paypal,
@@ -135,6 +140,7 @@ export default function Checkout({
         shipping_state: '',
         shipping_zip: '',
         shipping_country:
+            defaultShippingCountry ??
             c.form_sections.shipping_address.fields.country.default_value ??
             'US',
         shipping_method: defaultShippingMethod,
@@ -206,7 +212,11 @@ export default function Checkout({
         )
             ? data.shipping_state
             : '';
-        setData({ shipping_country: countryCode, shipping_state: newState });
+        setData((current) => ({
+            ...current,
+            shipping_country: countryCode,
+            shipping_state: newState,
+        }));
     };
 
     const [paypalSdkLoaded, setPaypalSdkLoaded] = useState(false);
@@ -230,10 +240,19 @@ export default function Checkout({
     const [cryptomusLoading, setCryptomusLoading] = useState(false);
     const [cryptomusError, setCryptomusError] = useState<string | null>(null);
 
+    const pricedShippingMethods = useMemo(
+        () =>
+            shippingMethods.map((method) => ({
+                ...method,
+                fee:
+                    method.country_rates?.[data.shipping_country] ?? method.fee,
+            })),
+        [shippingMethods, data.shipping_country],
+    );
     const selectedShipping =
-        shippingMethods.find(
+        pricedShippingMethods.find(
             (method) => method.code === data.shipping_method,
-        ) ?? shippingMethods[0];
+        ) ?? pricedShippingMethods[0];
     const orderTotal =
         shippingMethods.length > 0
             ? itemsTotal + (selectedShipping?.fee ?? shippingFee)
@@ -807,8 +826,13 @@ export default function Checkout({
                                 <h2 className="mb-4 text-lg font-semibold">
                                     {shippingMethodSection.heading}
                                 </h2>
+                                <p className="mb-4 text-xs text-[#706f6c]">
+                                    Rates shown for a{' '}
+                                    {shippingRateBasisWeightKg} kg parcel and
+                                    updated for the selected country.
+                                </p>
                                 <div className="space-y-3">
-                                    {shippingMethods.map((method) => {
+                                    {pricedShippingMethods.map((method) => {
                                         const optionContent =
                                             shippingMethodSection.options[
                                                 method.code

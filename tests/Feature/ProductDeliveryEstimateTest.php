@@ -43,7 +43,7 @@ class ProductDeliveryEstimateTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('shop/show')
-                ->where('deliveryEstimates.standard', 'Thu, 10 Sep')
+                ->where('deliveryEstimates.standard', 'Mon, 14 Sep')
                 ->where('deliveryEstimates.fast', 'Thu, 3 Sep'));
     }
 }

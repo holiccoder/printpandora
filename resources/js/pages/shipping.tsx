@@ -59,7 +59,7 @@ export default function Shipping() {
             </p>
             <ul>
                 <li>
-                    <strong>Standard (4PX)</strong> — 5 to 10 business days.
+                    <strong>Standard (4PX)</strong> — 7 to 12 business days.
                     Tracked.
                 </li>
                 <li>
