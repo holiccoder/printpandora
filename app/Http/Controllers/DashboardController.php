@@ -88,6 +88,8 @@ class DashboardController extends Controller
                 'status' => $order->status,
                 'payment_status' => $order->payment_status,
                 'payment_method' => $order->payment_method,
+                'tracking_number' => $order->tracking_number,
+                'tracking_url' => $order->tracking_url,
                 'total' => (float) $order->total,
                 'item_count' => $order->items->sum('quantity'),
                 'created_at' => $order->created_at?->toIso8601String(),

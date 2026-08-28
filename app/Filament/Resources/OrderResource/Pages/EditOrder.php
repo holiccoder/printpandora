@@ -20,36 +20,36 @@ class EditOrder extends EditRecord
     {
         return [
             Actions\Action::make('createFourPxShipment')
-                ->label('Create 4PX shipment')
+                ->label('创建 4PX 货运单')
                 ->icon('heroicon-o-truck')
                 ->color('success')
                 ->visible(fn (Order $record): bool => $record->shipping_method === 'standard')
                 ->requiresConfirmation()
                 ->form([
                     Forms\Components\TextInput::make('weight_grams')
-                        ->label('Parcel weight (g)')
+                        ->label('包裹重量（克）')
                         ->numeric()
                         ->integer()
                         ->minValue(1)
                         ->required()
                         ->default(fn (Order $record): mixed => $record->shipping_weight_grams ?: config('services.four_px.default_weight_grams')),
                     Forms\Components\TextInput::make('length_cm')
-                        ->label('Length (cm)')
+                        ->label('长度（厘米）')
                         ->numeric()
                         ->minValue(0.01)
                         ->default(fn (Order $record): mixed => $record->shipping_length_cm ?: config('services.four_px.default_length_cm')),
                     Forms\Components\TextInput::make('width_cm')
-                        ->label('Width (cm)')
+                        ->label('宽度（厘米）')
                         ->numeric()
                         ->minValue(0.01)
                         ->default(fn (Order $record): mixed => $record->shipping_width_cm ?: config('services.four_px.default_width_cm')),
                     Forms\Components\TextInput::make('height_cm')
-                        ->label('Height (cm)')
+                        ->label('高度（厘米）')
                         ->numeric()
                         ->minValue(0.01)
                         ->default(fn (Order $record): mixed => $record->shipping_height_cm ?: config('services.four_px.default_height_cm')),
                     Forms\Components\TextInput::make('logistics_product_code')
-                        ->label('4PX logistics product code')
+                        ->label('4PX 物流产品代码')
                         ->required()
                         ->default(config('services.four_px.logistics_product_code')),
                 ])
@@ -59,19 +59,19 @@ class EditOrder extends EditRecord
 
                         Notification::make()
                             ->success()
-                            ->title('4PX shipment created')
-                            ->body('Refresh the order later if 4PX has not returned the final channel number yet.')
+                            ->title('4PX 货运单已创建')
+                            ->body('如果 4PX 尚未返回最终渠道号，请稍后刷新订单。')
                             ->send();
                     } catch (Throwable $exception) {
                         Notification::make()
                             ->danger()
-                            ->title('4PX shipment failed')
+                            ->title('4PX 货运单创建失败')
                             ->body(Str::limit($exception->getMessage(), 500, '...'))
                             ->send();
                     }
                 }),
             Actions\Action::make('refreshFourPxShipment')
-                ->label('Refresh 4PX status')
+                ->label('刷新 4PX 状态')
                 ->icon('heroicon-o-arrow-path')
                 ->visible(fn (Order $record): bool => $record->shipping_method === 'standard' && filled($record->fourpx_ref_no))
                 ->action(function (Order $record): void {
@@ -80,18 +80,18 @@ class EditOrder extends EditRecord
 
                         Notification::make()
                             ->success()
-                            ->title('4PX status refreshed')
+                            ->title('4PX 状态已刷新')
                             ->send();
                     } catch (Throwable $exception) {
                         Notification::make()
                             ->danger()
-                            ->title('Unable to refresh 4PX status')
+                            ->title('无法刷新 4PX 状态')
                             ->body(Str::limit($exception->getMessage(), 500, '...'))
                             ->send();
                     }
                 }),
             Actions\Action::make('fetchFourPxLabel')
-                ->label('Get 4PX label')
+                ->label('获取 4PX 面单')
                 ->icon('heroicon-o-document-arrow-down')
                 ->visible(fn (Order $record): bool => $record->shipping_method === 'standard' && filled($record->fourpx_ref_no))
                 ->action(function (Order $record): void {
@@ -100,18 +100,18 @@ class EditOrder extends EditRecord
 
                         Notification::make()
                             ->success()
-                            ->title('4PX label URL saved')
+                            ->title('4PX 面单 URL 已保存')
                             ->send();
                     } catch (Throwable $exception) {
                         Notification::make()
                             ->danger()
-                            ->title('Unable to get 4PX label')
+                            ->title('无法获取 4PX 面单')
                             ->body(Str::limit($exception->getMessage(), 500, '...'))
                             ->send();
                     }
                 }),
             Actions\Action::make('refreshFourPxTracking')
-                ->label('Refresh 4PX tracking')
+                ->label('刷新 4PX 物流追踪')
                 ->icon('heroicon-o-map-pin')
                 ->visible(fn (Order $record): bool => $record->shipping_method === 'standard' && filled($record->tracking_number))
                 ->action(function (Order $record): void {
@@ -120,12 +120,12 @@ class EditOrder extends EditRecord
 
                         Notification::make()
                             ->success()
-                            ->title('4PX tracking refreshed')
+                            ->title('4PX 物流追踪已刷新')
                             ->send();
                     } catch (Throwable $exception) {
                         Notification::make()
                             ->danger()
-                            ->title('Unable to refresh 4PX tracking')
+                            ->title('无法刷新 4PX 物流追踪')
                             ->body(Str::limit($exception->getMessage(), 500, '...'))
                             ->send();
                     }

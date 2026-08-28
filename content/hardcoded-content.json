@@ -2110,11 +2110,13 @@
             "date": "Date",
             "items": "Items",
             "status": "Status",
+            "tracking": "Tracking",
             "payment": "Payment",
             "total": "Total",
             "actions": "Actions"
         },
         "view_link": "View",
+        "tracking_link": "Track package",
         "pagination": {
             "showing": "Showing",
             "of": "of",

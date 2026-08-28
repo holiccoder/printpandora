@@ -147,4 +147,19 @@ class FilamentSettingsTest extends TestCase
         $this->assertSame('Only saved slide', $content->section('home_page.hero_carousel.slides.0.headline'));
         $this->assertNotEmpty($content->section('home_page.popular_products.cards'));
     }
+
+    public function test_shipping_settings_are_saved_correctly(): void
+    {
+        $component = Livewire::test(SettingsPage::class);
+
+        $component
+            ->set('data.shipping.dhl_fuel_surcharge', 12.5)
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $stored = SiteSetting::query()->where('key', SiteSettingsService::KEY)->value('value');
+
+        $this->assertIsArray($stored);
+        $this->assertEquals(12.5, data_get($stored, 'shipping.dhl_fuel_surcharge'));
+    }
 }

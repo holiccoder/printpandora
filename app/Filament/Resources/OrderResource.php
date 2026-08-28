@@ -44,60 +44,60 @@ class OrderResource extends Resource
                                 'cancelled' => '已取消',
                             ]),
                         Forms\Components\Select::make('shipping_method')
-                            ->label('Shipping method')
+                            ->label('运输方式')
                             ->options([
-                                'standard' => 'Standard Shipping',
-                                'dhl_express' => 'Fast Shipping (DHL Express)',
+                                'standard' => '标准运输',
+                                'dhl_express' => '快速运输（DHL Express）',
                             ])
                             ->disabled(),
                         Forms\Components\TextInput::make('shipping_carrier')
-                            ->label('Carrier')
+                            ->label('承运商')
                             ->disabled(),
                         Forms\Components\TextInput::make('shipping_fee')
-                            ->label('Shipping fee')
+                            ->label('运费')
                             ->prefix('$')
                             ->disabled(),
                         Forms\Components\TextInput::make('shipping_weight_grams')
-                            ->label('Parcel weight (g)')
+                            ->label('包裹重量（克）')
                             ->numeric()
                             ->integer()
                             ->minValue(1),
                         Forms\Components\TextInput::make('shipping_length_cm')
-                            ->label('Length (cm)')
+                            ->label('长度（厘米）')
                             ->numeric()
                             ->minValue(0.01),
                         Forms\Components\TextInput::make('shipping_width_cm')
-                            ->label('Width (cm)')
+                            ->label('宽度（厘米）')
                             ->numeric()
                             ->minValue(0.01),
                         Forms\Components\TextInput::make('shipping_height_cm')
-                            ->label('Height (cm)')
+                            ->label('高度（厘米）')
                             ->numeric()
                             ->minValue(0.01),
                         Forms\Components\TextInput::make('tracking_number')
-                            ->label('Tracking number')
-                            ->helperText('4PX and DHL tracking numbers can be entered or synchronized here.'),
+                            ->label('快递追踪号')
+                            ->helperText('可在此填写或同步 4PX、DHL 快递追踪号。'),
                         Forms\Components\TextInput::make('tracking_url')
-                            ->label('Tracking URL')
+                            ->label('快递查询 URL')
                             ->url(),
                         Forms\Components\TextInput::make('fourpx_status')
-                            ->label('4PX status')
+                            ->label('4PX 状态')
                             ->disabled(),
                         Forms\Components\TextInput::make('fourpx_ref_no')
-                            ->label('4PX reference')
+                            ->label('4PX 参考号')
                             ->disabled(),
                         Forms\Components\TextInput::make('fourpx_consignment_no')
-                            ->label('4PX consignment number')
+                            ->label('4PX 托运单号')
                             ->disabled(),
                         Forms\Components\TextInput::make('fourpx_logistics_channel_no')
-                            ->label('4PX logistics channel number')
+                            ->label('4PX 物流渠道号')
                             ->disabled(),
                         Forms\Components\TextInput::make('fourpx_label_url')
-                            ->label('4PX label URL')
+                            ->label('4PX 面单 URL')
                             ->url()
                             ->disabled(),
                         Forms\Components\Textarea::make('fourpx_last_error')
-                            ->label('4PX last error')
+                            ->label('4PX 最后错误')
                             ->disabled()
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('notes')
@@ -173,9 +173,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('customer_name')->label('客户姓名')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('customer_email')->label('电子邮箱')->searchable(),
                 Tables\Columns\TextColumn::make('total')->label('订单总计')->money('USD')->sortable(),
-                Tables\Columns\TextColumn::make('shipping_carrier')->label('Carrier')->sortable(),
-                Tables\Columns\TextColumn::make('tracking_number')->label('Tracking')->searchable(),
-                Tables\Columns\TextColumn::make('fourpx_status')->label('4PX status')->sortable(),
+                Tables\Columns\TextColumn::make('shipping_carrier')->label('承运商')->sortable(),
                 Tables\Columns\SelectColumn::make('status')
                     ->label('状态')
                     ->options([
@@ -203,6 +201,36 @@ class OrderResource extends Resource
                     ]),
             ])
             ->actions([
+                Actions\Action::make('addShippingTracking')
+                    ->label('填写物流信息')
+                    ->icon('heroicon-o-truck')
+                    ->color('success')
+                    ->modalHeading('填写物流信息')
+                    ->modalSubmitActionLabel('保存并标记为已发货')
+                    ->fillForm(fn (Order $record): array => [
+                        'tracking_number' => $record->tracking_number,
+                        'tracking_url' => $record->tracking_url,
+                    ])
+                    ->form([
+                        Forms\Components\TextInput::make('tracking_number')
+                            ->label('快递追踪号')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('tracking_url')
+                            ->label('快递查询 URL')
+                            ->url()
+                            ->required()
+                            ->maxLength(255)
+                            ->helperText('客户将通过此链接查询物流状态。'),
+                    ])
+                    ->action(function (Order $record, array $data): void {
+                        $record->update([
+                            'tracking_number' => $data['tracking_number'],
+                            'tracking_url' => $data['tracking_url'],
+                            'status' => 'shipped',
+                        ]);
+                    })
+                    ->successNotificationTitle('物流信息已保存，订单已标记为已发货'),
                 Actions\EditAction::make(),
             ])
             ->bulkActions([

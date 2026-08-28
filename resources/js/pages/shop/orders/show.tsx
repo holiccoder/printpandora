@@ -207,24 +207,28 @@ export default function OrderShow({ order }: Props) {
                                             2,
                                         )}
                                     </p>
-                                    {order.tracking_number && (
-                                        <p className="mt-2 text-[#706f6c]">
-                                            {c.tracking_label}:{' '}
-                                            {order.tracking_url ? (
+                                    {(order.tracking_number ||
+                                        order.tracking_url) && (
+                                        <div className="mt-3 space-y-2 border-t border-[#e3e3e0] pt-3 dark:border-[#3E3E3A]">
+                                            {order.tracking_number && (
+                                                <p className="text-[#706f6c]">
+                                                    {c.tracking_label}:{' '}
+                                                    <span className="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">
+                                                        {order.tracking_number}
+                                                    </span>
+                                                </p>
+                                            )}
+                                            {order.tracking_url && (
                                                 <a
                                                     href={order.tracking_url}
                                                     target="_blank"
                                                     rel="noreferrer"
-                                                    className="font-medium text-[#1b1b18] underline dark:text-[#EDEDEC]"
+                                                    className="inline-flex font-medium text-[#1b1b18] underline dark:text-[#EDEDEC]"
                                                 >
-                                                    {order.tracking_number}
+                                                    {c.track_package_label}
                                                 </a>
-                                            ) : (
-                                                <span className="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">
-                                                    {order.tracking_number}
-                                                </span>
                                             )}
-                                        </p>
+                                        </div>
                                     )}
                                 </div>
                             </div>

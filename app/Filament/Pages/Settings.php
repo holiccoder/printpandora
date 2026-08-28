@@ -72,6 +72,7 @@ class Settings extends Page implements HasForms
         }
 
         $storedGeneral = Arr::get($settings->all(), 'general', []);
+        $storedShipping = Arr::get($settings->all(), 'shipping', []);
 
         $this->form->fill([
             'general' => [
@@ -93,6 +94,11 @@ class Settings extends Page implements HasForms
                     'next_button_label' => Arr::get($homepage, 'hero_carousel.next_button_label', 'Next slide'),
                     'slides' => $slides,
                 ],
+            ],
+            'shipping' => [
+                'dhl_fuel_surcharge' => is_array($storedShipping)
+                    ? ($storedShipping['dhl_fuel_surcharge'] ?? 0)
+                    : 0,
             ],
         ]);
     }
@@ -206,6 +212,23 @@ class Settings extends Page implements HasForms
                                     ])
                                     ->columns(3),
                             ]),
+                        Tab::make('shipping')
+                            ->label('快递设置')
+                            ->icon('heroicon-o-truck')
+                            ->schema([
+                                Section::make('快递参数设置')
+                                    ->description('配置运费相关的基础参数，如 DHL 燃油附加费率。')
+                                    ->schema([
+                                        TextInput::make('shipping.dhl_fuel_surcharge')
+                                            ->label('DHL 燃油附加费')
+                                            ->numeric()
+                                            ->suffix('%')
+                                            ->required()
+                                            ->minValue(0)
+                                            ->maxValue(100),
+                                    ])
+                                    ->columns(2),
+                            ]),
                     ])
                     ->columnSpanFull(),
             ])
@@ -247,13 +270,14 @@ class Settings extends Page implements HasForms
         $settings->saveSections([
             'general' => is_array($state['general'] ?? null) ? $state['general'] : [],
             'homepage' => $homepage,
+            'shipping' => is_array($state['shipping'] ?? null) ? $state['shipping'] : [],
         ]);
 
         $content->forget();
 
         Notification::make()
             ->title('设置已保存')
-            ->body('首页 SEO 和轮播图内容已保存到数据库。')
+            ->body('首页 SEO、轮播图内容和快递设置已保存到数据库。')
             ->success()
             ->send();
     }

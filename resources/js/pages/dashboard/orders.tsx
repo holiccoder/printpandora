@@ -12,6 +12,8 @@ type Order = {
     status: string;
     payment_status: string;
     payment_method: string | null;
+    tracking_number: string | null;
+    tracking_url: string | null;
     total: number;
     item_count: number;
     created_at: string | null;
@@ -84,6 +86,7 @@ export default function DashboardOrders({ orders }: Props) {
                                             <Th>{c.table_headers.date}</Th>
                                             <Th>{c.table_headers.items}</Th>
                                             <Th>{c.table_headers.status}</Th>
+                                            <Th>{c.table_headers.tracking}</Th>
                                             <Th>{c.table_headers.payment}</Th>
                                             <Th className="text-right">
                                                 {c.table_headers.total}
@@ -116,6 +119,41 @@ export default function DashboardOrders({ orders }: Props) {
                                                     <StatusPill
                                                         status={order.status}
                                                     />
+                                                </Td>
+                                                <Td className="max-w-52">
+                                                    {order.tracking_number ||
+                                                    order.tracking_url ? (
+                                                        <div className="flex flex-col gap-1">
+                                                            {order.tracking_number && (
+                                                                <span className="truncate font-medium text-neutral-900">
+                                                                    {
+                                                                        order.tracking_number
+                                                                    }
+                                                                </span>
+                                                            )}
+                                                            {order.tracking_url && (
+                                                                <a
+                                                                    href={
+                                                                        order.tracking_url
+                                                                    }
+                                                                    target="_blank"
+                                                                    rel="noreferrer"
+                                                                    className="font-semibold hover:underline"
+                                                                    style={{
+                                                                        color: ACCENT,
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        c.tracking_link
+                                                                    }
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-neutral-400">
+                                                            —
+                                                        </span>
+                                                    )}
                                                 </Td>
                                                 <Td className="text-neutral-600 capitalize">
                                                     {order.payment_status}
