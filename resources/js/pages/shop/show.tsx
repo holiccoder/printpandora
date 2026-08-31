@@ -1,7 +1,7 @@
 // Content (labels, copy, images, FAQs) sourced from `content/hardcoded-content.json`
 // via useContent('product_detail_page'). Configurator state and price math stay
 // local to the page; JSON drives the labels and option metadata.
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
 import { Fragment, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -263,6 +263,65 @@ function optionValueCode(value: ProductOptionValue): string {
             .toLowerCase()
             .replace(/[\s_]+/g, '-')
     );
+}
+
+function getProductTurnaround(
+    product: Product,
+    specialFinish: string | null,
+): { label: string; description: string } | null {
+    const slug = product.slug.toLowerCase();
+    const name = product.name.toLowerCase();
+    const category = product.category?.slug.toLowerCase();
+    const hasSpecialFinish =
+        specialFinish != null &&
+        !NO_SPECIAL_FINISH_CODES.includes(specialFinish);
+
+    let workdays: string | null = null;
+
+    if (slug.includes('metal') || name.includes('metal business card')) {
+        workdays = '15 - 20 Workdays';
+    } else if (
+        isPvcProductSlug(slug) ||
+        category === 'pvc-business-cards' ||
+        name.includes('pvc')
+    ) {
+        workdays =
+            slug.includes('premium') || name.includes('premium')
+                ? '5 - 7 Workdays'
+                : slug.includes('standard') || name.includes('standard')
+                  ? '3 - 5 Workdays'
+                  : '2 - 3 Workdays';
+    } else if (
+        category === 'cotton-business-cards' ||
+        slug.includes('cotton') ||
+        name.includes('cotton business card')
+    ) {
+        workdays = '5 - 7 Workdays';
+    } else if (
+        slug === 'luxe-business-cards' ||
+        name === 'luxe business cards'
+    ) {
+        workdays = '3 - 4 Workdays';
+    } else if (
+        slug === 'super-business-cards' ||
+        name.includes('super business card')
+    ) {
+        workdays = hasSpecialFinish ? '4 - 5 Workdays' : '2 - 3 Workdays';
+    } else if (
+        slug.includes('classic') ||
+        name.includes('classic business card')
+    ) {
+        workdays = hasSpecialFinish ? '4 - 5 Workdays' : '2 - 3 Workdays';
+    }
+
+    if (workdays === null) {
+        return null;
+    }
+
+    return {
+        label: `${workdays} Turnaround Time`,
+        description: `Custom business days for ${product.name}${hasSpecialFinish ? ' with a hot foil/cold foil special finish' : ''}.`,
+    };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -721,10 +780,27 @@ export default function ShopShow({
     const [designModal, setDesignModal] = useState<
         'canva' | 'upload' | 'design-for-you' | null
     >(null);
+    const [submittedDesignModes, setSubmittedDesignModes] = useState<
+        Record<'canva' | 'upload' | 'design-for-you', boolean>
+    >({
+        canva: false,
+        upload: false,
+        'design-for-you': false,
+    });
     const [selectedDesignService, setSelectedDesignService] = useState<
         string | null
     >(null);
     const [hasInteracted, setHasInteracted] = useState(false);
+
+    const markDesignSubmitted = (
+        mode: 'canva' | 'upload' | 'design-for-you',
+    ) => {
+        setSubmittedDesignModes((current) => ({
+            ...current,
+            [mode]: true,
+        }));
+        setDesignModal(null);
+    };
 
     const markInteracted = () => {
         setHasInteracted(true);
@@ -1200,6 +1276,16 @@ export default function ShopShow({
             (e: any) => e.id === selectedEmbossingOrSignaturePanel,
         )?.label ?? '';
 
+    const selectedProductSpecialFinish =
+        usesDynamicOptions &&
+        typeof selectedDynamicOptions.special_finish === 'string'
+            ? selectedDynamicOptions.special_finish
+            : selectedSpecialFinish;
+    const productTurnaround = getProductTurnaround(
+        product,
+        selectedProductSpecialFinish,
+    );
+
     const showSpecialFinishInSummary = specialFinishes.length > 0;
     const showTextureInSummary = textures.length > 0;
     const showEmbossingInSummary = embossingList.length > 0;
@@ -1331,9 +1417,12 @@ export default function ShopShow({
                                     </svg>
                                 }
                                 label={
-                                    firstFeatureCard.title || featureChips[0]
+                                    productTurnaround?.label ||
+                                    firstFeatureCard.title ||
+                                    featureChips[0]
                                 }
                                 description={
+                                    productTurnaround?.description ||
                                     firstFeatureCard.description ||
                                     featureChipDescriptions[0]
                                 }
@@ -2403,6 +2492,7 @@ export default function ShopShow({
                                     title={c.design_cta.options[0].title}
                                     body={c.design_cta.options[0].body}
                                     accent={ACCENT}
+                                    submitted={submittedDesignModes.canva}
                                     onClick={() => setDesignModal('canva')}
                                     icon={
                                         <svg
@@ -2447,6 +2537,7 @@ export default function ShopShow({
                                     title={c.design_cta.options[1].title}
                                     body={c.design_cta.options[1].body}
                                     accent={ACCENT}
+                                    submitted={submittedDesignModes.upload}
                                     onClick={() => setDesignModal('upload')}
                                     icon={
                                         <svg
@@ -2467,6 +2558,9 @@ export default function ShopShow({
                                     title={c.design_cta.options[2].title}
                                     body={c.design_cta.options[2].body}
                                     accent={ACCENT}
+                                    submitted={
+                                        submittedDesignModes['design-for-you']
+                                    }
                                     onClick={() =>
                                         setDesignModal('design-for-you')
                                     }
@@ -2495,6 +2589,11 @@ export default function ShopShow({
                             onOpenChange={(open) =>
                                 setDesignModal(open ? 'canva' : null)
                             }
+                            productId={product.id}
+                            productName={product.name}
+                            productSlug={product.slug}
+                            returnTo={pageUrl}
+                            onSubmitted={() => markDesignSubmitted('canva')}
                         />
                         <DesignServiceFormModal
                             open={designModal === 'upload'}
@@ -2504,6 +2603,13 @@ export default function ShopShow({
                             title="Upload a full design (free)"
                             description="Send us your print-ready artwork and we'll prepare a free proof before printing."
                             productOptions={c.design_form_product_options}
+                            submissionTarget="product-design"
+                            productDesignMode="upload"
+                            productId={product.id}
+                            productName={product.name}
+                            productSlug={product.slug}
+                            returnTo={pageUrl}
+                            onSubmitted={() => markDesignSubmitted('upload')}
                         />
                         <DesignServiceFormModal
                             open={designModal === 'design-for-you'}
@@ -2512,6 +2618,13 @@ export default function ShopShow({
                             }
                             title="Design for you"
                             productOptions={c.design_form_product_options}
+                            businessCardType={product.name}
+                            businessCardTypeDisabled
+                            submissionTarget="product-design"
+                            productDesignMode="design-for-you"
+                            productId={product.id}
+                            productName={product.name}
+                            productSlug={product.slug}
                             designServices={designServicesConfig?.options}
                             designServicesHeading={
                                 designServicesConfig?.heading
@@ -2523,6 +2636,9 @@ export default function ShopShow({
                             returnTo={pageUrl}
                             onDesignServiceSaved={(code) =>
                                 setSelectedDesignService(code)
+                            }
+                            onSubmitted={() =>
+                                markDesignSubmitted('design-for-you')
                             }
                         />
 
@@ -2867,18 +2983,25 @@ function DesignChoice({
     icon,
     accent,
     onClick,
+    submitted,
 }: {
     title: string;
     body: string;
     icon: React.ReactNode;
     accent: string;
     onClick?: () => void;
+    submitted?: boolean;
 }) {
     return (
         <button
             type="button"
             onClick={onClick}
-            className="flex h-full flex-col items-start gap-2 rounded-md border-2 border-neutral-200 bg-white p-4 text-left transition-colors hover:border-[#800020] hover:bg-[#800020]/5"
+            aria-pressed={submitted}
+            className={`flex h-full flex-col items-start gap-2 rounded-md border-2 p-4 text-left transition-colors hover:border-[#800020] hover:bg-[#800020]/5 ${
+                submitted
+                    ? 'border-[#800020] bg-[#800020]/5 ring-1 ring-[#800020]'
+                    : 'border-neutral-200 bg-white'
+            }`}
         >
             <span style={{ color: accent }}>{icon}</span>
             <p className="text-sm font-bold text-neutral-900">{title}</p>
@@ -2984,10 +3107,37 @@ function CustomSizeModal({
 function CanvaDesignModal({
     open,
     onOpenChange,
+    onSubmitted,
+    productId,
+    productName,
+    productSlug,
+    returnTo,
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    onSubmitted: () => void;
+    productId?: number;
+    productName?: string;
+    productSlug?: string;
+    returnTo?: string;
 }) {
+    const { setData, post, processing, errors, reset } = useForm<{
+        desgin: string;
+        design_file: File | null;
+        return_to: string;
+    }>({
+        desgin: JSON.stringify({
+            source: 'product-page',
+            mode: 'canva',
+            product_id: productId ?? null,
+            product_name: productName ?? null,
+            product_slug: productSlug ?? null,
+        }),
+        design_file: null,
+        return_to: returnTo ?? '',
+    });
+    const designInputRef = useRef<HTMLInputElement>(null);
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-2xl">
@@ -3013,22 +3163,50 @@ function CanvaDesignModal({
                     className="mt-2 space-y-3"
                     onSubmit={(e) => {
                         e.preventDefault();
-                        toast.success(
-                            'File received — we will attach it to your order.',
-                        );
-                        onOpenChange(false);
+                        post('/product-designs', {
+                            forceFormData: true,
+                            preserveScroll: true,
+                            preserveState: true,
+                            onSuccess: () => {
+                                toast.success(
+                                    'File received — we will attach it to your order.',
+                                );
+                                reset();
+                                if (designInputRef.current) {
+                                    designInputRef.current.value = '';
+                                }
+                                onSubmitted();
+                                onOpenChange(false);
+                            },
+                        });
                     }}
                 >
                     <h3 className="text-sm font-bold text-neutral-900">
                         Upload your Canva design file
                     </h3>
                     <Input
+                        ref={designInputRef}
                         type="file"
                         accept=".pdf,.png,.jpg,.jpeg,.svg,.ai,.psd"
                         required
+                        onChange={(e) =>
+                            setData(
+                                'design_file',
+                                e.target.files?.[0] ?? null,
+                            )
+                        }
                     />
-                    <Button type="submit" className="w-full sm:w-auto">
-                        Upload file
+                    {errors.design_file && (
+                        <p className="text-sm text-red-600">
+                            {errors.design_file}
+                        </p>
+                    )}
+                    <Button
+                        type="submit"
+                        className="w-full sm:w-auto"
+                        disabled={processing}
+                    >
+                        Submit
                     </Button>
                 </form>
             </DialogContent>

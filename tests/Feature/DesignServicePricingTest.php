@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\DesignServiceRequest;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\PricingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class DesignServicePricingTest extends TestCase
@@ -194,6 +197,34 @@ class DesignServicePricingTest extends TestCase
             'design_service_code' => 'card_design',
             'design_service_fee' => 79.00,
         ]);
+    }
+
+    public function test_request_stores_uploaded_logo_and_examples(): void
+    {
+        Storage::fake('public');
+
+        $this->post(route('business-card-design-service.store'), [
+            'email' => 'client@example.com',
+            'business_name' => 'Acme',
+            'business_card_type' => 'Classic Standard Business Cards',
+            'logo_file' => UploadedFile::fake()->image('logo.png'),
+            'example_files' => [
+                UploadedFile::fake()->image('example-one.png'),
+                UploadedFile::fake()->image('example-two.jpg'),
+            ],
+            'terms_accepted' => true,
+        ])->assertRedirect(route('business-card-design-service'));
+
+        $request = DesignServiceRequest::query()->firstOrFail();
+
+        $this->assertIsString($request->logo_path);
+        $this->assertIsArray($request->example_paths);
+        $this->assertCount(2, $request->example_paths);
+        Storage::disk('public')->assertExists($request->logo_path);
+
+        foreach ($request->example_paths as $path) {
+            Storage::disk('public')->assertExists($path);
+        }
     }
 
     public function test_invalid_code_is_rejected_and_not_stored(): void

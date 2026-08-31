@@ -1,9 +1,9 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { Image } from 'lucide-react';
-import { useState } from 'react';
-import type { FormEventHandler } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
+import type { ChangeEventHandler, FormEventHandler, RefObject } from 'react';
 import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,8 +21,13 @@ export interface DesignServiceOption {
     description?: string;
 }
 
+export type DesignSubmissionTarget = 'design-service' | 'product-design';
+export type ProductDesignMode = 'upload' | 'design-for-you';
+
 interface DesignServiceFormProps {
     productOptions?: string[];
+    businessCardType?: string;
+    businessCardTypeDisabled?: boolean;
     onSuccess?: () => void;
     submitLabel?: string;
     className?: string;
@@ -36,6 +41,11 @@ interface DesignServiceFormProps {
     onDesignServiceCodeChange?: (code: string) => void;
     onDesignServiceError?: (message: string | null) => void;
     hideDesignServices?: boolean;
+    submissionTarget?: DesignSubmissionTarget;
+    productDesignMode?: ProductDesignMode;
+    productId?: number;
+    productName?: string;
+    productSlug?: string;
 }
 
 type DesignServiceFormData = {
@@ -46,10 +56,14 @@ type DesignServiceFormData = {
     design_service_code: string;
     return_to: string;
     terms_accepted: boolean;
+    logo_file: File | null;
+    example_files: File[];
 };
 
 export default function DesignServiceForm({
     productOptions,
+    businessCardType,
+    businessCardTypeDisabled = false,
     onSuccess,
     submitLabel = 'Submit',
     className = '',
@@ -63,6 +77,11 @@ export default function DesignServiceForm({
     onDesignServiceCodeChange,
     onDesignServiceError,
     hideDesignServices = false,
+    submissionTarget = 'design-service',
+    productDesignMode = 'upload',
+    productId,
+    productName,
+    productSlug,
 }: DesignServiceFormProps) {
     const flashSuccess = (
         usePage().props.flash as { success?: string } | undefined
@@ -72,17 +91,48 @@ export default function DesignServiceForm({
     const [designServiceError, setDesignServiceError] = useState<string | null>(
         null,
     );
+    const logoInputRef = useRef<HTMLInputElement>(null);
+    const examplesInputRef = useRef<HTMLInputElement>(null);
 
-    const { data, setData, post, processing, errors, reset } =
+    const { data, setData, post, processing, errors, reset, transform } =
         useForm<DesignServiceFormData>({
             email: '',
             business_name: '',
             card_info: '',
-            business_card_type: '',
             design_service_code: '',
             return_to: returnTo ?? '',
             terms_accepted: false,
+            business_card_type: businessCardType ?? '',
+            logo_file: null,
+            example_files: [],
         });
+
+    useEffect(() => {
+        if (
+            businessCardType !== undefined &&
+            data.business_card_type !== businessCardType
+        ) {
+            setData('business_card_type', businessCardType);
+        }
+    }, [businessCardType, data.business_card_type, setData]);
+
+    const selectableProductOptions = Array.from(
+        new Set(
+            businessCardType
+                ? [businessCardType, ...(productOptions ?? [])]
+                : (productOptions ?? []),
+        ),
+    );
+
+    const handleLogoChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+        setData('logo_file', event.target.files?.[0] ?? null);
+    };
+
+    const handleExamplesChange: ChangeEventHandler<HTMLInputElement> = (
+        event,
+    ) => {
+        setData('example_files', Array.from(event.target.files ?? []));
+    };
 
     const designServiceCode =
         controlledDesignServiceCode ?? data.design_service_code;
@@ -93,6 +143,7 @@ export default function DesignServiceForm({
         } else {
             setData('design_service_code', code);
         }
+
         setDesignServiceError(null);
         onDesignServiceError?.(null);
     };
@@ -113,22 +164,70 @@ export default function DesignServiceForm({
         setDesignServiceError(null);
         onDesignServiceError?.(null);
         const savedCode = designServiceCode;
-        setData('design_service_code', designServiceCode);
 
-        post('/business-card-design-service', {
-            preserveScroll: true,
-            // Keep product-page state (incl. the saved design service)
-            // alive across the redirect back to the product page.
-            preserveState: true,
-            onSuccess: () => {
-                if (savedCode) {
-                    onDesignServiceSaved?.(savedCode);
-                }
+        transform((formData) => {
+            const normalizedData = {
+                ...formData,
+                business_card_type:
+                    businessCardType ?? formData.business_card_type,
+                design_service_code: designServiceCode,
+            };
 
-                reset();
-                onSuccess?.();
-            },
+            if (submissionTarget === 'product-design') {
+                return {
+                    desgin: JSON.stringify({
+                        source: 'product-page',
+                        mode: productDesignMode,
+                        product_id: productId ?? null,
+                        product_name: productName ?? null,
+                        product_slug: productSlug ?? null,
+                        email: normalizedData.email,
+                        business_name: normalizedData.business_name,
+                        card_info: normalizedData.card_info,
+                        business_card_type:
+                            normalizedData.business_card_type,
+                        design_service_code:
+                            normalizedData.design_service_code || null,
+                        terms_accepted: normalizedData.terms_accepted,
+                    }),
+                    return_to: normalizedData.return_to,
+                    logo_file: normalizedData.logo_file,
+                    example_files: normalizedData.example_files,
+                };
+            }
+
+            return normalizedData;
         });
+
+        post(
+            submissionTarget === 'product-design'
+                ? '/product-designs'
+                : '/business-card-design-service',
+            {
+                forceFormData: true,
+                preserveScroll: true,
+                // Keep product-page state (incl. the saved design service)
+                // alive across the redirect back to the product page.
+                preserveState: true,
+                onSuccess: () => {
+                    if (savedCode) {
+                        onDesignServiceSaved?.(savedCode);
+                    }
+
+                    reset();
+
+                    if (logoInputRef.current) {
+                        logoInputRef.current.value = '';
+                    }
+
+                    if (examplesInputRef.current) {
+                        examplesInputRef.current.value = '';
+                    }
+
+                    onSuccess?.();
+                },
+            },
+        );
     };
 
     return (
@@ -207,9 +306,15 @@ export default function DesignServiceForm({
                 />
             </FormRow>
 
-            <FormRow label="Company logo">
+            <FormRow label="Company logo" error={errors.logo_file}>
                 <div className="space-y-2">
-                    <UploadButton />
+                    <UploadButton
+                        inputRef={logoInputRef}
+                        onChange={handleLogoChange}
+                        selectedFiles={
+                            data.logo_file === null ? [] : [data.logo_file]
+                        }
+                    />
                     <p className="text-xs text-neutral-500">
                         Vector format preferred (AI, EPS, SVG, PDF).
                     </p>
@@ -250,15 +355,19 @@ export default function DesignServiceForm({
                 <Select
                     required
                     value={data.business_card_type}
+                    disabled={businessCardTypeDisabled}
                     onValueChange={(value) =>
                         setData('business_card_type', value)
                     }
                 >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger
+                        className="w-full"
+                        disabled={businessCardTypeDisabled}
+                    >
                         <SelectValue placeholder="Please select product" />
                     </SelectTrigger>
                     <SelectContent>
-                        {productOptions?.map((option: string) => (
+                        {selectableProductOptions.map((option: string) => (
                             <SelectItem key={option} value={option}>
                                 {option}
                             </SelectItem>
@@ -267,8 +376,16 @@ export default function DesignServiceForm({
                 </Select>
             </FormRow>
 
-            <FormRow label="Business card examples you like">
-                <UploadButton />
+            <FormRow
+                label="Business card examples you like"
+                error={errors.example_files ?? errors['example_files.0']}
+            >
+                <UploadButton
+                    inputRef={examplesInputRef}
+                    onChange={handleExamplesChange}
+                    multiple
+                    selectedFiles={data.example_files}
+                />
             </FormRow>
 
             <div className="flex items-start gap-3 rounded-md border border-neutral-200 bg-neutral-50 p-4">
@@ -335,15 +452,56 @@ function FormRow({
     );
 }
 
-function UploadButton() {
+function UploadButton({
+    inputRef,
+    onChange,
+    selectedFiles,
+    multiple = false,
+}: {
+    inputRef: RefObject<HTMLInputElement | null>;
+    onChange: ChangeEventHandler<HTMLInputElement>;
+    selectedFiles: File[];
+    multiple?: boolean;
+}) {
+    const inputId = `design-service-upload-${useId().replaceAll(':', '-')}`;
+
     return (
-        <Button
-            type="button"
-            variant="outline"
-            className="inline-flex items-center gap-2 border-primary text-primary hover:bg-primary/5"
-        >
-            <Image className="size-4" />
-            UPLOAD FILES
-        </Button>
+        <div className="space-y-2">
+            <input
+                id={inputId}
+                ref={inputRef}
+                type="file"
+                accept=".ai,.eps,.svg,.pdf,.png,.jpg,.jpeg,.webp,.psd"
+                multiple={multiple}
+                onChange={onChange}
+                className="sr-only"
+            />
+            <label
+                htmlFor={inputId}
+                className={buttonVariants({
+                    variant: 'outline',
+                    className:
+                        'cursor-pointer border-primary text-primary hover:bg-primary/5',
+                })}
+            >
+                <Image className="size-4" />
+                UPLOAD FILES
+            </label>
+            {selectedFiles.length > 0 && (
+                <ul
+                    className="space-y-1 text-xs text-neutral-600"
+                    aria-live="polite"
+                >
+                    {selectedFiles.map((file, index) => (
+                        <li
+                            key={`${file.name}-${file.lastModified}-${index}`}
+                            className="break-all"
+                        >
+                            {file.name}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
     );
 }

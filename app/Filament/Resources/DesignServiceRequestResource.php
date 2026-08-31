@@ -32,6 +32,26 @@ class DesignServiceRequestResource extends Resource
     {
         return $schema
             ->schema([
+                Section::make('上传文件')
+                    ->schema([
+                        Forms\Components\FileUpload::make('logo_path')
+                            ->label('公司 Logo')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->openable()
+                            ->downloadable()
+                            ->disabled()
+                            ->dehydrated(false),
+                        Forms\Components\FileUpload::make('example_paths')
+                            ->label('案例文件')
+                            ->multiple()
+                            ->disk('public')
+                            ->visibility('public')
+                            ->openable()
+                            ->downloadable()
+                            ->disabled()
+                            ->dehydrated(false),
+                    ]),
                 Section::make('申请详情')
                     ->schema([
                         Forms\Components\TextInput::make('email')
@@ -55,14 +75,17 @@ class DesignServiceRequestResource extends Resource
                             ])
                             ->nullable(),
                         Forms\Components\TextInput::make('design_service_fee')
+                            ->hidden()
                             ->label('设计服务费 (USD)')
                             ->numeric()
                             ->step('0.01')
                             ->nullable(),
                         Forms\Components\Toggle::make('terms_accepted')
+                            ->hidden()
                             ->label('同意服务条款')
                             ->required(),
                         Forms\Components\DateTimePicker::make('handled_at')
+                            ->hidden()
                             ->label('处理时间')
                             ->nullable(),
                     ]),

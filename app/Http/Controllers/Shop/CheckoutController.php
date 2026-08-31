@@ -15,6 +15,7 @@ use App\Services\DiscountException;
 use App\Services\DiscountService;
 use App\Services\PayPalService;
 use App\Services\ShippingService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,19 +26,23 @@ use Throwable;
 
 class CheckoutController extends Controller
 {
+    private const CHECKOUT_TOKEN_PREFIX = 'checkout:';
+
     public function __construct(
         protected ShippingService $shipping,
     ) {}
 
-    public function show(Cart $cart)
+    public function show(Request $request, Cart $cart)
     {
         if ($cart->count() === 0) {
             return redirect()->route('shop.cart');
         }
 
-        $quote = $cart->quote();
-        $defaultShippingMethod = $this->shipping->defaultMethod();
-        $defaultCountry = $this->shipping->defaultCountry();
+        $pendingOrder = $this->preparePendingCheckoutOrder($request, $cart);
+        $customerEmail = (string) $request->user()->email;
+        $quote = $this->pendingCheckoutQuote($cart, $customerEmail, $pendingOrder, false);
+        $defaultShippingMethod = (string) $pendingOrder->shipping_method;
+        $defaultCountry = (string) $pendingOrder->shipping_country;
         $shippingFee = $this->shipping->fee($defaultShippingMethod, $defaultCountry);
 
         return Inertia::render('shop/checkout', [
@@ -52,6 +57,15 @@ class CheckoutController extends Controller
             'defaultShippingCountry' => $defaultCountry,
             'defaultShippingMethod' => $defaultShippingMethod,
             'discountCode' => $quote['code'],
+            'pendingOrder' => [
+                'shipping_address' => $pendingOrder->shipping_address,
+                'shipping_city' => $pendingOrder->shipping_city,
+                'shipping_state' => $pendingOrder->shipping_state,
+                'shipping_zip' => $pendingOrder->shipping_zip,
+                'shipping_country' => $defaultCountry,
+                'shipping_method' => $defaultShippingMethod,
+                'notes' => $pendingOrder->notes,
+            ],
             'paypal' => [
                 'client_id' => config('services.paypal.client_id'),
                 'mode' => config('services.paypal.mode', 'sandbox'),
@@ -74,12 +88,19 @@ class CheckoutController extends Controller
         $validated = $this->validateCheckout($request);
 
         try {
-            $order = $this->placeOrder($request, $cart, $validated, 'manual', 'pending', null);
+            $order = $this->preparePendingCheckoutOrder(
+                $request,
+                $cart,
+                $validated,
+                'manual',
+                true,
+            );
         } catch (DiscountException $exception) {
             return back()->withErrors(['discount_code' => $exception->getMessage()])->withInput();
         }
 
         $cart->clear();
+        $order->update(['checkout_token' => null]);
 
         return redirect()->route('shop.orders.show', $order->id)
             ->with('success', 'Order placed successfully!');
@@ -97,11 +118,14 @@ class CheckoutController extends Controller
         $validated = $this->validateCheckout($request);
 
         try {
-            $quote = $cart->quote($validated['customer_email'], true);
-            $total = round($quote['total'] + $this->shipping->fee(
-                $validated['shipping_method'],
-                $validated['shipping_country'],
-            ), 2);
+            $order = $this->preparePendingCheckoutOrder(
+                $request,
+                $cart,
+                $validated,
+                'paypal',
+                true,
+            );
+            $total = (float) $order->total;
             $reference = 'checkout-'.$request->user()->getAuthIdentifier().'-'.now()->timestamp;
             $result = $paypal->createOrder($total, $reference);
             $paypalOrderId = $result['id'] ?? null;
@@ -110,15 +134,6 @@ class CheckoutController extends Controller
                 throw new \RuntimeException('PayPal did not return an order ID.');
             }
 
-            $order = $this->placeOrder(
-                $request,
-                $cart,
-                $validated,
-                'paypal',
-                'pending',
-                null,
-                'pending',
-            );
             $order->update(['paypal_order_id' => $paypalOrderId]);
 
             return response()->json([
@@ -151,6 +166,7 @@ class CheckoutController extends Controller
 
         if ($order->payment_status === 'paid') {
             $cart->clear();
+            $order->update(['checkout_token' => null]);
 
             return response()->json([
                 'redirect' => route('shop.checkout.thank-you', $order->id),
@@ -302,14 +318,12 @@ class CheckoutController extends Controller
         DB::beginTransaction();
 
         try {
-            $order = $this->placeOrder(
+            $order = $this->preparePendingCheckoutOrder(
                 $request,
                 $cart,
                 $validated,
                 'cryptomus',
-                'pending',
-                null,
-                'pending',
+                true,
             );
 
             $invoice = $cryptomus->createInvoice((float) $order->total, $order->id);
@@ -329,6 +343,7 @@ class CheckoutController extends Controller
         }
 
         $cart->clear();
+        $order->update(['checkout_token' => null]);
 
         return response()->json([
             'redirect' => $invoice['url'] ?? null,
@@ -381,6 +396,7 @@ class CheckoutController extends Controller
                 $order->update([
                     'payment_status' => 'paid',
                     'status' => 'processing',
+                    'checkout_token' => null,
                 ]);
                 break;
 
@@ -390,6 +406,7 @@ class CheckoutController extends Controller
                 $order->update([
                     'payment_status' => 'failed',
                     'status' => 'cancelled',
+                    'checkout_token' => null,
                 ]);
                 break;
 
@@ -504,6 +521,7 @@ class CheckoutController extends Controller
             if (! in_array($lockedOrder->payment_status, ['refunded', 'reversed'], true)) {
                 $updates = [
                     'payment_status' => 'paid',
+                    'checkout_token' => null,
                 ];
 
                 if ($lockedOrder->status === 'pending') {
@@ -536,6 +554,7 @@ class CheckoutController extends Controller
             $updates = ['payment_status' => $paymentStatus];
             if ($cancel && in_array($lockedOrder->status, ['pending', 'processing'], true)) {
                 $updates['status'] = 'cancelled';
+                $updates['checkout_token'] = null;
             }
 
             $lockedOrder->update($updates);
@@ -610,6 +629,309 @@ class CheckoutController extends Controller
         }
     }
 
+    /**
+     * Return the pending order for this browser checkout or create it once.
+     *
+     * The token is derived from the authenticated user and session, so a page
+     * refresh reuses the same local order while a different checkout session
+     * gets its own order. The unique database column also handles concurrent
+     * refreshes that arrive before the first response saves session state.
+     *
+     * @param  array<string, mixed>|null  $validated
+     */
+    protected function preparePendingCheckoutOrder(
+        Request $request,
+        Cart $cart,
+        ?array $validated = null,
+        ?string $paymentMethod = null,
+        bool $redeemDiscount = false,
+    ): Order {
+        $token = $this->checkoutToken($request);
+        $order = $this->findPendingCheckoutOrder($request, $token);
+
+        if (! $order) {
+            try {
+                $order = DB::transaction(function () use ($request, $cart, $token): Order {
+                    return $this->findPendingCheckoutOrder($request, $token)
+                        ?? $this->createPendingCheckoutOrder($request, $cart, $token);
+                });
+            } catch (QueryException $exception) {
+                // Another request may have created the unique token first.
+                $order = $this->findPendingCheckoutOrder($request, $token);
+
+                if (! $order) {
+                    throw $exception;
+                }
+            }
+        }
+
+        return $this->synchronizePendingCheckoutOrder(
+            $request,
+            $cart,
+            $order,
+            $validated,
+            $paymentMethod,
+            $redeemDiscount,
+        );
+    }
+
+    protected function checkoutToken(Request $request): string
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            throw new \LogicException('A logged-in customer is required to start checkout.');
+        }
+
+        return hash(
+            'sha256',
+            self::CHECKOUT_TOKEN_PREFIX.$user->getAuthIdentifier().':'.$request->session()->getId(),
+        );
+    }
+
+    protected function findPendingCheckoutOrder(Request $request, string $token): ?Order
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            return null;
+        }
+
+        return Order::query()
+            ->where('checkout_token', $token)
+            ->where('user_id', (int) $user->getAuthIdentifier())
+            ->where('status', 'pending')
+            ->where('payment_status', 'pending')
+            ->first();
+    }
+
+    protected function createPendingCheckoutOrder(Request $request, Cart $cart, string $token): Order
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            throw new \LogicException('A logged-in customer is required to start checkout.');
+        }
+
+        $shippingMethod = $this->shipping->defaultMethod();
+        $shippingCountry = $this->shipping->defaultCountry();
+        $shipping = $this->shipping->get($shippingMethod, $shippingCountry);
+        $quote = $cart->quote((string) $user->email);
+
+        $order = Order::create([
+            'user_id' => (int) $user->getAuthIdentifier(),
+            'checkout_token' => $token,
+            'status' => 'pending',
+            'payment_method' => 'manual',
+            'payment_status' => 'pending',
+            'payment_id' => null,
+            'total' => round($quote['total'] + $shipping['fee'], 2),
+            'customer_name' => (string) $user->name,
+            'customer_email' => (string) $user->email,
+            'customer_phone' => null,
+            'shipping_address' => null,
+            'shipping_city' => null,
+            'shipping_state' => null,
+            'shipping_zip' => null,
+            'shipping_country' => $shippingCountry,
+            'shipping_method' => $shipping['code'],
+            'shipping_carrier' => $shipping['carrier'],
+            'shipping_fee' => $shipping['fee'],
+            'notes' => null,
+        ]);
+
+        $this->replaceOrderItems($order, $cart);
+
+        return $order;
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $validated
+     */
+    protected function synchronizePendingCheckoutOrder(
+        Request $request,
+        Cart $cart,
+        Order $order,
+        ?array $validated,
+        ?string $paymentMethod,
+        bool $redeemDiscount,
+    ): Order {
+        return DB::transaction(function () use ($request, $cart, $order, $validated, $paymentMethod, $redeemDiscount): Order {
+            $lockedOrder = Order::query()
+                ->lockForUpdate()
+                ->whereKey($order->getKey())
+                ->firstOrFail();
+
+            if ($lockedOrder->status !== 'pending' || $lockedOrder->payment_status !== 'pending') {
+                return $lockedOrder;
+            }
+
+            $user = $request->user();
+
+            if (! $user) {
+                throw new \LogicException('A logged-in customer is required to continue checkout.');
+            }
+
+            $shippingCountry = (string) ($validated['shipping_country']
+                ?? $lockedOrder->shipping_country
+                ?? $this->shipping->defaultCountry());
+            $shippingMethod = (string) ($validated['shipping_method']
+                ?? $lockedOrder->shipping_method
+                ?? $this->shipping->defaultMethod());
+
+            if (! in_array($shippingMethod, $this->shipping->codes(), true)) {
+                $shippingMethod = $this->shipping->defaultMethod();
+            }
+
+            $shipping = $this->shipping->get($shippingMethod, $shippingCountry);
+            $customerEmail = (string) ($validated['customer_email']
+                ?? $lockedOrder->customer_email
+                ?? $user->email);
+            $quote = $this->pendingCheckoutQuote(
+                $cart,
+                $customerEmail,
+                $lockedOrder,
+                $redeemDiscount,
+            );
+
+            $attributes = [
+                'total' => round($quote['total'] + $shipping['fee'], 2),
+                'customer_name' => (string) ($validated['customer_name']
+                    ?? $lockedOrder->customer_name
+                    ?? $user->name),
+                'customer_email' => $customerEmail,
+                'shipping_country' => $shippingCountry,
+                'shipping_method' => $shipping['code'],
+                'shipping_carrier' => $shipping['carrier'],
+                'shipping_fee' => $shipping['fee'],
+                'status' => 'pending',
+                'payment_status' => 'pending',
+            ];
+
+            if ($validated !== null) {
+                $attributes = [
+                    ...$attributes,
+                    'customer_phone' => $validated['customer_phone'] ?? null,
+                    'shipping_address' => $validated['shipping_address'] ?? null,
+                    'shipping_city' => $validated['shipping_city'] ?? null,
+                    'shipping_state' => $validated['shipping_state'] ?? null,
+                    'shipping_zip' => $validated['shipping_zip'] ?? null,
+                    'notes' => $validated['notes'] ?? null,
+                ];
+            }
+
+            if ($paymentMethod !== null) {
+                $attributes['payment_method'] = $paymentMethod;
+                $attributes['payment_id'] = null;
+
+                if ($paymentMethod !== 'paypal') {
+                    $attributes['paypal_order_id'] = null;
+                }
+            }
+
+            $lockedOrder->update($attributes);
+            $this->replaceOrderItems($lockedOrder, $cart);
+
+            if ($redeemDiscount) {
+                $this->applyPendingCheckoutFinancials($lockedOrder, $quote, $request);
+            }
+
+            return $lockedOrder->fresh();
+        });
+    }
+
+    /**
+     * @return array{code: ?string, subtotal: float, discount: float, total: float}
+     */
+    protected function pendingCheckoutQuote(
+        Cart $cart,
+        string $customerEmail,
+        Order $order,
+        bool $strict,
+    ): array {
+        $redemption = $order->discountRedemption()->first();
+
+        if ($redemption) {
+            return [
+                'code' => $redemption->code,
+                'subtotal' => (float) $redemption->subtotal,
+                'discount' => (float) $redemption->discount_amount,
+                // Redemptions store the complete order total, including
+                // shipping. Checkout quotes keep shipping separate.
+                'total' => max(
+                    (float) $redemption->subtotal - (float) $redemption->discount_amount,
+                    0,
+                ),
+            ];
+        }
+
+        return $cart->quote($customerEmail !== '' ? $customerEmail : null, $strict);
+    }
+
+    /**
+     * @param  array{code: ?string, subtotal: float, discount: float, total: float}  $quote
+     */
+    protected function applyPendingCheckoutFinancials(Order $order, array $quote, Request $request): void
+    {
+        if ($quote['code'] && ! $order->discountRedemption()->exists()) {
+            app(DiscountService::class)->redeem(
+                $quote['code'],
+                $order,
+                (string) $order->customer_email,
+                $quote['subtotal'],
+                $quote['discount'],
+                (float) $order->total,
+            );
+        }
+
+        $user = $request->user();
+
+        if (! $user || AffiliateCommission::where('order_id', $order->id)->exists()) {
+            return;
+        }
+
+        $referral = AffiliateReferral::where('referred_user_id', $user->getAuthIdentifier())->first();
+
+        if (! $referral) {
+            return;
+        }
+
+        $affiliate = Affiliate::find($referral->affiliate_id);
+
+        if (! $affiliate || $affiliate->status !== 'active') {
+            return;
+        }
+
+        $rate = (float) $affiliate->commission_rate;
+        $amount = round($quote['total'] * $rate / 100, 2);
+
+        AffiliateCommission::create([
+            'affiliate_id' => $affiliate->id,
+            'order_id' => $order->id,
+            'amount' => $amount,
+            'rate' => $rate,
+            'status' => 'earned',
+        ]);
+
+        $affiliate->increment('total_earnings', $amount);
+    }
+
+    protected function replaceOrderItems(Order $order, Cart $cart): void
+    {
+        $order->items()->delete();
+
+        foreach ($cart->all() as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'unit_price' => $item['price'],
+                'subtotal' => $item['price'] * $item['quantity'],
+                'options' => $item['options'] ?? null,
+            ]);
+        }
+    }
+
     protected function validateCheckout(Request $request): array
     {
         $request->merge([
@@ -633,86 +955,5 @@ class CheckoutController extends Controller
             'shipping_method' => ['required', Rule::in($this->shipping->codes())],
             'notes' => 'nullable|string',
         ]);
-    }
-
-    /**
-     * Persist an Order + OrderItems and credit any affiliate commission.
-     */
-    protected function placeOrder(
-        Request $request,
-        Cart $cart,
-        array $validated,
-        string $paymentMethod,
-        string $paymentStatus,
-        ?string $paymentId,
-        string $orderStatus = 'pending',
-    ): Order {
-        $shipping = $this->shipping->get(
-            $validated['shipping_method'],
-            $validated['shipping_country'],
-        );
-
-        return DB::transaction(function () use ($validated, $cart, $request, $paymentMethod, $paymentStatus, $paymentId, $orderStatus, $shipping) {
-            $quote = $cart->quote($validated['customer_email'], true);
-            $orderTotal = round($quote['total'] + $shipping['fee'], 2);
-
-            $order = Order::create([
-                'user_id' => $request->user()?->id ?? 1,
-                'status' => $orderStatus,
-                'payment_method' => $paymentMethod,
-                'payment_status' => $paymentStatus,
-                'payment_id' => $paymentId,
-                'total' => $orderTotal,
-                'shipping_method' => $shipping['code'],
-                'shipping_carrier' => $shipping['carrier'],
-                'shipping_fee' => $shipping['fee'],
-                ...$validated,
-            ]);
-
-            if ($quote['code']) {
-                app(DiscountService::class)->redeem(
-                    $quote['code'],
-                    $order,
-                    $validated['customer_email'],
-                    $quote['subtotal'],
-                    $quote['discount'],
-                    $orderTotal,
-                );
-            }
-
-            foreach ($cart->all() as $item) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['price'],
-                    'subtotal' => $item['price'] * $item['quantity'],
-                    'options' => $item['options'] ?? null,
-                ]);
-            }
-
-            if ($request->user()) {
-                $referral = AffiliateReferral::where('referred_user_id', $request->user()->id)->first();
-                if ($referral) {
-                    $affiliate = Affiliate::find($referral->affiliate_id);
-                    if ($affiliate && $affiliate->status === 'active') {
-                        $rate = (float) $affiliate->commission_rate;
-                        $amount = round($quote['total'] * $rate / 100, 2);
-
-                        AffiliateCommission::create([
-                            'affiliate_id' => $affiliate->id,
-                            'order_id' => $order->id,
-                            'amount' => $amount,
-                            'rate' => $rate,
-                            'status' => 'earned',
-                        ]);
-
-                        $affiliate->increment('total_earnings', $amount);
-                    }
-                }
-            }
-
-            return $order;
-        });
     }
 }

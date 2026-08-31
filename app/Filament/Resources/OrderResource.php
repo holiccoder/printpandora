@@ -62,18 +62,6 @@ class OrderResource extends Resource
                             ->numeric()
                             ->integer()
                             ->minValue(1),
-                        Forms\Components\TextInput::make('shipping_length_cm')
-                            ->label('长度（厘米）')
-                            ->numeric()
-                            ->minValue(0.01),
-                        Forms\Components\TextInput::make('shipping_width_cm')
-                            ->label('宽度（厘米）')
-                            ->numeric()
-                            ->minValue(0.01),
-                        Forms\Components\TextInput::make('shipping_height_cm')
-                            ->label('高度（厘米）')
-                            ->numeric()
-                            ->minValue(0.01),
                         Forms\Components\TextInput::make('tracking_number')
                             ->label('快递追踪号')
                             ->helperText('可在此填写或同步 4PX、DHL 快递追踪号。'),
@@ -83,23 +71,6 @@ class OrderResource extends Resource
                         Forms\Components\TextInput::make('fourpx_status')
                             ->label('4PX 状态')
                             ->disabled(),
-                        Forms\Components\TextInput::make('fourpx_ref_no')
-                            ->label('4PX 参考号')
-                            ->disabled(),
-                        Forms\Components\TextInput::make('fourpx_consignment_no')
-                            ->label('4PX 托运单号')
-                            ->disabled(),
-                        Forms\Components\TextInput::make('fourpx_logistics_channel_no')
-                            ->label('4PX 物流渠道号')
-                            ->disabled(),
-                        Forms\Components\TextInput::make('fourpx_label_url')
-                            ->label('4PX 面单 URL')
-                            ->url()
-                            ->disabled(),
-                        Forms\Components\Textarea::make('fourpx_last_error')
-                            ->label('4PX 最后错误')
-                            ->disabled()
-                            ->columnSpanFull(),
                         Forms\Components\Textarea::make('notes')
                             ->label('备注')
                             ->columnSpanFull(),

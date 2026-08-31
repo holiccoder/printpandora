@@ -145,7 +145,7 @@ export function StorefrontHeader({
                             <img
                                 src={h.logo.image_url}
                                 alt={h.logo.alt}
-                                className="h-12 w-auto"
+                                className="h-10 w-auto lg:h-12"
                             />
                         </Link>
                     </div>

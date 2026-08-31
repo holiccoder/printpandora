@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DesignServiceRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -28,11 +29,43 @@ class DesignServiceRequestController extends Controller
                 'string',
                 Rule::in(array_keys(DesignServiceRequest::DESIGN_SERVICE_FEES)),
             ],
+            'logo_file' => [
+                'nullable',
+                'file',
+                'max:20480',
+                'mimes:jpg,jpeg,png,webp,pdf,svg,ai,eps,psd',
+            ],
+            'example_files' => ['nullable', 'array', 'max:10'],
+            'example_files.*' => [
+                'file',
+                'max:20480',
+                'mimes:jpg,jpeg,png,webp,pdf,svg,ai,eps,psd',
+            ],
             'return_to' => 'nullable|string|max:255',
             'terms_accepted' => 'required|boolean|accepted',
         ]);
 
         $designServiceCode = $validated['design_service_code'] ?? null;
+        $logoPath = null;
+        $logoFile = $request->file('logo_file');
+
+        if ($logoFile instanceof UploadedFile) {
+            $logoPath = $logoFile->store('design-service/logos', 'public');
+        }
+
+        $examplePaths = [];
+        $exampleFiles = $request->file('example_files', []);
+
+        if (is_array($exampleFiles)) {
+            foreach ($exampleFiles as $exampleFile) {
+                if ($exampleFile instanceof UploadedFile) {
+                    $examplePaths[] = $exampleFile->store(
+                        'design-service/examples',
+                        'public',
+                    );
+                }
+            }
+        }
 
         DesignServiceRequest::create([
             'email' => $validated['email'],
@@ -44,6 +77,8 @@ class DesignServiceRequestController extends Controller
                 ? DesignServiceRequest::DESIGN_SERVICE_FEES[$designServiceCode]
                 : null,
             'terms_accepted' => $validated['terms_accepted'],
+            'logo_path' => $logoPath,
+            'example_paths' => $examplePaths === [] ? null : $examplePaths,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);

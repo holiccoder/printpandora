@@ -7,6 +7,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignServiceRequestController;
+use App\Http\Controllers\ProductDesignRequestController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReferralController;
@@ -37,6 +38,7 @@ Route::inertia('/business-card-sample-pack', 'business-card-sample-pack')->name(
 Route::inertia('/free-sample-pack', 'free-sample-pack')->name('shop.free-sample-pack');
 Route::get('/business-card-design-service', [DesignServiceRequestController::class, 'create'])->name('business-card-design-service');
 Route::post('/business-card-design-service', [DesignServiceRequestController::class, 'store'])->name('business-card-design-service.store');
+Route::post('/product-designs', [ProductDesignRequestController::class, 'store'])->name('product-designs.store');
 Route::inertia('/postcards', 'postcards')->name('postcards');
 Route::inertia('/stickers-and-labels', 'stickers-and-labels')->name('stickers-and-labels');
 Route::inertia('/flyers-and-brochures', 'flyers-and-brochures')->name('flyers-and-brochures');

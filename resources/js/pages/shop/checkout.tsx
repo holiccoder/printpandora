@@ -32,6 +32,16 @@ interface CryptomusConfig {
     test: boolean;
 }
 
+interface PendingOrder {
+    shipping_address: string | null;
+    shipping_city: string | null;
+    shipping_state: string | null;
+    shipping_zip: string | null;
+    shipping_country: string;
+    shipping_method: string;
+    notes: string | null;
+}
+
 interface ShippingMethod {
     code: string;
     label: string;
@@ -54,6 +64,7 @@ interface Props {
     defaultShippingCountry: string;
     defaultShippingMethod: string;
     discountCode: string | null;
+    pendingOrder: PendingOrder;
     paypal: PaypalConfig;
     cryptomus: CryptomusConfig;
 }
@@ -128,6 +139,7 @@ export default function Checkout({
     defaultShippingCountry,
     defaultShippingMethod,
     discountCode,
+    pendingOrder,
     paypal,
     cryptomus,
 }: Props) {
@@ -135,16 +147,17 @@ export default function Checkout({
     const paymentMethods =
         useContent('global_chrome').footer.payment_methods ?? [];
     const { data, setData, errors } = useForm({
-        shipping_address: '',
-        shipping_city: '',
-        shipping_state: '',
-        shipping_zip: '',
+        shipping_address: pendingOrder.shipping_address ?? '',
+        shipping_city: pendingOrder.shipping_city ?? '',
+        shipping_state: pendingOrder.shipping_state ?? '',
+        shipping_zip: pendingOrder.shipping_zip ?? '',
         shipping_country:
+            pendingOrder.shipping_country ??
             defaultShippingCountry ??
             c.form_sections.shipping_address.fields.country.default_value ??
             'US',
-        shipping_method: defaultShippingMethod,
-        notes: '',
+        shipping_method: pendingOrder.shipping_method ?? defaultShippingMethod,
+        notes: pendingOrder.notes ?? '',
     });
 
     const [paymentMethod] = useState<PaymentMethod | null>(

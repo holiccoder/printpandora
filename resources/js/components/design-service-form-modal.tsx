@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import DesignServiceForm from '@/components/design-service-form';
-import type { DesignServiceOption } from '@/components/design-service-form';
+import type {
+    DesignServiceOption,
+    DesignSubmissionTarget,
+    ProductDesignMode,
+} from '@/components/design-service-form';
 import {
     Dialog,
     DialogContent,
@@ -16,12 +20,20 @@ interface DesignServiceFormModalProps {
     title: string;
     description?: string;
     productOptions?: string[];
+    businessCardType?: string;
+    businessCardTypeDisabled?: boolean;
     designServices?: DesignServiceOption[];
     designServicesHeading?: string;
     designServicesRequiredError?: string;
     designServicesNote?: string;
     returnTo?: string;
     onDesignServiceSaved?: (code: string) => void;
+    onSubmitted?: () => void;
+    submissionTarget?: DesignSubmissionTarget;
+    productDesignMode?: ProductDesignMode;
+    productId?: number;
+    productName?: string;
+    productSlug?: string;
 }
 
 export default function DesignServiceFormModal({
@@ -30,12 +42,20 @@ export default function DesignServiceFormModal({
     title,
     description,
     productOptions,
+    businessCardType,
+    businessCardTypeDisabled,
     designServices,
     designServicesHeading,
     designServicesRequiredError,
     designServicesNote,
     returnTo,
     onDesignServiceSaved,
+    onSubmitted,
+    submissionTarget = 'design-service',
+    productDesignMode = 'upload',
+    productId,
+    productName,
+    productSlug,
 }: DesignServiceFormModalProps) {
     const ds = useContent('design_service_page') as {
         notes_heading?: string;
@@ -152,6 +172,10 @@ export default function DesignServiceFormModal({
                         <div className="md:col-span-5">
                             <DesignServiceForm
                                 productOptions={productOptions}
+                                businessCardType={businessCardType}
+                                businessCardTypeDisabled={
+                                    businessCardTypeDisabled
+                                }
                                 designServices={designServices}
                                 designServicesHeading={designServicesHeading}
                                 designServicesRequiredError={
@@ -164,7 +188,15 @@ export default function DesignServiceFormModal({
                                 onDesignServiceCodeChange={setDesignServiceCode}
                                 onDesignServiceError={setDesignServiceError}
                                 hideDesignServices
-                                onSuccess={() => onOpenChange(false)}
+                                submissionTarget={submissionTarget}
+                                productDesignMode={productDesignMode}
+                                productId={productId}
+                                productName={productName}
+                                productSlug={productSlug}
+                                onSuccess={() => {
+                                    onSubmitted?.();
+                                    onOpenChange(false);
+                                }}
                             />
                         </div>
                     </div>

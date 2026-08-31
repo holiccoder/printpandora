@@ -872,31 +872,23 @@
             "Home"
         ],
         "feature_chips": [
-            "1 - 2 days Turn Around Time",
+            "Custom Business Days",
             "Gang Run Printing"
         ],
         "feature_chip_descriptions": [
-            "We will deliver your design after 1 - 2 work days",
+            "Custom business days based on the selected product and finish",
             "Not recommended for clients with high color accuracy requirements"
         ],
         "turnaround_tooltip": {
             "title": "Turnaround & delivery",
             "sections": [
                 {
-                    "heading": "Design",
-                    "body": "We take 1–2 business days to design your card."
+                    "heading": "Design and Production",
+                    "body": "Production time depends on the card type and special finish selected. The product-specific turnaround is shown above."
                 },
                 {
-                    "heading": "Printing",
-                    "body": "Allow 1 additional business day for printing and dispatch."
-                },
-                {
-                    "heading": "Shipping",
-                    "body": "Choose standard or expedited shipping at checkout."
-                },
-                {
-                    "heading": "U.S. delivery",
-                    "body": "Delivery to U.S. addresses typically takes 3–7 business days."
+                    "heading": "Shipping and Delivery",
+                    "body": "Choose standard or express shipping at checkout. Standard shipping usually takes 7 to 12 business days and express shipping takes 2 - 5 business days."
                 }
             ]
         },
