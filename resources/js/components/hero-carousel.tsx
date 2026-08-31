@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import { useContent } from '@/hooks/use-content';
 import { cn } from '@/lib/utils';
 
@@ -190,7 +190,7 @@ function MemberOfferCopy({
         <div className="max-w-xl pb-7 md:pb-0">
             <p
                 className={cn(
-                    'text-xs font-semibold tracking-[0.2em] text-[#C9A96A] uppercase',
+                    'text-[10px] font-semibold tracking-[0.2em] text-[#C9A96A] uppercase sm:text-xs',
                     enterClass(active),
                 )}
                 style={{ transitionDelay: active ? '80ms' : '0ms' }}
@@ -200,7 +200,7 @@ function MemberOfferCopy({
 
             <h2
                 className={cn(
-                    'mt-3 font-sans text-4xl leading-tight font-semibold tracking-[0.08em] text-white drop-shadow-sm sm:text-5xl',
+                    'mt-3 font-sans text-2xl leading-[1.15] font-semibold tracking-[0.08em] text-white drop-shadow-sm sm:text-5xl sm:leading-tight',
                     enterClass(active),
                 )}
                 style={{ transitionDelay: active ? '160ms' : '0ms' }}
@@ -215,29 +215,17 @@ function MemberOfferCopy({
                 )}
                 style={{ transitionDelay: active ? '240ms' : '0ms' }}
             >
-                <span className="text-xl font-medium">
+                <span className="text-lg font-medium sm:text-xl">
                     {offer.discount_label}
                 </span>
-                <span className="text-4xl leading-none font-bold tracking-tight text-[#C9A96A] sm:text-5xl">
+                <span className="text-3xl leading-none font-bold tracking-tight text-[#C9A96A] sm:text-5xl">
                     {offer.discount}
                 </span>
             </div>
 
             <div
-                className={cn(
-                    'mt-5 border-t border-[#C9A96A]/80 pt-4',
-                    enterClass(active),
-                )}
-                style={{ transitionDelay: active ? '320ms' : '0ms' }}
-            >
-                <p className="text-sm leading-relaxed text-white/90 sm:text-base">
-                    {offer.description}
-                </p>
-            </div>
-
-            <div
                 className={cn('mt-5', enterClass(active))}
-                style={{ transitionDelay: active ? '400ms' : '0ms' }}
+                style={{ transitionDelay: active ? '320ms' : '0ms' }}
             >
                 {offer.steps.map((step, stepIndex) => (
                     <div key={step.number} className="relative pb-2 last:pb-0">
@@ -245,7 +233,7 @@ function MemberOfferCopy({
                             <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[#C9A96A]/80 text-[#C9A96A]">
                                 <MemberOfferIcon icon={step.icon} />
                             </span>
-                            <p className="text-sm leading-relaxed text-white sm:text-base">
+                            <p className="text-xs leading-snug text-white sm:text-base sm:leading-relaxed">
                                 <span className="mr-3 text-xs font-semibold tracking-[0.12em] text-[#C9A96A]">
                                     {step.number}
                                 </span>
@@ -292,6 +280,7 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
 
     const [index, setIndex] = useState(0);
     const [paused, setPaused] = useState(false);
+    const swipeStart = useRef<{ x: number; y: number } | null>(null);
     const total = items.length;
 
     useEffect(() => {
@@ -315,16 +304,58 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
     const next = () => goTo(index + 1);
     const activeTextTone = items[index]?.textTone ?? 'dark';
 
+    const handlePointerDown = (event: PointerEvent<HTMLElement>) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) {
+            return;
+        }
+
+        swipeStart.current = { x: event.clientX, y: event.clientY };
+        event.currentTarget.setPointerCapture(event.pointerId);
+    };
+
+    const handlePointerUp = (event: PointerEvent<HTMLElement>) => {
+        const start = swipeStart.current;
+        swipeStart.current = null;
+
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+
+        if (start === null || total <= 1) {
+            return;
+        }
+
+        const deltaX = event.clientX - start.x;
+        const deltaY = event.clientY - start.y;
+
+        if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+            return;
+        }
+
+        if (deltaX > 0) {
+            prev();
+        } else {
+            next();
+        }
+    };
+
+    const handlePointerCancel = () => {
+        swipeStart.current = null;
+    };
+
     return (
         <section
             className={cn(
-                'home-hero-carousel relative w-full overflow-hidden',
+                'home-hero-carousel relative w-full touch-pan-y overflow-hidden',
                 className,
             )}
             aria-roledescription="carousel"
             aria-label={home.hero_carousel.aria_label}
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
         >
             <div
                 className="flex w-full transition-transform duration-700 ease-out"
@@ -363,7 +394,7 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
             )}
 
             {total > 1 && (
-                <div className="pointer-events-none absolute right-0 bottom-6 z-10 flex w-full justify-end md:w-1/2">
+                <div className="pointer-events-none absolute right-0 bottom-3 z-10 flex w-full justify-end md:bottom-6 md:w-1/2">
                     <div className="pointer-events-auto flex items-center gap-3 px-6 md:pr-12 lg:pr-20">
                         {items.map((_, i) => (
                             <button
@@ -423,18 +454,19 @@ function Slide({
     return (
         <div
             className={cn(
-                'relative w-full shrink-0 overflow-hidden',
+                'relative h-[700px] w-full shrink-0 overflow-hidden sm:h-auto',
                 slide.offer
-                    ? 'min-h-[560px] sm:aspect-[16/10] sm:min-h-0 lg:aspect-[12/5]'
-                    : 'aspect-[3/4] sm:aspect-[16/10] lg:aspect-[12/5]',
+                    ? 'sm:aspect-[16/10] sm:min-h-0 lg:aspect-[12/5]'
+                    : 'sm:aspect-[16/10] lg:aspect-[12/5]',
             )}
             aria-hidden={hidden}
         >
             {/* Full-width photo — subtle scale-in when active. From lg up the
                 container matches the 3840x1600 (12:5) source ratio, so the image
                 is never cropped and just scales with the viewport. On small
-                screens a taller ratio leaves room for the copy; object-position
-                keeps the right-of-center subject in frame when cropping. */}
+                screens the 400x700 mobile source is displayed at its native
+                height; object-position keeps the right-of-center subject in
+                frame when cropping. */}
             <picture className="absolute inset-0 block">
                 {slide.mobileImage && (
                     <source
@@ -448,7 +480,7 @@ function Slide({
                     alt={slide.imageAlt}
                     className={cn(
                         'absolute inset-0 h-full w-full object-cover object-[68%_center] transition-transform duration-[1200ms] ease-out',
-                        active ? 'scale-100' : 'scale-105',
+                        active ? 'scale-100' : 'scale-100 md:scale-105',
                     )}
                     loading={priority ? 'eager' : 'lazy'}
                     fetchPriority={priority ? 'high' : 'low'}
