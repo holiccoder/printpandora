@@ -115,4 +115,10 @@ class AiChatMessage extends Model
     {
         return $this->hasMany(AiChatTelegramMessage::class, 'ai_chat_message_id');
     }
+
+    /** @return HasMany<AiChatWecomMessage, $this> */
+    public function wecomMessages(): HasMany
+    {
+        return $this->hasMany(AiChatWecomMessage::class, 'ai_chat_message_id');
+    }
 }

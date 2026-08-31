@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Contracts\SendsChatReplies;
 use App\Models\AiChatChannel;
 use App\Models\AiChatConversation;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use RuntimeException;
 
-class TelegramBotService
+class TelegramBotService implements SendsChatReplies
 {
     public const PROVIDER = 'telegram';
 

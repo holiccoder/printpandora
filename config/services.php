@@ -64,6 +64,15 @@ return [
         ))),
     ],
 
+    'wecom' => [
+        'corp_id' => env('WECOM_CORP_ID'),
+        'kf_secret' => env('WECOM_KF_SECRET'),
+        'callback_token' => env('WECOM_CALLBACK_TOKEN'),
+        'encoding_aes_key' => env('WECOM_ENCODING_AES_KEY'),
+        'open_kfid' => env('WECOM_OPEN_KFID'),
+        'timeout' => (int) env('WECOM_TIMEOUT', 10),
+    ],
+
     'four_px' => [
         'enabled' => (bool) env('FOURPX_ENABLED', false),
         'environment' => env('FOURPX_ENVIRONMENT', 'test'),

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AiChatConversation;
 use App\Models\AiChatMessage;
 use App\Services\AiChatTranslationService;
+use App\Services\ChatReplyDispatcher;
 use App\Services\TelegramBotService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -79,7 +80,7 @@ class AdminAiChatController extends Controller
     public function reply(
         AiChatConversation $conversation,
         Request $request,
-        TelegramBotService $telegram,
+        ChatReplyDispatcher $dispatcher,
         AiChatTranslationService $translation,
     ): JsonResponse {
         $validator = Validator::make($request->all(), [
@@ -98,14 +99,18 @@ class AdminAiChatController extends Controller
 
         $translationAttributes = $translation->attributesFor('admin', $text);
         $customerText = $translationAttributes['translated_content'] ?? $text;
+        $channel = $conversation->channels()
+            ->whereNotNull('external_chat_id')
+            ->oldest('id')
+            ->first();
 
         try {
-            $telegramMessage = $telegram->sendToConversation($conversation, $customerText);
+            $channelMessage = $dispatcher->send($conversation, $customerText);
         } catch (Throwable $exception) {
             report($exception);
 
             return response()->json([
-                'message' => 'The reply could not be delivered through Telegram.',
+                'message' => 'The reply could not be delivered through the selected channel.',
             ], 502);
         }
 
@@ -123,8 +128,14 @@ class AdminAiChatController extends Controller
                 'customer_content' => $message->contentForCustomer(),
                 'customer_is_translated' => $message->isTranslatedForCustomer(),
             ],
-            'telegram_delivered' => $telegramMessage !== null,
-            'telegram_message_id' => $telegramMessage['message_id'] ?? null,
+            'channel_delivered' => $channelMessage !== null,
+            'channel_message_id' => $this->channelMessageId($channelMessage),
+            // Kept for the existing Filament-side client contract.
+            'telegram_delivered' => $channel?->provider === TelegramBotService::PROVIDER
+                && $channelMessage !== null,
+            'telegram_message_id' => $channel?->provider === TelegramBotService::PROVIDER
+                ? ($channelMessage['message_id'] ?? null)
+                : null,
         ], 201);
     }
 
@@ -141,6 +152,12 @@ class AdminAiChatController extends Controller
             'attachment_name' => $message->attachment_name,
             'created_at' => $message->created_at?->toIso8601String(),
         ];
+    }
+
+    /** @param array<string, mixed>|null $channelMessage */
+    protected function channelMessageId(?array $channelMessage): mixed
+    {
+        return $channelMessage['message_id'] ?? $channelMessage['msgid'] ?? null;
     }
 
     /**

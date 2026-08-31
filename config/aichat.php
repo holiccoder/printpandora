@@ -46,6 +46,16 @@ return [
     // Conversation history messages sent along with each request.
     'max_history' => env('AI_CHAT_MAX_HISTORY', 10),
 
+    // Conversation history used when generating replies for WeCom customers.
+    'wecom_history_limit' => (int) env('AI_CHAT_WECOM_HISTORY_LIMIT', 10),
+
+    // Messages containing one of these terms are handed to human support.
+    'wecom_handoff_keywords' => ['人工', 'human', '转人工'],
+
+    'wecom_handoff_message' => '已为您转接人工客服，请稍候。',
+
+    'wecom_fallback_message' => '抱歉，我暂时无法回答，将为您转接人工客服，请稍候。',
+
     // Chunking for the knowledge indexer.
     'chunk_size' => 500,
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ChatApiController;
 use App\Http\Controllers\Api\SocialMediaPostApiController;
 use App\Http\Controllers\TelegramWebhookController;
+use App\Http\Controllers\WeComKfCallbackController;
 use App\Http\Middleware\AuthenticateChatApi;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +11,11 @@ use Illuminate\Support\Facades\Route;
 // Telegram's X-Telegram-Bot-Api-Secret-Token header in the controller.
 Route::post('telegram/webhook', TelegramWebhookController::class)
     ->name('telegram.webhook');
+
+// WeCom verifies and authenticates this callback in the controller because
+// the request carries the provider-specific signature and encrypted payload.
+Route::match(['get', 'post'], 'wecom/kf/callback', WeComKfCallbackController::class)
+    ->name('wecom.kf.callback');
 
 // REST API for managing scheduled social media posts.
 Route::apiResource('v1/social-media-posts', SocialMediaPostApiController::class);

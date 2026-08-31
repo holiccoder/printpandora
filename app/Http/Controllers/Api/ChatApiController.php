@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AiChatConversation;
 use App\Models\AiChatMessage;
 use App\Services\AiChatTranslationService;
+use App\Services\ChatReplyDispatcher;
 use App\Services\TelegramBotService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -54,7 +55,7 @@ class ChatApiController extends Controller
     public function reply(
         AiChatConversation $conversation,
         Request $request,
-        TelegramBotService $telegram,
+        ChatReplyDispatcher $dispatcher,
         AiChatTranslationService $translation,
     ): JsonResponse {
         $validated = $request->validate([
@@ -68,14 +69,18 @@ class ChatApiController extends Controller
 
         $translationAttributes = $translation->attributesFor('admin', $text);
         $customerText = $translationAttributes['translated_content'] ?? $text;
+        $channel = $conversation->channels()
+            ->whereNotNull('external_chat_id')
+            ->oldest('id')
+            ->first();
 
         try {
-            $telegramMessage = $telegram->sendToConversation($conversation, $customerText);
+            $channelMessage = $dispatcher->send($conversation, $customerText);
         } catch (Throwable $exception) {
             report($exception);
 
             return response()->json([
-                'message' => 'The reply could not be delivered through Telegram.',
+                'message' => 'The reply could not be delivered through the selected channel.',
             ], 502);
         }
 
@@ -90,8 +95,14 @@ class ChatApiController extends Controller
             'message' => $this->serializeMessage($message),
             'customer_content' => $message->contentForCustomer(),
             'customer_is_translated' => $message->isTranslatedForCustomer(),
-            'telegram_delivered' => $telegramMessage !== null,
-            'telegram_message_id' => $telegramMessage['message_id'] ?? null,
+            'channel_delivered' => $channelMessage !== null,
+            'channel_message_id' => $this->channelMessageId($channelMessage),
+            // Kept for existing Telegram support clients.
+            'telegram_delivered' => $channel?->provider === TelegramBotService::PROVIDER
+                && $channelMessage !== null,
+            'telegram_message_id' => $channel?->provider === TelegramBotService::PROVIDER
+                ? ($channelMessage['message_id'] ?? null)
+                : null,
         ], 201);
     }
 
@@ -158,6 +169,12 @@ class ChatApiController extends Controller
                 'link_pending' => $telegram?->link_token_hash !== null,
             ],
         ];
+    }
+
+    /** @param array<string, mixed>|null $channelMessage */
+    protected function channelMessageId(?array $channelMessage): mixed
+    {
+        return $channelMessage['message_id'] ?? $channelMessage['msgid'] ?? null;
     }
 
     /** @return array<string, mixed> */

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
@@ -55,6 +56,19 @@ class AiChatConversation extends Model
     public function telegramMessages(): HasMany
     {
         return $this->hasMany(AiChatTelegramMessage::class, 'conversation_id');
+    }
+
+    /** @return HasManyThrough<AiChatWecomMessage, AiChatChannel, $this> */
+    public function wecomMessages(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            AiChatWecomMessage::class,
+            AiChatChannel::class,
+            'conversation_id',
+            'channel_id',
+            'id',
+            'id',
+        );
     }
 
     /** @return HasOne<AiChatMessage, $this> */
