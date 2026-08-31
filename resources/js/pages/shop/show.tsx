@@ -2,7 +2,7 @@
 // via useContent('product_detail_page'). Configurator state and price math stay
 // local to the page; JSON drives the labels and option metadata.
 import { Link, router, useForm, usePage } from '@inertiajs/react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Fragment, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import DesignServiceFormModal from '@/components/design-service-form-modal';
@@ -24,6 +24,7 @@ import type { PricingRule } from '@/lib/pricing';
 import { isPvcProductSlug } from '@/lib/product-images';
 import { findMatchingGallery } from '@/lib/product-options';
 import type { ProductGallery } from '@/lib/product-options';
+import { cn } from '@/lib/utils';
 
 const COLD_FOIL_OPTIONS = [
     {
@@ -1402,6 +1403,7 @@ export default function ShopShow({
                         </div>
                         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <FeatureChip
+                                mobileCollapsible
                                 icon={
                                     <svg
                                         viewBox="0 0 24 24"
@@ -1453,6 +1455,7 @@ export default function ShopShow({
                                 }
                             />
                             <FeatureChip
+                                mobileCollapsible
                                 icon={
                                     <svg
                                         viewBox="0 0 24 24"
@@ -2150,8 +2153,8 @@ export default function ShopShow({
                             )}
 
                         <OptionGroup label={c.configurator_labels.quantity}>
-                            <div className="overflow-hidden rounded-md border border-neutral-200">
-                                <table className="w-full text-sm">
+                            <div className="overflow-x-auto rounded-md border border-neutral-200">
+                                <table className="w-full min-w-[32rem] text-sm sm:min-w-0">
                                     <thead>
                                         <tr className="bg-neutral-50 text-left text-xs tracking-wide text-neutral-500 uppercase">
                                             <th className="px-4 py-2 font-medium">
@@ -2739,41 +2742,92 @@ function FeatureChip({
     description,
     detailTitle,
     details,
+    mobileCollapsible = false,
 }: {
     icon: React.ReactNode;
     label: string;
     description?: string;
     detailTitle?: string;
     details?: React.ReactNode;
+    mobileCollapsible?: boolean;
 }) {
+    const [mobileExpanded, setMobileExpanded] = useState(false);
+    const canCollapse = mobileCollapsible && Boolean(detailTitle || details);
+
+    const detailContent = (detailTitle || details) && (
+        <div className="mt-4 border-t border-neutral-100 pt-3">
+            {detailTitle && (
+                <p className="text-xs font-semibold text-neutral-700">
+                    {detailTitle}
+                </p>
+            )}
+            {details && (
+                <div className="mt-1 text-xs leading-relaxed text-neutral-600 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-4 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-4">
+                    {details}
+                </div>
+            )}
+        </div>
+    );
+
     return (
         <div className="flex h-full flex-col rounded-lg border border-neutral-200 bg-white p-4">
-            <div className="flex gap-3">
-                <span className="mt-0.5 shrink-0">{icon}</span>
-                <div className="min-w-0">
-                    <p className="text-sm font-bold text-neutral-900">
-                        {label}
-                    </p>
+            {canCollapse ? (
+                <button
+                    type="button"
+                    className="flex w-full items-start gap-3 text-left md:pointer-events-none"
+                    onClick={() => setMobileExpanded((expanded) => !expanded)}
+                    aria-expanded={mobileExpanded}
+                >
+                    <span className="mt-0.5 shrink-0">{icon}</span>
+                    <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-bold text-neutral-900">
+                            {label}
+                        </span>
+                        {description && (
+                            <span className="mt-1 hidden text-xs leading-relaxed text-neutral-500 md:block">
+                                {description}
+                            </span>
+                        )}
+                    </span>
+                    <ChevronDown
+                        aria-hidden="true"
+                        className={cn(
+                            'mt-0.5 size-4 shrink-0 text-neutral-500 transition-transform md:hidden',
+                            mobileExpanded && 'rotate-180',
+                        )}
+                    />
+                </button>
+            ) : (
+                <div className="flex gap-3">
+                    <span className="mt-0.5 shrink-0">{icon}</span>
+                    <div className="min-w-0">
+                        <p className="text-sm font-bold text-neutral-900">
+                            {label}
+                        </p>
+                        {description && (
+                            <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+                                {description}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            )}
+            {canCollapse ? (
+                <div
+                    className={cn(
+                        'md:block',
+                        mobileExpanded ? 'block' : 'hidden',
+                    )}
+                >
                     {description && (
-                        <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+                        <p className="mt-3 text-xs leading-relaxed text-neutral-500 md:hidden">
                             {description}
                         </p>
                     )}
+                    {detailContent}
                 </div>
-            </div>
-            {(detailTitle || details) && (
-                <div className="mt-4 border-t border-neutral-100 pt-3">
-                    {detailTitle && (
-                        <p className="text-xs font-semibold text-neutral-700">
-                            {detailTitle}
-                        </p>
-                    )}
-                    {details && (
-                        <div className="mt-1 text-xs leading-relaxed text-neutral-600 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-4 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-4">
-                            {details}
-                        </div>
-                    )}
-                </div>
+            ) : (
+                detailContent
             )}
         </div>
     );

@@ -96,6 +96,14 @@
                             {
                                 "label": "Cotton Business Cards",
                                 "href": "#",
+                                "promo": {
+                                    "image_url": "/images/nav/business-cards/cotton-business-cards.png",
+                                    "image_alt": "Cotton business cards in a tactile paper stock",
+                                    "title": "Cotton Business Cards",
+                                    "description": "Soft, tactile cotton stock for a premium first impression.",
+                                    "cta_label": "Shop Cotton Business Cards",
+                                    "cta_href": "/business-cards/classic-cotton"
+                                },
                                 "children": [
                                     {
                                         "label": "Basic Cotton Business Card",
@@ -121,15 +129,39 @@
                             },
                             {
                                 "label": "Super Business Cards",
-                                "href": "/business-cards/super"
+                                "href": "/business-cards/super",
+                                "promo": {
+                                    "image_url": "/images/nav/business-cards/super-business-cards.png",
+                                    "image_alt": "Super business cards in a premium paper stock",
+                                    "title": "Super Business Cards",
+                                    "description": "Thick, confident paper with a distinctive hand-feel.",
+                                    "cta_label": "Shop Super Business Cards",
+                                    "cta_href": "/business-cards/super"
+                                }
                             },
                             {
                                 "label": "Luxe Business Cards",
-                                "href": "/business-cards/luxe"
+                                "href": "/business-cards/luxe",
+                                "promo": {
+                                    "image_url": "/images/nav/business-cards/luxe-business-cards.png",
+                                    "image_alt": "Luxe business cards with a refined finish",
+                                    "title": "Luxe Business Cards",
+                                    "description": "Rich, tactile stock for an elevated first impression.",
+                                    "cta_label": "Shop Luxe Business Cards",
+                                    "cta_href": "/business-cards/luxe"
+                                }
                             },
                             {
                                 "label": "PVC Business Cards",
                                 "href": "#",
+                                "promo": {
+                                    "image_url": "/images/nav/business-cards/pvc-business-cards.png",
+                                    "image_alt": "PVC business cards with a durable finish",
+                                    "title": "PVC Business Cards",
+                                    "description": "Durable PVC cards with modern finish options.",
+                                    "cta_label": "Shop PVC Business Cards",
+                                    "cta_href": "/business-cards/standard-pvc"
+                                },
                                 "children": [
                                     {
                                         "label": "Basic PVC Card",
@@ -148,6 +180,14 @@
                             {
                                 "label": "Metal Business Cards",
                                 "href": "#",
+                                "promo": {
+                                    "image_url": "/images/nav/business-cards/metal-business-cards.png",
+                                    "image_alt": "Metal business cards with a distinctive metallic finish",
+                                    "title": "Metal Business Cards",
+                                    "description": "A distinctive metal finish made to be remembered.",
+                                    "cta_label": "Shop Metal Business Cards",
+                                    "cta_href": "/business-cards/classic-metal"
+                                },
                                 "children": [
                                     {
                                         "label": "Classic Metal Business Cards",
@@ -166,6 +206,14 @@
                             {
                                 "label": "Classic Business Cards",
                                 "href": "#",
+                                "promo": {
+                                    "image_url": "/images/nav/business-cards/classic-business-cards.png",
+                                    "image_alt": "Classic business cards in a timeless paper stock",
+                                    "title": "Classic Business Cards",
+                                    "description": "A timeless, versatile choice for everyday professional printing.",
+                                    "cta_label": "Shop Classic Business Cards",
+                                    "cta_href": "/business-cards/classic-standard"
+                                },
                                 "children": [
                                     {
                                         "label": "Classic Standard Business Cards",
@@ -200,16 +248,7 @@
                         ]
                     }
                 ],
-                "promo_cards": [
-                    {
-                        "image_url": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=800&q=70",
-                        "image_alt": "Two business cards on brown crinkled packing paper",
-                        "title": "Original Business Cards",
-                        "description": "Thicker than your average card, Original Business Cards set a new standard for 'standard' business cards.",
-                        "cta_label": "Shop Original Business Cards",
-                        "cta_href": "/business-cards/classic-standard"
-                    }
-                ]
+                "promo_cards": []
             }
         },
         "footer": {

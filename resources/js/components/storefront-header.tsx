@@ -111,7 +111,7 @@ export function StorefrontHeader({
                                 children: l.children as MegaLink[] | undefined,
                             })),
                         })),
-                        promos: bc.promo_cards as [PromoBlock, PromoBlock],
+                        promos: bc.promo_cards as PromoBlock[],
                     },
                 };
             }
@@ -525,7 +525,7 @@ function PromoCard({
     compact?: boolean;
 }) {
     return (
-        <div className="flex flex-col">
+        <div className="origin-top-right flex flex-col transition-transform duration-200 ease-out hover:scale-[1.05]">
             <Link
                 href={promo.cta_href}
                 className="block overflow-hidden rounded-md bg-white"
