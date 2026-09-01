@@ -9,6 +9,7 @@ use App\Models\AffiliateReferral;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PayPalWebhookEvent;
+use App\Models\ProductDesignRequest;
 use App\Services\Cart;
 use App\Services\CryptomusService;
 use App\Services\DiscountException;
@@ -831,6 +832,7 @@ class CheckoutController extends Controller
 
             $lockedOrder->update($attributes);
             $this->replaceOrderItems($lockedOrder, $cart);
+            $this->attachPendingProductDesignRequests($request, $lockedOrder, $cart);
 
             if ($redeemDiscount) {
                 $this->applyPendingCheckoutFinancials($lockedOrder, $quote, $request);
@@ -929,6 +931,74 @@ class CheckoutController extends Controller
                 'subtotal' => $item['price'] * $item['quantity'],
                 'options' => $item['options'] ?? null,
             ]);
+        }
+    }
+
+    protected function attachPendingProductDesignRequests(
+        Request $request,
+        Order $order,
+        Cart $cart,
+    ): void {
+        $pendingRequestIds = $request->session()->get(
+            'pending_product_design_request_ids',
+            [],
+        );
+
+        if (! is_array($pendingRequestIds) || $pendingRequestIds === []) {
+            return;
+        }
+
+        $productIds = [];
+
+        foreach ($cart->all() as $item) {
+            $productId = (int) ($item['product_id'] ?? 0);
+
+            if ($productId > 0) {
+                $productIds[$productId] = true;
+            }
+        }
+
+        if ($productIds === []) {
+            return;
+        }
+
+        $designRequests = ProductDesignRequest::query()
+            ->whereIn('id', array_map('intval', $pendingRequestIds))
+            ->get();
+        $resolvedRequestIds = [];
+
+        foreach ($designRequests as $designRequest) {
+            if ($designRequest->order_id !== null) {
+                $resolvedRequestIds[] = (int) $designRequest->getKey();
+
+                continue;
+            }
+
+            $productId = (int) data_get($designRequest->desgin, 'product_id', 0);
+
+            if ($productId <= 0 || ! isset($productIds[$productId])) {
+                continue;
+            }
+
+            $designRequest->order()->associate($order);
+            $designRequest->save();
+            $resolvedRequestIds[] = (int) $designRequest->getKey();
+        }
+
+        if ($resolvedRequestIds !== []) {
+            $remainingRequestIds = array_values(array_diff(
+                array_map('intval', $pendingRequestIds),
+                $resolvedRequestIds,
+            ));
+
+            if ($remainingRequestIds === []) {
+                $request->session()->forget('pending_product_design_request_ids');
+            } else {
+                $request->session()->put(
+                    'pending_product_design_request_ids',
+                    $remainingRequestIds,
+                );
+            }
         }
     }
 

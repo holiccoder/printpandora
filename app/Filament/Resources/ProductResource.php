@@ -77,6 +77,13 @@ class ProductResource extends Resource
                                             ->required()
                                             ->maxLength(255)
                                             ->unique(ignoreRecord: true),
+                                        TextInput::make('weight')
+                                            ->label('Weight')
+                                            ->numeric()
+                                            ->integer()
+                                            ->minValue(0)
+                                            ->default(0)
+                                            ->required(),
                                         RichEditor::make('subtitle')
                                             ->label('简短描述')
                                             ->columnSpanFull(),
@@ -869,6 +876,9 @@ class ProductResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('产品分类')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('weight')
+                    ->label('Weight')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('启用')

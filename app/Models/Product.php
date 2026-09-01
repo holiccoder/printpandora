@@ -16,6 +16,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property array<string, mixed>|null $product_config
  * @property string|null $featured_image
  * @property string|null $slug
+ * @property int $weight
  * @property-read ProductCategory|null $category
  */
 class Product extends Model implements HasMedia
@@ -24,6 +25,7 @@ class Product extends Model implements HasMedia
 
     protected $fillable = [
         'name',
+        'weight',
         'subtitle',
         'description_title',
         'description',
@@ -45,6 +47,7 @@ class Product extends Model implements HasMedia
             'product_options' => 'array',
             'product_config' => 'array',
             'is_active' => 'boolean',
+            'weight' => 'integer',
         ];
     }
 

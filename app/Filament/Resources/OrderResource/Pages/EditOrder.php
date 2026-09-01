@@ -19,6 +19,7 @@ class EditOrder extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            OrderResource::designAction(),
             Actions\Action::make('createFourPxShipment')
                 ->label('创建 4PX 货运单')
                 ->icon('heroicon-o-truck')

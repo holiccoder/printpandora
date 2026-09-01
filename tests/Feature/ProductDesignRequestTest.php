@@ -3,6 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\ProductDesignRequest;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\User;
+use App\Services\Cart;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -72,5 +77,47 @@ class ProductDesignRequestTest extends TestCase
         $this->assertNotNull($request->desgin['design_path']);
         $this->assertDatabaseCount('design_service_requests', 0);
         Storage::disk('public')->assertExists($request->desgin['design_path']);
+    }
+
+    public function test_product_design_submission_is_attached_to_the_checkout_order(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'design-client@example.com',
+        ]);
+        $category = ProductCategory::create([
+            'name' => 'Design test products',
+            'slug' => 'design-test-products-'.uniqid(),
+        ]);
+        $product = Product::create([
+            'name' => 'Design test product',
+            'slug' => 'design-test-product-'.uniqid(),
+            'product_category_id' => $category->id,
+            'price' => 25,
+        ]);
+
+        $this->post(route('product-designs.store'), [
+            'desgin' => json_encode([
+                'source' => 'product-page',
+                'mode' => 'upload',
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'product_slug' => $product->slug,
+                'email' => $user->email,
+                'business_name' => 'Design Client',
+                'business_card_type' => 'Classic Business Cards',
+                'terms_accepted' => true,
+            ], JSON_THROW_ON_ERROR),
+        ])->assertRedirect();
+
+        $this->actingAs($user);
+        app(Cart::class)->add($product->id);
+
+        $this->get(route('shop.checkout'))->assertOk();
+
+        $order = Order::firstOrFail();
+        $this->assertDatabaseHas('product_design_requests', [
+            'id' => ProductDesignRequest::firstOrFail()->id,
+            'order_id' => $order->id,
+        ]);
     }
 }

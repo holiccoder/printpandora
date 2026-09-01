@@ -85,7 +85,6 @@ HTML,
     <li><strong>Business cards, MiniCards, postcards, and flyers:</strong> 2 to 3 business days.</li>
     <li><strong>Stickers and labels:</strong> 3 to 4 business days.</li>
     <li><strong>Letterpress, foil, and hot foil products:</strong> 5 to 7 business days.</li>
-    <li><strong>Notebooks, journals, and planners:</strong> 4 to 6 business days.</li>
     <li><strong>Display boxes, greeting cards, and Luxe Notecards:</strong> 3 to 5 business days.</li>
 </ul>
 

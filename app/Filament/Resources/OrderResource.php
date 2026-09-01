@@ -4,16 +4,76 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Order;
+use App\Models\ProductDesignRequest;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 
 class OrderResource extends Resource
 {
+    public static function designAction(): Actions\Action
+    {
+        return Actions\Action::make('design')
+            ->label('设计')
+            ->icon('heroicon-o-paint-brush')
+            ->color('gray')
+            ->modalHeading(fn (Order $record): string => "Design for order #{$record->id}")
+            ->modalContent(fn (Order $record): View => view(
+                'filament.pages.order-design-modal',
+                [
+                    'order' => $record,
+                    'designRequests' => static::designRequestsFor($record),
+                ],
+            ))
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Close')
+            ->modalWidth(Width::SevenExtraLarge);
+    }
+
+    /**
+     * Return design requests explicitly attached to the order, plus older
+     * product-page submissions that predate the order association.
+     *
+     * @return Collection<int, ProductDesignRequest>
+     */
+    public static function designRequestsFor(Order $order): Collection
+    {
+        $order->loadMissing('items');
+
+        $requests = $order->productDesignRequests()
+            ->latest()
+            ->get();
+        $productIds = $order->items
+            ->pluck('product_id')
+            ->map(static fn (mixed $productId): int => (int) $productId)
+            ->filter(static fn (int $productId): bool => $productId > 0)
+            ->unique()
+            ->values();
+        $email = trim((string) $order->customer_email);
+
+        if ($productIds->isEmpty() || $email === '') {
+            return $requests;
+        }
+
+        $legacyRequests = ProductDesignRequest::query()
+            ->whereNull('order_id')
+            ->where('desgin->email', $email)
+            ->whereIn('desgin->product_id', $productIds->all())
+            ->get();
+
+        return $requests
+            ->merge($legacyRequests)
+            ->sortByDesc('created_at')
+            ->values();
+    }
+
     protected static ?string $model = Order::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
@@ -172,6 +232,7 @@ class OrderResource extends Resource
                     ]),
             ])
             ->actions([
+                static::designAction(),
                 Actions\Action::make('addShippingTracking')
                     ->label('填写物流信息')
                     ->icon('heroicon-o-truck')

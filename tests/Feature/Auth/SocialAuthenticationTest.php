@@ -95,9 +95,9 @@ class SocialAuthenticationTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
-    public function test_social_sign_in_does_not_silently_merge_an_existing_email_account(): void
+    public function test_verified_social_email_logs_into_and_connects_an_existing_email_account(): void
     {
-        User::factory()->create(['email' => 'customer@example.com']);
+        $user = User::factory()->unverified()->create(['email' => 'customer@example.com']);
 
         Socialite::fake('google', SocialiteUser::fake([
             'id' => 'google-user-456',
@@ -107,13 +107,36 @@ class SocialAuthenticationTest extends TestCase
 
         $response = $this->get(route('social.callback', ['provider' => 'google']));
 
+        $response->assertRedirect('/dashboard');
+        $this->assertAuthenticatedAs($user);
+        $this->assertDatabaseHas('social_accounts', [
+            'user_id' => $user->id,
+            'provider' => 'google',
+            'provider_id' => 'google-user-456',
+        ]);
+        $this->assertNotNull($user->refresh()->email_verified_at);
+    }
+
+    public function test_unverified_social_email_cannot_auto_connect_an_existing_email_account(): void
+    {
+        $user = User::factory()->unverified()->create(['email' => 'customer@example.com']);
+
+        Socialite::fake('google', SocialiteUser::fake([
+            'id' => 'google-user-457',
+            'email' => 'customer@example.com',
+            'email_verified' => false,
+        ]));
+
+        $response = $this->get(route('social.callback', ['provider' => 'google']));
+
         $response->assertRedirect(route('login'));
         $response->assertSessionHas('error', fn (string $error): bool => str_contains($error, 'connect Google'));
         $this->assertGuest();
         $this->assertDatabaseMissing('social_accounts', [
             'provider' => 'google',
-            'provider_id' => 'google-user-456',
+            'provider_id' => 'google-user-457',
         ]);
+        $this->assertNull($user->refresh()->email_verified_at);
     }
 
     public function test_authenticated_user_can_connect_a_social_account(): void

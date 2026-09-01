@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property-read Collection<int, OrderItem> $items
+ * @property-read Collection<int, ProductDesignRequest> $productDesignRequests
  */
 class Order extends Model
 {
@@ -79,6 +80,14 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * @return HasMany<ProductDesignRequest, $this>
+     */
+    public function productDesignRequests(): HasMany
+    {
+        return $this->hasMany(ProductDesignRequest::class);
     }
 
     /**

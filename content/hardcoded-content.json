@@ -248,7 +248,16 @@
                         ]
                     }
                 ],
-                "promo_cards": []
+                "promo_cards": [
+                    {
+                        "image_url": "/images/nav/business-cards/cotton-business-cards.png",
+                        "image_alt": "Cotton business cards in a tactile paper stock",
+                        "title": "Cotton Business Cards",
+                        "description": "Soft, tactile cotton stock for a premium first impression.",
+                        "cta_label": "Shop Cotton Business Cards",
+                        "cta_href": "/business-cards/classic-cotton"
+                    }
+                ]
             }
         },
         "footer": {
@@ -398,10 +407,6 @@
                 {
                     "text": "Free standard shipping on orders over $50",
                     "href": "/shipping-policy"
-                },
-                {
-                    "text": "New: FSC® certified Business Cards now available",
-                    "href": "/business-cards"
                 },
                 {
                     "text": "20% off your first order — use code WELCOME20",
@@ -1063,6 +1068,7 @@
         "design_fee_label": "Custom Design Fee",
         "design_cta": {
             "heading": "How would you like to design?",
+            "required_error": "Please choose and submit one of the three design options before adding this product to your cart.",
             "options": [
                 {
                     "title": "Design in Canva",

@@ -86,10 +86,32 @@ class SocialAuthController extends Controller
                 );
             }
 
-            if ($this->findUserByEmail($email) !== null) {
-                return $this->loginError(
-                    'An account already exists for this email. Sign in with your password, then connect '.$this->providerLabel($provider).' from Profile settings.'
-                );
+            $existingUser = $this->findUserByEmail($email);
+
+            if ($existingUser !== null) {
+                if (! $this->socialEmailIsVerified($socialUser)) {
+                    return $this->loginError(
+                        'An account already exists for this email. Sign in with your password, then connect '.$this->providerLabel($provider).' from Profile settings.'
+                    );
+                }
+
+                DB::transaction(function () use ($existingUser, $provider, $providerId, $email): void {
+                    $existingUser->socialAccounts()->create([
+                        'provider' => $provider,
+                        'provider_id' => $providerId,
+                        'provider_email' => $email,
+                    ]);
+
+                    if ($existingUser->email_verified_at === null) {
+                        $existingUser->forceFill([
+                            'email_verified_at' => now(),
+                        ])->save();
+                    }
+                });
+
+                $this->loginUser($request, $existingUser);
+
+                return redirect()->intended(route('dashboard', absolute: false));
             }
 
             $user = DB::transaction(function () use ($email, $provider, $providerId, $socialUser): User {

@@ -94,9 +94,26 @@ class ProductDesignRequestController extends Controller
             $designPayload['example_paths'] = $examplePaths;
         }
 
-        ProductDesignRequest::create([
+        $designRequest = ProductDesignRequest::create([
             'desgin' => $designPayload,
         ]);
+
+        $pendingRequestIds = $request->session()->get(
+            'pending_product_design_request_ids',
+            [],
+        );
+
+        if (! is_array($pendingRequestIds)) {
+            $pendingRequestIds = [];
+        }
+
+        $request->session()->put(
+            'pending_product_design_request_ids',
+            array_values(array_unique([
+                ...array_map('intval', $pendingRequestIds),
+                (int) $designRequest->getKey(),
+            ])),
+        );
 
         $returnTo = $validated['return_to'] ?? null;
 

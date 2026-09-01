@@ -36,10 +36,6 @@ export default function Shipping() {
                     5 to 7 business days
                 </li>
                 <li>
-                    <strong>Notebooks, Journals, Planners</strong> — 4 to 6
-                    business days
-                </li>
-                <li>
                     <strong>
                         Display Boxes, Greeting Cards, Luxe Notecards
                     </strong>{' '}
@@ -91,10 +87,6 @@ export default function Shipping() {
                 rates with our carriers and pass the savings on to you.
             </p>
             <ul>
-                <li>
-                    <strong>Free Standard Shipping</strong> on orders over £50 /
-                    €60 / $65 / A$95 to the UK, EU, US, Canada, and Australia.
-                </li>
                 <li>
                     <strong>Flat-rate Express</strong> — see the rates page at
                     checkout for current pricing.

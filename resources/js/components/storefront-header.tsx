@@ -506,7 +506,7 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                     {visiblePromos.map((promo) => (
                         <div
                             key={promo.title}
-                            className="w-full max-w-[280px] transition-opacity duration-200 ease-in"
+                            className="w-full max-w-[560px] transition-opacity duration-200 ease-in"
                         >
                             <PromoCard promo={promo} compact />
                         </div>
@@ -536,7 +536,7 @@ function PromoCard({
                     className={cn(
                         'w-full object-cover',
                         compact
-                            ? 'aspect-[16/10] max-h-[140px]'
+                            ? 'aspect-[16/9]'
                             : 'aspect-[4/3] h-full',
                     )}
                     loading="lazy"
@@ -545,7 +545,7 @@ function PromoCard({
             <h3
                 className={cn(
                     'leading-snug font-bold text-neutral-900',
-                    compact ? 'mt-2 text-xs' : 'mt-2 text-sm',
+                    compact ? 'mt-3 text-base' : 'mt-2 text-sm',
                 )}
             >
                 {promo.title}
@@ -553,7 +553,7 @@ function PromoCard({
             <p
                 className={cn(
                     'line-clamp-2 leading-snug text-neutral-600',
-                    compact ? 'mt-1 text-[10px]' : 'mt-1 text-xs',
+                    compact ? 'mt-1.5 text-sm' : 'mt-1 text-xs',
                 )}
             >
                 {promo.description}

@@ -788,10 +788,17 @@ export default function ShopShow({
         upload: false,
         'design-for-you': false,
     });
+    const [designSelectionError, setDesignSelectionError] = useState<
+        string | null
+    >(null);
     const [selectedDesignService, setSelectedDesignService] = useState<
         string | null
     >(null);
     const [hasInteracted, setHasInteracted] = useState(false);
+
+    const hasSubmittedDesign = Object.values(submittedDesignModes).some(
+        Boolean,
+    );
 
     const markDesignSubmitted = (
         mode: 'canva' | 'upload' | 'design-for-you',
@@ -800,7 +807,15 @@ export default function ShopShow({
             ...current,
             [mode]: true,
         }));
+        setDesignSelectionError(null);
         setDesignModal(null);
+    };
+
+    const openDesignModal = (
+        mode: 'canva' | 'upload' | 'design-for-you',
+    ) => {
+        setDesignSelectionError(null);
+        setDesignModal(mode);
     };
 
     const markInteracted = () => {
@@ -1294,6 +1309,17 @@ export default function ShopShow({
         embossingOrSignaturePanelList.length > 0;
 
     const addToCart = () => {
+        if (!hasSubmittedDesign) {
+            const message =
+                c.design_cta?.required_error ??
+                'Please choose and submit one of the three design options before adding this product to your cart.';
+
+            setDesignSelectionError(message);
+            toast.error(message);
+
+            return;
+        }
+
         setAdded(true);
         router.post(
             '/cart/add',
@@ -2496,7 +2522,7 @@ export default function ShopShow({
                                     body={c.design_cta.options[0].body}
                                     accent={ACCENT}
                                     submitted={submittedDesignModes.canva}
-                                    onClick={() => setDesignModal('canva')}
+                                    onClick={() => openDesignModal('canva')}
                                     icon={
                                         <svg
                                             viewBox="0 0 24 24"
@@ -2541,7 +2567,7 @@ export default function ShopShow({
                                     body={c.design_cta.options[1].body}
                                     accent={ACCENT}
                                     submitted={submittedDesignModes.upload}
-                                    onClick={() => setDesignModal('upload')}
+                                    onClick={() => openDesignModal('upload')}
                                     icon={
                                         <svg
                                             viewBox="0 0 24 24"
@@ -2565,7 +2591,7 @@ export default function ShopShow({
                                         submittedDesignModes['design-for-you']
                                     }
                                     onClick={() =>
-                                        setDesignModal('design-for-you')
+                                        openDesignModal('design-for-you')
                                     }
                                     icon={
                                         <svg
@@ -2584,6 +2610,15 @@ export default function ShopShow({
                                     }
                                 />
                             </div>
+                            {designSelectionError && (
+                                <p
+                                    id="design-selection-error"
+                                    role="alert"
+                                    className="mt-3 text-sm font-medium text-red-600"
+                                >
+                                    {designSelectionError}
+                                </p>
+                            )}
                         </div>
 
                         {/* design modals */}
@@ -2606,6 +2641,8 @@ export default function ShopShow({
                             title="Upload a full design (free)"
                             description="Send us your print-ready artwork and we'll prepare a free proof before printing."
                             productOptions={c.design_form_product_options}
+                            businessCardType={product.name}
+                            businessCardTypeDisabled
                             submissionTarget="product-design"
                             productDesignMode="upload"
                             productId={product.id}
@@ -2658,6 +2695,11 @@ export default function ShopShow({
 
                         <Button
                             onClick={addToCart}
+                            aria-describedby={
+                                designSelectionError
+                                    ? 'design-selection-error'
+                                    : undefined
+                            }
                             disabled={added || !hasSelection || !tier}
                             className={`mt-6 h-12 w-full text-base font-semibold text-primary-foreground ${added ? 'bg-primary/90' : 'bg-primary hover:bg-primary/90'}`}
                         >

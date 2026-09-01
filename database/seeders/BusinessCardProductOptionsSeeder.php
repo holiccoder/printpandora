@@ -59,21 +59,36 @@ class BusinessCardProductOptionsSeeder extends Seeder
     ];
 
     /**
-     * @var array<string, array{subtitle: string, description: string}>
+     * @var array<string, array{description: string}>
      */
     private const PVC_PRODUCT_DETAILS = [
         'basic-pvc-card' => [
-            'subtitle' => '0.38mm PVC cards with matte, gloss, or frosted-glass finish options.',
             'description' => '<p>Basic PVC cards at 0.38mm are lightweight, durable, and waterproof.</p>',
         ],
         'standard-pvc-card' => [
-            'subtitle' => '0.76mm PVC cards with matte, gloss, frosted-glass, foil, and stripe options.',
             'description' => '<p>Standard PVC cards at 0.76mm offer durable, waterproof construction with flexible print and finish options.</p>',
         ],
         'premium-pvc-card' => [
-            'subtitle' => '0.84mm premium PVC NFC cards with optional print code.',
             'description' => '<p>Premium PVC NFC cards at 0.84mm combine durable construction with optional print-code functionality.</p>',
         ],
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    private const PRODUCT_SUBTITLE_FILES = [
+        'classic-standard-business-cards' => 'content/product-options/business-cards/classic-standard-business-cards.json',
+        'classic-special-business-cards' => 'content/product-options/business-cards/classic-special-business-cards.json',
+        'classic-quality-business-cards' => 'content/product-options/business-cards/classic-quality-business-cards.json',
+        'classic-solid-business-cards' => 'content/product-options/business-cards/classic-solid-business-cards.json',
+        'basic-cotton-business-card' => 'content/product-options/cotton-business-cards/basic-cotton-business-card.json',
+        'classic-cotton-business-card' => 'content/product-options/cotton-business-cards/classic-cotton-business-card.json',
+        'premium-cotton-business-card' => 'content/product-options/cotton-business-cards/premium-cotton-business-card.json',
+        'luxe-cotton-business-card' => 'content/product-options/cotton-business-cards/luxe-cotton-business-card.json',
+        'grand-cotton-business-card' => 'content/product-options/cotton-business-cards/grand-cotton-business-card.json',
+        'basic-pvc-card' => 'content/product-options/pvc-business-cards/basic-pvc-card.json',
+        'standard-pvc-card' => 'content/product-options/pvc-business-cards/standard-pvc-card.json',
+        'premium-pvc-card' => 'content/product-options/pvc-business-cards/premium-pvc-card.json',
     ];
 
     /**
@@ -430,6 +445,8 @@ class BusinessCardProductOptionsSeeder extends Seeder
 
                 $configuration->syncProductProjection($product->fresh());
             }
+
+            $this->syncProductSubtitles($configuration);
         });
 
         if ($this->command !== null) {
@@ -470,5 +487,33 @@ class BusinessCardProductOptionsSeeder extends Seeder
         ));
 
         return $configuration->canonicalConfig($legacyProduct);
+    }
+
+    private function syncProductSubtitles(ProductConfigurationService $configuration): void
+    {
+        foreach (self::PRODUCT_SUBTITLE_FILES as $slug => $relativePath) {
+            $product = Product::query()->where('slug', $slug)->first();
+
+            if (! $product) {
+                continue;
+            }
+
+            $path = base_path($relativePath);
+            $contents = file_get_contents($path);
+
+            if ($contents === false) {
+                throw new \RuntimeException("Unable to read {$path}.");
+            }
+
+            $options = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+            $subtitle = $options['subtitle'] ?? null;
+
+            if (! is_string($subtitle)) {
+                continue;
+            }
+
+            $product->forceFill(['subtitle' => $subtitle])->save();
+            $configuration->syncProductProjection($product->fresh());
+        }
     }
 }
