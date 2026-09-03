@@ -79,6 +79,9 @@ class DiscountCodeResource extends Resource
                             ->numeric()
                             ->minValue(1)
                             ->helperText('根据结账时填写的邮箱统计。'),
+                        Forms\Components\Toggle::make('first_order_only')
+                            ->label('仅限首单')
+                            ->helperText('仅注册用户的第一个订单可用。'),
                     ])->columns(2),
             ]);
     }
@@ -111,6 +114,9 @@ class DiscountCodeResource extends Resource
                         : (string) $state),
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('启用状态')
+                    ->boolean(),
+                Tables\Columns\IconColumn::make('first_order_only')
+                    ->label('仅限首单')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('starts_at')
                     ->label('开始时间')

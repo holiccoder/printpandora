@@ -20,6 +20,7 @@ class HelpCenterTest extends TestCase
                 'getting-started-with-inkpavo',
                 'account-and-orders',
                 'your-designs',
+                'shipping-and-delivery',
             ],
             HelpCategory::query()
                 ->where('is_active', true)
@@ -47,6 +48,12 @@ class HelpCenterTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('help_categories', [
+            'slug' => 'shipping-and-delivery',
+            'name' => 'Shipping & Delivery',
+            'is_active' => true,
+        ]);
+
+        $this->assertDatabaseHas('help_categories', [
             'slug' => 'design-and-print-knowledge',
             'is_active' => false,
         ]);
@@ -61,10 +68,11 @@ class HelpCenterTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->component('help/index')
-            ->has('categories', 3)
+            ->has('categories', 4)
             ->where('categories.0.slug', 'getting-started-with-inkpavo')
             ->where('categories.1.slug', 'account-and-orders')
             ->where('categories.2.slug', 'your-designs')
+            ->where('categories.3.slug', 'shipping-and-delivery')
         );
     }
 
@@ -77,12 +85,36 @@ class HelpCenterTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->component('help/index')
-            ->has('faqs', 5)
+            ->has('faqs', 6)
             ->where('faqs.0.question', 'How quickly can my business cards be delivered?')
             ->where('faqs.1.question', 'Which business card sizes do you offer?')
             ->where('faqs.2.question', 'Why choose InkPavo business cards?')
             ->where('faqs.3.question', 'About design files')
             ->where('faqs.4.question', 'What is the difference between matte, gloss, and soft-touch business cards?')
+            ->where('faqs.5.question', '如果印刷有质量问题如何售后')
+        );
+    }
+
+    public function test_shipping_category_contains_the_delivery_article(): void
+    {
+        $this->seed(HelpCenterSeeder::class);
+
+        $category = HelpCategory::query()
+            ->where('slug', 'shipping-and-delivery')
+            ->firstOrFail();
+
+        $this->assertSame(
+            ['shipping-and-delivery-options'],
+            $category->publishedArticles()->pluck('slug')->all(),
+        );
+
+        $response = $this->get('/faq-and-help-center/categories/shipping-and-delivery');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('help/category')
+            ->has('articles', 1)
+            ->where('articles.0.slug', 'shipping-and-delivery-options')
         );
     }
 

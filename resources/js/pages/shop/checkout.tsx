@@ -60,7 +60,7 @@ interface Props {
     total: number;
     shippingFee: number;
     shippingMethods: ShippingMethod[];
-    shippingRateBasisWeightKg: number;
+    shippingWeightGrams: number;
     defaultShippingCountry: string;
     defaultShippingMethod: string;
     discountCode: string | null;
@@ -135,7 +135,7 @@ export default function Checkout({
     total,
     shippingFee,
     shippingMethods,
-    shippingRateBasisWeightKg,
+    shippingWeightGrams,
     defaultShippingCountry,
     defaultShippingMethod,
     discountCode,
@@ -270,6 +270,10 @@ export default function Checkout({
         shippingMethods.length > 0
             ? itemsTotal + (selectedShipping?.fee ?? shippingFee)
             : total;
+    const shippingWeightLabel =
+        shippingWeightGrams >= 1000
+            ? `${(shippingWeightGrams / 1000).toFixed(2)} kg`
+            : `${Math.round(shippingWeightGrams)} g`;
 
     // Keep latest form values available inside PayPal SDK callbacks.
     useEffect(() => {
@@ -841,7 +845,7 @@ export default function Checkout({
                                 </h2>
                                 <p className="mb-4 text-xs text-[#706f6c]">
                                     Rates shown for a{' '}
-                                    {shippingRateBasisWeightKg} kg parcel and
+                                    {shippingWeightLabel} parcel and
                                     updated for the selected country.
                                 </p>
                                 <div className="space-y-3">

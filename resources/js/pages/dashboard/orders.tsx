@@ -1,6 +1,6 @@
 // Content (headings/labels/pagination) sourced from `content/hardcoded-content.json` via useContent('dashboard_orders_page').
 import { Link } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
@@ -14,6 +14,7 @@ type Order = {
     payment_method: string | null;
     tracking_number: string | null;
     tracking_url: string | null;
+    invoice_url: string | null;
     total: number;
     item_count: number;
     created_at: string | null;
@@ -165,16 +166,33 @@ export default function DashboardOrders({ orders }: Props) {
                                                     ${order.total.toFixed(2)}
                                                 </Td>
                                                 <Td className="text-right">
-                                                    <Link
-                                                        href={`/orders/${order.id}`}
-                                                        className="inline-flex items-center gap-1 text-sm font-semibold hover:underline"
-                                                        style={{
-                                                            color: ACCENT,
-                                                        }}
-                                                    >
-                                                        {c.view_link}{' '}
-                                                        <ChevronRight className="size-3.5" />
-                                                    </Link>
+                                                    <div className="flex flex-wrap justify-end gap-x-4 gap-y-1">
+                                                        <Link
+                                                            href={`/orders/${order.id}`}
+                                                            className="inline-flex items-center gap-1 text-sm font-semibold hover:underline"
+                                                            style={{
+                                                                color: ACCENT,
+                                                            }}
+                                                        >
+                                                            {c.view_link}{' '}
+                                                            <ChevronRight className="size-3.5" />
+                                                        </Link>
+                                                        {order.invoice_url && (
+                                                            <a
+                                                                href={
+                                                                    order.invoice_url
+                                                                }
+                                                                className="inline-flex items-center gap-1 text-sm font-semibold hover:underline"
+                                                                style={{
+                                                                    color: ACCENT,
+                                                                }}
+                                                                download
+                                                            >
+                                                                {c.invoice_link}{' '}
+                                                                <Download className="size-3.5" />
+                                                            </a>
+                                                        )}
+                                                    </div>
                                                 </Td>
                                             </tr>
                                         ))}

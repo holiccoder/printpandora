@@ -405,11 +405,7 @@
             "default_interval_ms": 4000,
             "default_messages": [
                 {
-                    "text": "Free standard shipping on orders over $50",
-                    "href": "/shipping-policy"
-                },
-                {
-                    "text": "20% off your first order — use code WELCOME20",
+                    "text": "15% off your first order — applied automatically",
                     "href": "/business-cards"
                 },
                 {
@@ -1036,7 +1032,7 @@
         "save_percentage_label": "Save {n}%",
         "delivery_callout": {
             "title": "With Standard Shipping, receive your order by {date}.",
-            "subtitle": "With Fast Shipping, receive your order by {date}."
+            "subtitle": "With Express Shipping, receive your order by {date}."
         },
         "order_summary": {
             "heading": "Your selection",
@@ -1191,18 +1187,18 @@
                             ]
                         },
                         {
-                            "id": "luxe",
-                            "name": "Luxe Business Cards",
+                            "id": "pvc",
+                            "name": "PVC Business Cards",
                             "price": "50 cards from $43.00",
                             "image_url": "/images/product-detail/paper-stocks/pvc-card.webp",
-                            "href": "/business-cards/luxe",
-                            "cta": "Shop Luxe Business Cards ›",
+                            "href": "/business-cards/standard-pvc",
+                            "cta": "Shop PVC Business Cards ›",
                             "features": [
-                                "32pt thickness",
-                                "4-Layer Mohawk Superfine®",
-                                "Eight color seams",
-                                "Uncoated texture",
-                                "FSC® Certified"
+                                "0.76mm thickness",
+                                "Durable and waterproof",
+                                "Sharp full-colour printing",
+                                "Flexible finish options",
+                                "Easy to clean"
                             ]
                         },
                         {
@@ -1210,7 +1206,7 @@
                             "name": "Classic Business Cards",
                             "price": "50 cards from $23.00",
                             "image_url": "/images/product-detail/paper-stocks/paper-stock-four.webp",
-                            "href": "/classic-business-cards",
+                            "href": "/business-cards/classic-standard",
                             "cta": "Shop Classic Business Cards ›",
                             "features": [
                                 "16pt thickness",
@@ -1510,11 +1506,11 @@
                         "emphasised": true
                     }
                 ],
-                "free_shipping_promo": {
-                    "eyebrow": "On every order",
-                    "heading": "Free shipping worldwide",
-                    "body": "Wherever your card needs to land, we'll get it there — free — on every single order.",
-                    "cta": "Start an order",
+                "shipping_info": {
+                    "eyebrow": "Shipping & Delivery",
+                    "heading": "Choose the delivery speed that suits you",
+                    "body": "Shipping is calculated at checkout based on your destination, parcel weight, and selected method. Standard shipping usually takes 7 to 12 business days; express shipping usually takes 2 to 5 business days.",
+                    "cta": "View shipping policy",
                     "image_url": "/images/business-cards/packing/shipping-promo.webp",
                     "image_alt": "Packed business card order ready for shipping"
                 }
@@ -1554,8 +1550,8 @@
                         "blurb": "Sustainably sourced paper and eco-friendly inks, every order."
                     },
                     {
-                        "name": "Fast & Free",
-                        "blurb": "Free worldwide shipping on every order, with express options available."
+                        "name": "Fast delivery",
+                        "blurb": "Choose standard or express shipping at checkout, with delivery estimates shown for your order."
                     }
                 ]
             },
@@ -1607,7 +1603,7 @@
         "faq": [
             {
                 "question": "How do I order business cards?",
-                "answer": "Pick a paper, choose a size, then either use a template, upload artwork, or design from scratch in the browser. Add to cart and we ship within 3–5 working days."
+                "answer": "Pick a paper, choose a size, then either use a template, upload artwork, or design from scratch in the browser. Production and delivery times depend on the product and shipping method: standard shipping usually takes 7 to 12 business days, while express shipping usually takes 2 to 5 business days after production."
             },
             {
                 "question": "Which InkPavo paper is best for my business?",
@@ -1690,7 +1686,7 @@
                         "fallback_description": "Tracked delivery for routine orders."
                     },
                     "dhl_express": {
-                        "fallback_label": "Fast Shipping (DHL Express)",
+                        "fallback_label": "Express Shipping (DHL Express)",
                         "fallback_description": "Fast tracked delivery. DHL shipment will be created manually after payment."
                     }
                 },
@@ -2153,6 +2149,7 @@
             "actions": "Actions"
         },
         "view_link": "View",
+        "invoice_link": "Download invoice",
         "tracking_link": "Track package",
         "pagination": {
             "showing": "Showing",

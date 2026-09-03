@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Filament\Pages\Settings as SettingsPage;
 use App\Models\Admin;
 use App\Models\SiteSetting;
+use App\Services\ShippingService;
 use App\Services\SiteSettingsService;
 use App\Support\HardcodedContent;
 use Filament\Facades\Filament;
@@ -161,5 +162,6 @@ class FilamentSettingsTest extends TestCase
 
         $this->assertIsArray($stored);
         $this->assertEquals(12.5, data_get($stored, 'shipping.dhl_fuel_surcharge'));
+        $this->assertSame(31.66, app(ShippingService::class)->fee('dhl_express', 'US', 542));
     }
 }

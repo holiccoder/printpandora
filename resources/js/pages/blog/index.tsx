@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import BlogHero from '@/components/blog-hero';
+import type { BlogHeroSlide } from '@/components/blog-hero';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
@@ -23,15 +24,47 @@ interface Props {
         prev_page_url: string | null;
         next_page_url: string | null;
     };
+    carouselPosts: Post[];
 }
 
 function excerpt(body: string, length = 160): string {
-    const text = body.replace(/<[^>]+>/g, '');
+    const text = body.replace(/<[^>]+>/g, '').trim();
 
     return text.length > length ? text.slice(0, length) + '...' : text;
 }
 
-export default function BlogIndex({ posts }: Props) {
+function readMinutes(body: string): number {
+    const wordCount = body
+        .replace(/<[^>]+>/g, ' ')
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean).length;
+
+    return Math.max(1, Math.ceil(wordCount / 200));
+}
+
+function formatDate(iso: string): string {
+    return new Date(iso).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+}
+
+function toHeroSlide(post: Post): BlogHeroSlide {
+    return {
+        image: post.featured_image,
+        imageAlt: post.title,
+        category: post.category.name,
+        headline: post.title,
+        excerpt: excerpt(post.body),
+        date: formatDate(post.published_at),
+        readMinutes: readMinutes(post.body),
+        href: `/blog/${post.slug}`,
+    };
+}
+
+export default function BlogIndex({ posts, carouselPosts }: Props) {
     const c = useContent('blog_index_page');
 
     return (
@@ -43,7 +76,10 @@ export default function BlogIndex({ posts }: Props) {
             />
 
             <div className="flex flex-col bg-[#FDFDFC] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
-                <BlogHero />
+                <BlogHero
+                    slides={carouselPosts.map(toHeroSlide)}
+                    initialSlide={0}
+                />
 
                 <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-12">
                     <h1 className="mb-8 text-3xl font-semibold tracking-tight">

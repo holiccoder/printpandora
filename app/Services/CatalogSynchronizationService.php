@@ -35,6 +35,11 @@ class CatalogSynchronizationService
         'product_config',
     ];
 
+    /** @var array<int, string> */
+    private const PRODUCT_INTEGER_FIELDS = [
+        'weight',
+    ];
+
     /**
      * @return SyncSummary
      */
@@ -249,6 +254,12 @@ class CatalogSynchronizationService
             foreach (self::PRODUCT_JSON_FIELDS as $field) {
                 if (array_key_exists($field, $row)) {
                     $attributes[$field] = $this->nullableJsonArray($row[$field], "product {$slug}.{$field}");
+                }
+            }
+
+            foreach (self::PRODUCT_INTEGER_FIELDS as $field) {
+                if (array_key_exists($field, $row)) {
+                    $attributes[$field] = $this->nonNegativeInteger($row[$field], "product {$slug}.{$field}");
                 }
             }
 
@@ -571,6 +582,19 @@ class CatalogSynchronizationService
         }
 
         throw new RuntimeException("{$context} must be a boolean value.");
+    }
+
+    private function nonNegativeInteger(mixed $value, string $context): int
+    {
+        if (is_int($value) && $value >= 0) {
+            return $value;
+        }
+
+        if (is_string($value) && preg_match('/^\\d+$/', trim($value)) === 1) {
+            return (int) trim($value);
+        }
+
+        throw new RuntimeException("{$context} must be a non-negative integer.");
     }
 
     private function sourceIdentifier(mixed $value, string $context): string

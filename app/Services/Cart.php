@@ -129,11 +129,37 @@ class Cart
         $this->session->forget('discount_code');
     }
 
+    public function applyAutomaticFirstOrderDiscount(?int $customerId): void
+    {
+        if ($customerId === null || $this->count() === 0 || $this->discountCode()) {
+            return;
+        }
+
+        $subtotal = $this->subtotal();
+
+        if ($subtotal <= 0) {
+            return;
+        }
+
+        $discountCode = app(DiscountService::class)->firstOrderCodeFor(
+            $customerId,
+            $subtotal,
+        );
+
+        if ($discountCode) {
+            $this->applyDiscountCode($discountCode->code);
+        }
+    }
+
     /**
      * @return array{code: ?string, subtotal: float, discount: float, total: float}
      */
-    public function quote(?string $customerEmail = null, bool $strict = false): array
-    {
+    public function quote(
+        ?string $customerEmail = null,
+        bool $strict = false,
+        ?int $customerId = null,
+        ?int $currentOrderId = null,
+    ): array {
         $subtotal = $this->subtotal();
         $code = $this->discountCode();
 
@@ -142,7 +168,13 @@ class Cart
         }
 
         try {
-            $quote = app(DiscountService::class)->quote($code, $subtotal, $customerEmail);
+            $quote = app(DiscountService::class)->quote(
+                $code,
+                $subtotal,
+                $customerEmail,
+                $customerId,
+                $currentOrderId,
+            );
 
             return [
                 'code' => $quote['code_value'],

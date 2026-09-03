@@ -23,23 +23,32 @@ export default function Shipping() {
             </p>
             <ul>
                 <li>
-                    <strong>
-                        Business Cards, MiniCards, Postcards, Flyers
-                    </strong>{' '}
-                    — 2 to 3 business days
+                    <strong>Cotton Business Cards</strong> — 5 to 7 business
+                    days
+                </li>
+                <li>
+                    <strong>Super Business Cards</strong> — 2 to 3 business
+                    days; hot foil or cold foil finishes take 4 to 5 business
+                    days
+                </li>
+                <li>
+                    <strong>Luxe Business Cards</strong> — 3 to 4 business days
+                </li>
+                <li>
+                    <strong>PVC Business Cards</strong> — Basic: 2 to 3;
+                    Standard: 3 to 5; Premium: 5 to 7 business days
+                </li>
+                <li>
+                    <strong>Classic Business Cards</strong> — 2 to 3 business
+                    days; hot foil or cold foil finishes take 4 to 5 business
+                    days
+                </li>
+                <li>
+                    <strong>Metal Business Cards</strong> — 15 to 20 business
+                    days
                 </li>
                 <li>
                     <strong>Stickers & Labels</strong> — 3 to 4 business days
-                </li>
-                <li>
-                    <strong>Letterpress, Foil, and Hot Foil products</strong> —
-                    5 to 7 business days
-                </li>
-                <li>
-                    <strong>
-                        Display Boxes, Greeting Cards, Luxe Notecards
-                    </strong>{' '}
-                    — 3 to 5 business days
                 </li>
             </ul>
             <p>
@@ -59,14 +68,15 @@ export default function Shipping() {
                     Tracked.
                 </li>
                 <li>
-                    <strong>Fast (DHL Express)</strong> — 2 to 5 business days.
-                    Tracked; DHL waybill is added after manual fulfillment.
+                    <strong>Express (DHL Express)</strong> — 2 to 5 business
+                    days. Tracked; DHL waybill is added after manual
+                    fulfillment.
                 </li>
             </ul>
 
             <h2>3. Carriers</h2>
             <p>
-                Standard orders are fulfilled through 4PX. Fast orders are
+                Standard orders are fulfilled through 4PX. Express orders are
                 fulfilled through DHL Express:
             </p>
             <ul>
@@ -75,7 +85,7 @@ export default function Shipping() {
                     shipment is created after payment and confirmed by our team.
                 </li>
                 <li>
-                    <strong>Fast</strong> — DHL Express shipment created
+                    <strong>Express</strong> — DHL Express shipment created
                     manually in EShip after payment.
                 </li>
             </ul>
@@ -219,8 +229,8 @@ export default function Shipping() {
                 kraft-cardboard outer boxes, recycled tissue, and starch-based
                 cushioning. Where available, we ship orders carbon-neutral
                 through partnerships with DHL GoGreen, UPS Carbon Neutral, and
-                Royal Mail. Read more on our{' '}
-                <a href="/about/sustainability">sustainability page</a>.
+                Royal Mail. We continue to review lower-impact materials and
+                delivery options as they become available.
             </p>
 
             <h2>11. Contact</h2>

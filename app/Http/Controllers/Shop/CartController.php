@@ -12,9 +12,14 @@ use Inertia\Inertia;
 
 class CartController extends Controller
 {
-    public function index(Cart $cart)
+    public function index(Request $request, Cart $cart)
     {
-        $quote = $cart->quote();
+        $user = $request->user();
+        $customerId = $user?->getAuthIdentifier();
+        $customerId = $customerId === null ? null : (int) $customerId;
+
+        $cart->applyAutomaticFirstOrderDiscount($customerId);
+        $quote = $cart->quote($user?->email, false, $customerId);
 
         return Inertia::render('shop/cart', [
             'cart' => $cart->all(),
@@ -72,7 +77,10 @@ class CartController extends Controller
         $cart->applyDiscountCode($data['code']);
 
         try {
-            $cart->quote(null, true);
+            $user = $request->user();
+            $customerId = $user?->getAuthIdentifier();
+            $customerId = $customerId === null ? null : (int) $customerId;
+            $cart->quote($user?->email, true, $customerId);
         } catch (DiscountException $exception) {
             $cart->removeDiscountCode();
 

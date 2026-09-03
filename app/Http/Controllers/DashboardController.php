@@ -90,6 +90,9 @@ class DashboardController extends Controller
                 'payment_method' => $order->payment_method,
                 'tracking_number' => $order->tracking_number,
                 'tracking_url' => $order->tracking_url,
+                'invoice_url' => $order->payment_status === 'paid'
+                    ? route('dashboard.orders.invoice', ['id' => $order->id])
+                    : null,
                 'total' => (float) $order->total,
                 'item_count' => $order->items->sum('quantity'),
                 'created_at' => $order->created_at?->toIso8601String(),

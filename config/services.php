@@ -71,6 +71,18 @@ return [
         'encoding_aes_key' => env('WECOM_ENCODING_AES_KEY'),
         'open_kfid' => env('WECOM_OPEN_KFID'),
         'timeout' => (int) env('WECOM_TIMEOUT', 10),
+
+        // Self-built application that bridges website support chat to staff.
+        // Its callback credentials fall back to the customer-service ones so a
+        // single Token/EncodingAESKey pair can be reused in the admin console.
+        'app_agent_id' => env('WECOM_APP_AGENT_ID'),
+        'app_secret' => env('WECOM_APP_SECRET'),
+        'app_support_user_ids' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('WECOM_APP_SUPPORT_USER_IDS', '')),
+        ))),
+        'app_callback_token' => env('WECOM_APP_CALLBACK_TOKEN') ?: env('WECOM_CALLBACK_TOKEN'),
+        'app_encoding_aes_key' => env('WECOM_APP_ENCODING_AES_KEY') ?: env('WECOM_ENCODING_AES_KEY'),
     ],
 
     'four_px' => [

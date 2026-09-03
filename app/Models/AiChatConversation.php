@@ -71,6 +71,12 @@ class AiChatConversation extends Model
         );
     }
 
+    /** @return HasMany<AiChatWecomAppMessage, $this> */
+    public function wecomAppMessages(): HasMany
+    {
+        return $this->hasMany(AiChatWecomAppMessage::class, 'conversation_id');
+    }
+
     /** @return HasOne<AiChatMessage, $this> */
     public function latestMessage(): HasOne
     {

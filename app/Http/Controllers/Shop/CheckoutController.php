@@ -14,6 +14,7 @@ use App\Services\Cart;
 use App\Services\CryptomusService;
 use App\Services\DiscountException;
 use App\Services\DiscountService;
+use App\Services\OrderWeightService;
 use App\Services\PayPalService;
 use App\Services\ShippingService;
 use Illuminate\Database\QueryException;
@@ -31,6 +32,7 @@ class CheckoutController extends Controller
 
     public function __construct(
         protected ShippingService $shipping,
+        protected OrderWeightService $weights,
     ) {}
 
     public function show(Request $request, Cart $cart)
@@ -44,7 +46,12 @@ class CheckoutController extends Controller
         $quote = $this->pendingCheckoutQuote($cart, $customerEmail, $pendingOrder, false);
         $defaultShippingMethod = (string) $pendingOrder->shipping_method;
         $defaultCountry = (string) $pendingOrder->shipping_country;
-        $shippingFee = $this->shipping->fee($defaultShippingMethod, $defaultCountry);
+        $shippingWeightGrams = $this->weights->forCart($cart->all());
+        $shippingFee = $this->shipping->fee(
+            $defaultShippingMethod,
+            $defaultCountry,
+            $shippingWeightGrams,
+        );
 
         return Inertia::render('shop/checkout', [
             'cart' => $cart->all(),
@@ -53,8 +60,8 @@ class CheckoutController extends Controller
             'itemsTotal' => $quote['total'],
             'total' => round($quote['total'] + $shippingFee, 2),
             'shippingFee' => $shippingFee,
-            'shippingMethods' => $this->shipping->methods($defaultCountry),
-            'shippingRateBasisWeightKg' => $this->shipping->rateBasisWeightKg(),
+            'shippingMethods' => $this->shipping->methods($defaultCountry, $shippingWeightGrams),
+            'shippingWeightGrams' => $shippingWeightGrams,
             'defaultShippingCountry' => $defaultCountry,
             'defaultShippingMethod' => $defaultShippingMethod,
             'discountCode' => $quote['code'],
@@ -647,6 +654,12 @@ class CheckoutController extends Controller
         ?string $paymentMethod = null,
         bool $redeemDiscount = false,
     ): Order {
+        $user = $request->user();
+
+        if ($user) {
+            $cart->applyAutomaticFirstOrderDiscount((int) $user->getAuthIdentifier());
+        }
+
         $token = $this->checkoutToken($request);
         $order = $this->findPendingCheckoutOrder($request, $token);
 
@@ -716,8 +729,17 @@ class CheckoutController extends Controller
 
         $shippingMethod = $this->shipping->defaultMethod();
         $shippingCountry = $this->shipping->defaultCountry();
-        $shipping = $this->shipping->get($shippingMethod, $shippingCountry);
-        $quote = $cart->quote((string) $user->email);
+        $shippingWeightGrams = $this->weights->forCart($cart->all());
+        $shipping = $this->shipping->get(
+            $shippingMethod,
+            $shippingCountry,
+            $shippingWeightGrams,
+        );
+        $quote = $cart->quote(
+            (string) $user->email,
+            false,
+            (int) $user->getAuthIdentifier(),
+        );
 
         $order = Order::create([
             'user_id' => (int) $user->getAuthIdentifier(),
@@ -738,6 +760,7 @@ class CheckoutController extends Controller
             'shipping_method' => $shipping['code'],
             'shipping_carrier' => $shipping['carrier'],
             'shipping_fee' => $shipping['fee'],
+            'shipping_weight_grams' => $this->weights->wholeGrams($shippingWeightGrams),
             'notes' => null,
         ]);
 
@@ -784,7 +807,12 @@ class CheckoutController extends Controller
                 $shippingMethod = $this->shipping->defaultMethod();
             }
 
-            $shipping = $this->shipping->get($shippingMethod, $shippingCountry);
+            $shippingWeightGrams = $this->weights->forCart($cart->all());
+            $shipping = $this->shipping->get(
+                $shippingMethod,
+                $shippingCountry,
+                $shippingWeightGrams,
+            );
             $customerEmail = (string) ($validated['customer_email']
                 ?? $lockedOrder->customer_email
                 ?? $user->email);
@@ -805,6 +833,7 @@ class CheckoutController extends Controller
                 'shipping_method' => $shipping['code'],
                 'shipping_carrier' => $shipping['carrier'],
                 'shipping_fee' => $shipping['fee'],
+                'shipping_weight_grams' => $this->weights->wholeGrams($shippingWeightGrams),
                 'status' => 'pending',
                 'payment_status' => 'pending',
             ];
@@ -867,7 +896,12 @@ class CheckoutController extends Controller
             ];
         }
 
-        return $cart->quote($customerEmail !== '' ? $customerEmail : null, $strict);
+        return $cart->quote(
+            $customerEmail !== '' ? $customerEmail : null,
+            $strict,
+            (int) $order->user_id,
+            (int) $order->id,
+        );
     }
 
     /**

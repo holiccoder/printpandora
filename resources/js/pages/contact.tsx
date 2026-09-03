@@ -1,5 +1,5 @@
 ﻿import { useForm, usePage } from '@inertiajs/react';
-import { Clock, Mail, MapPin, MessageSquare, Phone } from 'lucide-react';
+import { Mail, MessageSquare } from 'lucide-react';
 import type { FormEventHandler } from 'react';
 import InputError from '@/components/input-error';
 import SEO from '@/components/seo';
@@ -94,40 +94,6 @@ export default function Contact() {
                                     >
                                         support@inkpavo.com
                                     </a>
-                                }
-                            />
-                            <InfoRow
-                                icon={<Phone className="size-4" />}
-                                label="Phone"
-                                value={
-                                    <a
-                                        href="tel:+18005551234"
-                                        className="text-[#800020] hover:underline"
-                                    >
-                                        +1 (800) 555-1234
-                                    </a>
-                                }
-                            />
-                            <InfoRow
-                                icon={<Clock className="size-4" />}
-                                label="Hours"
-                                value={
-                                    <>
-                                        Mon–Fri · 9am – 6pm ET
-                                        <br />
-                                        Sat · 10am – 2pm ET
-                                    </>
-                                }
-                            />
-                            <InfoRow
-                                icon={<MapPin className="size-4" />}
-                                label="Studio"
-                                value={
-                                    <>
-                                        100 Print Lane
-                                        <br />
-                                        Brooklyn, NY 11201
-                                    </>
                                 }
                             />
                             <InfoRow

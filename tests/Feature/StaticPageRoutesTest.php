@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class StaticPageRoutesTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_static_pages_use_the_requested_public_slugs(): void
     {
         $pages = [
@@ -31,6 +34,17 @@ class StaticPageRoutesTest extends TestCase
             'faq-and-help-center',
             $this->app['router']->getRoutes()->getByName('help')->uri(),
         );
+    }
+
+    public function test_legacy_shipping_and_classic_business_card_paths_redirect(): void
+    {
+        $this->get('/shipping')
+            ->assertStatus(301)
+            ->assertRedirect('/shipping-policy');
+
+        $this->get('/classic-business-cards')
+            ->assertStatus(301)
+            ->assertRedirect('/business-cards/classic-standard');
     }
 
     public function test_sitemap_is_served_as_a_direct_xml_response(): void

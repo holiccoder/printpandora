@@ -15,6 +15,7 @@ type ChatMessage = {
 
 const SESSION_STORAGE_KEY = 'ai_chat_session_id';
 const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+export const OPEN_AI_CHAT_EVENT = 'inkpavo:open-ai-chat';
 let fallbackSessionId: string | null = null;
 
 function getSessionId(): string {
@@ -73,6 +74,16 @@ export function AiChatWidget() {
     const loadedRef = useRef(false);
     const pollAbortRef = useRef<AbortController | null>(null);
     const handoffPendingRef = useRef(false);
+
+    useEffect(() => {
+        const openChat = () => setOpen(true);
+
+        window.addEventListener(OPEN_AI_CHAT_EVENT, openChat);
+
+        return () => {
+            window.removeEventListener(OPEN_AI_CHAT_EVENT, openChat);
+        };
+    }, []);
 
     useEffect(() => {
         scrollRef.current?.scrollTo({

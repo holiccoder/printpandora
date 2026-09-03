@@ -6,7 +6,7 @@ return [
         'answer' => <<<'HTML'
 <p>At InkPavo, production time for business cards depends on the paper and finishes you choose. The fastest production time is 2-3 business days; orders with special finishes take 5-7 business days; metal business cards require 15-20 business days to complete production.</p>
 <p>Please place your order before 6:00 p.m. Beijing time, Monday through Saturday.</p>
-<p>Delivery time depends on your country and shipping method. The fastest shipping option can deliver in 3-7 business days, while standard shipping takes 10-18 business days. Please see our <a href="/shipping">Shipping &amp; Delivery page</a> for details.</p>
+<p>Delivery time depends on your country and shipping method. Standard shipping usually takes 7 to 12 business days, while express shipping usually takes 2 to 5 business days. Please see our <a href="/shipping-policy">Shipping &amp; Delivery page</a> for details.</p>
 HTML,
     ],
     [
@@ -44,6 +44,30 @@ HTML,
 <p>Matte business cards have a non-reflective surface and can be written on with a marker.</p>
 <p>Gloss business cards reflect light and have a bright shine that enhances colors and depth, making images look more vivid.</p>
 <p>Soft-touch business cards have a soft, matte, luxurious velvet-like coating that feels smooth and inviting.</p>
+HTML,
+    ],
+    [
+        'question' => '如果印刷有质量问题如何售后',
+        'answer' => <<<'HTML'
+<p><strong>一、印刷错误类问题</strong></p>
+<p>要求客户提供：</p>
+<ul>
+    <li>缺陷或者错误的高清照片/视频</li>
+    <li>错误样本与设计稿对比图</li>
+</ul>
+<p>文字错误要明确是哪方的问题。如果是客户方提供的文件问题，我们不承担责任；如果是我方错误，将免费重新印刷并采取普通快递送达。</p>
+<p>轻微色差（10-15%）：补偿订单金额15%或提供下次订单15%折扣券。</p>
+<p><strong>二、裁切工艺问题</strong></p>
+<p>要求客户使用标准测量工具拍摄：</p>
+<ul>
+    <li>对角线偏差 &gt;1mm：全批次返工</li>
+    <li>圆角/异形切割毛边：按缺陷数量比例退款</li>
+</ul>
+<p><strong>补偿标准</strong></p>
+<ul>
+    <li>材质不符：退款并承担销毁费用（需公证视频）</li>
+    <li>使用瑕疵：按影响数量折算补偿（如瑕疵数量在20%，则赔20%货款）</li>
+</ul>
 HTML,
     ],
 ];

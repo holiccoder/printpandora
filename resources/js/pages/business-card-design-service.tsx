@@ -29,6 +29,7 @@ const DESIGN_SERVICES: DesignServiceOption[] = [
 export default function BusinessCardDesignService() {
     const c = useContent('design_service_page') as any;
     const [selectedService, setSelectedService] = useState('');
+    const notes = Array.isArray(c.notes) ? c.notes.slice(0, 2) : [];
 
     return (
         <StorefrontLayout activeCategory="Design Service">
@@ -85,7 +86,7 @@ export default function BusinessCardDesignService() {
                 className="scroll-mt-20 border-t border-neutral-100"
                 style={{ backgroundColor: WARM_BG }}
             >
-                <div className="mx-auto grid max-w-7xl items-start gap-10 px-4 py-12 lg:grid-cols-2 lg:gap-12 lg:py-16">
+                <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 lg:py-16">
                     <div>
                         {/* Choose a Design Service Section */}
                         <div className="space-y-6">
@@ -169,11 +170,11 @@ export default function BusinessCardDesignService() {
                 <p className="mx-auto max-w-7xl px-4 pb-12 text-center text-sm text-neutral-500 lg:pb-16">
                     Prefer to browse first?{' '}
                     <Link
-                        href="/business-cards"
+                        href="/showcases"
                         className="font-semibold underline-offset-2 hover:underline"
                         style={{ color: ACCENT }}
                     >
-                        Explore our business cards
+                        Explore our showcases
                     </Link>
                 </p>
             </section>
@@ -205,7 +206,7 @@ export default function BusinessCardDesignService() {
                             {c.notes_heading}
                         </h2>
                         <ol className="mt-6 space-y-4">
-                            {c.notes.map((note: string, i: number) => (
+                            {notes.map((note: string, i: number) => (
                                 <li key={i} className="flex gap-4">
                                     <span
                                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
@@ -222,7 +223,6 @@ export default function BusinessCardDesignService() {
                     </div>
                 </div>
             </section>
-
         </StorefrontLayout>
     );
 }

@@ -2,6 +2,7 @@ import { Link, router, usePage } from '@inertiajs/react';
 import {
     ChevronDown,
     ChevronRight,
+    FileText,
     LogOut,
     Menu,
     Package,
@@ -76,6 +77,20 @@ type GlobalCart = {
     subtotal: string;
 };
 
+type BlogDropdownPost = {
+    id: number;
+    title: string;
+    slug: string;
+    excerpt: string;
+    featured_image: string | null;
+};
+
+type HeaderPageProps = {
+    auth?: { user?: { name?: string } | null };
+    global_cart?: GlobalCart;
+    blog_dropdown_posts?: BlogDropdownPost[];
+};
+
 const ACTIVE_GREEN = 'text-[#800020]';
 const INACTIVE_GREY = 'text-neutral-700 hover:text-neutral-950';
 
@@ -84,11 +99,13 @@ export function StorefrontHeader({
 }: { activeCategory?: string } = {}) {
     const chrome = useContent('global_chrome');
     const h = chrome.header;
+    const blogHero = useContent('blog_index_page').blog_hero;
     const page = usePage();
-    const { auth, global_cart: globalCart } = page.props as unknown as {
-        auth?: { user?: { name?: string } | null };
-        global_cart?: GlobalCart;
-    };
+    const {
+        auth,
+        global_cart: globalCart,
+        blog_dropdown_posts: blogDropdownPosts = [],
+    } = page.props as unknown as HeaderPageProps;
     const user = auth?.user;
 
     // Product detail pages have their own sticky gallery; keep the header
@@ -112,6 +129,41 @@ export function StorefrontHeader({
                             })),
                         })),
                         promos: bc.promo_cards as PromoBlock[],
+                    },
+                };
+            }
+
+            if (nav.label === 'Blog' && blogDropdownPosts.length > 0) {
+                const blogHome = blogHero.default_categories.find(
+                    (category) => category.active,
+                ) ??
+                    blogHero.default_categories[0] ?? {
+                        label: nav.label,
+                        href: nav.href,
+                    };
+
+                return {
+                    label: nav.label,
+                    href: nav.href,
+                    mega: {
+                        groups: [
+                            {
+                                links: [
+                                    {
+                                        label: blogHome.label,
+                                        href: blogHome.href,
+                                    },
+                                    ...blogDropdownPosts.map((post) => ({
+                                        label: post.title,
+                                        href: `/blog/${post.slug}`,
+                                        promo: blogPostPromo(post),
+                                    })),
+                                ],
+                            },
+                        ],
+                        // The newest article is the default card. Hovering a
+                        // post link replaces it with that post's preview.
+                        promos: [blogPostPromo(blogDropdownPosts[0])],
                     },
                 };
             }
@@ -393,6 +445,17 @@ function ActiveUnderline() {
     );
 }
 
+function blogPostPromo(post: BlogDropdownPost): PromoBlock {
+    return {
+        image_url: post.featured_image ?? '',
+        image_alt: post.title,
+        title: post.title,
+        description: post.excerpt,
+        cta_label: 'Read article',
+        cta_href: `/blog/${post.slug}`,
+    };
+}
+
 function MegaPanel({ mega }: { mega: MegaMenu }) {
     // Which link (if any) is currently being hovered. Drives both the
     // third-level flyout and the right-hand promo card swap.
@@ -525,26 +588,36 @@ function PromoCard({
     compact?: boolean;
 }) {
     return (
-        <div className="origin-top-right flex flex-col transition-transform duration-200 ease-out hover:scale-[1.05]">
+        <div className="flex origin-top-right flex-col transition-transform duration-200 ease-out hover:scale-[1.05]">
             <Link
                 href={promo.cta_href}
                 className="block overflow-hidden rounded-md bg-white"
             >
-                <img
-                    src={promo.image_url}
-                    alt={promo.image_alt}
-                    className={cn(
-                        'w-full object-cover',
-                        compact
-                            ? 'aspect-[16/9]'
-                            : 'aspect-[4/3] h-full',
-                    )}
-                    loading="lazy"
-                />
+                {promo.image_url ? (
+                    <img
+                        src={promo.image_url}
+                        alt={promo.image_alt}
+                        className={cn(
+                            'w-full object-contain',
+                            compact ? 'aspect-[16/9]' : 'aspect-[4/3] h-full',
+                        )}
+                        loading="lazy"
+                    />
+                ) : (
+                    <div
+                        className={cn(
+                            'flex w-full items-center justify-center bg-neutral-100 text-neutral-300',
+                            compact ? 'aspect-[16/9]' : 'aspect-[4/3] h-full',
+                        )}
+                    >
+                        <span className="sr-only">{promo.image_alt}</span>
+                        <FileText className="size-10" aria-hidden />
+                    </div>
+                )}
             </Link>
             <h3
                 className={cn(
-                    'leading-snug font-bold text-neutral-900',
+                    'text-center leading-snug font-bold text-neutral-900',
                     compact ? 'mt-3 text-base' : 'mt-2 text-sm',
                 )}
             >
@@ -552,7 +625,8 @@ function PromoCard({
             </h3>
             <p
                 className={cn(
-                    'line-clamp-2 leading-snug text-neutral-600',
+                    'text-center leading-snug text-neutral-600',
+                    'line-clamp-2',
                     compact ? 'mt-1.5 text-sm' : 'mt-1 text-xs',
                 )}
             >

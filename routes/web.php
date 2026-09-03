@@ -30,6 +30,11 @@ Route::inertia('/affiliate-program', 'affiliate-program')->name('affiliate-progr
 Route::inertia('/affiliate-program-terms-and-conditions', 'affiliate-terms')->name('affiliate-terms');
 Route::inertia('/shipping-policy', 'shipping')->name('shipping');
 Route::inertia('/shipping-and-cost-calculator', 'shipping-calculator')->name('shipping.calculator');
+Route::redirect('/shipping', '/shipping-policy', 301)->name('shipping.legacy');
+Route::redirect('/classic-business-cards', '/business-cards/classic-standard', 301)->name('shop.classic-business-cards.legacy');
+Route::redirect('/classic-cotton-business-card', '/business-cards/classic-cotton', 301)->name('shop.classic-cotton.legacy');
+Route::redirect('/super-business-cards', '/business-cards/super', 301)->name('shop.super-business-cards.legacy');
+Route::redirect('/luxe-business-cards', '/business-cards/luxe', 301)->name('shop.luxe-business-cards.legacy');
 Route::get('/faq-and-help-center', [HelpController::class, 'index'])->name('help');
 Route::get('/faq-and-help-center/categories/{slug}', [HelpController::class, 'category'])->name('help.category');
 Route::get('/faq-and-help-center/articles/{slug}', [HelpController::class, 'article'])->name('help.article');
@@ -59,6 +64,9 @@ Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback']
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/orders', [DashboardController::class, 'orders'])->name('dashboard.orders');
+    Route::get('dashboard/orders/{id}/invoice', [OrderController::class, 'downloadInvoice'])
+        ->whereNumber('id')
+        ->name('dashboard.orders.invoice');
     Route::get('dashboard/profile', [DashboardController::class, 'profile'])->name('dashboard.profile');
     Route::patch('dashboard/profile', [DashboardController::class, 'updateProfile'])->name('dashboard.profile.update');
 });

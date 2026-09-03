@@ -49,6 +49,18 @@ class DiscountCodeSeeder extends Seeder
                 'max_uses' => null,
                 'max_uses_per_customer' => null,
             ],
+            [
+                'code' => 'WELCOME15',
+                'type' => 'percent',
+                'value' => 15.00,
+                'minimum_subtotal' => 0.00,
+                'is_active' => true,
+                'starts_at' => null,
+                'ends_at' => null,
+                'max_uses' => null,
+                'max_uses_per_customer' => 1,
+                'first_order_only' => true,
+            ],
         ];
 
         foreach ($codes as $codeData) {

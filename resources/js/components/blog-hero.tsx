@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
  * pill-shaped category tabs with a trailing search field, and a single
  * featured-article carousel with image-left / copy-right layout.
  *
- * All default content (title, categories, slides, aria-labels, search
+ * Fallback content (title, categories, slides, aria-labels, search
  * placeholder, date/read-time template) comes from
  * `content/hardcoded-content.json` → `blog_index_page.blog_hero`.
  */
@@ -22,7 +22,7 @@ export type BlogHeroCategory = {
 };
 
 export type BlogHeroSlide = {
-    image: string;
+    image: string | null;
     imageAlt: string;
     category: string;
     headline: string;
@@ -51,7 +51,7 @@ type Props = {
 export function BlogHero({
     categories,
     slides,
-    initialSlide = 4,
+    initialSlide = 0,
     autoPlayMs = 0,
     className,
 }: Props) {
@@ -203,16 +203,22 @@ export function BlogHero({
                         className="relative block overflow-hidden rounded-2xl bg-neutral-100 focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
                         <div className="aspect-[4/3] w-full overflow-hidden">
-                            <img
-                                key={slide.image}
-                                src={slide.image}
-                                alt={slide.imageAlt}
-                                className={cn(
-                                    'h-full w-full object-cover transition-transform duration-700 ease-out',
-                                    slide.sticker && 'scale-105 blur-[2px]',
-                                )}
-                                loading="eager"
-                            />
+                            {slide.image ? (
+                                <img
+                                    key={slide.image}
+                                    src={slide.image}
+                                    alt={slide.imageAlt}
+                                    className={cn(
+                                        'h-full w-full object-cover transition-transform duration-700 ease-out',
+                                        slide.sticker && 'scale-105 blur-[2px]',
+                                    )}
+                                    loading="eager"
+                                />
+                            ) : (
+                                <div className="flex h-full w-full items-center justify-center text-neutral-300">
+                                    <FileText className="size-16" aria-hidden />
+                                </div>
+                            )}
                         </div>
                         {slide.sticker && (
                             <StickerOverlay text={slide.sticker.text} />

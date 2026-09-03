@@ -11,6 +11,7 @@ use App\Services\Cart;
 use App\Services\DiscountException;
 use App\Services\DiscountService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class DiscountCodeTest extends TestCase
@@ -71,6 +72,82 @@ class DiscountCodeTest extends TestCase
         $this->assertNull($cart->discountCode());
     }
 
+    public function test_first_order_discount_is_applied_automatically_for_a_new_registered_user(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $this->assertAuthenticatedAs($user);
+        $product = $this->makeProduct();
+        $cart = app(Cart::class);
+        $cart->add($product->id, ['design_service' => 'card_design']);
+
+        $this->assertDatabaseHas('discount_codes', [
+            'code' => DiscountService::FIRST_ORDER_CODE,
+            'first_order_only' => 1,
+        ]);
+        $this->assertNotNull(app(DiscountService::class)->firstOrderCodeFor($user->id, 79));
+
+        $response = $this->get(route('shop.cart'));
+        $response->assertOk();
+        $response->assertInertia(fn (Assert $page): Assert => $page->where('discountAmount', 11.85));
+
+        $this->assertSame(DiscountService::FIRST_ORDER_CODE, $cart->discountCode());
+        $quote = $cart->quote($user->email, false, $user->id);
+        $this->assertSame(11.85, $quote['discount']);
+        $this->assertSame(67.15, $quote['total']);
+    }
+
+    public function test_first_order_discount_is_not_applied_to_a_customer_with_a_previous_order(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $product = $this->makeProduct();
+        Order::create([
+            'user_id' => $user->id,
+            'status' => 'processing',
+            'payment_method' => 'manual',
+            'payment_status' => 'paid',
+            'total' => 100,
+            'customer_name' => $user->name,
+            'customer_email' => $user->email,
+            'shipping_address' => '1 Main Street',
+            'shipping_city' => 'Austin',
+            'shipping_state' => 'TX',
+            'shipping_zip' => '78701',
+            'shipping_country' => 'US',
+            'shipping_method' => 'standard',
+            'shipping_carrier' => 'Standard',
+            'shipping_fee' => 0,
+        ]);
+        $cart = app(Cart::class);
+        $cart->add($product->id, ['design_service' => 'card_design']);
+
+        $this->get(route('shop.cart'))->assertOk();
+
+        $this->assertNull($cart->discountCode());
+        $this->assertSame(0.0, $cart->quote($user->email, false, $user->id)['discount']);
+    }
+
+    public function test_first_order_discount_is_redeemed_automatically_at_checkout(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $product = $this->makeProduct();
+        app(Cart::class)->add($product->id, ['design_service' => 'card_design']);
+
+        $this->post(route('shop.checkout.store'), $this->checkoutData())
+            ->assertRedirect();
+
+        $order = Order::firstOrFail();
+
+        $this->assertDatabaseHas('discount_redemptions', [
+            'order_id' => $order->id,
+            'code' => DiscountService::FIRST_ORDER_CODE,
+            'discount_amount' => '11.85',
+        ]);
+        $this->assertSame(1, DiscountCode::where('code', DiscountService::FIRST_ORDER_CODE)->firstOrFail()->usage_count);
+    }
+
     public function test_checkout_persists_discount_snapshot_and_uses_discounted_total(): void
     {
         $user = User::factory()->create();
@@ -94,14 +171,14 @@ class DiscountCodeTest extends TestCase
         ])->assertRedirect();
 
         $order = Order::firstOrFail();
-        $this->assertSame('213.10', $order->total);
+        $this->assertSame('92.24', $order->total);
         $this->assertDatabaseHas('discount_redemptions', [
             'order_id' => $order->id,
             'code' => 'CHECKOUT10',
             'discount_amount' => '7.90',
-            'total' => '213.10',
+            'total' => '92.24',
         ]);
-        $this->assertSame(1, DiscountCode::firstOrFail()->usage_count);
+        $this->assertSame(1, DiscountCode::where('code', 'CHECKOUT10')->firstOrFail()->usage_count);
     }
 
     public function test_checkout_uses_the_authenticated_customer_contact_details(): void
@@ -153,9 +230,9 @@ class DiscountCodeTest extends TestCase
 
         $this->assertSame('dhl_express', $order->shipping_method);
         $this->assertSame('DHL', $order->shipping_carrier);
-        $this->assertSame('201.00', $order->shipping_fee);
+        $this->assertSame('30.12', $order->shipping_fee);
         $this->assertEquals(
-            (float) $order->items->sum('subtotal') + 201.00,
+            (float) $order->items->sum('subtotal') + 30.12,
             (float) $order->total,
         );
     }
@@ -179,8 +256,8 @@ class DiscountCodeTest extends TestCase
         $order = Order::firstOrFail();
 
         $this->assertSame('CA', $order->shipping_country);
-        $this->assertSame('114.00', $order->shipping_fee);
-        $this->assertSame('114.00', $order->total);
+        $this->assertSame('15.54', $order->shipping_fee);
+        $this->assertSame('15.54', $order->total);
     }
 
     public function test_global_and_per_customer_limits_are_enforced(): void
@@ -211,5 +288,19 @@ class DiscountCodeTest extends TestCase
             'slug' => 'test-card-'.uniqid(),
             'product_category_id' => $category->id,
         ]);
+    }
+
+    /** @return array<string, string> */
+    private function checkoutData(): array
+    {
+        return [
+            'shipping_address' => '1 Main Street',
+            'shipping_city' => 'Austin',
+            'shipping_state' => 'TX',
+            'shipping_zip' => '78701',
+            'shipping_country' => 'US',
+            'shipping_method' => 'standard',
+            'notes' => '',
+        ];
     }
 }

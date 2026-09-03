@@ -18,12 +18,24 @@ class BlogController extends Controller
             ->latest('published_at')
             ->simplePaginate(12);
 
+        $carouselPosts = Post::with(['category', 'author'])
+            ->where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->latest('published_at')
+            ->limit(4)
+            ->get();
+
         $posts->getCollection()->each(
+            fn (Post $post): Post => $this->resolveFeaturedImage($post, $imageResolver),
+        );
+        $carouselPosts->each(
             fn (Post $post): Post => $this->resolveFeaturedImage($post, $imageResolver),
         );
 
         return Inertia::render('blog/index', [
             'posts' => $posts,
+            'carouselPosts' => $carouselPosts,
         ]);
     }
 

@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\SendWeComAppNotification;
 use App\Models\Admin;
 use App\Models\AiChatConversation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -41,6 +43,49 @@ class AiChatHumanModeTest extends TestCase
         $this->getJson("/ai/chat/poll?session_id={$sessionId}&after_id=0")
             ->assertOk()
             ->assertJsonPath('mode', 'human');
+    }
+
+    public function test_human_mode_customer_messages_queue_wecom_app_notifications(): void
+    {
+        Queue::fake();
+        $sessionId = $this->sessionId();
+
+        $this->postJson('/ai/chat/handoff', ['session_id' => $sessionId])->assertOk();
+        $this->postJson('/ai/chat/message', [
+            'session_id' => $sessionId,
+            'message' => 'I still need help.',
+        ])->assertCreated();
+
+        Queue::assertPushed(SendWeComAppNotification::class, function (
+            SendWeComAppNotification $job,
+        ): bool {
+            return $job->conversation->session_id !== ''
+                && $job->message->content === 'I still need help.';
+        });
+    }
+
+    public function test_handoff_queues_the_latest_customer_message_for_wecom_app_support(): void
+    {
+        Queue::fake();
+        $conversation = AiChatConversation::create([
+            'session_id' => $this->sessionId(),
+            'mode' => 'ai',
+        ]);
+        $message = $conversation->messages()->create([
+            'role' => 'user',
+            'content' => 'Please connect me to a person.',
+        ]);
+
+        $this->postJson('/ai/chat/handoff', [
+            'session_id' => $conversation->session_id,
+        ])->assertOk();
+
+        Queue::assertPushed(SendWeComAppNotification::class, function (
+            SendWeComAppNotification $job,
+        ) use ($conversation, $message): bool {
+            return $job->conversation->is($conversation)
+                && $job->message->is($message);
+        });
     }
 
     public function test_handoff_remains_available_when_ai_replies_are_disabled(): void

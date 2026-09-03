@@ -37,11 +37,18 @@ class HelpCenterSeeder extends Seeder
                 'sort_order' => 3,
             ],
             [
+                'slug' => 'shipping-and-delivery',
+                'name' => 'Shipping & Delivery',
+                'description' => 'Understand production times, shipping methods, delivery estimates, and order tracking.',
+                'icon' => 'truck',
+                'sort_order' => 4,
+            ],
+            [
                 'slug' => 'design-and-print-knowledge',
                 'name' => 'Design and Print knowledge',
                 'description' => 'File formats, bleed, templates, special finishes, and production-ready artwork guidelines.',
                 'icon' => 'palette',
-                'sort_order' => 4,
+                'sort_order' => 5,
                 'is_active' => false,
             ],
         ];
@@ -86,6 +93,13 @@ class HelpCenterSeeder extends Seeder
 
         foreach ($accountOrdersArticles as $index => $data) {
             $upsertArticle($accountOrdersCategory, $data, $index, count($accountOrdersArticles));
+        }
+
+        $shippingCategory = HelpCategory::where('slug', 'shipping-and-delivery')->firstOrFail();
+        $shippingArticles = require database_path('seeders/data/help_shipping.php');
+
+        foreach ($shippingArticles as $index => $data) {
+            $upsertArticle($shippingCategory, $data, $index, count($shippingArticles));
         }
 
         $category = HelpCategory::where('slug', 'design-and-print-knowledge')->firstOrFail();

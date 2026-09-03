@@ -35,7 +35,7 @@ return [
 <h2>After you place the order</h2>
 <p>After the order is received, InkPavo creates an order record and shows the order details. Save the order number for future questions. You can review your orders from <a href="/orders">My Orders</a>, and you will receive shipping information when the parcel leaves our facility.</p>
 
-<p>Production starts after the final artwork is approved. Check the <a href="/shipping">Shipping &amp; Delivery</a> page for current production and delivery estimates.</p>
+<p>Production starts after the final artwork is approved. Check the <a href="/shipping-policy">Shipping &amp; Delivery</a> page for current production and delivery estimates.</p>
 HTML,
     ],
     [
@@ -90,8 +90,8 @@ HTML,
 
 <h2>Shipping estimates</h2>
 <ul>
-    <li><strong>Standard Shipping:</strong> usually 5 to 10 business days with tracked 4PX delivery.</li>
-    <li><strong>Fast Shipping (DHL Express):</strong> usually 2 to 5 business days with tracked DHL delivery.</li>
+    <li><strong>Standard Shipping:</strong> usually 7 to 12 business days with tracked 4PX delivery.</li>
+    <li><strong>Express Shipping (DHL Express):</strong> usually 2 to 5 business days with tracked DHL delivery.</li>
 </ul>
 
 <h2>What can change the estimate?</h2>
@@ -99,7 +99,7 @@ HTML,
 
 <p>Rush production may be available for selected products at checkout. Where offered, it reduces production time for an additional fee, but it does not remove the time required for shipping or customs.</p>
 
-<p>For the latest product-specific information, review the <a href="/shipping">Shipping &amp; Delivery</a> page and the delivery estimate shown at checkout.</p>
+<p>For the latest product-specific information, review the <a href="/shipping-policy">Shipping &amp; Delivery</a> page and the delivery estimate shown at checkout.</p>
 HTML,
     ],
     [

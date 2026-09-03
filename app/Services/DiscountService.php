@@ -5,19 +5,27 @@ namespace App\Services;
 use App\Models\DiscountCode;
 use App\Models\DiscountRedemption;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Str;
 use RuntimeException;
 
 class DiscountService
 {
+    public const FIRST_ORDER_CODE = 'WELCOME15';
+
     /**
      * Return the validated pricing quote for a code and cart subtotal.
      * Customer limits are checked when an email is available.
      *
      * @return array{code: DiscountCode, code_value: string, subtotal: float, discount: float, total: float}
      */
-    public function quote(string $code, float $subtotal, ?string $customerEmail = null): array
-    {
+    public function quote(
+        string $code,
+        float $subtotal,
+        ?string $customerEmail = null,
+        ?int $customerId = null,
+        ?int $currentOrderId = null,
+    ): array {
         $normalized = Str::upper(trim($code));
         $discountCode = DiscountCode::where('code', $normalized)->first();
 
@@ -25,7 +33,13 @@ class DiscountService
             throw new DiscountException('That discount code is not valid.');
         }
 
-        $this->assertEligible($discountCode, $subtotal, $customerEmail);
+        $this->assertEligible(
+            $discountCode,
+            $subtotal,
+            $customerEmail,
+            $customerId,
+            $currentOrderId,
+        );
 
         $discount = $discountCode->type === 'percent'
             ? round($subtotal * ((float) $discountCode->value / 100), 2)
@@ -39,6 +53,26 @@ class DiscountService
             'discount' => round($discount, 2),
             'total' => round(max($subtotal - $discount, 0), 2),
         ];
+    }
+
+    public function firstOrderCodeFor(int $customerId, float $subtotal): ?DiscountCode
+    {
+        $discountCode = DiscountCode::query()
+            ->where('code', self::FIRST_ORDER_CODE)
+            ->where('first_order_only', true)
+            ->first();
+
+        if (! $discountCode) {
+            return null;
+        }
+
+        try {
+            $this->assertEligible($discountCode, $subtotal, null, $customerId);
+        } catch (DiscountException) {
+            return null;
+        }
+
+        return $discountCode;
     }
 
     public function redeem(
@@ -56,7 +90,13 @@ class DiscountService
             throw new DiscountException('That discount code is not valid.');
         }
 
-        $this->assertEligible($discountCode, $subtotal, $customerEmail);
+        $this->assertEligible(
+            $discountCode,
+            $subtotal,
+            $customerEmail,
+            $order->user_id,
+            $order->id,
+        );
 
         $redemption = DiscountRedemption::create([
             'discount_code_id' => $discountCode->id,
@@ -73,8 +113,13 @@ class DiscountService
         return $redemption;
     }
 
-    protected function assertEligible(DiscountCode $discountCode, float $subtotal, ?string $customerEmail): void
-    {
+    protected function assertEligible(
+        DiscountCode $discountCode,
+        float $subtotal,
+        ?string $customerEmail,
+        ?int $customerId = null,
+        ?int $currentOrderId = null,
+    ): void {
         $now = now();
 
         if (! $discountCode->is_active) {
@@ -108,13 +153,23 @@ class DiscountService
             ));
         }
 
+        if ($discountCode->first_order_only && $this->customerHasPreviousOrder($customerId, $customerEmail, $currentOrderId)) {
+            throw new DiscountException('This offer is only available on your first order.');
+        }
+
         if ($discountCode->max_uses !== null && $discountCode->usage_count >= $discountCode->max_uses) {
             throw new DiscountException('That discount code has reached its usage limit.');
         }
 
-        if ($customerEmail && $discountCode->max_uses_per_customer !== null) {
+        $normalizedEmail = Str::lower(trim((string) $customerEmail));
+
+        if ($normalizedEmail === '' && $customerId !== null) {
+            $normalizedEmail = Str::lower(trim((string) User::query()->whereKey($customerId)->value('email')));
+        }
+
+        if ($normalizedEmail !== '' && $discountCode->max_uses_per_customer !== null) {
             $customerUses = $discountCode->redemptions()
-                ->whereRaw('LOWER(customer_email) = ?', [Str::lower(trim($customerEmail))])
+                ->whereRaw('LOWER(customer_email) = ?', [$normalizedEmail])
                 ->count();
 
             if ($customerUses >= $discountCode->max_uses_per_customer) {
@@ -122,8 +177,34 @@ class DiscountService
             }
         }
     }
+
+    protected function customerHasPreviousOrder(
+        ?int $customerId,
+        ?string $customerEmail,
+        ?int $currentOrderId = null,
+    ): bool {
+        $resolvedCustomerId = $customerId;
+
+        if ($resolvedCustomerId === null && filled($customerEmail)) {
+            $resolvedCustomerId = User::query()
+                ->whereRaw('LOWER(email) = ?', [Str::lower(trim((string) $customerEmail))])
+                ->value('id');
+        }
+
+        if ($resolvedCustomerId === null) {
+            throw new DiscountException('This offer is available to registered customers only.');
+        }
+
+        return Order::query()
+            ->where('user_id', (int) $resolvedCustomerId)
+            ->when(
+                $currentOrderId !== null,
+                fn ($query) => $query->where('id', '<>', $currentOrderId),
+            )
+            ->whereNull('checkout_token')
+            ->where('status', '<>', 'cancelled')
+            ->exists();
+    }
 }
 
-class DiscountException extends RuntimeException
-{
-}
+class DiscountException extends RuntimeException {}

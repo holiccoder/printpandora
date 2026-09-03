@@ -11,6 +11,10 @@ use Throwable;
 
 class FourPxService
 {
+    public function __construct(
+        protected OrderWeightService $weights,
+    ) {}
+
     /**
      * Return whether the minimum credentials and product configuration exist.
      */
@@ -218,10 +222,13 @@ class FourPxService
      */
     protected function buildCreatePayload(Order $order, string $reference, array $overrides): array
     {
+        $computedWeight = $order->shipping_weight_grams ?: $this->weights->wholeGrams(
+            $this->weights->forOrder($order),
+        );
         $weight = (int) $this->valueFrom(
             $overrides,
             'weight_grams',
-            $order->shipping_weight_grams ?: config('services.four_px.default_weight_grams'),
+            $computedWeight ?: config('services.four_px.default_weight_grams'),
         );
 
         if ($weight <= 0) {

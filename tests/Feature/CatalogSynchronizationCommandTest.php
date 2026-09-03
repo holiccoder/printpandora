@@ -96,6 +96,7 @@ class CatalogSynchronizationCommandTest extends TestCase
             products: [
                 $this->productRow(500, 'Updated Product', 'existing-product', 200, [
                     'subtitle' => '<p>Updated subtitle</p>',
+                    'weight' => 275,
                     'is_active' => 1,
                     'bullet_points' => json_encode(['First', 'Second'], JSON_THROW_ON_ERROR),
                     'product_config' => json_encode([
@@ -120,6 +121,7 @@ class CatalogSynchronizationCommandTest extends TestCase
         $this->assertSame('Catalog Root', $root->name);
         $this->assertSame($root->getKey(), $child->parent_id);
         $this->assertSame('Updated Product', $existingProduct->name);
+        $this->assertSame(275, $existingProduct->weight);
         $this->assertSame($child->getKey(), $existingProduct->product_category_id);
         $this->assertTrue($existingProduct->is_active);
         $this->assertSame(['First', 'Second'], $existingProduct->bullet_points);

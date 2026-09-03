@@ -338,7 +338,7 @@ export default function BusinessCardsLanding() {
                         ))}
                     </ul>
 
-                    {/* Inset free-shipping promo banner */}
+                    {/* Inset shipping information banner */}
                     <div
                         className="mt-12 grid overflow-hidden rounded-lg sm:grid-cols-2"
                         style={{ backgroundColor: WARM_BG }}
@@ -348,42 +348,28 @@ export default function BusinessCardsLanding() {
                                 className="text-xs font-semibold tracking-widest uppercase"
                                 style={{ color: ACCENT }}
                             >
-                                {
-                                    sections.shop_by_finish.free_shipping_promo
-                                        .eyebrow
-                                }
+                                {sections.shop_by_finish.shipping_info.eyebrow}
                             </p>
                             <h3 className="mt-2 text-2xl font-bold text-neutral-900 sm:text-3xl">
-                                {
-                                    sections.shop_by_finish.free_shipping_promo
-                                        .heading
-                                }
+                                {sections.shop_by_finish.shipping_info.heading}
                             </h3>
                             <p className="mt-3 text-sm text-neutral-700 sm:text-base">
-                                {
-                                    sections.shop_by_finish.free_shipping_promo
-                                        .body
-                                }
+                                {sections.shop_by_finish.shipping_info.body}
                             </p>
                             <Link
-                                href="/business-cards"
+                                href="/shipping-policy"
                                 className="mt-5 inline-flex w-fit items-center gap-2 rounded-md border border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                             >
-                                {
-                                    sections.shop_by_finish.free_shipping_promo
-                                        .cta
-                                }
+                                {sections.shop_by_finish.shipping_info.cta}
                                 <ArrowRight className="size-4" />
                             </Link>
                         </div>
                         <img
                             src={
-                                sections.shop_by_finish.free_shipping_promo
-                                    .image_url
+                                sections.shop_by_finish.shipping_info.image_url
                             }
                             alt={
-                                sections.shop_by_finish.free_shipping_promo
-                                    .image_alt
+                                sections.shop_by_finish.shipping_info.image_alt
                             }
                             loading="lazy"
                             className="h-64 w-full object-cover sm:h-full"

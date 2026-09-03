@@ -31,6 +31,8 @@ class CheckoutPendingOrderTest extends TestCase
         $this->assertSame($user->id, $order->user_id);
         $this->assertCount(1, $order->items);
         $this->assertNull($order->shipping_address);
+        $this->assertSame(250, $order->shipping_weight_grams);
+        $this->assertSame('21.14', $order->shipping_fee);
 
         $this->get(route('shop.checkout'))->assertOk();
 
@@ -107,6 +109,52 @@ class CheckoutPendingOrderTest extends TestCase
         $this->assertNull($order->checkout_token);
         $this->assertSame('1 Main Street', $order->shipping_address);
         $this->assertSame(0, app(Cart::class)->count());
+    }
+
+    public function test_checkout_uses_card_pack_weight_for_the_shipping_fee(): void
+    {
+        $user = User::factory()->create();
+        $product = $this->makeProduct();
+        $product->update(['weight' => 300]);
+
+        $this->actingAs($user);
+        app(Cart::class)->add($product->id, [
+            'sizes' => 'square',
+            'quantity' => '50',
+        ]);
+
+        $this->post(route('shop.checkout.store'), $this->checkoutData())
+            ->assertRedirect();
+
+        $order = Order::firstOrFail();
+
+        // 50 square 300 GSM cards weigh 54 g, plus the 250 g package.
+        $this->assertSame(304, $order->shipping_weight_grams);
+        $this->assertSame('21.14', $order->shipping_fee);
+    }
+
+    public function test_standard_qc_shipping_uses_the_us_weight_tier_and_rmb_to_usd_conversion(): void
+    {
+        $user = User::factory()->create();
+        $product = $this->makeProduct();
+        $product->update(['weight' => 300]);
+
+        $this->actingAs($user);
+        app(Cart::class)->add($product->id, [
+            'sizes' => 'standard',
+            'quantity' => '200',
+        ]);
+
+        $this->post(route('shop.checkout.store'), $this->checkoutData())
+            ->assertRedirect();
+
+        $order = Order::firstOrFail();
+
+        // 200 standard 300 GSM cards weigh 291.6 g, plus the 250 g package.
+        // QC interval 0.451-0.7 kg: 133 RMB + 16 RMB/parcel,
+        // converted at 0.14 USD/RMB.
+        $this->assertSame(542, $order->shipping_weight_grams);
+        $this->assertSame('20.86', $order->shipping_fee);
     }
 
     /** @return array{0: User, 1: Product} */

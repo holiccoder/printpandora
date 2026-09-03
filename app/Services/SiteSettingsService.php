@@ -47,6 +47,16 @@ class SiteSettingsService
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function shipping(): array
+    {
+        $shipping = Arr::get($this->all(), 'shipping', []);
+
+        return is_array($shipping) ? $shipping : [];
+    }
+
+    /**
      * Provide a cache-key component that changes when the setting value
      * changes, even if two updates happen within the same timestamp tick.
      */

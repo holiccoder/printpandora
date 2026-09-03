@@ -2,14 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Mail\OrderInvoiceMail;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\User;
 use App\Services\Cart;
-use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PayPalAsyncOrderTest extends TestCase
@@ -27,6 +30,9 @@ class PayPalAsyncOrderTest extends TestCase
             'services.paypal.webhook_id' => 'sandbox-webhook-id',
             'services.paypal.currency' => 'USD',
         ]);
+
+        Mail::fake();
+        Storage::fake('local');
     }
 
     public function test_paypal_create_persists_a_pending_local_order(): void
@@ -108,6 +114,13 @@ class PayPalAsyncOrderTest extends TestCase
         ]);
         $this->assertSame('{}', $captureRequestBody);
         $this->assertSame(0, app(Cart::class)->count());
+
+        $paidOrder = Order::query()->where('paypal_order_id', 'PAYPAL-ORDER-1')->firstOrFail();
+        $this->assertNotNull($paidOrder->invoice_number);
+        Storage::disk('local')->assertExists($paidOrder->invoice_path);
+        Mail::assertSent(OrderInvoiceMail::class, function (OrderInvoiceMail $mail) use ($user): bool {
+            return $mail->hasTo($user->email);
+        });
     }
 
     public function test_completed_capture_webhook_settles_and_deduplicates_the_order(): void

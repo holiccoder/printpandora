@@ -52,6 +52,11 @@ echo "==> 4/6 构建前端资源（始终执行——源码变了就要重新构
 #   NODE_OPTIONS=--max-old-space-size=1024 $NPM_BIN run build
 $NPM_BIN run build
 
+# The Vite hot-file makes Laravel point browsers at the dev server. It must
+# not survive a production deployment, otherwise every page references the
+# deploy machine's localhost:5173 instead of public/build.
+rm -f "$PROJECT_DIR/public/hot"
+
 echo "==> 5/6 执行数据库迁移（不重置数据）"
 $PHP_BIN artisan migrate --force
 $PHP_BIN artisan db:seed --class=BusinessCardProductOptionsSeeder --force

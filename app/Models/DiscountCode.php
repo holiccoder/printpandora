@@ -18,6 +18,7 @@ class DiscountCode extends Model
         'ends_at',
         'max_uses',
         'max_uses_per_customer',
+        'first_order_only',
         'usage_count',
     ];
 
@@ -31,6 +32,7 @@ class DiscountCode extends Model
             'ends_at' => 'datetime',
             'max_uses' => 'integer',
             'max_uses_per_customer' => 'integer',
+            'first_order_only' => 'boolean',
             'usage_count' => 'integer',
         ];
     }

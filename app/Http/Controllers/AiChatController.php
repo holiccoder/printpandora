@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Ai\Agents\CustomerSupportAgent;
+use App\Jobs\SendWeComAppNotification;
 use App\Models\AiChatConversation;
 use App\Models\AiChatMessage;
 use App\Services\AiChatTranslationService;
@@ -117,6 +118,12 @@ class AiChatController extends Controller
             ]);
         }
 
+        $latestMessage = $conversation->messages()->latest('id')->first();
+
+        if ($latestMessage?->role === 'user') {
+            SendWeComAppNotification::dispatch($conversation, $latestMessage);
+        }
+
         return response()->json(['mode' => 'human']);
     }
 
@@ -174,6 +181,7 @@ class AiChatController extends Controller
         $conversation->touch();
         if ($conversation->mode === 'human') {
             $telegramSupport->notifyCustomerMessage($conversation, $message);
+            SendWeComAppNotification::dispatch($conversation, $message);
         }
 
         return response()->json(['message' => $this->serializeMessage($message)], 201);

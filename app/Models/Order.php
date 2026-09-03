@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\OrderPaid;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +15,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Order extends Model
 {
+    protected static function booted(): void
+    {
+        static::updated(function (Order $order): void {
+            if ($order->wasChanged('payment_status') && $order->payment_status === 'paid') {
+                OrderPaid::dispatch($order);
+            }
+        });
+    }
+
     protected $fillable = [
         'user_id',
         'checkout_token',
@@ -21,6 +31,10 @@ class Order extends Model
         'payment_method',
         'payment_status',
         'payment_id',
+        'invoice_number',
+        'invoice_path',
+        'invoice_issued_at',
+        'invoice_emailed_at',
         'paypal_order_id',
         'total',
         'customer_name',
@@ -63,6 +77,8 @@ class Order extends Model
             'shipping_height_cm' => 'decimal:2',
             'fourpx_response' => 'array',
             'fourpx_tracking_response' => 'array',
+            'invoice_issued_at' => 'datetime',
+            'invoice_emailed_at' => 'datetime',
         ];
     }
 

@@ -97,8 +97,8 @@ class Settings extends Page implements HasForms
             ],
             'shipping' => [
                 'dhl_fuel_surcharge' => is_array($storedShipping)
-                    ? ($storedShipping['dhl_fuel_surcharge'] ?? 0)
-                    : 0,
+                    ? ($storedShipping['dhl_fuel_surcharge'] ?? config('shipping.methods.dhl_express.fuel_surcharge_percent', 42))
+                    : config('shipping.methods.dhl_express.fuel_surcharge_percent', 42),
             ],
         ]);
     }
@@ -252,7 +252,7 @@ class Settings extends Page implements HasForms
 
             foreach (['image_url', 'mobile_image_url'] as $imageKey) {
                 if (array_key_exists($imageKey, $slide)) {
-                    $slide[$imageKey] = static::normaliseFileUploadValue($slide[$imageKey]);
+                    $slide[$imageKey] = self::normaliseFileUploadValue($slide[$imageKey]);
                 }
             }
 

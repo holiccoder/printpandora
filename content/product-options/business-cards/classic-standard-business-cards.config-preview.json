@@ -669,7 +669,7 @@
     },
     {
       "question": "How long does delivery take?",
-      "answer": "Standard delivery takes 3–5 working days. Next Day Delivery is available on selected products before 12pm.",
+      "answer": "Standard shipping usually takes 7 to 12 business days. Express shipping usually takes 2 to 5 business days.",
       "sort_order": 6,
       "is_active": true
     }
@@ -787,7 +787,7 @@
           "name": "Classic Business Cards",
           "price": "50 cards from $23.00",
           "image_url": "/images/product-detail/paper-stocks/original-business-cards.png",
-          "href": "/classic-business-cards",
+                    "href": "/business-cards/classic-standard",
           "cta": "Shop Classic Business Cards ›",
           "features": [
             "16pt thickness",

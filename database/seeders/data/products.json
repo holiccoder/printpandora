@@ -2,6 +2,7 @@
     {
         "id": 12,
         "name": "Classic Standard Business Cards",
+        "weight": 300,
         "slug": "classic-standard-business-cards",
         "description": "<p>A classic business card printed on 300 gsm coated stock with a glossy UV finish. Smooth, vibrant, and designed to catch the light — and the eye.</p>",
         "featured_image": "https://images.unsplash.com/photo-1606857521015-7f9fcf423740?auto=format&fit=crop&w=1200&q=70",
@@ -20,6 +21,7 @@
     {
         "id": 13,
         "name": "Classic Special Business Cards",
+        "weight": 300,
         "slug": "classic-special-business-cards",
         "description": "<p>Our artistic take on the classic card. Printed on 300 gsm textured art paper for a tactile, premium feel that stands out from the stack.</p>",
         "featured_image": "https://images.unsplash.com/photo-1583912267550-d6c2ac3196c0?auto=format&fit=crop&w=1200&q=70",
@@ -38,6 +40,7 @@
     {
         "id": 14,
         "name": "Classic Quality Business Cards",
+        "weight": 320,
         "slug": "classic-quality-business-cards",
         "description": "<p>A step up in substance. 320 gsm coated board gives these business cards a heavier, more premium hand-feel while keeping colors sharp and bright.</p>",
         "featured_image": "https://images.unsplash.com/photo-1517242810446-cc8951b2be40?auto=format&fit=crop&w=1200&q=70",
@@ -56,6 +59,7 @@
     {
         "id": 15,
         "name": "Classic Solid Business Cards",
+        "weight": 640,
         "slug": "classic-solid-business-cards",
         "description": "<p>Our thickest classic card. 350 gsm white board delivers a crisp, clean canvas with a substantial weight that feels as professional as it looks.</p>",
         "featured_image": "/images/products/classic-solid/matte-default-01.jpg",
@@ -74,6 +78,7 @@
     {
         "id": 16,
         "name": "Basic cotton business card",
+        "weight": 530,
         "slug": "basic-cotton-business-card",
         "description": "<p>Basic cotton business card printed on premium cotton stock.</p>",
         "featured_image": "/images/products/cotton/basic/basic-01.png",
@@ -92,6 +97,7 @@
     {
         "id": 17,
         "name": "Classic cotton business card",
+        "weight": 530,
         "slug": "classic-cotton-business-card",
         "description": "<p>Classic cotton business card printed on premium cotton stock.</p>",
         "featured_image": "/images/products/cotton/classic/classic-01.png",
@@ -110,6 +116,7 @@
     {
         "id": 18,
         "name": "Premium cotton business card",
+        "weight": 530,
         "slug": "premium-cotton-business-card",
         "description": "<p>Premium cotton business card printed on premium cotton stock.</p>",
         "featured_image": "/images/products/cotton/premium/premium-01.png",
@@ -128,6 +135,7 @@
     {
         "id": 19,
         "name": "Luxe cotton business card",
+        "weight": 530,
         "slug": "luxe-cotton-business-card",
         "description": "<p>Luxe cotton business card printed on premium cotton stock.</p>",
         "featured_image": "/images/products/cotton/luxe/luxe-01.png",
@@ -146,6 +154,7 @@
     {
         "id": 20,
         "name": "Grand cotton business card",
+        "weight": 530,
         "slug": "grand-cotton-business-card",
         "description": "<p>Grand cotton business card printed on premium cotton stock.</p>",
         "featured_image": "/images/products/cotton/grand/grand-01.png",
@@ -164,6 +173,7 @@
     {
         "id": 21,
         "name": "Standard PVC card",
+        "weight": 1300,
         "slug": "standard-pvc-card",
         "description": "<p>Standard PVC cards at 0.76mm offer durable, waterproof construction with flexible print and finish options.</p>",
         "featured_image": "/images/products/pvc/pvc-01.jpg",
@@ -182,6 +192,7 @@
     {
         "id": 22,
         "name": "Premium PVC card",
+        "weight": 1550,
         "slug": "premium-pvc-card",
         "description": "<p>Premium PVC NFC cards at 0.84mm combine durable construction with optional print-code functionality.</p>",
         "featured_image": "/images/products/pvc/pvc-01.jpg",
@@ -200,6 +211,7 @@
     {
         "id": 23,
         "name": "Super Business Cards",
+        "weight": 350,
         "slug": "super-business-cards",
         "description": "<p>350 gsm premium paper — a refined upgrade with exceptional detail and a vibrant finish. Thicker, brighter, and built to leave a lasting impression.</p>",
         "featured_image": "/images/products/super-business-cards/super-business-cards-default-01.png",
@@ -218,6 +230,7 @@
     {
         "id": 24,
         "name": "Luxe Business Cards",
+        "weight": 700,
         "slug": "luxe-business-cards",
         "description": "<p>700 gsm premium paper — our thickest, most luxurious card. An ultra-premium feel that demands attention and conveys uncompromising quality.</p>",
         "featured_image": "/images/products/luxe-business-cards/luxe-business-cards-standard-01.png",
@@ -236,6 +249,7 @@
     {
         "id": 25,
         "name": "Basic PVC Card",
+        "weight": 530,
         "slug": "basic-pvc-card",
         "description": "<p>Basic PVC cards at 0.38mm are lightweight, durable, and waterproof.</p>",
         "featured_image": "/images/products/pvc/pvc-01.jpg",
@@ -254,6 +268,7 @@
     {
         "id": 31,
         "name": "Classic Metal Business Cards",
+        "weight": 2400,
         "slug": "classic-metal-business-cards",
         "description": "<p>Make a lasting impression with durable metal business cards in your choice of thickness, size, and code or stripe finish.</p>",
         "featured_image": "/images/products/metal/classic-metal-business-cards-04.png",
@@ -272,6 +287,7 @@
     {
         "id": 32,
         "name": "Premium Metal Business Cards",
+        "weight": 2400,
         "slug": "premium-metal-business-cards",
         "description": "<p>Premium metal business cards with a choice of thickness, size, code or stripe finish, and a signature special finish.</p>",
         "featured_image": "/images/products/metal/premium-metal-business-cards-02.png",
@@ -290,6 +306,7 @@
     {
         "id": 33,
         "name": "Luxe Metal Business Cards",
+        "weight": 2400,
         "slug": "luxe-metal-business-cards",
         "description": "<p>Luxe metal business cards designed for standout introductions, with premium engraving, color, plating, and NFC options.</p>",
         "featured_image": "/images/products/metal/luxe-metal-business-cards-04.png",

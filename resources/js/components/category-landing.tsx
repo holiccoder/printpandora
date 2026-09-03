@@ -8,10 +8,8 @@ import {
     ShieldCheck,
     Truck,
 } from 'lucide-react';
-import { useState } from 'react';
-import DesignServiceFormModal from '@/components/design-service-form-modal';
+import { OPEN_AI_CHAT_EVENT } from '@/components/ai-chat-widget';
 import SEO from '@/components/seo';
-import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
 /* -------------------------------------------------------------------------- */
@@ -97,12 +95,10 @@ export default function CategoryLanding({
     const WARM_BG = content.warm_bg ?? DEFAULT_WARM;
     const GOLD = content.gold ?? DEFAULT_GOLD;
     const { hero, series, design_cta, perks, faq } = content;
-    const [uploadModalOpen, setUploadModalOpen] = useState(false);
-    const productDetailContent = useContent('product_detail_page') as {
-        design_form_product_options?: string[];
-    };
 
-    const openUploadModal = () => setUploadModalOpen(true);
+    const openConsultation = () => {
+        window.dispatchEvent(new Event(OPEN_AI_CHAT_EVENT));
+    };
 
     return (
         <StorefrontLayout activeCategory={content.active_category}>
@@ -132,7 +128,7 @@ export default function CategoryLanding({
                         <div className="mt-8">
                             <button
                                 type="button"
-                                onClick={openUploadModal}
+                                onClick={openConsultation}
                                 className="inline-flex items-center gap-2 rounded-md bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                             >
                                 {hero.cta}
@@ -179,7 +175,7 @@ export default function CategoryLanding({
                             <li key={item.name} className="group">
                                 <button
                                     type="button"
-                                    onClick={openUploadModal}
+                                    onClick={openConsultation}
                                     className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
                                 >
                                     <div className="overflow-hidden bg-neutral-100">
@@ -249,7 +245,7 @@ export default function CategoryLanding({
                                 <li key={path.name}>
                                     <button
                                         type="button"
-                                        onClick={openUploadModal}
+                                        onClick={openConsultation}
                                         className="group flex h-full w-full flex-col items-start rounded-lg border border-neutral-200 bg-white p-6 text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
                                     >
                                         <span
@@ -349,15 +345,6 @@ export default function CategoryLanding({
                     </div>
                 </section>
             )}
-            <DesignServiceFormModal
-                open={uploadModalOpen}
-                onOpenChange={setUploadModalOpen}
-                title="Upload a full design (free)"
-                description="Send us your print-ready artwork and we'll prepare a free proof before printing."
-                productOptions={
-                    productDetailContent.design_form_product_options
-                }
-            />
         </StorefrontLayout>
     );
 }
