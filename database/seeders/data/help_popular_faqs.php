@@ -6,7 +6,17 @@ return [
         'answer' => <<<'HTML'
 <p>At InkPavo, production time for business cards depends on the paper and finishes you choose. The fastest production time is 2-3 business days; orders with special finishes take 5-7 business days; metal business cards require 15-20 business days to complete production.</p>
 <p>Please place your order before 6:00 p.m. Beijing time, Monday through Saturday.</p>
-<p>Delivery time depends on your country and shipping method. Standard shipping usually takes 7 to 12 business days, while express shipping usually takes 2 to 5 business days. Please see our <a href="/shipping-policy">Shipping &amp; Delivery page</a> for details.</p>
+<p>Delivery time depends on your country and shipping method. Standard shipping takes 7 - 12 business days. Express shipping takes 2 - 5 business days. Please see our <a href="/shipping-policy">Shipping &amp; Delivery page</a> for details.</p>
+HTML,
+    ],
+    [
+        'question' => 'Why choose InkPavo business cards?',
+        'answer' => <<<'HTML'
+<p>InkPavo&apos;s online printing service supports small-batch, personalized orders for businesses and individuals around the world.</p>
+<ul>
+    <li>A wide range of paper stocks and other materials.</li>
+    <li>A wide range of finishes, quantities, and sizes.</li>
+</ul>
 HTML,
     ],
     [
@@ -22,20 +32,34 @@ HTML,
 HTML,
     ],
     [
-        'question' => 'Why choose InkPavo business cards?',
-        'answer' => <<<'HTML'
-<p>InkPavo&apos;s online printing service supports small-batch, personalized orders for businesses and individuals around the world.</p>
-<ul>
-    <li>A wide range of paper stocks and other materials.</li>
-    <li>A wide range of finishes, quantities, and sizes.</li>
-</ul>
-HTML,
-    ],
-    [
         'question' => 'About design files',
         'answer' => <<<'HTML'
 <p>You can design your business cards yourself, use one of our templates, provide a template for us to customize, or choose a dedicated one-on-one design service. Visit our <a href="/business-card-design-service">Business Card Design Service</a> page for details.</p>
 <p>Our team manually checks every file to make sure it meets the requirements of your selected materials and finishes.</p>
+HTML,
+    ],
+    [
+        'question' => 'What is the after-sales policy for printing quality issues?',
+        'answer' => <<<'HTML'
+<p><strong>1. Printing Errors &amp; Content Issues</strong></p>
+<p>Customers are required to provide:</p>
+<ul>
+    <li>High-resolution photos or videos clearly showing the defect or error.</li>
+    <li>A side-by-side comparison between the defective printed sample and the approved design file.</li>
+</ul>
+<p><strong>Text/Typographical Errors:</strong> Responsibility must be verified. We assume no liability if the error originates from the customer-submitted artwork. If the error is on our end, we will reprint the order free of charge and ship it via standard courier delivery.</p>
+<p><strong>Slight Color Variation (10–15%):</strong> A 15% refund on the order value or a 15% discount coupon for the next order.</p>
+<p><strong>2. Cutting &amp; Finishing Issues</strong></p>
+<p>Customers are required to provide photos using standard measuring tools showing:</p>
+<ul>
+    <li><strong>Diagonal deviation &gt; 1 mm:</strong> Full batch rework/reprint.</li>
+    <li><strong>Rough edges/burrs on rounded or die-cut edges:</strong> Pro-rata refund based on the proportion of defective items.</li>
+</ul>
+<p><strong>Compensation Standards</strong></p>
+<ul>
+    <li><strong>Material Mismatch:</strong> Full refund plus reimbursement for disposal costs (notarized/certified video proof required).</li>
+    <li><strong>Usability Defects:</strong> Proportional compensation based on the affected quantity (e.g., if 20% of the batch has defects, a 20% refund will be issued).</li>
+</ul>
 HTML,
     ],
     [
@@ -44,30 +68,6 @@ HTML,
 <p>Matte business cards have a non-reflective surface and can be written on with a marker.</p>
 <p>Gloss business cards reflect light and have a bright shine that enhances colors and depth, making images look more vivid.</p>
 <p>Soft-touch business cards have a soft, matte, luxurious velvet-like coating that feels smooth and inviting.</p>
-HTML,
-    ],
-    [
-        'question' => '如果印刷有质量问题如何售后',
-        'answer' => <<<'HTML'
-<p><strong>一、印刷错误类问题</strong></p>
-<p>要求客户提供：</p>
-<ul>
-    <li>缺陷或者错误的高清照片/视频</li>
-    <li>错误样本与设计稿对比图</li>
-</ul>
-<p>文字错误要明确是哪方的问题。如果是客户方提供的文件问题，我们不承担责任；如果是我方错误，将免费重新印刷并采取普通快递送达。</p>
-<p>轻微色差（10-15%）：补偿订单金额15%或提供下次订单15%折扣券。</p>
-<p><strong>二、裁切工艺问题</strong></p>
-<p>要求客户使用标准测量工具拍摄：</p>
-<ul>
-    <li>对角线偏差 &gt;1mm：全批次返工</li>
-    <li>圆角/异形切割毛边：按缺陷数量比例退款</li>
-</ul>
-<p><strong>补偿标准</strong></p>
-<ul>
-    <li>材质不符：退款并承担销毁费用（需公证视频）</li>
-    <li>使用瑕疵：按影响数量折算补偿（如瑕疵数量在20%，则赔20%货款）</li>
-</ul>
 HTML,
     ],
 ];

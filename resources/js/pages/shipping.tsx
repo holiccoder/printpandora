@@ -64,11 +64,11 @@ export default function Shipping() {
             </p>
             <ul>
                 <li>
-                    <strong>Standard (4PX)</strong> — 7 to 12 business days.
+                    <strong>Standard (4PX)</strong> — 7 - 12 business days.
                     Tracked.
                 </li>
                 <li>
-                    <strong>Express (DHL Express)</strong> — 2 to 5 business
+                    <strong>Express (DHL Express)</strong> — 2 - 5 business
                     days. Tracked; DHL waybill is added after manual
                     fulfillment.
                 </li>

@@ -17,6 +17,22 @@
 
 生产环境使用 **MySQL**；本地开发环境可继续用 SQLite，互不影响（迁移与 seeder 两者通用）。
 
+### 上传文件限制
+
+产品页的设计文件上传单文件上限为 **75 MB**。Docker 镜像已通过
+`docker/php/uploads.ini` 设置 `upload_max_filesize=75M` 和
+`post_max_size=80M`。宝塔 PHP-FPM 生产环境也必须在 PHP 8.4 的 `php.ini`
+（或对应 PHP-FPM pool 配置）中设置相同值，并重载 PHP-FPM。
+
+Nginx 站点配置还需要允许相同的请求体大小：
+
+```nginx
+client_max_body_size 80m;
+```
+
+如果生产站点使用 Apache，请将 `LimitRequestBody` 设置为至少 `83886080`
+字节，并重载 Apache。
+
 ***
 
 ## 1. 创建网站

@@ -39,7 +39,7 @@ return [
             'fee' => (float) env('SHIPPING_STANDARD_RATE', 142),
             'rate_currency' => 'RMB',
             'description' => env('SHIPPING_STANDARD_DESCRIPTION', '4PX tracked delivery. Shipment is created after payment.'),
-            'estimated_delivery' => env('SHIPPING_STANDARD_ESTIMATE', '7-12 business days'),
+            'estimated_delivery' => env('SHIPPING_STANDARD_ESTIMATE', '7 - 12 business days'),
             'max_business_days' => (int) env('SHIPPING_STANDARD_MAX_BUSINESS_DAYS', 12),
             // 4PX 联邮通标准挂号-普货（QC）价格表（2026-08-28），按 1 kg
             // 计费档位导入：运费 + 挂号费。
@@ -133,7 +133,7 @@ return [
             'fuel_surcharge_percent' => 42,
             'weight_rounding_kg' => 0.5,
             'description' => env('SHIPPING_DHL_DESCRIPTION', 'Fast tracked delivery. DHL shipment will be created manually after payment.'),
-            'estimated_delivery' => env('SHIPPING_DHL_ESTIMATE', '2-5 business days'),
+            'estimated_delivery' => env('SHIPPING_DHL_ESTIMATE', '2 - 5 business days'),
             'max_business_days' => (int) env('SHIPPING_DHL_MAX_BUSINESS_DAYS', 5),
             // DHL PTZONE2022 + 锐茨价目表：出口中国、1 kg 包裹报价。
             'country_rates' => [

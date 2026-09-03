@@ -11,7 +11,7 @@ export default function Affiliate(props: Props) {
     const c = useContent('settings_affiliate_page') as any;
 
     return (
-        <div className="container mx-auto px-0 py-2 space-y-6 w-full max-w-5xl">
+        <div className="container mx-auto w-full max-w-5xl space-y-6 px-0 py-2">
             <SEO title={c.seo.title} description={c.seo.description} />
             <h1 className="sr-only">{c.sr_heading}</h1>
             <ManageAffiliate

@@ -71,6 +71,17 @@ class ProductDesignRequestController extends Controller
                 );
             }
         } else {
+            if ($mode === 'upload') {
+                $designFile = $request->file('design_file');
+
+                if ($designFile instanceof UploadedFile) {
+                    $designPayload['design_path'] = $designFile->store(
+                        'product-designs/designs',
+                        'public',
+                    );
+                }
+            }
+
             $logoPath = null;
             $logoFile = $request->file('logo_file');
 
@@ -133,19 +144,28 @@ class ProductDesignRequestController extends Controller
      */
     private function fileRules(string $mode): array
     {
-        $fileRule = [
+        $ancillaryFileRule = [
             'file',
             'max:20480',
             'mimes:jpg,jpeg,png,webp,pdf,svg,ai,eps,psd',
         ];
+        $designFileRule = $mode === 'upload'
+            ? [
+                'file',
+                'max:76800',
+                'mimes:jpg,jpeg,png,psd,ai,eps,pdf,svg,tiff',
+            ]
+            : $ancillaryFileRule;
 
         return [
-            'logo_file' => ['nullable', ...$fileRule],
+            'logo_file' => ['nullable', ...$ancillaryFileRule],
             'example_files' => ['nullable', 'array', 'max:10'],
-            'example_files.*' => $fileRule,
+            'example_files.*' => $ancillaryFileRule,
             'design_file' => [
-                $mode === 'canva' ? 'required' : 'nullable',
-                ...$fileRule,
+                in_array($mode, ['canva', 'upload'], true)
+                    ? 'required'
+                    : 'nullable',
+                ...$designFileRule,
             ],
         ];
     }

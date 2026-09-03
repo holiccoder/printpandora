@@ -167,9 +167,12 @@ export default function Help() {
                                     <h3 className="text-base font-bold text-neutral-900">
                                         {item.question}
                                     </h3>
-                                    <p className="mt-2 text-sm leading-relaxed text-neutral-600">
-                                        {item.answer}
-                                    </p>
+                                    <div
+                                        className="mt-2 space-y-2 text-sm leading-relaxed text-neutral-600 [&_hr]:my-4 [&_hr]:border-neutral-200 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
+                                        dangerouslySetInnerHTML={{
+                                            __html: item.answer,
+                                        }}
+                                    />
                                 </li>
                             ))}
                         </ul>

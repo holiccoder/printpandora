@@ -77,18 +77,9 @@ type GlobalCart = {
     subtotal: string;
 };
 
-type BlogDropdownPost = {
-    id: number;
-    title: string;
-    slug: string;
-    excerpt: string;
-    featured_image: string | null;
-};
-
 type HeaderPageProps = {
     auth?: { user?: { name?: string } | null };
     global_cart?: GlobalCart;
-    blog_dropdown_posts?: BlogDropdownPost[];
 };
 
 const ACTIVE_GREEN = 'text-[#800020]';
@@ -99,13 +90,9 @@ export function StorefrontHeader({
 }: { activeCategory?: string } = {}) {
     const chrome = useContent('global_chrome');
     const h = chrome.header;
-    const blogHero = useContent('blog_index_page').blog_hero;
     const page = usePage();
-    const {
-        auth,
-        global_cart: globalCart,
-        blog_dropdown_posts: blogDropdownPosts = [],
-    } = page.props as unknown as HeaderPageProps;
+    const { auth, global_cart: globalCart } =
+        page.props as unknown as HeaderPageProps;
     const user = auth?.user;
 
     // Product detail pages have their own sticky gallery; keep the header
@@ -129,41 +116,6 @@ export function StorefrontHeader({
                             })),
                         })),
                         promos: bc.promo_cards as PromoBlock[],
-                    },
-                };
-            }
-
-            if (nav.label === 'Blog' && blogDropdownPosts.length > 0) {
-                const blogHome = blogHero.default_categories.find(
-                    (category) => category.active,
-                ) ??
-                    blogHero.default_categories[0] ?? {
-                        label: nav.label,
-                        href: nav.href,
-                    };
-
-                return {
-                    label: nav.label,
-                    href: nav.href,
-                    mega: {
-                        groups: [
-                            {
-                                links: [
-                                    {
-                                        label: blogHome.label,
-                                        href: blogHome.href,
-                                    },
-                                    ...blogDropdownPosts.map((post) => ({
-                                        label: post.title,
-                                        href: `/blog/${post.slug}`,
-                                        promo: blogPostPromo(post),
-                                    })),
-                                ],
-                            },
-                        ],
-                        // The newest article is the default card. Hovering a
-                        // post link replaces it with that post's preview.
-                        promos: [blogPostPromo(blogDropdownPosts[0])],
                     },
                 };
             }
@@ -443,17 +395,6 @@ function ActiveUnderline() {
             className="pointer-events-none absolute inset-x-3 bottom-0 h-[3px] rounded-t-sm bg-[#800020]"
         />
     );
-}
-
-function blogPostPromo(post: BlogDropdownPost): PromoBlock {
-    return {
-        image_url: post.featured_image ?? '',
-        image_alt: post.title,
-        title: post.title,
-        description: post.excerpt,
-        cta_label: 'Read article',
-        cta_href: `/blog/${post.slug}`,
-    };
 }
 
 function MegaPanel({ mega }: { mega: MegaMenu }) {

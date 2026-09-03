@@ -196,8 +196,8 @@ class ProductConfigurationServiceTest extends TestCase
         $this->assertSame(
             [
                 '/images/product-detail/even-more/even-more-one.webp',
-                '/images/product-detail/even-more/stickers.webp',
-                '/images/product-detail/even-more/postcards.webp',
+                '/images/product-detail/even-more/super-postcards.png',
+                '/images/product-detail/even-more/premium-flyers.png',
                 '/images/product-detail/even-more/folded-brochure.webp',
             ],
             data_get($options, 'detail_sections.more_good_stuff.items.*.image_url'),

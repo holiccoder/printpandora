@@ -405,8 +405,8 @@
             "default_interval_ms": 4000,
             "default_messages": [
                 {
-                    "text": "15% off your first order — applied automatically",
-                    "href": "/business-cards"
+                    "text": "15% off your first order",
+                    "href": "https://www.inkpavo.com/business-cards"
                 },
                 {
                     "text": "Need help? Chat with our print experts 24/7",
@@ -928,7 +928,7 @@
                 },
                 {
                     "heading": "Shipping and Delivery",
-                    "body": "Choose standard or express shipping at checkout. Standard shipping usually takes 7 to 12 business days and express shipping takes 2 - 5 business days."
+                    "body": "Choose standard or express shipping at checkout. Standard shipping takes 7 - 12 business days. Express shipping takes 2 - 5 business days."
                 }
             ]
         },
@@ -1230,17 +1230,17 @@
                         },
                         {
                             "id": "super-postcards",
-                            "name": "Super Postcards",
+                            "name": "Premium Flyers",
                             "image_url": "/images/product-detail/even-more/stickers.webp",
                             "href": "/postcards",
-                            "link_label": "Super Postcards →"
+                            "link_label": "Premium Flyers →"
                         },
                         {
                             "id": "premium-flyers",
-                            "name": "Premium Flyers",
+                            "name": "Super Postcards",
                             "image_url": "/images/product-detail/even-more/postcards.webp",
                             "href": "/flyers-and-brochures",
-                            "link_label": "Premium Flyers →"
+                            "link_label": "Super Postcards →"
                         },
                         {
                             "id": "brochures",
@@ -1253,6 +1253,26 @@
                 }
             }
         }
+    },
+    "upload_files_modal": {
+        "_source_file": "resources/js/components/design-service-form-modal.tsx",
+        "title": "Upload Files",
+        "accepted_formats": [
+            "Accepted design file formats: .ai, .eps, or .pdf (vector data must be retained)",
+            "Accepted image or reference file formats: .jpg, .jpeg, .png, .psd, .ai, .eps, .pdf, .svg, .tiff",
+            "Maximum file size: 75 MB"
+        ],
+        "please_note_heading": "Please Note:",
+        "please_note_paragraphs": [
+            "Unless you have purchased design services or a business card template, we require complete, print-ready design files in vector format. For more information on design file setup, please refer to our Support page.",
+            "If you have purchased design services or a business card template, please note that your company logo must be provided in vector format. If you cannot provide the correct file type, we offer various services to assist you, including logo tracing services! Please note that additional fees may apply."
+        ],
+        "contact_prefix": "If you have any questions regarding your files, please feel free to contact our ",
+        "contact_link_label": "online department",
+        "contact_link_href": "/contact-us",
+        "file_input_label": "Upload your design file",
+        "file_input_help": "One file, up to 75 MB.",
+        "file_input_error": "Please select one file up to 75 MB."
     },
     "design_service_page": {
         "_source_file": "resources/js/pages/business-card-design-service.tsx",
@@ -1395,6 +1415,7 @@
         "hero": {
             "heading": "Business Cards that mean business.",
             "body": "As a forward-thinking print company, we offer unique paper, colours, shapes, and textures to help your card stand out the moment it leaves your hand.",
+            "offer": "15% off your first order",
             "cta": "Browse all Business Cards"
         },
         "hero_collage": [
@@ -1509,7 +1530,7 @@
                 "shipping_info": {
                     "eyebrow": "Shipping & Delivery",
                     "heading": "Choose the delivery speed that suits you",
-                    "body": "Shipping is calculated at checkout based on your destination, parcel weight, and selected method. Standard shipping usually takes 7 to 12 business days; express shipping usually takes 2 to 5 business days.",
+                    "body": "Shipping is calculated at checkout based on your destination, parcel weight, and selected method. Standard shipping takes 7 - 12 business days. Express shipping takes 2 - 5 business days.",
                     "cta": "View shipping policy",
                     "image_url": "/images/business-cards/packing/shipping-promo.webp",
                     "image_alt": "Packed business card order ready for shipping"
@@ -1603,7 +1624,7 @@
         "faq": [
             {
                 "question": "How do I order business cards?",
-                "answer": "Pick a paper, choose a size, then either use a template, upload artwork, or design from scratch in the browser. Production and delivery times depend on the product and shipping method: standard shipping usually takes 7 to 12 business days, while express shipping usually takes 2 to 5 business days after production."
+                "answer": "Pick a paper, choose a size, then either use a template, upload artwork, or design from scratch in the browser. Production and delivery times depend on the product and shipping method. Standard shipping takes 7 - 12 business days. Express shipping takes 2 - 5 business days after production."
             },
             {
                 "question": "Which InkPavo paper is best for my business?",
@@ -1702,12 +1723,6 @@
                         "sandbox_badge": "Sandbox",
                         "description_configured": "Pay securely with PayPal or a credit card.",
                         "description_not_configured": "PayPal is not configured."
-                    },
-                    {
-                        "value": "cryptomus",
-                        "label": "Cryptocurrency",
-                        "test_badge": "Test",
-                        "description": "Pay with Bitcoin, Ethereum, USDT and other cryptocurrencies via Cryptomus."
                     }
                 ]
             }
@@ -1724,11 +1739,6 @@
             "finalizing": "Finalizing payment…",
             "disclaimer": "Make sure your contact & shipping details are filled in before paying."
         },
-        "cryptomus_section": {
-            "button_label": "Pay with Cryptocurrency",
-            "processing": "Creating invoice…",
-            "disclaimer": "You will be redirected to Cryptomus to complete your crypto payment."
-        },
         "error_messages": {
             "paypal_not_configured": "PayPal is not configured.",
             "sdk_load_failed": "Failed to load PayPal SDK.",
@@ -1736,8 +1746,7 @@
             "capture_failed": "Payment capture failed.",
             "generic_error": "PayPal encountered an error. Please try again.",
             "cancelled": "Payment was cancelled.",
-            "render_failed": "Failed to render PayPal buttons.",
-            "cryptomus_create_failed": "Unable to create Cryptomus invoice. Please try again."
+            "render_failed": "Failed to render PayPal buttons."
         }
     },
     "about_page": {
@@ -1894,6 +1903,10 @@
                 {
                     "question": "What is your refund policy?",
                     "answer": "If you're not satisfied with the print quality due to a production error, contact us within 14 days. We'll reprint or refund eligible orders."
+                },
+                {
+                    "question": "What is the after-sales policy for printing quality issues?",
+                    "answer": "<p><strong>1. Printing Errors &amp; Content Issues</strong></p><p class=\"mt-1\">Customers are required to provide:</p><ul class=\"list-disc pl-5 mt-1 space-y-1\"><li>High-resolution photos or videos clearly showing the defect or error.</li><li>A side-by-side comparison between the defective printed sample and the approved design file.</li></ul><p class=\"mt-2\"><em>Text/Typographical Errors:</em> Responsibility must be verified. We assume no liability if the error originates from the customer-submitted artwork. If the error is on our end, we will reprint the order free of charge and ship it via standard courier delivery.</p><p class=\"mt-2\"><em>Slight Color Variation (10–15%):</em> A 15% refund on the order value or a 15% discount coupon for the next order.</p><hr class=\"my-3 border-neutral-200\" /><p><strong>2. Cutting &amp; Finishing Issues</strong></p><p class=\"mt-1\">Customers are required to provide photos using standard measuring tools showing:</p><ul class=\"list-disc pl-5 mt-1 space-y-1\"><li><strong>Diagonal deviation &gt; 1 mm:</strong> Full batch rework/reprint.</li><li><strong>Rough edges/burrs on rounded or die-cut edges:</strong> Pro-rata refund based on the proportion of defective items.</li></ul><hr class=\"my-3 border-neutral-200\" /><p><strong>Compensation Standards</strong></p><ul class=\"list-disc pl-5 mt-1 space-y-1\"><li><strong>Material Mismatch:</strong> Full refund plus reimbursement for disposal costs (notarized/certified video proof required).</li><li><strong>Usability Defects:</strong> Proportional compensation based on the affected quantity (e.g., if 20% of the batch has defects, a 20% refund will be issued).</li></ul>"
                 }
             ]
         },

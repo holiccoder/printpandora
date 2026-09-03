@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\ProductDesignRequest;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ProductDesignRequest;
 use App\Models\User;
 use App\Services\Cart;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -35,6 +35,11 @@ class ProductDesignRequestTest extends TestCase
                 'design_service_code' => null,
                 'terms_accepted' => true,
             ], JSON_THROW_ON_ERROR),
+            'design_file' => UploadedFile::fake()->create(
+                'artwork.pdf',
+                1,
+                'application/pdf',
+            ),
             'logo_file' => UploadedFile::fake()->image('logo.png'),
             'example_files' => [
                 UploadedFile::fake()->image('example.png'),
@@ -47,10 +52,16 @@ class ProductDesignRequestTest extends TestCase
         $this->assertSame('product-page', $request->desgin['source']);
         $this->assertSame('upload', $request->desgin['mode']);
         $this->assertSame('client@example.com', $request->desgin['email']);
+        $this->assertNotNull($request->desgin['design_path']);
+        $this->assertStringStartsWith(
+            'product-designs/designs/',
+            $request->desgin['design_path'],
+        );
         $this->assertNotNull($request->desgin['logo_path']);
         $this->assertCount(1, $request->desgin['example_paths']);
         $this->assertDatabaseCount('design_service_requests', 0);
 
+        Storage::disk('public')->assertExists($request->desgin['design_path']);
         Storage::disk('public')->assertExists($request->desgin['logo_path']);
         Storage::disk('public')->assertExists($request->desgin['example_paths'][0]);
     }
@@ -77,6 +88,49 @@ class ProductDesignRequestTest extends TestCase
         $this->assertNotNull($request->desgin['design_path']);
         $this->assertDatabaseCount('design_service_requests', 0);
         Storage::disk('public')->assertExists($request->desgin['design_path']);
+    }
+
+    public function test_upload_mode_requires_a_main_design_file(): void
+    {
+        $response = $this->post(route('product-designs.store'), [
+            'desgin' => json_encode([
+                'source' => 'product-page',
+                'mode' => 'upload',
+                'product_name' => 'Classic Business Cards',
+                'product_slug' => 'classic-business-cards',
+                'email' => 'client@example.com',
+                'business_name' => 'Acme',
+                'business_card_type' => 'Classic Business Cards',
+                'terms_accepted' => true,
+            ], JSON_THROW_ON_ERROR),
+        ]);
+
+        $response->assertSessionHasErrors('design_file');
+        $this->assertDatabaseCount('product_design_requests', 0);
+    }
+
+    public function test_upload_mode_rejects_a_design_file_over_75_mb(): void
+    {
+        $response = $this->post(route('product-designs.store'), [
+            'desgin' => json_encode([
+                'source' => 'product-page',
+                'mode' => 'upload',
+                'product_name' => 'Classic Business Cards',
+                'product_slug' => 'classic-business-cards',
+                'email' => 'client@example.com',
+                'business_name' => 'Acme',
+                'business_card_type' => 'Classic Business Cards',
+                'terms_accepted' => true,
+            ], JSON_THROW_ON_ERROR),
+            'design_file' => UploadedFile::fake()->create(
+                'oversized.pdf',
+                76801,
+                'application/pdf',
+            ),
+        ]);
+
+        $response->assertSessionHasErrors('design_file');
+        $this->assertDatabaseCount('product_design_requests', 0);
     }
 
     public function test_product_design_submission_is_attached_to_the_checkout_order(): void
@@ -107,6 +161,11 @@ class ProductDesignRequestTest extends TestCase
                 'business_card_type' => 'Classic Business Cards',
                 'terms_accepted' => true,
             ], JSON_THROW_ON_ERROR),
+            'design_file' => UploadedFile::fake()->create(
+                'artwork.pdf',
+                1,
+                'application/pdf',
+            ),
         ])->assertRedirect();
 
         $this->actingAs($user);

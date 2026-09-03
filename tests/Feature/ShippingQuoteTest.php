@@ -23,9 +23,20 @@ class ShippingQuoteTest extends TestCase
             ->assertJsonPath('quantity', 1)
             ->assertJsonPath('shipping_weight_grams', 255)
             ->assertJsonPath('methods.0.code', 'standard')
-            ->assertJsonPath('methods.0.estimated_delivery', '7-12 business days')
+            ->assertJsonPath('methods.0.estimated_delivery', '7 - 12 business days')
             ->assertJsonPath('methods.1.code', 'dhl_express')
-            ->assertJsonPath('methods.1.estimated_delivery', '2-5 business days');
+            ->assertJsonPath('methods.1.estimated_delivery', '2 - 5 business days');
+    }
+
+    public function test_shipping_quote_uses_standard_and_express_weight_tiers(): void
+    {
+        $this->postJson('/api/shipping/quote', [
+            'country' => 'US',
+            'product_type' => 'postcards',
+            'quantity' => 1,
+        ])->assertOk()
+            ->assertJsonPath('methods.0.fee', 21.14)
+            ->assertJsonPath('methods.1.fee', 30.12);
     }
 
     public function test_shipping_quote_changes_with_quantity(): void

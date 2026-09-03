@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class BusinessCardProductOptionsSeeder extends Seeder
 {
-    private const DELIVERY_FAQ_ANSWER = 'Standard shipping usually takes 7 to 12 business days. Express shipping usually takes 2 to 5 business days.';
+    private const DELIVERY_FAQ_ANSWER = 'Standard shipping takes 7 - 12 business days. Express shipping takes 2 - 5 business days.';
 
     /**
      * @var array<int, array{slug: string, name: string, subtitle: string, description: string}>

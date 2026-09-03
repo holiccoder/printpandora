@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Faq;
+use App\Models\HelpArticle;
 use App\Models\HelpCategory;
 use Database\Seeders\HelpCenterSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -91,8 +93,66 @@ class HelpCenterTest extends TestCase
             ->where('faqs.2.question', 'Why choose InkPavo business cards?')
             ->where('faqs.3.question', 'About design files')
             ->where('faqs.4.question', 'What is the difference between matte, gloss, and soft-touch business cards?')
-            ->where('faqs.5.question', '如果印刷有质量问题如何售后')
+            ->where('faqs.5.question', 'What is the after-sales policy for printing quality issues?')
         );
+
+        $qualityFaq = Faq::query()
+            ->where('question', 'What is the after-sales policy for printing quality issues?')
+            ->firstOrFail();
+
+        $this->assertDoesNotMatchRegularExpression(
+            '/\p{Han}/u',
+            $qualityFaq->question.$qualityFaq->answer,
+        );
+        $this->assertStringContainsString(
+            '1. Printing Errors &amp; Content Issues',
+            $qualityFaq->answer,
+        );
+        $this->assertStringContainsString(
+            'Full batch rework/reprint.',
+            $qualityFaq->answer,
+        );
+        $this->assertStringContainsString(
+            'if 20% of the batch has defects, a 20% refund will be issued',
+            $qualityFaq->answer,
+        );
+    }
+
+    public function test_quality_faq_migration_replaces_legacy_rows_without_duplicates(): void
+    {
+        $legacyQuestion = json_decode(
+            '"\u5982\u679c\u5370\u5237\u6709\u8d28\u91cf\u95ee\u9898\u5982\u4f55\u552e\u540e"',
+            true,
+        );
+
+        Faq::create([
+            'question' => $legacyQuestion,
+            'answer' => 'legacy answer',
+            'sort_order' => 5,
+        ]);
+        Faq::create([
+            'question' => 'What should I do if my printed order has a quality issue?',
+            'answer' => 'interim answer',
+            'sort_order' => 5,
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_03_000001_translate_help_center_quality_faq.php',
+        );
+        $migration->up();
+
+        $this->assertSame(
+            1,
+            Faq::query()
+                ->where('question', 'What is the after-sales policy for printing quality issues?')
+                ->count(),
+        );
+        $this->assertDatabaseMissing('faqs', [
+            'question' => $legacyQuestion,
+        ]);
+        $this->assertDatabaseMissing('faqs', [
+            'question' => 'What should I do if my printed order has a quality issue?',
+        ]);
     }
 
     public function test_shipping_category_contains_the_delivery_article(): void
@@ -176,5 +236,12 @@ class HelpCenterTest extends TestCase
             ->where('articles.0.slug', 'how-to-place-an-order')
             ->where('articles.5.slug', 'what-payment-methods-do-you-accept')
         );
+
+        $paymentArticle = HelpArticle::query()
+            ->where('slug', 'what-payment-methods-do-you-accept')
+            ->firstOrFail();
+
+        $this->assertStringNotContainsString('Cryptomus', $paymentArticle->body);
+        $this->assertStringNotContainsString('cryptocurrency', strtolower($paymentArticle->body));
     }
 }

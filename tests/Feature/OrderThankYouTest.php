@@ -52,7 +52,7 @@ class OrderThankYouTest extends TestCase
                 ->where('order.id', $order->id)
                 ->where('order.shipping_method', 'Standard Shipping')
                 ->where('order.carrier', '4PX')
-                ->where('order.shipping_estimate', '7-12 business days')
+                ->where('order.shipping_estimate', '7 - 12 business days')
                 ->where('order.dispatch_date', 'Fri, 28 Aug')
                 ->where('order.delivery_date', 'Mon, 14 Sep')
             );

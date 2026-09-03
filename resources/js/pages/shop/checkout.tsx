@@ -26,12 +26,6 @@ interface PaypalConfig {
     currency: string;
 }
 
-interface CryptomusConfig {
-    configured: boolean;
-    currency: string;
-    test: boolean;
-}
-
 interface PendingOrder {
     shipping_address: string | null;
     shipping_city: string | null;
@@ -66,7 +60,6 @@ interface Props {
     discountCode: string | null;
     pendingOrder: PendingOrder;
     paypal: PaypalConfig;
-    cryptomus: CryptomusConfig;
 }
 
 declare global {
@@ -75,7 +68,7 @@ declare global {
     }
 }
 
-type PaymentMethod = 'paypal' | 'cryptomus';
+type PaymentMethod = 'paypal';
 
 type ShippingAddressField =
     | 'shipping_address'
@@ -141,7 +134,6 @@ export default function Checkout({
     discountCode,
     pendingOrder,
     paypal,
-    cryptomus,
 }: Props) {
     const c = useContent('checkout_page') as any;
     const paymentMethods =
@@ -161,7 +153,7 @@ export default function Checkout({
     });
 
     const [paymentMethod] = useState<PaymentMethod | null>(
-        paypal.client_id ? 'paypal' : cryptomus.configured ? 'cryptomus' : null,
+        paypal.client_id ? 'paypal' : null,
     );
     const [shippingErrors, setShippingErrors] = useState<ShippingErrors>({});
     const [discountInput, setDiscountInput] = useState(discountCode ?? '');
@@ -249,9 +241,6 @@ export default function Checkout({
     const paypalContainerRef = useRef<HTMLDivElement | null>(null);
     const paypalButtonsRef = useRef<any>(null);
     const dataRef = useRef(data);
-
-    const [cryptomusLoading, setCryptomusLoading] = useState(false);
-    const [cryptomusError, setCryptomusError] = useState<string | null>(null);
 
     const pricedShippingMethods = useMemo(
         () =>
@@ -461,60 +450,6 @@ export default function Checkout({
             }
         };
     }, [paymentMethod, paypalReady, c.error_messages]);
-
-    const handleCryptomusSubmit = async () => {
-        if (cryptomusLoading) {
-            return;
-        }
-
-        setCryptomusLoading(true);
-        setCryptomusError(null);
-
-        const csrfToken =
-            (
-                document.querySelector(
-                    'meta[name="csrf-token"]',
-                ) as HTMLMetaElement | null
-            )?.content ?? '';
-
-        try {
-            const res = await fetch('/checkout/cryptomus/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    Accept: 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-            const json = await res.json().catch(() => ({}));
-
-            if (!res.ok) {
-                setCryptomusError(
-                    json.error ||
-                        (json.errors
-                            ? Object.values(json.errors).flat().join(' ')
-                            : null) ||
-                        c.error_messages.cryptomus_create_failed,
-                );
-
-                return;
-            }
-
-            if (json.redirect) {
-                window.location.href = json.redirect;
-            } else {
-                setCryptomusError(c.error_messages.cryptomus_create_failed);
-            }
-        } catch (err) {
-            setCryptomusError(
-                (err as Error).message ||
-                    c.error_messages.cryptomus_create_failed,
-            );
-        } finally {
-            setCryptomusLoading(false);
-        }
-    };
 
     const shipping = c.form_sections.shipping_address;
     const shippingMethodSection = c.form_sections.shipping_method;
@@ -844,9 +779,8 @@ export default function Checkout({
                                     {shippingMethodSection.heading}
                                 </h2>
                                 <p className="mb-4 text-xs text-[#706f6c]">
-                                    Rates shown for a{' '}
-                                    {shippingWeightLabel} parcel and
-                                    updated for the selected country.
+                                    Rates shown for a {shippingWeightLabel}{' '}
+                                    parcel and updated for the selected country.
                                 </p>
                                 <div className="space-y-3">
                                     {pricedShippingMethods.map((method) => {
@@ -1020,31 +954,7 @@ export default function Checkout({
                                     </div>
                                 )}
 
-                                {paymentMethod === 'cryptomus' && (
-                                    <div className="mt-4 space-y-2">
-                                        <button
-                                            type="button"
-                                            onClick={handleCryptomusSubmit}
-                                            disabled={cryptomusLoading}
-                                            className="w-full rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-                                        >
-                                            {cryptomusLoading
-                                                ? c.cryptomus_section.processing
-                                                : c.cryptomus_section
-                                                      .button_label}
-                                        </button>
-                                        {cryptomusError && (
-                                            <p className="text-xs text-red-500">
-                                                {cryptomusError}
-                                            </p>
-                                        )}
-                                        <p className="text-[10px] text-[#706f6c]">
-                                            {c.cryptomus_section.disclaimer}
-                                        </p>
-                                    </div>
-                                )}
-
-                                {!paypal.client_id && !cryptomus.configured && (
+                                {!paypal.client_id && (
                                     <p className="mt-4 text-sm text-[#706f6c]">
                                         {payment.no_methods_message ??
                                             'No online payment method is currently configured.'}

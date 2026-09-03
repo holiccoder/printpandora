@@ -14,14 +14,18 @@ interface CreateTicketModalProps {
     onClose: () => void;
 }
 
-export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModalProps) {
+export default function CreateTicketModal({
+    isOpen,
+    onClose,
+}: CreateTicketModalProps) {
     const c = useContent('shop_tickets_create_page') as any;
-    const { data, setData, post, processing, errors, reset, transform } = useForm({
-        subject: '',
-        message: '',
-        priority: 'medium',
-        order_id: '',
-    });
+    const { data, setData, post, processing, errors, reset, transform } =
+        useForm({
+            subject: '',
+            message: '',
+            priority: 'medium',
+            order_id: '',
+        });
 
     // Reset form fields when modal closes
     useEffect(() => {
@@ -45,7 +49,7 @@ export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModal
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-lg bg-white dark:bg-[#161615] text-neutral-900 dark:text-neutral-50">
+            <DialogContent className="bg-white text-neutral-900 sm:max-w-lg dark:bg-[#161615] dark:text-neutral-50">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold tracking-tight">
                         {c.page_heading}
@@ -60,7 +64,7 @@ export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModal
                         e.preventDefault();
                         submit();
                     }}
-                    className="space-y-4 mt-2"
+                    className="mt-2 space-y-4"
                 >
                     <div>
                         <label
@@ -73,10 +77,8 @@ export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModal
                             id="subject"
                             type="text"
                             value={data.subject}
-                            onChange={(e) =>
-                                setData('subject', e.target.value)
-                            }
-                            className="w-full rounded-lg border border-[#e3e3e0] bg-white px-4 py-2.5 text-sm dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-neutral-100 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            onChange={(e) => setData('subject', e.target.value)}
+                            className="w-full rounded-lg border border-[#e3e3e0] bg-white px-4 py-2.5 text-sm text-neutral-900 focus:ring-2 focus:ring-primary/20 focus:outline-none dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-neutral-100"
                             placeholder={c.placeholders.subject}
                             required
                         />
@@ -100,7 +102,7 @@ export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModal
                             onChange={(e) =>
                                 setData('priority', e.target.value)
                             }
-                            className="w-full rounded-lg border border-[#e3e3e0] bg-white px-4 py-2.5 text-sm dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-neutral-100 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            className="w-full rounded-lg border border-[#e3e3e0] bg-white px-4 py-2.5 text-sm text-neutral-900 focus:ring-2 focus:ring-primary/20 focus:outline-none dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-neutral-100"
                         >
                             <option value="low">
                                 {c.priority_options.low}
@@ -133,7 +135,7 @@ export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModal
                             onChange={(e) =>
                                 setData('order_id', e.target.value)
                             }
-                            className="w-full rounded-lg border border-[#e3e3e0] bg-white px-4 py-2.5 text-sm dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-neutral-100 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            className="w-full rounded-lg border border-[#e3e3e0] bg-white px-4 py-2.5 text-sm text-neutral-900 focus:ring-2 focus:ring-primary/20 focus:outline-none dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-neutral-100"
                             placeholder={c.placeholders.order_id}
                         />
                         {errors.order_id && (
@@ -153,11 +155,9 @@ export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModal
                         <textarea
                             id="message"
                             value={data.message}
-                            onChange={(e) =>
-                                setData('message', e.target.value)
-                            }
+                            onChange={(e) => setData('message', e.target.value)}
                             rows={4}
-                            className="w-full rounded-lg border border-[#e3e3e0] bg-white px-4 py-2.5 text-sm dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-neutral-100 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            className="w-full rounded-lg border border-[#e3e3e0] bg-white px-4 py-2.5 text-sm text-neutral-900 focus:ring-2 focus:ring-primary/20 focus:outline-none dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-neutral-100"
                             placeholder={c.placeholders.message}
                             required
                         />
@@ -173,9 +173,7 @@ export default function CreateTicketModal({ isOpen, onClose }: CreateTicketModal
                         disabled={processing}
                         className="w-full rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                     >
-                        {processing
-                            ? c.buttons.submitting
-                            : c.buttons.submit}
+                        {processing ? c.buttons.submitting : c.buttons.submit}
                     </button>
                 </form>
             </DialogContent>

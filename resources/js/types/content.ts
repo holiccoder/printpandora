@@ -292,6 +292,19 @@ export interface DesignServicePageContent {
     form_product_options: string[];
 }
 
+export interface UploadFilesModalContent {
+    title: string;
+    accepted_formats: string[];
+    please_note_heading: string;
+    please_note_paragraphs: string[];
+    contact_prefix: string;
+    contact_link_label: string;
+    contact_link_href: string;
+    file_input_label: string;
+    file_input_help: string;
+    file_input_error: string;
+}
+
 // ---------------------------------------------------------------------------
 // Tier C — storefront pages
 // ---------------------------------------------------------------------------
@@ -550,6 +563,7 @@ export interface ContentSections {
     about_page: AboutPageContent;
     help_center_page: HelpCenterPageContent;
     design_service_page: DesignServicePageContent;
+    upload_files_modal: UploadFilesModalContent;
     shop_thank_you_page: ShopThankYouPageContent;
     // untuned sections fall through to unknown
 }

@@ -18,8 +18,8 @@ return [
 </ul>
 <h2>Shipping methods</h2>
 <ul>
-    <li><strong>Standard Shipping:</strong> 7 to 12 business days with tracked 4PX delivery.</li>
-    <li><strong>Express Shipping:</strong> 2 to 5 business days with tracked DHL Express delivery.</li>
+    <li><strong>Standard Shipping:</strong> 7 - 12 business days with tracked 4PX delivery.</li>
+    <li><strong>Express Shipping:</strong> 2 - 5 business days with tracked DHL Express delivery.</li>
 </ul>
 <p>Shipping fees are calculated from the destination, parcel weight, and selected method. Shipping is not free unless a separate offer is explicitly shown at checkout.</p>
 HTML,

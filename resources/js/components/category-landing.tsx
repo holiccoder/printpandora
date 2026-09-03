@@ -8,8 +8,9 @@ import {
     ShieldCheck,
     Truck,
 } from 'lucide-react';
-import { OPEN_AI_CHAT_EVENT } from '@/components/ai-chat-widget';
+import { useState } from 'react';
 import SEO from '@/components/seo';
+import UploadFilesModal from '@/components/upload-files-modal';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
 /* -------------------------------------------------------------------------- */
@@ -95,9 +96,10 @@ export default function CategoryLanding({
     const WARM_BG = content.warm_bg ?? DEFAULT_WARM;
     const GOLD = content.gold ?? DEFAULT_GOLD;
     const { hero, series, design_cta, perks, faq } = content;
+    const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
-    const openConsultation = () => {
-        window.dispatchEvent(new Event(OPEN_AI_CHAT_EVENT));
+    const openUploadModal = () => {
+        setUploadModalOpen(true);
     };
 
     return (
@@ -128,7 +130,7 @@ export default function CategoryLanding({
                         <div className="mt-8">
                             <button
                                 type="button"
-                                onClick={openConsultation}
+                                onClick={openUploadModal}
                                 className="inline-flex items-center gap-2 rounded-md bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                             >
                                 {hero.cta}
@@ -175,7 +177,7 @@ export default function CategoryLanding({
                             <li key={item.name} className="group">
                                 <button
                                     type="button"
-                                    onClick={openConsultation}
+                                    onClick={openUploadModal}
                                     className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
                                 >
                                     <div className="overflow-hidden bg-neutral-100">
@@ -245,7 +247,7 @@ export default function CategoryLanding({
                                 <li key={path.name}>
                                     <button
                                         type="button"
-                                        onClick={openConsultation}
+                                        onClick={openUploadModal}
                                         className="group flex h-full w-full flex-col items-start rounded-lg border border-neutral-200 bg-white p-6 text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
                                     >
                                         <span
@@ -345,6 +347,11 @@ export default function CategoryLanding({
                     </div>
                 </section>
             )}
+
+            <UploadFilesModal
+                open={uploadModalOpen}
+                onOpenChange={setUploadModalOpen}
+            />
         </StorefrontLayout>
     );
 }

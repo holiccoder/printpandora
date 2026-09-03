@@ -49,6 +49,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Composer.
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Allow the product-design upload flow to accept one design file up to 75 MB.
+COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
+
 # Configure Apache document root.
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
     && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf

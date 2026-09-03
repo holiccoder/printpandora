@@ -14,6 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useContent } from '@/hooks/use-content';
 
 export interface DesignServiceOption {
     code: string;
@@ -23,6 +24,9 @@ export interface DesignServiceOption {
 
 export type DesignSubmissionTarget = 'design-service' | 'product-design';
 export type ProductDesignMode = 'upload' | 'design-for-you';
+
+const DESIGN_FILE_ACCEPT = '.ai,.eps,.pdf,.jpg,.jpeg,.png,.psd,.svg,.tiff';
+const MAX_DESIGN_FILE_BYTES = 75 * 1024 * 1024;
 
 interface DesignServiceFormProps {
     productOptions?: string[];
@@ -46,6 +50,7 @@ interface DesignServiceFormProps {
     productId?: number;
     productName?: string;
     productSlug?: string;
+    productTypeLabel?: string;
 }
 
 type DesignServiceFormData = {
@@ -58,6 +63,7 @@ type DesignServiceFormData = {
     terms_accepted: boolean;
     logo_file: File | null;
     example_files: File[];
+    design_file: File | null;
 };
 
 export default function DesignServiceForm({
@@ -82,15 +88,21 @@ export default function DesignServiceForm({
     productId,
     productName,
     productSlug,
+    productTypeLabel,
 }: DesignServiceFormProps) {
     const flashSuccess = (
         usePage().props.flash as { success?: string } | undefined
     )?.success;
 
     const hasDesignServices = (designServices?.length ?? 0) > 0;
+    const uploadContent = useContent('upload_files_modal');
+    const requiresDesignFile =
+        submissionTarget === 'product-design' && productDesignMode === 'upload';
     const [designServiceError, setDesignServiceError] = useState<string | null>(
         null,
     );
+    const [designFileError, setDesignFileError] = useState<string | null>(null);
+    const designInputRef = useRef<HTMLInputElement>(null);
     const logoInputRef = useRef<HTMLInputElement>(null);
     const examplesInputRef = useRef<HTMLInputElement>(null);
 
@@ -105,6 +117,7 @@ export default function DesignServiceForm({
             business_card_type: businessCardType ?? '',
             logo_file: null,
             example_files: [],
+            design_file: null,
         });
 
     useEffect(() => {
@@ -126,6 +139,23 @@ export default function DesignServiceForm({
 
     const handleLogoChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         setData('logo_file', event.target.files?.[0] ?? null);
+    };
+
+    const handleDesignFileChange: ChangeEventHandler<HTMLInputElement> = (
+        event,
+    ) => {
+        const file = event.target.files?.[0] ?? null;
+
+        if (file && file.size > MAX_DESIGN_FILE_BYTES) {
+            setData('design_file', null);
+            setDesignFileError(uploadContent.file_input_error);
+            event.target.value = '';
+
+            return;
+        }
+
+        setDesignFileError(null);
+        setData('design_file', file);
     };
 
     const handleExamplesChange: ChangeEventHandler<HTMLInputElement> = (
@@ -184,13 +214,13 @@ export default function DesignServiceForm({
                         email: normalizedData.email,
                         business_name: normalizedData.business_name,
                         card_info: normalizedData.card_info,
-                        business_card_type:
-                            normalizedData.business_card_type,
+                        business_card_type: normalizedData.business_card_type,
                         design_service_code:
                             normalizedData.design_service_code || null,
                         terms_accepted: normalizedData.terms_accepted,
                     }),
                     return_to: normalizedData.return_to,
+                    design_file: normalizedData.design_file,
                     logo_file: normalizedData.logo_file,
                     example_files: normalizedData.example_files,
                 };
@@ -215,6 +245,10 @@ export default function DesignServiceForm({
                     }
 
                     reset();
+
+                    if (designInputRef.current) {
+                        designInputRef.current.value = '';
+                    }
 
                     if (logoInputRef.current) {
                         logoInputRef.current.value = '';
@@ -306,6 +340,31 @@ export default function DesignServiceForm({
                 />
             </FormRow>
 
+            {requiresDesignFile && (
+                <FormRow
+                    label={uploadContent.file_input_label}
+                    error={designFileError ?? errors.design_file}
+                >
+                    <div className="space-y-2">
+                        <UploadButton
+                            inputRef={designInputRef}
+                            onChange={handleDesignFileChange}
+                            accept={DESIGN_FILE_ACCEPT}
+                            required
+                            large
+                            selectedFiles={
+                                data.design_file === null
+                                    ? []
+                                    : [data.design_file]
+                            }
+                        />
+                        <p className="text-xs text-neutral-500">
+                            {uploadContent.file_input_help}
+                        </p>
+                    </div>
+                </FormRow>
+            )}
+
             <FormRow label="Company logo" error={errors.logo_file}>
                 <div className="space-y-2">
                     <UploadButton
@@ -349,7 +408,7 @@ export default function DesignServiceForm({
             </FormRow>
 
             <FormRow
-                label="Business card type"
+                label={productTypeLabel ?? 'Business card type'}
                 error={errors.business_card_type}
             >
                 <Select
@@ -421,7 +480,8 @@ export default function DesignServiceForm({
                 disabled={
                     !data.terms_accepted ||
                     processing ||
-                    (hasDesignServices && !designServiceCode)
+                    (hasDesignServices && !designServiceCode) ||
+                    (requiresDesignFile && !data.design_file)
                 }
             >
                 {submitLabel}
@@ -457,11 +517,17 @@ function UploadButton({
     onChange,
     selectedFiles,
     multiple = false,
+    accept = '.ai,.eps,.svg,.pdf,.png,.jpg,.jpeg,.webp,.psd',
+    large = false,
+    required = false,
 }: {
     inputRef: RefObject<HTMLInputElement | null>;
     onChange: ChangeEventHandler<HTMLInputElement>;
     selectedFiles: File[];
     multiple?: boolean;
+    accept?: string;
+    large?: boolean;
+    required?: boolean;
 }) {
     const inputId = `design-service-upload-${useId().replaceAll(':', '-')}`;
 
@@ -471,8 +537,9 @@ function UploadButton({
                 id={inputId}
                 ref={inputRef}
                 type="file"
-                accept=".ai,.eps,.svg,.pdf,.png,.jpg,.jpeg,.webp,.psd"
+                accept={accept}
                 multiple={multiple}
+                required={required}
                 onChange={onChange}
                 className="sr-only"
             />
@@ -480,12 +547,20 @@ function UploadButton({
                 htmlFor={inputId}
                 className={buttonVariants({
                     variant: 'outline',
-                    className:
-                        'cursor-pointer border-primary text-primary hover:bg-primary/5',
+                    className: large
+                        ? 'flex min-h-36 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary px-6 py-8 text-center text-primary hover:bg-primary/5'
+                        : 'cursor-pointer border-primary text-primary hover:bg-primary/5',
                 })}
             >
-                <Image className="size-4" />
-                UPLOAD FILES
+                <Image className={large ? 'size-8' : 'size-4'} />
+                <span>
+                    {large ? 'Choose a file to upload' : 'UPLOAD FILES'}
+                </span>
+                {large && (
+                    <span className="text-xs font-normal text-neutral-500">
+                        AI, EPS, PDF, JPG, PNG, PSD, SVG, or TIFF · Up to 75 MB
+                    </span>
+                )}
             </label>
             {selectedFiles.length > 0 && (
                 <ul

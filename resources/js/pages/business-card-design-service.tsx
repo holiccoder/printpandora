@@ -1,4 +1,3 @@
-import { Link } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import DesignServiceForm from '@/components/design-service-form';
@@ -166,17 +165,6 @@ export default function BusinessCardDesignService() {
                         />
                     </div>
                 </div>
-
-                <p className="mx-auto max-w-7xl px-4 pb-12 text-center text-sm text-neutral-500 lg:pb-16">
-                    Prefer to browse first?{' '}
-                    <Link
-                        href="/showcases"
-                        className="font-semibold underline-offset-2 hover:underline"
-                        style={{ color: ACCENT }}
-                    >
-                        Explore our showcases
-                    </Link>
-                </p>
             </section>
             {/* 3. Design Process -------------------------------------------- */}
             <section className="border-t border-neutral-100 bg-white">

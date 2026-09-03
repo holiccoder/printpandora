@@ -136,6 +136,11 @@ export default function BusinessCardsLanding() {
                         <p className="mt-5 max-w-lg text-base text-neutral-700 sm:text-lg">
                             {c.hero.body}
                         </p>
+                        {c.hero.offer && (
+                            <p className="mt-4 text-base font-bold text-[#800020] sm:text-lg">
+                                {c.hero.offer}
+                            </p>
+                        )}
                         <div className="mt-8">
                             <Link
                                 href="/business-cards"

@@ -79,11 +79,6 @@ class CheckoutController extends Controller
                 'mode' => config('services.paypal.mode', 'sandbox'),
                 'currency' => config('services.paypal.currency', 'USD'),
             ],
-            'cryptomus' => [
-                'configured' => app(CryptomusService::class)->isConfigured(),
-                'currency' => app(CryptomusService::class)->currency(),
-                'test' => app(CryptomusService::class)->isTest(),
-            ],
         ]);
     }
 

@@ -378,7 +378,7 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
                         type="button"
                         onClick={prev}
                         aria-label={home.hero_carousel.prev_button_label}
-                        className="absolute top-1/2 left-3 z-10 hidden -translate-y-1/2 rounded-full border border-neutral-200 bg-white/90 p-2 text-neutral-700 shadow-sm backdrop-blur transition hover:bg-white hover:text-[#800020] focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:outline-none md:block md:left-5"
+                        className="absolute top-1/2 left-3 z-10 hidden -translate-y-1/2 rounded-full border border-neutral-200 bg-white/90 p-2 text-neutral-700 shadow-sm backdrop-blur transition hover:bg-white hover:text-[#800020] focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:outline-none md:left-5 md:block"
                     >
                         <ChevronLeft className="size-5" />
                     </button>
@@ -386,7 +386,7 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
                         type="button"
                         onClick={next}
                         aria-label={home.hero_carousel.next_button_label}
-                        className="absolute top-1/2 right-3 z-10 hidden -translate-y-1/2 rounded-full border border-neutral-200 bg-white/90 p-2 text-neutral-700 shadow-sm backdrop-blur transition hover:bg-white hover:text-[#800020] focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:outline-none md:block md:right-5"
+                        className="absolute top-1/2 right-3 z-10 hidden -translate-y-1/2 rounded-full border border-neutral-200 bg-white/90 p-2 text-neutral-700 shadow-sm backdrop-blur transition hover:bg-white hover:text-[#800020] focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:outline-none md:right-5 md:block"
                     >
                         <ChevronRight className="size-5" />
                     </button>

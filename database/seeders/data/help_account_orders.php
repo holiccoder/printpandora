@@ -90,8 +90,8 @@ HTML,
 
 <h2>Shipping estimates</h2>
 <ul>
-    <li><strong>Standard Shipping:</strong> usually 7 to 12 business days with tracked 4PX delivery.</li>
-    <li><strong>Express Shipping (DHL Express):</strong> usually 2 to 5 business days with tracked DHL delivery.</li>
+    <li><strong>Standard Shipping:</strong> 7 - 12 business days with tracked 4PX delivery.</li>
+    <li><strong>Express Shipping (DHL Express):</strong> 2 - 5 business days with tracked DHL delivery.</li>
 </ul>
 
 <h2>What can change the estimate?</h2>
@@ -165,14 +165,11 @@ HTML,
 <h2>PayPal and cards</h2>
 <p>When PayPal is available, you can pay with a PayPal account. PayPal may also offer a credit or debit card checkout option, subject to PayPal's availability and your location. Your card details are entered through PayPal's secure checkout and should not be sent to InkPavo by email or chat.</p>
 
-<h2>Cryptocurrency</h2>
-<p>When Cryptomus is enabled at checkout, you can pay with supported cryptocurrencies such as Bitcoin, Ethereum, USDT, and other assets offered by the payment provider. Selecting this option redirects you to Cryptomus to create and complete the payment invoice.</p>
-
 <h2>Before you pay</h2>
 <ol>
     <li>Confirm the product options, artwork, quantity, shipping address, shipping method, and total.</li>
     <li>Select the payment method shown on the checkout page.</li>
-    <li>Complete the payment on PayPal or Cryptomus as directed.</li>
+    <li>Complete the payment using the method shown at checkout.</li>
     <li>Return to InkPavo and check your order page for the order and payment status.</li>
 </ol>
 

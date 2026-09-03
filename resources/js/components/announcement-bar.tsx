@@ -69,27 +69,29 @@ export function AnnouncementBar({ messages, intervalMs, className }: Props) {
                         const wasActive =
                             items.length > 1 &&
                             i === (index - 1 + items.length) % items.length;
+                        const slideClassName = cn(
+                            'absolute inset-0 flex items-center justify-center px-4 hover:underline',
+                            // Only the active and just-departed slides should
+                            // animate. Other slides snap to the bottom-rest
+                            // position so they never traverse the viewport.
+                            (isActive || wasActive) &&
+                                'transition-transform duration-700 ease-in-out',
+                            isActive && 'translate-y-0',
+                            wasActive && '-translate-y-full',
+                            !isActive && !wasActive && 'translate-y-full',
+                        );
+                        const slideProps = {
+                            'aria-hidden': !isActive,
+                            tabIndex: isActive ? 0 : -1,
+                            className: slideClassName,
+                        };
 
-                        return (
-                            <Link
-                                key={i}
-                                href={msg.href}
-                                aria-hidden={!isActive}
-                                tabIndex={isActive ? 0 : -1}
-                                className={cn(
-                                    'absolute inset-0 flex items-center justify-center px-4 hover:underline',
-                                    // Only the active and just-departed slides should
-                                    // animate. Other slides snap to the bottom-rest
-                                    // position so they never traverse the viewport.
-                                    (isActive || wasActive) &&
-                                        'transition-transform duration-700 ease-in-out',
-                                    isActive && 'translate-y-0',
-                                    wasActive && '-translate-y-full',
-                                    !isActive &&
-                                        !wasActive &&
-                                        'translate-y-full',
-                                )}
-                            >
+                        return /^https?:\/\//i.test(msg.href) ? (
+                            <a key={i} href={msg.href} {...slideProps}>
+                                {msg.text}
+                            </a>
+                        ) : (
+                            <Link key={i} href={msg.href} {...slideProps}>
                                 {msg.text}
                             </Link>
                         );

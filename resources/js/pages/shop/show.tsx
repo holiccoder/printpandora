@@ -221,10 +221,24 @@ const generatedFinishSwatches: Record<string, string> = {
 };
 
 const generatedCornerSwatches: Record<string, string> = {
-    square: `${reusableSwatchBase}/square.webp`,
-    standard: `${reusableSwatchBase}/square.webp`,
-    rounded: `${reusableSwatchBase}/rounded.webp`,
+    square: `${reusableSwatchBase}/square-corner.svg`,
+    standard: `${reusableSwatchBase}/square-corner.svg`,
+    rounded: `${reusableSwatchBase}/rounded-corner.svg`,
 };
+
+function cornerSwatchFor(value: string): string | undefined {
+    const normalized = value.toLowerCase();
+
+    if (normalized.includes('round')) {
+        return generatedCornerSwatches.rounded;
+    }
+
+    if (normalized.includes('square') || normalized.includes('standard')) {
+        return generatedCornerSwatches.square;
+    }
+
+    return undefined;
+}
 
 // Display-only mirror of the server-side fee map
 // (App\Models\DesignServiceRequest::DESIGN_SERVICE_FEES). The server
@@ -462,15 +476,11 @@ export default function ShopShow({
                 ? productOptions.corners.map((cn) => ({
                       id: cn.code ?? cn.name.toLowerCase(),
                       label: cn.name,
-                      swatch:
-                          generatedCornerSwatches[cn.name.toLowerCase()] ??
-                          cn.swatch_image,
+                      swatch: cornerSwatchFor(cn.name) ?? cn.swatch_image,
                   }))
                 : c.configurator_options.corners.map((cn: any) => ({
                       ...cn,
-                      swatch:
-                          generatedCornerSwatches[cn.id.toLowerCase()] ??
-                          cn.swatch,
+                      swatch: cornerSwatchFor(cn.id) ?? cn.swatch,
                   })),
         [hasProductOptions, productOptions, c.configurator_options.corners],
     );
@@ -796,9 +806,8 @@ export default function ShopShow({
     >(null);
     const [hasInteracted, setHasInteracted] = useState(false);
 
-    const hasSubmittedDesign = Object.values(submittedDesignModes).some(
-        Boolean,
-    );
+    const hasSubmittedDesign =
+        Object.values(submittedDesignModes).some(Boolean);
 
     const markDesignSubmitted = (
         mode: 'canva' | 'upload' | 'design-for-you',
@@ -811,9 +820,7 @@ export default function ShopShow({
         setDesignModal(null);
     };
 
-    const openDesignModal = (
-        mode: 'canva' | 'upload' | 'design-for-you',
-    ) => {
+    const openDesignModal = (mode: 'canva' | 'upload' | 'design-for-you') => {
         setDesignSelectionError(null);
         setDesignModal(mode);
     };
@@ -1747,68 +1754,21 @@ export default function ShopShow({
 
                         {!usesDynamicOptions && cornersList.length > 0 && (
                             <OptionGroup label={c.configurator_labels.corners}>
-                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                    {cornersList.map((cn: any) => {
-                                        const isImageSwatch =
-                                            typeof cn.swatch === 'string' &&
-                                            /^(https?:)?\//.test(cn.swatch);
-                                        const isSvgSwatch =
-                                            typeof cn.swatch === 'string' &&
-                                            cn.swatch
-                                                .trimStart()
-                                                .startsWith('<svg');
-
-                                        return (
-                                            <ChoiceTile
-                                                key={cn.id}
-                                                active={
-                                                    selectedCorners === cn.id &&
-                                                    hasInteracted
-                                                }
-                                                onClick={() =>
-                                                    selectOption(
-                                                        'corners',
-                                                        cn.id,
-                                                    )
-                                                }
-                                            >
-                                                <div className="flex h-16 items-center justify-center">
-                                                    {isImageSwatch ? (
-                                                        <img
-                                                            src={cn.swatch}
-                                                            alt=""
-                                                            className="h-full max-h-16 w-full rounded-sm object-contain"
-                                                        />
-                                                    ) : isSvgSwatch ? (
-                                                        <div
-                                                            className="h-12 w-12 text-neutral-700"
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: cn.swatch,
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <span
-                                                            className={`block h-8 w-14 border-2 ${
-                                                                cn.id ===
-                                                                'rounded'
-                                                                    ? 'rounded-lg'
-                                                                    : 'rounded-sm'
-                                                            } ${
-                                                                selectedCorners ===
-                                                                    cn.id &&
-                                                                hasInteracted
-                                                                    ? 'border-[#800020] bg-[#800020]/5'
-                                                                    : 'border-neutral-300 bg-neutral-50'
-                                                            }`}
-                                                        />
-                                                    )}
-                                                </div>
-                                                <p className="mt-2 text-sm font-semibold">
-                                                    {cn.label}
-                                                </p>
-                                            </ChoiceTile>
-                                        );
-                                    })}
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                    {cornersList.map((cn: any) => (
+                                        <CornerChoiceCard
+                                            key={cn.id}
+                                            label={cn.label}
+                                            swatch={cn.swatch}
+                                            active={
+                                                selectedCorners === cn.id &&
+                                                hasInteracted
+                                            }
+                                            onClick={() =>
+                                                selectOption('corners', cn.id)
+                                            }
+                                        />
+                                    ))}
                                 </div>
                             </OptionGroup>
                         )}
@@ -2728,7 +2688,8 @@ export default function ShopShow({
                     {productOptions.detail_sections.design_specifications && (
                         <DesignSpecificationsSection
                             content={
-                                c?.shared_detail_sections?.business_cards?.design_specifications
+                                c?.shared_detail_sections?.business_cards
+                                    ?.design_specifications
                             }
                         />
                     )}
@@ -2951,28 +2912,43 @@ function DynamicOptionGroups({
                                           selectedValue.includes(code)
                                         : selectedValue === code;
                                 const active = isSelected && hasInteracted;
-                                const swatch = value.swatch_image;
+                                const swatch =
+                                    group.key === 'corners'
+                                        ? (cornerSwatchFor(code) ??
+                                          value.swatch_image)
+                                        : value.swatch_image;
                                 const isCustomSize =
                                     group.key === 'sizes' && code === 'custom';
                                 const isSvg =
                                     typeof swatch === 'string' &&
                                     swatch.trimStart().startsWith('<svg');
 
+                                const handleSelect = () => {
+                                    if (isCustomSize && onCustomSizeSelect) {
+                                        onCustomSizeSelect();
+                                    } else {
+                                        onSelect(group.key, code);
+                                    }
+                                    markInteracted();
+                                };
+
+                                if (group.key === 'corners') {
+                                    return (
+                                        <CornerChoiceCard
+                                            key={code}
+                                            label={value.name}
+                                            swatch={swatch}
+                                            active={active}
+                                            onClick={handleSelect}
+                                        />
+                                    );
+                                }
+
                                 return (
                                     <ChoiceTile
                                         key={code}
                                         active={active}
-                                        onClick={() => {
-                                            if (
-                                                isCustomSize &&
-                                                onCustomSizeSelect
-                                            ) {
-                                                onCustomSizeSelect();
-                                            } else {
-                                                onSelect(group.key, code);
-                                            }
-                                            markInteracted();
-                                        }}
+                                        onClick={handleSelect}
                                     >
                                         <div className="flex min-h-16 items-center justify-center">
                                             {isSvg ? (
@@ -3041,6 +3017,52 @@ function OptionGroup({
             </legend>
             {children}
         </fieldset>
+    );
+}
+
+function CornerChoiceCard({
+    label,
+    swatch,
+    active,
+    onClick,
+}: {
+    label: string;
+    swatch?: string;
+    active: boolean;
+    onClick: () => void;
+}) {
+    const isSvg =
+        typeof swatch === 'string' && swatch.trimStart().startsWith('<svg');
+
+    return (
+        <button
+            type="button"
+            aria-pressed={active}
+            onClick={onClick}
+            className={`flex min-h-16 items-center justify-between gap-3 rounded-md border-2 px-3 py-2 text-left transition-colors ${
+                active
+                    ? 'border-[#800020] bg-[#800020]/5'
+                    : 'border-neutral-200 hover:border-neutral-300'
+            }`}
+        >
+            <span className="text-sm font-semibold text-neutral-900">
+                {label}
+            </span>
+            <span className="flex size-12 shrink-0 items-center justify-center text-neutral-700">
+                {isSvg ? (
+                    <span
+                        className="size-10"
+                        dangerouslySetInnerHTML={{ __html: swatch as string }}
+                    />
+                ) : swatch ? (
+                    <img
+                        src={swatch}
+                        alt={`${label} corner preview`}
+                        className="size-12 object-contain"
+                    />
+                ) : null}
+            </span>
+        </button>
     );
 }
 
@@ -3286,10 +3308,7 @@ function CanvaDesignModal({
                         accept=".pdf,.png,.jpg,.jpeg,.svg,.ai,.psd"
                         required
                         onChange={(e) =>
-                            setData(
-                                'design_file',
-                                e.target.files?.[0] ?? null,
-                            )
+                            setData('design_file', e.target.files?.[0] ?? null)
                         }
                     />
                     {errors.design_file && (

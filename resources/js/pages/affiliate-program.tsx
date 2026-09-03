@@ -10,7 +10,9 @@ export function AffiliateProgram() {
     const user = auth?.user;
 
     const buttonHref = user ? '/settings/affiliate' : c.content.cta_button_href;
-    const buttonText = user ? 'Go to Affiliate Dashboard' : c.content.cta_button_text;
+    const buttonText = user
+        ? 'Go to Affiliate Dashboard'
+        : c.content.cta_button_text;
 
     return (
         <StorefrontLayout>

@@ -8,6 +8,10 @@ import StorefrontLayout from '@/layouts/storefront-layout';
 
 const ACCENT = '#800020';
 const GOLD = '#C9A96A';
+const LEFT_FAQ_QUESTIONS = new Set([
+    'How quickly can my business cards be delivered?',
+    'What is the after-sales policy for printing quality issues?',
+]);
 
 interface Category {
     id: number;
@@ -134,6 +138,13 @@ export default function HelpIndex({ categories, faqs }: Props) {
         );
     }, [faqs, q]);
 
+    const leftFaqs = filteredFaqs.filter((item) =>
+        LEFT_FAQ_QUESTIONS.has(item.question),
+    );
+    const rightFaqs = filteredFaqs.filter(
+        (item) => !LEFT_FAQ_QUESTIONS.has(item.question),
+    );
+
     return (
         <StorefrontLayout activeCategory="Help & FAQs">
             <SEO title={c.seo.title} description={c.seo.description} />
@@ -223,25 +234,32 @@ export default function HelpIndex({ categories, faqs }: Props) {
                     </h2>
 
                     {filteredFaqs.length > 0 ? (
-                        <ul className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-                            {filteredFaqs.map((item) => (
-                                <li
-                                    key={item.id}
-                                    id={`faq-${item.id}`}
-                                    className="w-full rounded-xl border border-neutral-200 bg-white p-5"
+                        <div className="mt-8 grid grid-cols-1 items-start gap-4 md:grid-cols-2">
+                            {[leftFaqs, rightFaqs].map((column, index) => (
+                                <ul
+                                    key={index}
+                                    className="grid content-start gap-4"
                                 >
-                                    <h3 className="text-base font-bold text-neutral-900">
-                                        {item.question}
-                                    </h3>
-                                    <div
-                                        className="help-faq-content mt-2 max-w-none"
-                                        dangerouslySetInnerHTML={{
-                                            __html: item.answer,
-                                        }}
-                                    />
-                                </li>
+                                    {column.map((item) => (
+                                        <li
+                                            key={item.id}
+                                            id={`faq-${item.id}`}
+                                            className="w-full rounded-xl border border-neutral-200 bg-white p-5"
+                                        >
+                                            <h3 className="text-base font-bold text-neutral-900">
+                                                {item.question}
+                                            </h3>
+                                            <div
+                                                className="help-faq-content mt-2 max-w-none"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: item.answer,
+                                                }}
+                                            />
+                                        </li>
+                                    ))}
+                                </ul>
                             ))}
-                        </ul>
+                        </div>
                     ) : (
                         <p className="mt-8 text-center text-sm text-neutral-500">
                             No questions match your search.

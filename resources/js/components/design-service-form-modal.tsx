@@ -13,6 +13,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { useContent } from '@/hooks/use-content';
+import type { UploadFilesModalContent } from '@/types/content';
 
 interface DesignServiceFormModalProps {
     open: boolean;
@@ -34,6 +35,8 @@ interface DesignServiceFormModalProps {
     productId?: number;
     productName?: string;
     productSlug?: string;
+    productTypeLabel?: string;
+    uploadFilesMode?: boolean;
 }
 
 export default function DesignServiceFormModal({
@@ -56,11 +59,14 @@ export default function DesignServiceFormModal({
     productId,
     productName,
     productSlug,
+    productTypeLabel,
+    uploadFilesMode = false,
 }: DesignServiceFormModalProps) {
     const ds = useContent('design_service_page') as {
         notes_heading?: string;
         notes?: string[];
     };
+    const uploadContent = useContent('upload_files_modal');
     const [designServiceCode, setDesignServiceCode] = useState('');
     const [designServiceError, setDesignServiceError] = useState<string | null>(
         null,
@@ -69,7 +75,7 @@ export default function DesignServiceFormModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-7xl">
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-7xl">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     {description && (
@@ -80,28 +86,38 @@ export default function DesignServiceFormModal({
                 <div className="mt-4">
                     <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
                         <div className="space-y-8 md:col-span-7">
-                            <div>
-                                <h3 className="font-serif text-xl font-bold text-[#800020]">
-                                    {ds.notes_heading ?? 'Terms & notes'}
-                                </h3>
-                                <ol className="mt-4 space-y-3">
-                                    {(ds.notes ?? []).map((note, i) => (
-                                        <li key={i} className="flex gap-3">
-                                            <span
-                                                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                                                style={{
-                                                    backgroundColor: '#800020',
-                                                }}
-                                            >
-                                                {i + 1}
-                                            </span>
-                                            <p className="text-sm leading-relaxed text-neutral-700">
-                                                {note}
-                                            </p>
-                                        </li>
-                                    ))}
-                                </ol>
-                            </div>
+                            {uploadFilesMode ? (
+                                <UploadFilesGuidance content={uploadContent} />
+                            ) : (
+                                <div>
+                                    <h3 className="font-serif text-xl font-bold text-[#800020]">
+                                        {ds.notes_heading ?? 'Terms & notes'}
+                                    </h3>
+                                    <ol className="mt-4 space-y-3">
+                                        {(ds.notes ?? [])
+                                            .slice(0, 2)
+                                            .map((note, i) => (
+                                                <li
+                                                    key={i}
+                                                    className="flex gap-3"
+                                                >
+                                                    <span
+                                                        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                                                        style={{
+                                                            backgroundColor:
+                                                                '#800020',
+                                                        }}
+                                                    >
+                                                        {i + 1}
+                                                    </span>
+                                                    <p className="text-sm leading-relaxed text-neutral-700">
+                                                        {note}
+                                                    </p>
+                                                </li>
+                                            ))}
+                                    </ol>
+                                </div>
+                            )}
 
                             {hasDesignServices && (
                                 <div className="border-t border-neutral-100 pt-6">
@@ -193,6 +209,7 @@ export default function DesignServiceFormModal({
                                 productId={productId}
                                 productName={productName}
                                 productSlug={productSlug}
+                                productTypeLabel={productTypeLabel}
                                 onSuccess={() => {
                                     onSubmitted?.();
                                     onOpenChange(false);
@@ -203,5 +220,59 @@ export default function DesignServiceFormModal({
                 </div>
             </DialogContent>
         </Dialog>
+    );
+}
+
+function UploadFilesGuidance({
+    content,
+}: {
+    content: UploadFilesModalContent;
+}) {
+    return (
+        <div className="space-y-5">
+            <div>
+                <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-neutral-700">
+                    {content.accepted_formats.map((format) => (
+                        <li key={format}>
+                            <FormatInstruction value={format} />
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <div className="space-y-3 border-t border-neutral-100 pt-5 text-sm leading-relaxed text-neutral-700">
+                <h4 className="font-bold text-neutral-900">
+                    {content.please_note_heading}
+                </h4>
+                {content.please_note_paragraphs.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                ))}
+                <p>
+                    {content.contact_prefix}
+                    <a
+                        href={content.contact_link_href}
+                        className="font-semibold text-primary hover:underline"
+                    >
+                        {content.contact_link_label}
+                    </a>
+                    .
+                </p>
+            </div>
+        </div>
+    );
+}
+
+function FormatInstruction({ value }: { value: string }) {
+    const separator = value.indexOf(':');
+
+    if (separator === -1) {
+        return value;
+    }
+
+    return (
+        <>
+            <strong>{value.slice(0, separator + 1)}</strong>
+            {value.slice(separator + 1)}
+        </>
     );
 }

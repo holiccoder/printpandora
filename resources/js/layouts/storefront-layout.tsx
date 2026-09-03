@@ -35,7 +35,10 @@ export default function StorefrontLayout({ children, activeCategory }: Props) {
 
             if (target && target instanceof HTMLAnchorElement) {
                 const href = target.getAttribute('href');
-                if (href === '/tickets/create' || href?.endsWith('/tickets/create')) {
+                if (
+                    href === '/tickets/create' ||
+                    href?.endsWith('/tickets/create')
+                ) {
                     e.preventDefault();
                     e.stopPropagation();
 
