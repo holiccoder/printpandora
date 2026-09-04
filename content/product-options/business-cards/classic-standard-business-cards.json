@@ -1702,6 +1702,13 @@
         }
     ],
     "detail_sections": {
+        "feature_cards": [
+            {},
+            {
+                "tooltip_title": "What is gang run printing?",
+                "tooltip_content": "<p>Gang run printing combines the print content from multiple customers on a single layout, prints it on the same paper stock, and then cuts the sheet into individual orders.</p><p><strong>Advantages:</strong></p><ul><li><strong>Lower cost:</strong> Multiple customers share the plate-making and printing costs.</li><li><strong>Suitable for small batches:</strong> Ideal for customers with smaller quantities, with a minimum order of 200 cards of the same design.</li></ul><p><strong>Disadvantages:</strong></p><ul><li><strong>Limited flexibility:</strong> Color variation and minimum order quantities are subject to limitations.</li><li><strong>Color variation between batches:</strong> Different print runs may have color differences, and color reproduction is relatively less accurate.</li></ul>"
+            }
+        ],
         "design_specifications": {
             "heading": "Design Specifications",
             "diagram": {

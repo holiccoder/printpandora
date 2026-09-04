@@ -14,6 +14,53 @@ class BusinessCardProductOptionsTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_seeder_applies_product_specific_gang_run_copy(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        foreach (['classic-standard-business-cards', 'classic-special-business-cards'] as $slug) {
+            Product::create([
+                'name' => str_replace('-', ' ', $slug),
+                'slug' => $slug,
+                'product_category_id' => $category->id,
+                'product_config' => [
+                    'detail_sections' => [
+                        'design_specifications' => ['heading' => 'Keep this section'],
+                        'feature_cards' => [
+                            ['title' => 'Keep this title'],
+                            ['tooltip_content' => 'Replace this copy'],
+                        ],
+                    ],
+                ],
+            ]);
+        }
+
+        (new BusinessCardProductOptionsSeeder)->run();
+
+        $standard = Product::where('slug', 'classic-standard-business-cards')->firstOrFail();
+        $special = Product::where('slug', 'classic-special-business-cards')->firstOrFail();
+
+        $this->assertSame(
+            'Keep this title',
+            data_get($standard->product_config, 'detail_sections.feature_cards.0.title'),
+        );
+        $this->assertSame(
+            'Keep this section',
+            data_get($special->product_config, 'detail_sections.design_specifications.heading'),
+        );
+        $this->assertStringContainsString(
+            'color reproduction is relatively less accurate',
+            strtolower((string) data_get($standard->product_config, 'detail_sections.feature_cards.1.tooltip_content')),
+        );
+        $this->assertStringContainsString(
+            'as accurately as dedicated printing',
+            (string) data_get($special->product_config, 'detail_sections.feature_cards.1.tooltip_content'),
+        );
+    }
+
     public function test_requested_contracts_are_applied_and_existing_content_is_preserved(): void
     {
         $businessCards = ProductCategory::create([

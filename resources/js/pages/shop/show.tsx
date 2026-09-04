@@ -1437,6 +1437,7 @@ export default function ShopShow({
                         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <FeatureChip
                                 mobileCollapsible
+                                revealDetailsOnTitleHover
                                 icon={
                                     <svg
                                         viewBox="0 0 24 24"
@@ -1489,6 +1490,7 @@ export default function ShopShow({
                             />
                             <FeatureChip
                                 mobileCollapsible
+                                revealDetailsOnTitleHover
                                 icon={
                                     <svg
                                         viewBox="0 0 24 24"
@@ -2746,6 +2748,7 @@ function FeatureChip({
     detailTitle,
     details,
     mobileCollapsible = false,
+    revealDetailsOnTitleHover = false,
 }: {
     icon: React.ReactNode;
     label: string;
@@ -2753,9 +2756,12 @@ function FeatureChip({
     detailTitle?: string;
     details?: React.ReactNode;
     mobileCollapsible?: boolean;
+    revealDetailsOnTitleHover?: boolean;
 }) {
     const [mobileExpanded, setMobileExpanded] = useState(false);
+    const [titleHovered, setTitleHovered] = useState(false);
     const canCollapse = mobileCollapsible && Boolean(detailTitle || details);
+    const canRevealOnHover = revealDetailsOnTitleHover && canCollapse;
 
     const detailContent = (detailTitle || details) && (
         <div className="mt-4 border-t border-neutral-100 pt-3">
@@ -2777,9 +2783,14 @@ function FeatureChip({
             {canCollapse ? (
                 <button
                     type="button"
-                    className="flex w-full items-start gap-3 text-left md:pointer-events-none"
+                    className={cn(
+                        'flex w-full items-start gap-3 text-left',
+                        !canRevealOnHover && 'md:pointer-events-none',
+                    )}
                     onClick={() => setMobileExpanded((expanded) => !expanded)}
-                    aria-expanded={mobileExpanded}
+                    onMouseEnter={() => setTitleHovered(true)}
+                    onMouseLeave={() => setTitleHovered(false)}
+                    aria-expanded={mobileExpanded || titleHovered}
                 >
                     <span className="mt-0.5 shrink-0">{icon}</span>
                     <span className="min-w-0 flex-1">
@@ -2819,6 +2830,7 @@ function FeatureChip({
                 <div
                     className={cn(
                         'md:block',
+                        canRevealOnHover && !titleHovered && 'md:hidden',
                         mobileExpanded ? 'block' : 'hidden',
                     )}
                 >

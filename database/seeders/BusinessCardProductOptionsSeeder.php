@@ -94,6 +94,17 @@ class BusinessCardProductOptionsSeeder extends Seeder
     ];
 
     /**
+     * The gang-run copy is product-specific, so keep its source beside each
+     * product's existing detail-section configuration.
+     *
+     * @var array<string, string>
+     */
+    private const PRODUCT_FEATURE_CARD_FILES = [
+        'classic-standard-business-cards' => 'content/product-options/business-cards/classic-standard-business-cards.json',
+        'classic-special-business-cards' => 'content/product-options/business-cards/classic-special-business-cards.json',
+    ];
+
+    /**
      * @var array<string, array<int, string>>
      */
     private const COTTON_GALLERIES = [
@@ -450,6 +461,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
 
             $this->syncProductSubtitles($configuration);
             $this->syncDeliveryFaqs();
+            $this->syncFeatureCards();
         });
 
         if ($this->command !== null) {
@@ -547,5 +559,50 @@ class BusinessCardProductOptionsSeeder extends Seeder
                     $product->forceFill(['product_config' => $config])->saveQuietly();
                 }
             });
+    }
+
+    private function syncFeatureCards(): void
+    {
+        foreach (self::PRODUCT_FEATURE_CARD_FILES as $slug => $relativePath) {
+            $product = Product::query()->where('slug', $slug)->first();
+
+            if (! $product || ! is_array($product->product_config) || $product->product_config === []) {
+                continue;
+            }
+
+            $path = base_path($relativePath);
+            $contents = file_get_contents($path);
+
+            if ($contents === false) {
+                throw new \RuntimeException("Unable to read {$path}.");
+            }
+
+            $source = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+            $featureCards = is_array($source['detail_sections']['feature_cards'] ?? null)
+                ? $source['detail_sections']['feature_cards']
+                : [];
+            $gangRunCard = is_array($featureCards[1] ?? null) ? $featureCards[1] : [];
+
+            if ($gangRunCard === []) {
+                continue;
+            }
+
+            $config = $product->product_config;
+            $details = is_array($config['detail_sections'] ?? null)
+                ? $config['detail_sections']
+                : [];
+            $cards = is_array($details['feature_cards'] ?? null)
+                ? array_values($details['feature_cards'])
+                : [];
+            $cards[0] = is_array($cards[0] ?? null) ? $cards[0] : [];
+            $cards[1] = array_replace(
+                is_array($cards[1] ?? null) ? $cards[1] : [],
+                $gangRunCard,
+            );
+            $details['feature_cards'] = array_values($cards);
+            $config['detail_sections'] = $details;
+
+            $product->forceFill(['product_config' => $config])->saveQuietly();
+        }
     }
 }

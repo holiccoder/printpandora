@@ -303,9 +303,11 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
     const prev = () => goTo(index - 1);
     const next = () => goTo(index + 1);
     const activeTextTone = items[index]?.textTone ?? 'dark';
+    const isSwipePointer = (event: PointerEvent<HTMLElement>) =>
+        event.pointerType === 'touch' || event.pointerType === 'pen';
 
     const handlePointerDown = (event: PointerEvent<HTMLElement>) => {
-        if (event.pointerType === 'mouse' && event.button !== 0) {
+        if (!isSwipePointer(event)) {
             return;
         }
 
@@ -314,6 +316,10 @@ export function HeroCarousel({ slides, autoPlayMs = 6000, className }: Props) {
     };
 
     const handlePointerUp = (event: PointerEvent<HTMLElement>) => {
+        if (!isSwipePointer(event)) {
+            return;
+        }
+
         const start = swipeStart.current;
         swipeStart.current = null;
 
