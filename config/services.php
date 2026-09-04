@@ -85,6 +85,19 @@ return [
         'app_encoding_aes_key' => env('WECOM_APP_ENCODING_AES_KEY') ?: env('WECOM_ENCODING_AES_KEY'),
     ],
 
+    'feishu' => [
+        'app_id' => env('FEISHU_APP_ID'),
+        'app_secret' => env('FEISHU_APP_SECRET'),
+        'verification_token' => env('FEISHU_VERIFICATION_TOKEN'),
+        'encrypt_key' => env('FEISHU_ENCRYPT_KEY'),
+        'timeout' => (int) env('FEISHU_TIMEOUT', 10),
+        'base_url' => env('FEISHU_BASE_URL', 'https://open.feishu.cn/open-apis'),
+        'support_open_ids' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('FEISHU_SUPPORT_OPEN_IDS', '')),
+        ))),
+    ],
+
     'four_px' => [
         'enabled' => (bool) env('FOURPX_ENABLED', false),
         'environment' => env('FOURPX_ENVIRONMENT', 'test'),

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Ai\Agents\CustomerSupportAgent;
+use App\Jobs\SendFeishuNotification;
 use App\Jobs\SendWeComAppNotification;
 use App\Models\AiChatConversation;
 use App\Models\AiChatMessage;
@@ -122,6 +123,7 @@ class AiChatController extends Controller
 
         if ($latestMessage?->role === 'user') {
             SendWeComAppNotification::dispatch($conversation, $latestMessage);
+            SendFeishuNotification::dispatch($conversation, $latestMessage);
         }
 
         return response()->json(['mode' => 'human']);
@@ -182,6 +184,7 @@ class AiChatController extends Controller
         if ($conversation->mode === 'human') {
             $telegramSupport->notifyCustomerMessage($conversation, $message);
             SendWeComAppNotification::dispatch($conversation, $message);
+            SendFeishuNotification::dispatch($conversation, $message);
         }
 
         return response()->json(['message' => $this->serializeMessage($message)], 201);

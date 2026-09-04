@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ChatApiController;
 use App\Http\Controllers\Api\SocialMediaPostApiController;
+use App\Http\Controllers\FeishuCallbackController;
 use App\Http\Controllers\ShippingQuoteController;
 use App\Http\Controllers\TelegramWebhookController;
 use App\Http\Controllers\WeComAppCallbackController;
@@ -17,6 +18,11 @@ Route::post('shipping/quote', [ShippingQuoteController::class, 'store'])
 // Telegram's X-Telegram-Bot-Api-Secret-Token header in the controller.
 Route::post('telegram/webhook', TelegramWebhookController::class)
     ->name('telegram.webhook');
+
+// Feishu authenticates this callback in the controller because the request
+// carries the provider-specific signature and optional encrypted payload.
+Route::post('feishu/callback', FeishuCallbackController::class)
+    ->name('feishu.callback');
 
 // WeCom verifies and authenticates this callback in the controller because
 // the request carries the provider-specific signature and encrypted payload.

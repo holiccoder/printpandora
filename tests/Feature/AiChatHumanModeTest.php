@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\SendFeishuNotification;
 use App\Jobs\SendWeComAppNotification;
 use App\Models\Admin;
 use App\Models\AiChatConversation;
@@ -62,6 +63,12 @@ class AiChatHumanModeTest extends TestCase
             return $job->conversation->session_id !== ''
                 && $job->message->content === 'I still need help.';
         });
+        Queue::assertPushed(SendFeishuNotification::class, function (
+            SendFeishuNotification $job,
+        ): bool {
+            return $job->conversation->session_id !== ''
+                && $job->message->content === 'I still need help.';
+        });
     }
 
     public function test_handoff_queues_the_latest_customer_message_for_wecom_app_support(): void
@@ -82,6 +89,12 @@ class AiChatHumanModeTest extends TestCase
 
         Queue::assertPushed(SendWeComAppNotification::class, function (
             SendWeComAppNotification $job,
+        ) use ($conversation, $message): bool {
+            return $job->conversation->is($conversation)
+                && $job->message->is($message);
+        });
+        Queue::assertPushed(SendFeishuNotification::class, function (
+            SendFeishuNotification $job,
         ) use ($conversation, $message): bool {
             return $job->conversation->is($conversation)
                 && $job->message->is($message);

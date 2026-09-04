@@ -77,6 +77,12 @@ class AiChatConversation extends Model
         return $this->hasMany(AiChatWecomAppMessage::class, 'conversation_id');
     }
 
+    /** @return HasMany<AiChatFeishuMessage, $this> */
+    public function feishuMessages(): HasMany
+    {
+        return $this->hasMany(AiChatFeishuMessage::class, 'conversation_id');
+    }
+
     /** @return HasOne<AiChatMessage, $this> */
     public function latestMessage(): HasOne
     {
