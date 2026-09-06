@@ -69,7 +69,7 @@
                     "href": "/business-card-design-service"
                 },
                 {
-                    "label": "Design Partner Program",
+                    "label": "Designer Partner Program",
                     "href": "/designer-partner-program"
                 },
                 {
@@ -1425,9 +1425,9 @@
             "highlight": "Designer pricing up to 30% off",
             "highlight_body": "Approved partners receive a tiered Designer Account with pricing that grows with your relationship.",
             "cta": "Apply to become a partner",
-            "cta_href": "#apply",
-            "image_url": "/images/home/business-card-design-service.jpg",
-            "image_alt": "Business card design concepts on a designer's desk with a laptop, printed cards, and notebooks"
+            "cta_href": "#application-requirements-form",
+            "image_url": "/images/home/designer-partner-program-hero.png",
+            "image_alt": "Designer arranging premium printed cards, paper swatches, and finishing samples in a print studio"
         },
         "anchor_links": [
             {
@@ -1467,27 +1467,37 @@
                 {
                     "icon": "badge-percent",
                     "title": "Exclusive designer pricing",
-                    "description": "Get a Designer Account with pricing assigned to your partnership tier."
+                    "description": "Get a Designer Account with pricing assigned to your partnership tier.",
+                    "image_url": "/images/business-cards/finish/gold-foil.webp",
+                    "image_alt": "Burgundy business cards with a refined gold foil border"
                 },
                 {
                     "icon": "printer",
                     "title": "Professional print support",
-                    "description": "Get practical guidance on paper, materials, and special finishes so your designs can be produced with confidence."
+                    "description": "Get practical guidance on paper, materials, and special finishes so your designs can be produced with confidence.",
+                    "image_url": "/images/home/designer-partner-program-hero.png",
+                    "image_alt": "Hands comparing printed card samples and paper stocks"
                 },
                 {
                     "icon": "file-check",
                     "title": "File and production support",
-                    "description": "Receive a basic pre-production file check and a clear warning when we spot an obvious production risk."
+                    "description": "Receive a basic pre-production file check and a clear warning when we spot an obvious production risk.",
+                    "image_url": "/images/business-cards/finish/linen-embossed.webp",
+                    "image_alt": "Textured linen business card showing a subtle embossed finish"
                 },
                 {
                     "icon": "layers",
                     "title": "Sample and material support",
-                    "description": "Eligible partners can access sample sets, paper samples, and finishing references for client projects."
+                    "description": "Eligible partners can access sample sets, paper samples, and finishing references for client projects.",
+                    "image_url": "/images/business-cards/paper/cotton-deckled.webp",
+                    "image_alt": "Tactile cotton business cards with deckled edges"
                 },
                 {
                     "icon": "handshake",
                     "title": "Long-term partnership benefits",
-                    "description": "Your partner tier can grow with order volume, collaboration frequency, and annual purchasing."
+                    "description": "Your partner tier can grow with order volume, collaboration frequency, and annual purchasing.",
+                    "image_url": "/images/business-cards/packing/shipping-promo.webp",
+                    "image_alt": "Printed cards prepared in protective packaging for shipment"
                 }
             ]
         },
@@ -1547,16 +1557,6 @@
                 "Branding agency",
                 "Advertising agency",
                 "Other professional creative organization"
-            ],
-            "requirements_heading": "Application requirements",
-            "requirements_intro": "Applicants should provide verifiable professional and portfolio information. InkPavo reviews the application, work, and business context together.",
-            "requirements": [
-                "Your name or company name",
-                "Country or region and email address",
-                "Personal or company website",
-                "Portfolio links such as Behance, Dribbble, or Instagram",
-                "Your primary design field",
-                "The print products and finishes you expect to purchase"
             ]
         },
         "process": {
@@ -1610,7 +1610,46 @@
             "heading": "Bring your next client project to life with InkPavo.",
             "body": "To apply, share a little about your work and the print projects you expect to bring to InkPavo. Include your name or company, country or region, email, website or portfolio links, main design field, and expected products or finishes.",
             "cta": "Start your application",
-            "cta_href": "/contact-us?topic=Press%20%26%20partnerships&subject=Designer%20Partner%20Program%20Application"
+            "cta_href": "#application-requirements-form"
+        },
+        "application_form": {
+            "eyebrow": "Application requirements form",
+            "heading": "Tell us about your work",
+            "body": "Share the details we need to review your Designer Partner application.",
+            "fields": {
+                "name_or_company": {
+                    "label": "Your name or company name",
+                    "placeholder": "Your name or company"
+                },
+                "country_or_region": {
+                    "label": "Country or region",
+                    "placeholder": "Where are you based?"
+                },
+                "email": {
+                    "label": "Email address",
+                    "placeholder": "you@example.com"
+                },
+                "website": {
+                    "label": "Personal or company website",
+                    "placeholder": "https://yourwebsite.com"
+                },
+                "portfolio_links": {
+                    "label": "Portfolio links such as Behance, Dribbble, or Instagram",
+                    "placeholder": "Add one or more portfolio links"
+                },
+                "design_field": {
+                    "label": "Your primary design field",
+                    "placeholder": "e.g. brand, packaging, or wedding design"
+                },
+                "expected_products_finishes": {
+                    "label": "The print products and finishes you expect to purchase",
+                    "placeholder": "Tell us what you plan to print and the finishes you need"
+                }
+            },
+            "submit_label": "Submit application",
+            "submitting_label": "Sending application...",
+            "privacy_note": "We'll use your details to review your application and follow up about the program.",
+            "success_message": "Thanks for applying. Our team will review your details and get back to you soon."
         }
     },
     "business_cards_landing_page": {

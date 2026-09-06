@@ -1,30 +1,24 @@
-import { Link } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import {
     ArrowRight,
     BadgePercent,
     Building2,
     Check,
     ClipboardCheck,
-    FileCheck2,
     Handshake,
-    Layers3,
     Palette,
-    Printer,
     Scissors,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import type { FormEventHandler } from 'react';
+import InputError from '@/components/input-error';
 import SEO from '@/components/seo';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import type { DesignerPartnerPageContent } from '@/types/content';
-
-const BENEFIT_ICONS: Record<string, LucideIcon> = {
-    'badge-percent': BadgePercent,
-    printer: Printer,
-    'file-check': FileCheck2,
-    layers: Layers3,
-    handshake: Handshake,
-};
 
 const AUDIENCE_ICONS: LucideIcon[] = [
     Palette,
@@ -39,11 +33,21 @@ const AUDIENCE_ICONS: LucideIcon[] = [
     Handshake,
 ];
 
+type DesignerPartnerApplicationForm = {
+    name_or_company: string;
+    country_or_region: string;
+    email: string;
+    website: string;
+    portfolio_links: string;
+    design_field: string;
+    expected_products_finishes: string;
+};
+
 export default function DesignerPartnerProgram() {
     const c = useContent('designer_partner_page') as DesignerPartnerPageContent;
 
     return (
-        <StorefrontLayout activeCategory="Design Partner Program">
+        <StorefrontLayout activeCategory="Designer Partner Program">
             <SEO
                 title={c.seo.title ?? c.hero.heading}
                 description={c.seo.description}
@@ -167,34 +171,28 @@ function BenefitsSection({ content }: { content: DesignerPartnerPageContent }) {
                 />
 
                 <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-                    {benefits.items.map((item, index) => {
-                        const Icon = BENEFIT_ICONS[item.icon] ?? Check;
-
-                        return (
-                            <article
-                                key={item.title}
-                                className="flex flex-col rounded-xl border border-neutral-200 bg-[#fbfaf6] p-6 transition hover:-translate-y-0.5 hover:border-[#c9a96a] hover:shadow-md"
-                            >
-                                <div className="flex items-center justify-between">
-                                    <div className="flex size-11 items-center justify-center rounded-full bg-[#800020]/10 text-[#800020]">
-                                        <Icon
-                                            className="size-5"
-                                            strokeWidth={1.7}
-                                        />
-                                    </div>
-                                    <span className="font-serif text-2xl font-bold text-[#c9a96a]">
-                                        {String(index + 1).padStart(2, '0')}
-                                    </span>
-                                </div>
-                                <h3 className="mt-6 font-serif text-xl leading-tight font-bold text-neutral-900">
+                    {benefits.items.map((item) => (
+                        <article
+                            key={item.title}
+                            className="overflow-hidden rounded-xl border border-neutral-200 bg-[#fbfaf6] transition hover:-translate-y-0.5 hover:border-[#c9a96a] hover:shadow-md"
+                        >
+                            <div className="aspect-[4/3] overflow-hidden bg-neutral-200">
+                                <img
+                                    src={item.image_url}
+                                    alt={item.image_alt}
+                                    className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                                />
+                            </div>
+                            <div className="p-6">
+                                <h3 className="font-serif text-xl leading-tight font-bold text-neutral-900">
                                     {item.title}
                                 </h3>
                                 <p className="mt-3 text-sm leading-relaxed text-neutral-600">
                                     {item.description}
                                 </p>
-                            </article>
-                        );
-                    })}
+                            </div>
+                        </article>
+                    ))}
                 </div>
             </div>
         </section>
@@ -341,32 +339,25 @@ function EligibilitySection({
                 </div>
 
                 <div className="rounded-2xl bg-[#800020] p-7 text-white sm:p-10">
-                    <ClipboardCheck
+                    <Handshake
                         className="size-8 text-[#e5c98f]"
                         strokeWidth={1.5}
                     />
                     <h3 className="mt-6 font-serif text-3xl font-bold">
-                        {eligibility.requirements_heading}
+                        A thoughtful print partner for your clients
                     </h3>
                     <p className="mt-4 text-sm leading-relaxed text-white/75">
-                        {eligibility.requirements_intro}
+                        Bring your creative direction and client relationships;
+                        we will bring the production expertise, materials, and
+                        support behind every order.
                     </p>
-                    <ul className="mt-8 space-y-4">
-                        {eligibility.requirements.map((requirement) => (
-                            <li
-                                key={requirement}
-                                className="flex items-start gap-3"
-                            >
-                                <Check
-                                    className="mt-0.5 size-4 shrink-0 text-[#e5c98f]"
-                                    strokeWidth={2.2}
-                                />
-                                <span className="text-sm leading-relaxed text-white/90">
-                                    {requirement}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
+                    <a
+                        href="#application-requirements-form"
+                        className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-[#e5c98f] underline decoration-[#e5c98f]/50 underline-offset-4 transition hover:text-white focus-visible:ring-2 focus-visible:ring-[#e5c98f] focus-visible:outline-none"
+                    >
+                        Review the application form
+                        <ArrowRight className="size-4" />
+                    </a>
                 </div>
             </div>
         </section>
@@ -466,33 +457,357 @@ function MaterialsSection({
 }
 
 function ApplySection({ content }: { content: DesignerPartnerPageContent }) {
-    const { apply } = content;
+    const { apply, application_form } = content;
+    const page = usePage<{ flash?: { success?: string } }>();
+    const { data, setData, post, processing, errors, reset } =
+        useForm<DesignerPartnerApplicationForm>({
+            name_or_company: '',
+            country_or_region: '',
+            email: '',
+            website: '',
+            portfolio_links: '',
+            design_field: '',
+            expected_products_finishes: '',
+        });
+
+    const submit: FormEventHandler<HTMLFormElement> = (event) => {
+        event.preventDefault();
+
+        post('/designer-partner-program/applications', {
+            preserveScroll: true,
+            onSuccess: () => reset(),
+        });
+    };
 
     return (
         <section
             id="apply"
             className="scroll-mt-32 bg-[#fbf6ee] py-16 lg:py-24"
         >
-            <div className="mx-auto grid max-w-5xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_auto] lg:px-8">
-                <div>
-                    <p className="text-xs font-semibold tracking-[0.18em] text-[#800020] uppercase">
-                        {apply.eyebrow}
-                    </p>
-                    <h2 className="mt-4 max-w-2xl font-serif text-3xl leading-tight font-bold text-[#800020] sm:text-4xl lg:text-5xl">
-                        {apply.heading}
-                    </h2>
-                    <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-700">
-                        {apply.body}
-                    </p>
+            <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+                <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <p className="text-xs font-semibold tracking-[0.18em] text-[#800020] uppercase">
+                            {apply.eyebrow}
+                        </p>
+                        <h2 className="mt-4 max-w-2xl font-serif text-3xl leading-tight font-bold text-[#800020] sm:text-4xl lg:text-5xl">
+                            {apply.heading}
+                        </h2>
+                        <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-700">
+                            {apply.body}
+                        </p>
+                    </div>
+
+                    <a
+                        href={apply.cta_href}
+                        className="inline-flex shrink-0 items-center justify-center gap-2 rounded-md bg-[#800020] px-7 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#650019] focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none"
+                    >
+                        {apply.cta}
+                        <ArrowRight className="size-4" />
+                    </a>
                 </div>
 
-                <Link
-                    href={apply.cta_href}
-                    className="inline-flex items-center justify-center gap-2 rounded-md bg-[#800020] px-7 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#650019] focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none"
-                >
-                    {apply.cta}
-                    <ArrowRight className="size-4" />
-                </Link>
+                <div className="mt-14 rounded-2xl border border-[#eadfce] bg-white p-6 shadow-sm sm:p-10">
+                    <div className="max-w-2xl">
+                        <p className="text-xs font-semibold tracking-[0.18em] text-[#800020] uppercase">
+                            {application_form.eyebrow}
+                        </p>
+                        <h3 className="mt-3 font-serif text-3xl font-bold text-neutral-900">
+                            {application_form.heading}
+                        </h3>
+                        <p className="mt-3 text-sm leading-relaxed text-neutral-600">
+                            {application_form.body}
+                        </p>
+                    </div>
+
+                    {page.props.flash?.success && (
+                        <div
+                            className="mt-8 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-relaxed text-emerald-800"
+                            role="status"
+                        >
+                            {application_form.success_message}
+                        </div>
+                    )}
+
+                    <form
+                        id="application-requirements-form"
+                        onSubmit={submit}
+                        className="mt-8 grid scroll-mt-32 gap-6 sm:grid-cols-2"
+                    >
+                        <div>
+                            <Label
+                                htmlFor="name_or_company"
+                                className="text-neutral-800"
+                            >
+                                {application_form.fields.name_or_company.label}
+                            </Label>
+                            <Input
+                                id="name_or_company"
+                                name="name_or_company"
+                                value={data.name_or_company}
+                                onChange={(event) =>
+                                    setData(
+                                        'name_or_company',
+                                        event.target.value,
+                                    )
+                                }
+                                placeholder={
+                                    application_form.fields.name_or_company
+                                        .placeholder
+                                }
+                                aria-invalid={Boolean(errors.name_or_company)}
+                                aria-describedby={
+                                    errors.name_or_company
+                                        ? 'name_or_company-error'
+                                        : undefined
+                                }
+                                autoComplete="name"
+                                required
+                                className="mt-2 bg-white"
+                            />
+                            <InputError
+                                id="name_or_company-error"
+                                message={errors.name_or_company}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <Label
+                                htmlFor="country_or_region"
+                                className="text-neutral-800"
+                            >
+                                {
+                                    application_form.fields.country_or_region
+                                        .label
+                                }
+                            </Label>
+                            <Input
+                                id="country_or_region"
+                                name="country_or_region"
+                                value={data.country_or_region}
+                                onChange={(event) =>
+                                    setData(
+                                        'country_or_region',
+                                        event.target.value,
+                                    )
+                                }
+                                placeholder={
+                                    application_form.fields.country_or_region
+                                        .placeholder
+                                }
+                                aria-invalid={Boolean(errors.country_or_region)}
+                                aria-describedby={
+                                    errors.country_or_region
+                                        ? 'country_or_region-error'
+                                        : undefined
+                                }
+                                autoComplete="country-name"
+                                required
+                                className="mt-2 bg-white"
+                            />
+                            <InputError
+                                id="country_or_region-error"
+                                message={errors.country_or_region}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <Label htmlFor="email" className="text-neutral-800">
+                                {application_form.fields.email.label}
+                            </Label>
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                value={data.email}
+                                onChange={(event) =>
+                                    setData('email', event.target.value)
+                                }
+                                placeholder={
+                                    application_form.fields.email.placeholder
+                                }
+                                aria-invalid={Boolean(errors.email)}
+                                aria-describedby={
+                                    errors.email ? 'email-error' : undefined
+                                }
+                                autoComplete="email"
+                                required
+                                className="mt-2 bg-white"
+                            />
+                            <InputError
+                                id="email-error"
+                                message={errors.email}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <Label
+                                htmlFor="website"
+                                className="text-neutral-800"
+                            >
+                                {application_form.fields.website.label}
+                            </Label>
+                            <Input
+                                id="website"
+                                name="website"
+                                type="url"
+                                value={data.website}
+                                onChange={(event) =>
+                                    setData('website', event.target.value)
+                                }
+                                placeholder={
+                                    application_form.fields.website.placeholder
+                                }
+                                aria-invalid={Boolean(errors.website)}
+                                aria-describedby={
+                                    errors.website ? 'website-error' : undefined
+                                }
+                                autoComplete="url"
+                                required
+                                className="mt-2 bg-white"
+                            />
+                            <InputError
+                                id="website-error"
+                                message={errors.website}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="sm:col-span-2">
+                            <Label
+                                htmlFor="portfolio_links"
+                                className="text-neutral-800"
+                            >
+                                {application_form.fields.portfolio_links.label}
+                            </Label>
+                            <textarea
+                                id="portfolio_links"
+                                name="portfolio_links"
+                                value={data.portfolio_links}
+                                onChange={(event) =>
+                                    setData(
+                                        'portfolio_links',
+                                        event.target.value,
+                                    )
+                                }
+                                placeholder={
+                                    application_form.fields.portfolio_links
+                                        .placeholder
+                                }
+                                aria-invalid={Boolean(errors.portfolio_links)}
+                                aria-describedby={
+                                    errors.portfolio_links
+                                        ? 'portfolio_links-error'
+                                        : undefined
+                                }
+                                rows={4}
+                                required
+                                className="mt-2 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-neutral-900 shadow-xs transition outline-none placeholder:text-muted-foreground focus-visible:border-[#800020] focus-visible:ring-2 focus-visible:ring-[#800020]/20"
+                            />
+                            <InputError
+                                id="portfolio_links-error"
+                                message={errors.portfolio_links}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="sm:col-span-2">
+                            <Label
+                                htmlFor="design_field"
+                                className="text-neutral-800"
+                            >
+                                {application_form.fields.design_field.label}
+                            </Label>
+                            <Input
+                                id="design_field"
+                                name="design_field"
+                                value={data.design_field}
+                                onChange={(event) =>
+                                    setData('design_field', event.target.value)
+                                }
+                                placeholder={
+                                    application_form.fields.design_field
+                                        .placeholder
+                                }
+                                aria-invalid={Boolean(errors.design_field)}
+                                aria-describedby={
+                                    errors.design_field
+                                        ? 'design_field-error'
+                                        : undefined
+                                }
+                                required
+                                className="mt-2 bg-white"
+                            />
+                            <InputError
+                                id="design_field-error"
+                                message={errors.design_field}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="sm:col-span-2">
+                            <Label
+                                htmlFor="expected_products_finishes"
+                                className="text-neutral-800"
+                            >
+                                {
+                                    application_form.fields
+                                        .expected_products_finishes.label
+                                }
+                            </Label>
+                            <textarea
+                                id="expected_products_finishes"
+                                name="expected_products_finishes"
+                                value={data.expected_products_finishes}
+                                onChange={(event) =>
+                                    setData(
+                                        'expected_products_finishes',
+                                        event.target.value,
+                                    )
+                                }
+                                placeholder={
+                                    application_form.fields
+                                        .expected_products_finishes.placeholder
+                                }
+                                aria-invalid={Boolean(
+                                    errors.expected_products_finishes,
+                                )}
+                                aria-describedby={
+                                    errors.expected_products_finishes
+                                        ? 'expected_products_finishes-error'
+                                        : undefined
+                                }
+                                rows={4}
+                                required
+                                className="mt-2 w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-neutral-900 shadow-xs transition outline-none placeholder:text-muted-foreground focus-visible:border-[#800020] focus-visible:ring-2 focus-visible:ring-[#800020]/20"
+                            />
+                            <InputError
+                                id="expected_products_finishes-error"
+                                message={errors.expected_products_finishes}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-4 border-t border-neutral-200 pt-6 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="max-w-xl text-xs leading-relaxed text-neutral-500">
+                                {application_form.privacy_note}
+                            </p>
+                            <Button
+                                type="submit"
+                                disabled={processing}
+                                className="shrink-0 bg-[#800020] px-6 py-3 text-white hover:bg-[#650019]"
+                            >
+                                {processing
+                                    ? application_form.submitting_label
+                                    : application_form.submit_label}
+                                <ArrowRight className="size-4" />
+                            </Button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </section>
     );

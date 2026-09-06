@@ -314,6 +314,8 @@ export interface DesignerPartnerPageContent {
             icon: string;
             title: string;
             description: string;
+            image_url: string;
+            image_alt: string;
         }>;
     };
     pricing: {
@@ -340,9 +342,6 @@ export interface DesignerPartnerPageContent {
         heading: string;
         body: string;
         audiences: string[];
-        requirements_heading: string;
-        requirements_intro: string;
-        requirements: string[];
     };
     process: {
         eyebrow: string;
@@ -367,6 +366,45 @@ export interface DesignerPartnerPageContent {
         body: string;
         cta: string;
         cta_href: string;
+    };
+    application_form: {
+        eyebrow: string;
+        heading: string;
+        body: string;
+        fields: {
+            name_or_company: {
+                label: string;
+                placeholder: string;
+            };
+            country_or_region: {
+                label: string;
+                placeholder: string;
+            };
+            email: {
+                label: string;
+                placeholder: string;
+            };
+            website: {
+                label: string;
+                placeholder: string;
+            };
+            portfolio_links: {
+                label: string;
+                placeholder: string;
+            };
+            design_field: {
+                label: string;
+                placeholder: string;
+            };
+            expected_products_finishes: {
+                label: string;
+                placeholder: string;
+            };
+        };
+        submit_label: string;
+        submitting_label: string;
+        privacy_note: string;
+        success_message: string;
     };
 }
 

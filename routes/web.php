@@ -6,17 +6,18 @@ use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DesignerPartnerApplicationController;
 use App\Http\Controllers\DesignServiceRequestController;
-use App\Http\Controllers\ProductDesignRequestController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductDesignRequestController;
 use App\Http\Controllers\ReferralController;
-use App\Http\Controllers\ShowcaseController;
 use App\Http\Controllers\Shop\CartController;
 use App\Http\Controllers\Shop\CheckoutController;
 use App\Http\Controllers\Shop\OrderController;
 use App\Http\Controllers\Shop\ProductController;
 use App\Http\Controllers\Shop\TicketController;
+use App\Http\Controllers\ShowcaseController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -44,6 +45,8 @@ Route::inertia('/free-sample-pack', 'free-sample-pack')->name('shop.free-sample-
 Route::get('/business-card-design-service', [DesignServiceRequestController::class, 'create'])->name('business-card-design-service');
 Route::post('/business-card-design-service', [DesignServiceRequestController::class, 'store'])->name('business-card-design-service.store');
 Route::inertia('/designer-partner-program', 'designer-partner-program')->name('designer-partner-program');
+Route::post('/designer-partner-program/applications', [DesignerPartnerApplicationController::class, 'store'])
+    ->name('designer-partner-program.applications.store');
 Route::post('/product-designs', [ProductDesignRequestController::class, 'store'])->name('product-designs.store');
 Route::inertia('/postcards', 'postcards')->name('postcards');
 Route::inertia('/stickers-and-labels', 'stickers-and-labels')->name('stickers-and-labels');
