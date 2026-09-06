@@ -316,6 +316,10 @@
                     "href": "/affiliate-program"
                 },
                 {
+                    "label": "Designer Partner Program",
+                    "href": "/designer-partner-program"
+                },
+                {
                     "label": "Showcases",
                     "href": "/showcases"
                 }
@@ -1403,6 +1407,207 @@
             "Standard PVC card",
             "Premium PVC card"
         ]
+    },
+    "designer_partner_page": {
+        "_source_file": "resources/js/pages/designer-partner-program.tsx",
+        "seo": {
+            "title": "Designer Partner Program",
+            "description": "Join InkPavo's Designer Partner Program for designer pricing, print production support, file checks, and long-term partnership benefits."
+        },
+        "hero": {
+            "eyebrow": "For designers, studios and creative agencies",
+            "heading": "Designer Partner Program",
+            "body": "A professional print partnership for the people who bring business cards, invitations, packaging cards, and other custom print projects to life.",
+            "highlight": "Designer pricing up to 30% off",
+            "highlight_body": "Approved partners receive a tiered Designer Account with pricing that grows with your relationship.",
+            "cta": "Apply to become a partner",
+            "cta_href": "#apply",
+            "image_url": "/images/home/business-card-design-service.jpg",
+            "image_alt": "Business card design concepts on a designer's desk with a laptop, printed cards, and notebooks"
+        },
+        "anchor_links": [
+            {
+                "label": "Benefits",
+                "href": "#benefits"
+            },
+            {
+                "label": "Pricing",
+                "href": "#pricing"
+            },
+            {
+                "label": "File support",
+                "href": "#support"
+            },
+            {
+                "label": "Who can apply",
+                "href": "#eligibility"
+            },
+            {
+                "label": "How it works",
+                "href": "#process"
+            },
+            {
+                "label": "Materials",
+                "href": "#materials"
+            },
+            {
+                "label": "Apply",
+                "href": "#apply"
+            }
+        ],
+        "benefits": {
+            "eyebrow": "Partner benefits",
+            "heading": "Make more room for the creative work.",
+            "body": "Spend more time on the idea. Leave the paper, processes, file checks, and production questions to InkPavo.",
+            "items": [
+                {
+                    "icon": "badge-percent",
+                    "title": "Exclusive designer pricing",
+                    "description": "Get a Designer Account with pricing assigned to your partnership tier."
+                },
+                {
+                    "icon": "printer",
+                    "title": "Professional print support",
+                    "description": "Get practical guidance on paper, materials, and special finishes so your designs can be produced with confidence."
+                },
+                {
+                    "icon": "file-check",
+                    "title": "File and production support",
+                    "description": "Receive a basic pre-production file check and a clear warning when we spot an obvious production risk."
+                },
+                {
+                    "icon": "layers",
+                    "title": "Sample and material support",
+                    "description": "Eligible partners can access sample sets, paper samples, and finishing references for client projects."
+                },
+                {
+                    "icon": "handshake",
+                    "title": "Long-term partnership benefits",
+                    "description": "Your partner tier can grow with order volume, collaboration frequency, and annual purchasing."
+                }
+            ]
+        },
+        "pricing": {
+            "eyebrow": "Designer pricing",
+            "heading": "A pricing tier for every stage of the partnership.",
+            "body": "Designer Partner pricing is adjusted by qualification, order frequency, order value, and annual purchasing.",
+            "tiers": [
+                {
+                    "name": "Designer Member",
+                    "discount": "Up to 15% off",
+                    "description": "The starting Designer Pricing tier after your application is approved.",
+                    "audience": "Newly approved designers"
+                },
+                {
+                    "name": "Designer Partner and Pro",
+                    "discount": "Up to 25% off",
+                    "description": "A higher tier for stable, ongoing collaboration.",
+                    "audience": "Independent designers and studios with consistent orders"
+                },
+                {
+                    "name": "Designer Elite",
+                    "discount": "Up to 30% off",
+                    "description": "The highest partner tier for long-term collaboration and higher purchasing volume.",
+                    "audience": "Established professional partners"
+                }
+            ]
+        },
+        "support": {
+            "eyebrow": "File and production support",
+            "heading": "Get the details right before your files go to press.",
+            "body": "Special printing processes often require different file preparation. InkPavo can help you confirm the key production details before a project moves forward.",
+            "checks": [
+                "File dimensions, bleed, and safe area",
+                "CMYK and Pantone color settings",
+                "Letterpress spot-color files and hot foil separations",
+                "Emboss, deboss, and spot UV files",
+                "Die-cut lines and laser-cut artwork",
+                "Minimum type size and line-weight requirements",
+                "Front-to-back registration and conflicts between processes"
+            ],
+            "closing": "Before production, we perform a basic file check based on the selected processes and flag obvious production risks with practical suggestions.",
+            "note": "Discount tiers are adjusted through a combination of qualifications, collaboration frequency, order value, and annual purchasing."
+        },
+        "eligibility": {
+            "eyebrow": "Who can apply",
+            "heading": "Built for the people behind the work.",
+            "body": "We welcome applications from professionals and organizations with genuine design or creative businesses.",
+            "audiences": [
+                "Graphic designer",
+                "Brand designer",
+                "Freelance designer",
+                "Packaging designer",
+                "Wedding and invitation designer",
+                "Creative studio",
+                "Design agency",
+                "Branding agency",
+                "Advertising agency",
+                "Other professional creative organization"
+            ],
+            "requirements_heading": "Application requirements",
+            "requirements_intro": "Applicants should provide verifiable professional and portfolio information. InkPavo reviews the application, work, and business context together.",
+            "requirements": [
+                "Your name or company name",
+                "Country or region and email address",
+                "Personal or company website",
+                "Portfolio links such as Behance, Dribbble, or Instagram",
+                "Your primary design field",
+                "The print products and finishes you expect to purchase"
+            ]
+        },
+        "process": {
+            "eyebrow": "How it works",
+            "heading": "From application to your first partner order in five steps.",
+            "steps": [
+                {
+                    "number": "01",
+                    "title": "Submit your application",
+                    "description": "Complete the Designer Partner Application and share your portfolio or website links."
+                },
+                {
+                    "number": "02",
+                    "title": "Qualification review",
+                    "description": "InkPavo reviews your designer identity, portfolio, and business context."
+                },
+                {
+                    "number": "03",
+                    "title": "Activate your account",
+                    "description": "Once approved, your account receives Designer Account partner access."
+                },
+                {
+                    "number": "04",
+                    "title": "Unlock your pricing",
+                    "description": "Sign in to InkPavo to access the Designer Pricing assigned to your tier."
+                },
+                {
+                    "number": "05",
+                    "title": "Start your project",
+                    "description": "Upload files, choose materials and finishes, and place your order with partner pricing."
+                }
+            ]
+        },
+        "materials": {
+            "eyebrow": "Sample and material support",
+            "heading": "Give every client project a more confident finish.",
+            "body": "Eligible Designer Partners can receive support based on account tier and project needs, from material references to production guidance.",
+            "items": [
+                "Discounts on sample sets",
+                "Material and paper sample support",
+                "Special finishing case references",
+                "Early access to new materials and processes",
+                "Project-specific quotes for larger jobs",
+                "Proofing and production suggestions"
+            ],
+            "image_url": "/images/business-cards/packing/shipping-promo.webp",
+            "image_alt": "InkPavo business cards prepared for shipment in protective packaging"
+        },
+        "apply": {
+            "eyebrow": "Ready to collaborate",
+            "heading": "Bring your next client project to life with InkPavo.",
+            "body": "To apply, share a little about your work and the print projects you expect to bring to InkPavo. Include your name or company, country or region, email, website or portfolio links, main design field, and expected products or finishes.",
+            "cta": "Start your application",
+            "cta_href": "/contact-us?topic=Press%20%26%20partnerships&subject=Designer%20Partner%20Program%20Application"
+        }
     },
     "business_cards_landing_page": {
         "_source_file": "resources/js/pages/shop/business-cards.tsx",

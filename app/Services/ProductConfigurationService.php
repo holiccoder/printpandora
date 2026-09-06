@@ -37,6 +37,21 @@ class ProductConfigurationService
     ];
 
     /**
+     * Product option groups share one storefront order. Any other option
+     * groups keep their original relative order after these groups.
+     *
+     * @var array<string, int>
+     */
+    private const OPTION_GROUP_ORDER = [
+        'sizes' => 1,
+        'size' => 1,
+        'corners' => 2,
+        'corner' => 2,
+        'paper_finish' => 3,
+        'special_finish' => 4,
+    ];
+
+    /**
      * @var array<int, string>
      */
     public const PRICING_SCENARIOS = [
@@ -1349,7 +1364,11 @@ class ProductConfigurationService
         $options = [];
         $optionGroups = [];
 
-        foreach ($config['options'] ?? [] as $key => $group) {
+        $configuredOptions = is_array($config['options'] ?? null)
+            ? $this->orderedOptionGroups($config['options'])
+            : [];
+
+        foreach ($configuredOptions as $key => $group) {
             if (! is_array($group)) {
                 continue;
             }
@@ -1829,11 +1848,11 @@ class ProductConfigurationService
         $catalogOptions = BusinessCardOptionCatalog::normalize((string) $product->slug, $options);
 
         if ($catalogOptions !== null) {
-            return $catalogOptions;
+            return $this->orderedOptionGroups($catalogOptions);
         }
 
         if ($product->slug !== 'classic-special-business-cards') {
-            return $options;
+            return $this->orderedOptionGroups($options);
         }
 
         $group = static fn (string $label, array $values, string $default): array => [
@@ -2025,14 +2044,50 @@ class ProductConfigurationService
             ],
         );
 
-        return [
+        return $this->orderedOptionGroups([
             'sizes' => $group('Size', $sizes, 'standard'),
             'corners' => $group('Corners', $corners, 'square'),
             'paper_finish' => $group('Paper Finish', $paperFinish, 'matte'),
             'special_finish' => $group('Special Finish', $specialFinish, 'no_special_finish'),
             'special_finish_on_sides' => $group('Special Finish on Sides', $specialFinishOnSides, 'one_side'),
             'texture' => $group('Texture', $textures, 'pin_hole_paper'),
-        ];
+        ]);
+    }
+
+    /**
+     * Order the four shared option groups consistently while preserving the
+     * relative order of product-specific groups that follow them.
+     *
+     * @param  array<string, mixed>  $groups
+     * @return array<string, mixed>
+     */
+    private function orderedOptionGroups(array $groups): array
+    {
+        $indexed = [];
+        $fallbackPriority = count(self::OPTION_GROUP_ORDER) + 1;
+
+        foreach ($groups as $index => $group) {
+            $key = (string) $index;
+
+            $indexed[] = [
+                'key' => $index,
+                'group' => $group,
+                'priority' => self::OPTION_GROUP_ORDER[$key] ?? $fallbackPriority,
+                'index' => count($indexed),
+            ];
+        }
+
+        usort($indexed, static function (array $left, array $right): int {
+            return [$left['priority'], $left['index']] <=> [$right['priority'], $right['index']];
+        });
+
+        $ordered = [];
+
+        foreach ($indexed as $item) {
+            $ordered[$item['key']] = $item['group'];
+        }
+
+        return $ordered;
     }
 
     /**

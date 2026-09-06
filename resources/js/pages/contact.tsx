@@ -25,16 +25,25 @@ const TOPICS = [
 ] as const;
 
 export default function Contact() {
-    const flashSuccess = (
-        usePage().props.flash as { success?: string } | undefined
-    )?.success;
+    const page = usePage();
+    const flashSuccess = (page.props.flash as { success?: string } | undefined)
+        ?.success;
+    const query = new URLSearchParams(page.url.split('?')[1] ?? '');
+    const requestedTopic = query.get('topic');
+    const requestedSubject = query.get('subject');
+    const initialTopic = TOPICS.includes(
+        requestedTopic as (typeof TOPICS)[number],
+    )
+        ? requestedTopic!
+        : TOPICS[0];
+    const initialSubject = requestedSubject?.slice(0, 255) ?? '';
 
     const { data, setData, post, processing, errors, reset } =
         useForm<ContactForm>({
             name: '',
             email: '',
-            topic: TOPICS[0],
-            subject: '',
+            topic: initialTopic,
+            subject: initialSubject,
             message: '',
         });
 

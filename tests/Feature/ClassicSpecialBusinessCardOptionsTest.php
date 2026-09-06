@@ -116,6 +116,10 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
         $options = app(ProductConfigurationService::class)->storefrontOptions($product);
 
         $this->assertSame(
+            ['sizes', 'corners', 'paper_finish', 'special_finish', 'special_finish_on_sides', 'texture'],
+            array_column(data_get($options, 'option_groups', []), 'key'),
+        );
+        $this->assertSame(
             ['standard', 'square', 'custom'],
             array_column(data_get($options, 'option_groups.0.values', []), 'code'),
         );

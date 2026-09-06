@@ -292,6 +292,84 @@ export interface DesignServicePageContent {
     form_product_options: string[];
 }
 
+export interface DesignerPartnerPageContent {
+    seo: SeoMeta;
+    hero: {
+        eyebrow: string;
+        heading: string;
+        body: string;
+        highlight: string;
+        highlight_body: string;
+        cta: string;
+        cta_href: string;
+        image_url: string;
+        image_alt: string;
+    };
+    anchor_links: NavLink[];
+    benefits: {
+        eyebrow: string;
+        heading: string;
+        body: string;
+        items: Array<{
+            icon: string;
+            title: string;
+            description: string;
+        }>;
+    };
+    pricing: {
+        eyebrow: string;
+        heading: string;
+        body: string;
+        tiers: Array<{
+            name: string;
+            discount: string;
+            description: string;
+            audience: string;
+        }>;
+    };
+    support: {
+        eyebrow: string;
+        heading: string;
+        body: string;
+        checks: string[];
+        closing: string;
+        note: string;
+    };
+    eligibility: {
+        eyebrow: string;
+        heading: string;
+        body: string;
+        audiences: string[];
+        requirements_heading: string;
+        requirements_intro: string;
+        requirements: string[];
+    };
+    process: {
+        eyebrow: string;
+        heading: string;
+        steps: Array<{
+            number: string;
+            title: string;
+            description: string;
+        }>;
+    };
+    materials: {
+        eyebrow: string;
+        heading: string;
+        body: string;
+        items: string[];
+        image_url: string;
+        image_alt: string;
+    };
+    apply: {
+        eyebrow: string;
+        heading: string;
+        body: string;
+        cta: string;
+        cta_href: string;
+    };
+}
+
 export interface UploadFilesModalContent {
     title: string;
     accepted_formats: string[];
@@ -563,6 +641,7 @@ export interface ContentSections {
     about_page: AboutPageContent;
     help_center_page: HelpCenterPageContent;
     design_service_page: DesignServicePageContent;
+    designer_partner_page: DesignerPartnerPageContent;
     upload_files_modal: UploadFilesModalContent;
     shop_thank_you_page: ShopThankYouPageContent;
     // untuned sections fall through to unknown

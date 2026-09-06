@@ -78,6 +78,18 @@ const NO_SPECIAL_FINISH_CODES = [
     'no-special-finish',
     'no_special_finish',
 ];
+
+const OPTION_GROUP_ORDER: Record<string, number> = {
+    sizes: 1,
+    size: 1,
+    corners: 2,
+    corner: 2,
+    paper_finish: 3,
+    special_finish: 4,
+};
+
+const OPTION_GROUP_FALLBACK_ORDER = Object.keys(OPTION_GROUP_ORDER).length + 1;
+
 import DesignSpecificationsSection from '@/components/product-detail/design-specifications-section';
 import DesignServiceBanner from '@/components/product-detail/design-service-banner';
 import PaperStockComparisonSection from '@/components/product-detail/paper-stock-comparison-section';
@@ -280,6 +292,22 @@ function optionValueCode(value: ProductOptionValue): string {
     );
 }
 
+function orderOptionGroups(groups: ProductOptionGroup[]): ProductOptionGroup[] {
+    return groups
+        .map((group, index) => ({ group, index }))
+        .sort((left, right) => {
+            const leftOrder =
+                OPTION_GROUP_ORDER[left.group.key] ??
+                OPTION_GROUP_FALLBACK_ORDER;
+            const rightOrder =
+                OPTION_GROUP_ORDER[right.group.key] ??
+                OPTION_GROUP_FALLBACK_ORDER;
+
+            return leftOrder - rightOrder || left.index - right.index;
+        })
+        .map(({ group }) => group);
+}
+
 function getProductTurnaround(
     product: Product,
     specialFinish: string | null,
@@ -386,7 +414,7 @@ export default function ShopShow({
     const dynamicOptionGroups = useMemo(
         () =>
             usesDynamicOptions && Array.isArray(productOptions?.option_groups)
-                ? productOptions.option_groups
+                ? orderOptionGroups(productOptions.option_groups)
                 : [],
         [usesDynamicOptions, productOptions],
     );
@@ -1716,6 +1744,27 @@ export default function ShopShow({
                                 </OptionGroup>
                             )}
 
+                        {!usesDynamicOptions && cornersList.length > 0 && (
+                            <OptionGroup label={c.configurator_labels.corners}>
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                    {cornersList.map((cn: any) => (
+                                        <CornerChoiceCard
+                                            key={cn.id}
+                                            label={cn.label}
+                                            swatch={cn.swatch}
+                                            active={
+                                                selectedCorners === cn.id &&
+                                                hasInteracted
+                                            }
+                                            onClick={() =>
+                                                selectOption('corners', cn.id)
+                                            }
+                                        />
+                                    ))}
+                                </div>
+                            </OptionGroup>
+                        )}
+
                         {!usesDynamicOptions && !isCottonBusinessCards && (
                             <OptionGroup
                                 label={c.configurator_labels.paper_finish}
@@ -1746,68 +1795,6 @@ export default function ShopShow({
                                             {f.description && (
                                                 <p className="text-xs text-neutral-500">
                                                     {f.description}
-                                                </p>
-                                            )}
-                                        </ChoiceTile>
-                                    ))}
-                                </div>
-                            </OptionGroup>
-                        )}
-
-                        {!usesDynamicOptions && cornersList.length > 0 && (
-                            <OptionGroup label={c.configurator_labels.corners}>
-                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                    {cornersList.map((cn: any) => (
-                                        <CornerChoiceCard
-                                            key={cn.id}
-                                            label={cn.label}
-                                            swatch={cn.swatch}
-                                            active={
-                                                selectedCorners === cn.id &&
-                                                hasInteracted
-                                            }
-                                            onClick={() =>
-                                                selectOption('corners', cn.id)
-                                            }
-                                        />
-                                    ))}
-                                </div>
-                            </OptionGroup>
-                        )}
-
-                        {!usesDynamicOptions && textures.length > 0 && (
-                            <OptionGroup label="Texture">
-                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                    {textures.map((t: any) => (
-                                        <ChoiceTile
-                                            key={t.id}
-                                            active={
-                                                selectedTexture === t.id &&
-                                                hasInteracted
-                                            }
-                                            onClick={() =>
-                                                selectOption('texture', t.id)
-                                            }
-                                        >
-                                            {t.thumb ? (
-                                                <img
-                                                    src={t.thumb}
-                                                    alt=""
-                                                    className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
-                                                />
-                                            ) : (
-                                                <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50">
-                                                    <span className="text-xs text-neutral-400">
-                                                        Texture
-                                                    </span>
-                                                </div>
-                                            )}
-                                            <p className="mt-2 text-sm font-semibold">
-                                                {t.label}
-                                            </p>
-                                            {t.description && (
-                                                <p className="text-xs text-neutral-500">
-                                                    {t.description}
                                                 </p>
                                             )}
                                         </ChoiceTile>
@@ -1999,6 +1986,47 @@ export default function ShopShow({
                                     </>
                                 )}
                             </div>
+                        )}
+
+                        {!usesDynamicOptions && textures.length > 0 && (
+                            <OptionGroup label="Texture">
+                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                    {textures.map((t: any) => (
+                                        <ChoiceTile
+                                            key={t.id}
+                                            active={
+                                                selectedTexture === t.id &&
+                                                hasInteracted
+                                            }
+                                            onClick={() =>
+                                                selectOption('texture', t.id)
+                                            }
+                                        >
+                                            {t.thumb ? (
+                                                <img
+                                                    src={t.thumb}
+                                                    alt=""
+                                                    className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
+                                                />
+                                            ) : (
+                                                <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50">
+                                                    <span className="text-xs text-neutral-400">
+                                                        Texture
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <p className="mt-2 text-sm font-semibold">
+                                                {t.label}
+                                            </p>
+                                            {t.description && (
+                                                <p className="text-xs text-neutral-500">
+                                                    {t.description}
+                                                </p>
+                                            )}
+                                        </ChoiceTile>
+                                    ))}
+                                </div>
+                            </OptionGroup>
                         )}
 
                         {!usesDynamicOptions &&
@@ -2345,10 +2373,10 @@ export default function ShopShow({
                                             </dd>
                                             {selectedDesignService && (
                                                 <>
-                                                    <dt className="text-neutral-500">
+                                                    <dt className="order-10 text-neutral-500">
                                                         {designFeeLabel}
                                                     </dt>
-                                                    <dd className="text-right font-medium">
+                                                    <dd className="order-10 text-right font-medium">
                                                         <LiveText
                                                             text={`$${designFee}`}
                                                         />
@@ -2358,76 +2386,76 @@ export default function ShopShow({
                                         </>
                                     ) : (
                                         <>
-                                            <dt className="text-neutral-500">
+                                            <dt className="order-3 text-neutral-500">
                                                 {summaryLabels[0]}
                                             </dt>
-                                            <dd className="text-right font-medium">
+                                            <dd className="order-3 text-right font-medium">
                                                 {finishLabel}
                                             </dd>
                                             {sizes.length > 0 && (
                                                 <>
-                                                    <dt className="text-neutral-500">
+                                                    <dt className="order-1 text-neutral-500">
                                                         {summaryLabels[1]}
                                                     </dt>
-                                                    <dd className="text-right font-medium">
+                                                    <dd className="order-1 text-right font-medium">
                                                         {sizeLabel}
                                                     </dd>
                                                 </>
                                             )}
-                                            <dt className="text-neutral-500">
+                                            <dt className="order-9 text-neutral-500">
                                                 {summaryLabels[2]}
                                             </dt>
-                                            <dd className="text-right font-medium">
+                                            <dd className="order-9 text-right font-medium">
                                                 <LiveText
                                                     text={String(selectedQty)}
                                                 />
                                             </dd>
                                             {cornersList.length > 0 && (
                                                 <>
-                                                    <dt className="text-neutral-500">
+                                                    <dt className="order-2 text-neutral-500">
                                                         {summaryLabels[3]}
                                                     </dt>
-                                                    <dd className="text-right font-medium capitalize">
+                                                    <dd className="order-2 text-right font-medium capitalize">
                                                         {cornersLabel}
                                                     </dd>
                                                 </>
                                             )}
                                             {showTextureInSummary && (
                                                 <>
-                                                    <dt className="text-neutral-500">
+                                                    <dt className="order-5 text-neutral-500">
                                                         Texture
                                                     </dt>
-                                                    <dd className="text-right font-medium">
+                                                    <dd className="order-5 text-right font-medium">
                                                         {textureLabel}
                                                     </dd>
                                                 </>
                                             )}
                                             {showSpecialFinishInSummary && (
                                                 <>
-                                                    <dt className="text-neutral-500">
+                                                    <dt className="order-4 text-neutral-500">
                                                         Special finish
                                                     </dt>
-                                                    <dd className="text-right font-medium">
+                                                    <dd className="order-4 text-right font-medium">
                                                         {specialFinishLabel}
                                                     </dd>
                                                 </>
                                             )}
                                             {showEmbossingInSummary && (
                                                 <>
-                                                    <dt className="text-neutral-500">
+                                                    <dt className="order-6 text-neutral-500">
                                                         Embossing
                                                     </dt>
-                                                    <dd className="text-right font-medium">
+                                                    <dd className="order-6 text-right font-medium">
                                                         {embossingLabel}
                                                     </dd>
                                                 </>
                                             )}
                                             {showEmbossingOrSignaturePanelInSummary && (
                                                 <>
-                                                    <dt className="text-neutral-500">
+                                                    <dt className="order-7 text-neutral-500">
                                                         Embossing / Signature
                                                     </dt>
-                                                    <dd className="text-right font-medium">
+                                                    <dd className="order-7 text-right font-medium">
                                                         {
                                                             embossingOrSignaturePanelLabel
                                                         }
@@ -2436,10 +2464,10 @@ export default function ShopShow({
                                             )}
                                             {selectedDesignService && (
                                                 <>
-                                                    <dt className="text-neutral-500">
+                                                    <dt className="order-10 text-neutral-500">
                                                         {designFeeLabel}
                                                     </dt>
-                                                    <dd className="text-right font-medium">
+                                                    <dd className="order-10 text-right font-medium">
                                                         <LiveText
                                                             text={`$${designFee}`}
                                                         />

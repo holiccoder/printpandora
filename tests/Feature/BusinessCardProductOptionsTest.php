@@ -579,7 +579,7 @@ class BusinessCardProductOptionsTest extends TestCase
         ];
 
         $this->assertSame(
-            ['sizes', 'corners', 'texture', 'special_finish'],
+            ['sizes', 'corners', 'special_finish', 'texture'],
             array_keys($config['options']),
         );
         $this->assertSame(['standard', 'square', 'custom'], data_get($config, 'options.sizes.values.*.code'));
@@ -648,7 +648,7 @@ class BusinessCardProductOptionsTest extends TestCase
 
         $this->assertTrue((bool) data_get($options, 'dynamic_options'));
         $this->assertSame(
-            ['sizes', 'corners', 'texture', 'special_finish'],
+            ['sizes', 'corners', 'special_finish', 'texture'],
             array_column(data_get($options, 'option_groups', []), 'key'),
         );
         $this->assertSame(
@@ -657,7 +657,7 @@ class BusinessCardProductOptionsTest extends TestCase
         );
         $this->assertSame(
             ['inkpavo_j1', 'inkpavo_j2', 'inkpavo_j3', 'inkpavo_j4', 'inkpavo_j5', 'inkpavo_j6', 'inkpavo_j7', 'inkpavo_j8'],
-            array_column(data_get($options, 'option_groups.2.values', []), 'code'),
+            array_column(data_get($options, 'option_groups.3.values', []), 'code'),
         );
         $this->assertSame(
             '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j6.webp',
@@ -709,7 +709,7 @@ class BusinessCardProductOptionsTest extends TestCase
         ];
 
         $this->assertSame(
-            ['sizes', 'corners', 'texture', 'special_finish'],
+            ['sizes', 'corners', 'special_finish', 'texture'],
             array_keys($config['options']),
         );
         $this->assertSame(['standard', 'square', 'custom'], data_get($config, 'options.sizes.values.*.code'));
@@ -790,7 +790,7 @@ class BusinessCardProductOptionsTest extends TestCase
 
         $this->assertTrue((bool) data_get($options, 'dynamic_options'));
         $this->assertSame(
-            ['sizes', 'corners', 'texture', 'special_finish'],
+            ['sizes', 'corners', 'special_finish', 'texture'],
             array_column(data_get($options, 'option_groups', []), 'key'),
         );
         $this->assertSame(
@@ -799,7 +799,7 @@ class BusinessCardProductOptionsTest extends TestCase
         );
         $this->assertSame(
             ['j1_water_ripple_paper', 'j2_cloth_texture_paper', 'j3_eggshell_texture', 'j4_high_grade_paper', 'j5_pearlescent_paper', 'j6_kraft_paper', 'j7_absorbent_cotton_paper', 'j8_pinhole_paper'],
-            array_column(data_get($options, 'option_groups.2.values', []), 'code'),
+            array_column(data_get($options, 'option_groups.3.values', []), 'code'),
         );
         $this->assertSame(
             '/images/products/super-business-cards/super-business-cards-rounded-j3-eggshell-texture.webp',

@@ -19,6 +19,7 @@ class StaticPageRoutesTest extends TestCase
             '/terms-and-conditions' => 'terms',
             '/shipping-and-cost-calculator' => 'shipping-calculator',
             '/shipping-policy' => 'shipping',
+            '/designer-partner-program' => 'designer-partner-program',
         ];
 
         foreach ($pages as $path => $component) {
@@ -52,6 +53,12 @@ class StaticPageRoutesTest extends TestCase
         $this->get('/sitemap.xml')
             ->assertOk()
             ->assertHeader('Content-Type', 'application/xml')
-            ->assertSee('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"', false);
+            ->assertSee('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"', false)
+            ->assertSee(route('designer-partner-program'), false);
+
+        $this->assertStringContainsString(
+            '/designer-partner-program',
+            (string) file_get_contents(public_path('sitemap.xml')),
+        );
     }
 }

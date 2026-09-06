@@ -43,6 +43,7 @@ Route::inertia('/business-card-sample-pack', 'business-card-sample-pack')->name(
 Route::inertia('/free-sample-pack', 'free-sample-pack')->name('shop.free-sample-pack');
 Route::get('/business-card-design-service', [DesignServiceRequestController::class, 'create'])->name('business-card-design-service');
 Route::post('/business-card-design-service', [DesignServiceRequestController::class, 'store'])->name('business-card-design-service.store');
+Route::inertia('/designer-partner-program', 'designer-partner-program')->name('designer-partner-program');
 Route::post('/product-designs', [ProductDesignRequestController::class, 'store'])->name('product-designs.store');
 Route::inertia('/postcards', 'postcards')->name('postcards');
 Route::inertia('/stickers-and-labels', 'stickers-and-labels')->name('stickers-and-labels');
@@ -77,6 +78,7 @@ Route::get('sitemap.xml', function () {
         ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'daily'],
         ['loc' => route('login'), 'priority' => '0.6', 'changefreq' => 'monthly'],
         ['loc' => route('register'), 'priority' => '0.6', 'changefreq' => 'monthly'],
+        ['loc' => route('designer-partner-program'), 'priority' => '0.7', 'changefreq' => 'monthly'],
     ];
 
     $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
