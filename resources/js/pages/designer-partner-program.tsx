@@ -141,7 +141,7 @@ function AnchorNavigation({
             className="border-b border-neutral-200 bg-white"
         >
             <div className="mx-auto max-w-7xl overflow-x-auto px-4 sm:px-6 lg:px-8">
-                <ul className="flex min-w-max items-center gap-1 py-3">
+                <ul className="flex min-w-max items-center justify-center gap-1 py-3">
                     {links.map((link) => (
                         <li key={link.href}>
                             <a
@@ -389,10 +389,7 @@ function ProcessSection({ content }: { content: DesignerPartnerPageContent }) {
                             <span className="absolute top-0 -left-3 flex size-6 items-center justify-center rounded-full bg-[#e5c98f] text-xs font-bold text-[#800020] md:top-[-13px] md:left-5 md:first:left-0">
                                 {index + 1}
                             </span>
-                            <p className="text-xs font-semibold tracking-[0.16em] text-[#e5c98f] uppercase">
-                                {step.number}
-                            </p>
-                            <h3 className="mt-3 font-serif text-xl leading-tight font-bold">
+                            <h3 className="font-serif text-xl leading-tight font-bold">
                                 {step.title}
                             </h3>
                             <p className="mt-3 text-sm leading-relaxed text-white/70">
