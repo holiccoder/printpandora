@@ -1468,15 +1468,15 @@
                     "icon": "badge-percent",
                     "title": "Exclusive designer pricing",
                     "description": "Get a Designer Account with pricing assigned to your partnership tier.",
-                    "image_url": "/images/business-cards/finish/gold-foil.webp",
-                    "image_alt": "Burgundy business cards with a refined gold foil border"
+                    "image_url": "/images/home/designer-partner-benefit-pricing-success.png",
+                    "image_alt": "Designer reviewing a successful print project with a laptop, calculator, and completed samples"
                 },
                 {
                     "icon": "printer",
                     "title": "Professional print support",
                     "description": "Get practical guidance on paper, materials, and special finishes so your designs can be produced with confidence.",
-                    "image_url": "/images/home/designer-partner-program-hero.png",
-                    "image_alt": "Hands comparing printed card samples and paper stocks"
+                    "image_url": "/images/home/designer-partner-benefit-print-support.png",
+                    "image_alt": "Designer working at a computer in a print studio surrounded by card samples"
                 },
                 {
                     "icon": "file-check",
@@ -1489,15 +1489,15 @@
                     "icon": "layers",
                     "title": "Sample and material support",
                     "description": "Eligible partners can access sample sets, paper samples, and finishing references for client projects.",
-                    "image_url": "/images/business-cards/paper/cotton-deckled.webp",
-                    "image_alt": "Tactile cotton business cards with deckled edges"
+                    "image_url": "/images/home/designer-partner-benefit-print-range.png",
+                    "image_alt": "Assorted business cards, flyers, postcards, stickers, labels, and brochures arranged as a print sample pack"
                 },
                 {
                     "icon": "handshake",
                     "title": "Long-term partnership benefits",
                     "description": "Your partner tier can grow with order volume, collaboration frequency, and annual purchasing.",
-                    "image_url": "/images/business-cards/packing/shipping-promo.webp",
-                    "image_alt": "Printed cards prepared in protective packaging for shipment"
+                    "image_url": "/images/home/designer-partner-benefit-collaboration.png",
+                    "image_alt": "Two creative professionals reviewing printed card and finishing samples together"
                 }
             ]
         },
