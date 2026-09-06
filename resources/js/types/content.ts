@@ -404,7 +404,9 @@ export interface DesignerPartnerPageContent {
         submit_label: string;
         submitting_label: string;
         privacy_note: string;
+        success_title: string;
         success_message: string;
+        success_close_label: string;
     };
 }
 

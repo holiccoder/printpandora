@@ -1649,7 +1649,9 @@
             "submit_label": "Submit application",
             "submitting_label": "Sending application...",
             "privacy_note": "We'll use your details to review your application and follow up about the program.",
-            "success_message": "Thanks for applying. Our team will review your details and get back to you soon."
+            "success_title": "Application received",
+            "success_message": "Thanks for applying. Our team will review your details and get back to you soon.",
+            "success_close_label": "Continue browsing"
         }
     },
     "business_cards_landing_page": {

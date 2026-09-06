@@ -10,10 +10,20 @@ import {
     Scissors,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useState } from 'react';
 import type { FormEventHandler } from 'react';
 import InputError from '@/components/input-error';
 import SEO from '@/components/seo';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useContent } from '@/hooks/use-content';
@@ -456,6 +466,9 @@ function MaterialsSection({
 function ApplySection({ content }: { content: DesignerPartnerPageContent }) {
     const { apply, application_form } = content;
     const page = usePage<{ flash?: { success?: string } }>();
+    const [successModalOpen, setSuccessModalOpen] = useState(
+        Boolean(page.props.flash?.success),
+    );
     const { data, setData, post, processing, errors, reset } =
         useForm<DesignerPartnerApplicationForm>({
             name_or_company: '',
@@ -472,7 +485,10 @@ function ApplySection({ content }: { content: DesignerPartnerPageContent }) {
 
         post('/designer-partner-program/applications', {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                reset();
+                setSuccessModalOpen(true);
+            },
         });
     };
 
@@ -516,15 +532,6 @@ function ApplySection({ content }: { content: DesignerPartnerPageContent }) {
                             {application_form.body}
                         </p>
                     </div>
-
-                    {page.props.flash?.success && (
-                        <div
-                            className="mt-8 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-relaxed text-emerald-800"
-                            role="status"
-                        >
-                            {application_form.success_message}
-                        </div>
-                    )}
 
                     <form
                         id="application-requirements-form"
@@ -806,6 +813,32 @@ function ApplySection({ content }: { content: DesignerPartnerPageContent }) {
                     </form>
                 </div>
             </div>
+
+            <Dialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
+                <DialogContent className="border-[#eadfce] bg-[#fbf6ee] sm:max-w-md">
+                    <DialogHeader className="items-center text-center sm:text-center">
+                        <span className="flex size-14 items-center justify-center rounded-full bg-[#800020]/10 text-[#800020]">
+                            <Check className="size-7" strokeWidth={2.2} />
+                        </span>
+                        <DialogTitle className="font-serif text-2xl text-[#800020]">
+                            {application_form.success_title}
+                        </DialogTitle>
+                        <DialogDescription className="text-center text-neutral-600">
+                            {application_form.success_message}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="sm:justify-center">
+                        <DialogClose asChild>
+                            <Button
+                                type="button"
+                                className="bg-[#800020] px-6 text-white hover:bg-[#650019]"
+                            >
+                                {application_form.success_close_label}
+                            </Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </section>
     );
 }
