@@ -43,7 +43,7 @@ export default function DesignerPartnerProgram() {
     const c = useContent('designer_partner_page') as DesignerPartnerPageContent;
 
     return (
-        <StorefrontLayout activeCategory="Design Service">
+        <StorefrontLayout activeCategory="Design Partner Program">
             <SEO
                 title={c.seo.title ?? c.hero.heading}
                 description={c.seo.description}
