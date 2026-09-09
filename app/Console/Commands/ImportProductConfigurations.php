@@ -12,7 +12,7 @@ class ImportProductConfigurations extends Command
         {--slug=* : Import only the provided product slug(s)}
         {--force : Replace existing product_config values}';
 
-    protected $description = 'Import legacy product option and pricing files into products.product_config';
+    protected $description = 'Import legacy product option and gallery data into products.product_config';
 
     public function handle(ProductConfigurationService $configuration): int
     {

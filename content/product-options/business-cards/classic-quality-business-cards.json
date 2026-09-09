@@ -137,7 +137,7 @@
         {
             "code": "custom",
             "name": "Custom",
-            "description": "Enter a custom width and height from 2.1 to 3.5 inches.",
+            "description": "max range: 2.1 - 3.5 inches",
             "swatch_image": "/images/product-options/business-cards/swatches/custom-size.webp"
         }
     ],
@@ -1699,31 +1699,31 @@
             "code": "shattered_glass_film",
             "name": "Shattered Glass Film",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/product-options/business-cards/swatches/quality/shattered-glass-film.png"
         },
         {
             "code": "holographic_film",
             "name": "Holographic Film",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/product-options/business-cards/swatches/quality/holographic-film.png"
         },
         {
             "code": "starlight_film",
             "name": "Starlight Film",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/product-options/business-cards/swatches/quality/starlight-film.png"
         },
         {
             "code": "holographic_star_film",
             "name": "Holographic Star Film",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/product-options/business-cards/swatches/quality/holographic-star-film.png"
         },
         {
             "code": "soft_touch_film",
             "name": "Soft-Touch Film",
             "description": "",
-            "swatch_image": ""
+            "swatch_image": "/images/product-options/business-cards/swatches/quality/soft-touch-film.png"
         }
     ]
 }

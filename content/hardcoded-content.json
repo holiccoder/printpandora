@@ -979,12 +979,12 @@
                 {
                     "id": "standard",
                     "label": "Standard",
-                    "dims": "85 x 55 mm"
+                    "dims": "3.35 x 2.17 inches"
                 },
                 {
                     "id": "square",
                     "label": "Square",
-                    "dims": "65 x 65 mm"
+                    "dims": "2.56 x 2.56 inches"
                 }
             ],
             "finishes": [
@@ -1202,7 +1202,7 @@
                             "href": "/business-cards/standard-pvc",
                             "cta": "Shop PVC Business Cards ›",
                             "features": [
-                                "0.76mm thickness",
+                                "0.03 inches thickness",
                                 "Durable and waterproof",
                                 "Sharp full-colour printing",
                                 "Flexible finish options",
@@ -1608,9 +1608,7 @@
         "apply": {
             "eyebrow": "Ready to collaborate",
             "heading": "Bring your next client project to life with InkPavo.",
-            "body": "To apply, share a little about your work and the print projects you expect to bring to InkPavo. Include your name or company, country or region, email, website or portfolio links, main design field, and expected products or finishes.",
-            "cta": "Start your application",
-            "cta_href": "#application-requirements-form"
+            "body": "To apply, share a little about your work and the print projects you expect to bring to InkPavo. Include your name or company, country or region, email, website or portfolio links, main design field, and expected products or finishes."
         },
         "application_form": {
             "eyebrow": "Application requirements form",
@@ -1730,7 +1728,7 @@
                     },
                     {
                         "name": "Square",
-                        "blurb": "Stand out with a 65 × 65 mm square, finished in gold logo detail.",
+                        "blurb": "Stand out with a 2.56 × 2.56 inches square, finished in gold logo detail.",
                         "image_url": "/images/business-cards/size/square.webp"
                     },
                     {

@@ -7,7 +7,7 @@
             "code": "standard",
             "width": "2.0",
             "height": "3.5",
-            "swatch_image": "/images/product-options/business-cards/sizes/business_card-standard-526x325.jpg",
+            "swatch_image": "/images/product-options/business-cards/swatches/standard-size.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -72,7 +72,7 @@
             "code": "square",
             "width": "2.16",
             "height": "3.3",
-            "swatch_image": "/images/product-options/business-cards/sizes/business_card-square-526x325.jpg",
+            "swatch_image": "/images/product-options/business-cards/swatches/square-size.webp",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -1232,6 +1232,7 @@
             "name": "no print code",
             "code": "no_print_code",
             "description": "no need to print codes",
+            "swatch_image": "/images/product-options/business-cards/swatches/pvc-no-print-code.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -1295,6 +1296,7 @@
             "name": "need print code",
             "code": "need_print_code",
             "description": "no need to print codes",
+            "swatch_image": "/images/product-options/business-cards/swatches/pvc-print-code.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -1359,7 +1361,7 @@
         {
             "name": "no drilling",
             "code": "no_drilling",
-            "swatch_image": "",
+            "swatch_image": "/images/product-options/business-cards/swatches/drilling/no-drilling.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -1422,7 +1424,7 @@
         {
             "name": "needs drilling",
             "code": "needs_drilling",
-            "swatch_image": "",
+            "swatch_image": "/images/product-options/business-cards/swatches/drilling/needs-drilling.png",
             "added_price": [
                 {
                     "pack_size": 50,

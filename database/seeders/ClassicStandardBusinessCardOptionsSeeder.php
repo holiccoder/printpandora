@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Product;
 use App\Services\ProductConfigurationService;
+use App\Support\BusinessCardOptionCatalog;
 use Illuminate\Database\Seeder;
 
 class ClassicStandardBusinessCardOptionsSeeder extends Seeder
@@ -43,7 +44,7 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                         ]),
                         [
                             'description' => '2.0x3.5  ',
-                            'swatch_image' => '/images/product-options/business-cards/swatches/standard-size.webp',
+                            'swatch_image' => BusinessCardOptionCatalog::STANDARD_SIZE_SWATCH_IMAGE,
                         ],
                     ),
                     array_replace(
@@ -54,13 +55,13 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                         ]),
                         [
                             'description' => '2.5x2.5',
-                            'swatch_image' => '/images/product-options/business-cards/swatches/square-size.webp',
+                            'swatch_image' => BusinessCardOptionCatalog::SQUARE_SIZE_SWATCH_IMAGE,
                         ],
                     ),
                     [
                         'code' => 'custom',
                         'label' => 'Custom',
-                        'description' => 'Enter a custom width and height from 2.1 to 3.5 inches.',
+                        'description' => BusinessCardOptionCatalog::CUSTOM_SIZE_DESCRIPTION,
                         'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
                     ],
                 ],
@@ -214,6 +215,48 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                 'Special Finish on Sides',
                 ['one_side', 'both_sides'],
             ),
+            'print_code' => [
+                ...$this->copyGroup($existing, 'print_code', 'Print Code', [
+                    'no_print_code',
+                    'need_print_code',
+                ]),
+                'default' => 'no_print_code',
+                'values' => [
+                    $this->withSwatch(
+                        $existing,
+                        'print_code',
+                        'no_print_code',
+                        BusinessCardOptionCatalog::NO_PRINT_CODE_SWATCH_IMAGE,
+                    ),
+                    $this->withSwatch(
+                        $existing,
+                        'print_code',
+                        'need_print_code',
+                        BusinessCardOptionCatalog::PRINT_CODE_SWATCH_IMAGE,
+                    ),
+                ],
+            ],
+            'drill' => [
+                ...$this->copyGroup($existing, 'drill', 'Drilling', [
+                    'no_drilling',
+                    'needs_drilling',
+                ]),
+                'default' => 'no_drilling',
+                'values' => [
+                    $this->withSwatch(
+                        $existing,
+                        'drill',
+                        'no_drilling',
+                        BusinessCardOptionCatalog::NO_DRILLING_SWATCH_IMAGE,
+                    ),
+                    $this->withSwatch(
+                        $existing,
+                        'drill',
+                        'needs_drilling',
+                        BusinessCardOptionCatalog::NEEDS_DRILLING_SWATCH_IMAGE,
+                    ),
+                ],
+            ],
         ];
 
         $normalizedProduct = clone $product;

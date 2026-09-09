@@ -178,6 +178,7 @@ function BenefitsSection({ content }: { content: DesignerPartnerPageContent }) {
                     eyebrow={benefits.eyebrow}
                     heading={benefits.heading}
                     body={benefits.body}
+                    headingClassName="sm:whitespace-nowrap"
                 />
 
                 <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
@@ -498,7 +499,7 @@ function ApplySection({ content }: { content: DesignerPartnerPageContent }) {
             className="scroll-mt-32 bg-[#fbf6ee] py-16 lg:py-24"
         >
             <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+                <div className="max-w-4xl">
                     <div>
                         <p className="text-xs font-semibold tracking-[0.18em] text-[#800020] uppercase">
                             {apply.eyebrow}
@@ -506,18 +507,10 @@ function ApplySection({ content }: { content: DesignerPartnerPageContent }) {
                         <h2 className="mt-4 max-w-2xl font-serif text-3xl leading-tight font-bold text-[#800020] sm:text-4xl lg:text-5xl">
                             {apply.heading}
                         </h2>
-                        <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-700">
+                        <p className="mt-5 max-w-4xl text-base leading-relaxed text-neutral-700">
                             {apply.body}
                         </p>
                     </div>
-
-                    <a
-                        href={apply.cta_href}
-                        className="inline-flex shrink-0 items-center justify-center gap-2 rounded-md bg-[#800020] px-7 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#650019] focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:ring-offset-2 focus-visible:outline-none"
-                    >
-                        {apply.cta}
-                        <ArrowRight className="size-4" />
-                    </a>
                 </div>
 
                 <div className="mt-14 rounded-2xl border border-[#eadfce] bg-white p-6 shadow-sm sm:p-10">
@@ -849,12 +842,14 @@ function SectionIntro({
     body,
     align = 'center',
     tone = 'light',
+    headingClassName = '',
 }: {
     eyebrow: string;
     heading: string;
     body: string;
     align?: 'left' | 'center';
     tone?: 'light' | 'dark';
+    headingClassName?: string;
 }) {
     const isDark = tone === 'dark';
     const isLeft = align === 'left';
@@ -873,7 +868,7 @@ function SectionIntro({
             <h2
                 className={`mt-4 font-serif text-3xl leading-tight font-bold sm:text-4xl ${
                     isDark ? 'text-white' : 'text-[#800020]'
-                }`}
+                } ${headingClassName}`}
             >
                 {heading}
             </h2>

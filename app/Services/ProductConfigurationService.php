@@ -13,8 +13,10 @@ use Illuminate\Validation\ValidationException;
  *
  * The new configuration is stored in products.product_config. During the
  * migration period this service can still read the old product_options JSON
- * or the category product-option files and expose the old flat shape to the
- * storefront.
+ * or the category product-option files. The storefront deliberately keeps a
+ * narrower boundary: product copy, pricing, FAQs, and detail sections come
+ * from the database, while the legacy product files can provide only option
+ * metadata and galleries.
  */
 class ProductConfigurationService
 {
@@ -28,8 +30,8 @@ class ProductConfigurationService
      */
     public const OPTION_GROUP_LABELS = [
         'sizes' => 'Size',
-        'paper_finish' => 'Paper Finish',
         'corners' => 'Corners',
+        'paper_finish' => 'Paper Finish',
         'special_finish' => 'Special Finish',
         'special_finish_on_sides' => 'Special Finish on Sides',
         'print_code' => 'Print Code',
@@ -47,8 +49,9 @@ class ProductConfigurationService
         'size' => 1,
         'corners' => 2,
         'corner' => 2,
-        'paper_finish' => 3,
-        'special_finish' => 4,
+        'texture' => 3,
+        'paper_finish' => 4,
+        'special_finish' => 5,
     ];
 
     /**
@@ -334,8 +337,11 @@ class ProductConfigurationService
     }
 
     /**
-     * Return the canonical JSON or import a legacy product configuration for
-     * editing.
+     * Return the canonical database configuration for editing.
+     *
+     * Legacy repository files contribute only option metadata and galleries.
+     * If an old product_options column exists, its pricing and detail data
+     * remain eligible for this one-time database compatibility path.
      *
      * @return array<string, mixed>
      */
@@ -355,56 +361,13 @@ class ProductConfigurationService
             return $config;
         }
 
-        return $this->fromLegacyOptions($product, $this->loadLegacyOptions($product) ?? []);
-    }
+        $legacy = $this->databaseLegacyOptions($product);
 
-    /**
-     * Build fresh canonical pricing scenarios from the imported reference
-     * data for a product. This lets repeatable seeders refresh pricing on
-     * products that already have a canonical configuration.
-     *
-     * @return array<string, array<string, mixed>>|null
-     */
-    public function dynamicPricingScenarios(Product $product): ?array
-    {
-        $pricingData = $this->loadDynamicPricingData((string) $product->slug);
-
-        return $pricingData === null ? null : $this->scenariosFromDynamicPricing($pricingData);
-    }
-
-    /**
-     * Build thickness-matched pricing rules for metal business cards from the
-     * imported thin/thick reference files.
-     *
-     * @return array<int, array{id: string, match: array<string, string>, pricing: array<string, mixed>}>
-     */
-    public function dynamicPricingRules(Product $product): ?array
-    {
-        if (! in_array((string) $product->slug, [
-            'classic-metal-business-cards',
-            'premium-metal-business-cards',
-            'luxe-metal-business-cards',
-        ], true)) {
-            return null;
-        }
-
-        $scenarios = $this->dynamicPricingScenarios($product);
-
-        if ($scenarios === null) {
-            return null;
-        }
-
-        $rules = [];
-
-        foreach ($scenarios as $thickness => $scenario) {
-            $rules[] = [
-                'id' => "metal-thickness-{$thickness}",
-                'match' => ['thickness' => (string) $thickness],
-                'pricing' => $this->scenarioToPricingJson($scenario),
-            ];
-        }
-
-        return $rules === [] ? null : $rules;
+        return $this->fromLegacyOptions(
+            $product,
+            $legacy ?? $this->loadHardcodedProductOptions($product) ?? [],
+            $legacy !== null,
+        );
     }
 
     public function hasLegacyConfiguration(Product $product): bool
@@ -1040,127 +1003,246 @@ class ProductConfigurationService
      */
     public function storefrontOptions(Product $product): ?array
     {
-        if ($this->hasCanonicalConfig($product)) {
-            return $this->withResolvedStorefrontImages($this->withSharedBusinessCardDetailSections(
-                $this->toStorefrontOptions($this->canonicalConfig($product), $product),
-                $product,
-            ));
-        }
+        $hasCanonicalConfig = $this->hasCanonicalConfig($product);
+        $hardcodedProductOptions = $this->loadHardcodedProductOptions($product);
+        $databaseLegacyOptions = $this->databaseLegacyOptions($product);
 
-        $legacy = $this->loadLegacyOptions($product);
-
-        if ($legacy === null && ! BusinessCardOptionCatalog::supports((string) $product->slug)) {
+        if (
+            ! $hasCanonicalConfig
+            && $hardcodedProductOptions === null
+            && $databaseLegacyOptions === null
+            && ! BusinessCardOptionCatalog::supports((string) $product->slug)
+        ) {
             return null;
         }
 
-        $legacy ??= [];
+        // Start with the canonical database record. No product-specific JSON
+        // file is allowed to replace this copy, pricing, FAQ, or detail data.
+        $config = $this->databaseStorefrontConfig($product);
 
-        if (! isset($legacy['pricing_data'])) {
-            $pricingData = $this->loadDynamicPricingData($product->slug ?? '');
-
-            if ($pricingData !== null) {
-                $legacy['pricing_data'] = $pricingData;
-            }
+        // The legacy file is intentionally limited to the two pieces of
+        // product-detail presentation that still use it: option metadata and
+        // galleries. Its subtitle, price table, and detail sections are
+        // ignored even when they are present in an older file.
+        if (! $hasCanonicalConfig && $databaseLegacyOptions !== null) {
+            // Legacy product_options is already stored in the database. Keep
+            // its old product content available for old records, but never
+            // read that content from a repository JSON fallback.
+            $config = $this->applyDatabaseLegacyProductData(
+                $config,
+                $databaseLegacyOptions,
+            );
         }
 
-        if (
-            $product->slug === 'classic-special-business-cards'
-            || BusinessCardOptionCatalog::supports((string) $product->slug)
-        ) {
-            $canonical = $this->fromLegacyOptions($product, $legacy);
-
-            return $this->withResolvedStorefrontImages(
-                $this->withSharedBusinessCardDetailSections(
-                    $this->toStorefrontOptions($canonical, $product),
-                    $product,
-                ),
+        if ($hardcodedProductOptions !== null) {
+            $config = $this->applyLegacyOptionAndGalleryData(
+                $config,
+                $hardcodedProductOptions,
+                (string) $product->slug,
+            );
+        } elseif (! $hasCanonicalConfig && $databaseLegacyOptions !== null) {
+            $config = $this->applyLegacyOptionAndGalleryData(
+                $config,
+                $databaseLegacyOptions,
+                (string) $product->slug,
+            );
+        } elseif (! $hasCanonicalConfig && BusinessCardOptionCatalog::supports((string) $product->slug)) {
+            $config['options'] = $this->normalizeProductSpecificOptions(
+                $config['options'],
+                $product,
             );
         }
 
         return $this->withResolvedStorefrontImages(
-            $this->withSharedBusinessCardDetailSections($legacy, $product),
+            $this->toStorefrontOptions(
+                $config,
+                $product,
+                $hardcodedProductOptions !== null || $databaseLegacyOptions !== null,
+            ),
         );
     }
 
     /**
-     * Apply the centrally maintained business-card detail sections. A shared
-     * design specification is used only when the product does not define one;
-     * product-specific dimensions and downloads remain authoritative. FAQ
-     * content remains product-specific while the shared cross-sell sections
-     * use the centrally maintained storefront content. Eligibility follows
-     * the Business Cards category hierarchy so direct products and descendants
-     * share the same section contract.
+     * Normalize only the database-owned configuration used by the storefront.
+     * This intentionally does not call canonicalConfig(), because that method
+     * also applies the editor's product-specific option contracts to legacy
+     * payloads. The live storefront should preserve the database option map
+     * and only overlay the explicitly permitted file option/gallery source.
      *
-     * @param  array<string, mixed>  $options
      * @return array<string, mixed>
      */
-    private function withSharedBusinessCardDetailSections(array $options, Product $product): array
+    private function databaseStorefrontConfig(Product $product): array
     {
-        if (! $this->belongsToBusinessCardCategory($product)) {
-            return $options;
-        }
-
-        $details = is_array($options['detail_sections'] ?? null)
-            ? $options['detail_sections']
+        $config = $this->hasCanonicalConfig($product)
+            ? (is_array($product->product_config) ? $product->product_config : [])
             : [];
 
-        $shared = $this->content->section(
-            'product_detail_page.shared_detail_sections.business_cards',
-            [],
-        );
-
-        if (! is_array($shared)) {
-            return $options;
-        }
-
-        if (
-            ! is_array($details['design_specifications'] ?? null)
-            && is_array($shared['design_specifications'] ?? null)
-        ) {
-            $details['design_specifications'] = $shared['design_specifications'];
-        }
-
-        foreach (['design_service_banner', 'paper_stocks', 'more_good_stuff'] as $key) {
-            if (is_array($shared[$key] ?? null)) {
-                $details[$key] = $shared[$key];
-            }
-        }
-
-        $options['detail_sections'] = $details;
-
-        return $options;
+        return $this->normalizeCanonicalConfig($config, $product);
     }
 
-    private function belongsToBusinessCardCategory(Product $product): bool
+    /**
+     * Return the legacy option payload stored on the product itself. A null
+     * result means that the database does not contain the old payload; it does
+     * not fall back to a repository file.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function databaseLegacyOptions(Product $product): ?array
     {
-        $category = $product->category;
-        $visited = [];
+        return is_array($product->product_options) && $product->product_options !== []
+            ? $product->product_options
+            : null;
+    }
 
-        while ($category !== null) {
-            if ($category->slug === 'business-cards') {
-                return true;
-            }
+    /**
+     * Load the product-detail JSON source used only for option metadata and
+     * galleries. Category slugs have changed over time, so the exact product
+     * filename is also searched across the product-options directories.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function loadHardcodedProductOptions(Product $product): ?array
+    {
+        $slug = trim((string) $product->slug);
 
-            $categoryId = $category->getKey();
-
-            if ($categoryId !== null) {
-                if (isset($visited[$categoryId])) {
-                    return false;
-                }
-
-                $visited[$categoryId] = true;
-            }
-
-            if (! $category->parent_id) {
-                return false;
-            }
-
-            $category = $category->relationLoaded('parent')
-                ? $category->getRelation('parent')
-                : $category->parent()->first();
+        if ($slug === '') {
+            return null;
         }
 
-        return false;
+        $paths = [];
+        $categorySlug = $product->category?->slug;
+
+        if (is_string($categorySlug) && $categorySlug !== '') {
+            $paths[] = base_path("content/product-options/{$categorySlug}/{$slug}.json");
+        }
+
+        $matchingPaths = glob(base_path("content/product-options/*/{$slug}.json"));
+        $paths = [
+            ...$paths,
+            ...(is_array($matchingPaths) ? $matchingPaths : []),
+        ];
+
+        foreach (array_values(array_unique($paths)) as $path) {
+            if (! is_file($path)) {
+                continue;
+            }
+
+            $contents = file_get_contents($path);
+
+            if ($contents === false) {
+                continue;
+            }
+
+            $decoded = json_decode($contents, true);
+
+            if (is_array($decoded)) {
+                $allowedData = $this->hardcodedOptionAndGalleryData($decoded);
+
+                return $allowedData === [] ? null : $allowedData;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Keep the legacy file boundary explicit. Product copy, pricing, FAQ,
+     * and detail sections are intentionally discarded before the payload can
+     * reach any configuration adapter.
+     *
+     * @param  array<string, mixed>  $payload
+     * @return array<string, mixed>
+     */
+    private function hardcodedOptionAndGalleryData(array $payload): array
+    {
+        $allowedKeys = [
+            ...array_keys(self::OPTION_GROUP_LABELS),
+            'finish',
+            'texture',
+            'thickness',
+            'print_code_or_signature_stripe',
+            'print_code_or_magnetic_stripe',
+            'with_nfc',
+            'galleries',
+        ];
+
+        return array_intersect_key($payload, array_fill_keys($allowedKeys, true));
+    }
+
+    /**
+     * Copy only the option and gallery portions of a legacy payload into a
+     * canonical-shaped configuration. All other keys are deliberately left
+     * untouched so database-owned product data cannot be replaced by file
+     * content.
+     *
+     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $legacy
+     * @return array<string, mixed>
+     */
+    private function applyLegacyOptionAndGalleryData(array $config, array $legacy, ?string $slug = null): array
+    {
+        $options = $this->optionsFromLegacy($legacy);
+
+        if ($options !== []) {
+            $config['options'] = $this->orderedOptionGroups(
+                BusinessCardOptionCatalog::normalizeSharedSwatchImages(
+                    BusinessCardOptionCatalog::normalizeSharedSizeSwatches($options, $slug),
+                ),
+            );
+        }
+
+        $galleries = is_array($legacy['galleries'] ?? null) ? $legacy['galleries'] : [];
+
+        if ($galleries === []) {
+            return $config;
+        }
+
+        $defaultGallery = collect($galleries)->first(function (mixed $gallery): bool {
+            return is_array($gallery) && (
+                (bool) ($gallery['is_default'] ?? false)
+                || ($gallery['id'] ?? null) === 'default'
+                || ($gallery['match'] ?? []) === []
+            );
+        });
+        $media = is_array($config['media'] ?? null) ? $config['media'] : [];
+
+        $media['gallery'] = is_array($defaultGallery['images'] ?? null)
+            ? array_values($defaultGallery['images'])
+            : [];
+        $media['gallery_rules'] = $this->galleryRulesFromLegacy($galleries);
+        $config['media'] = $media;
+
+        return $config;
+    }
+
+    /**
+     * Preserve non-option data from the legacy JSON column when an old
+     * database row has not been migrated to product_config yet. Repository
+     * files are never used for this path.
+     *
+     * @param  array<string, mixed>  $config
+     * @param  array<string, mixed>  $legacy
+     * @return array<string, mixed>
+     */
+    private function applyDatabaseLegacyProductData(array $config, array $legacy): array
+    {
+        $pricing = is_array($config['pricing'] ?? null) ? $config['pricing'] : [];
+
+        if (is_array($legacy['pricing_data'] ?? null)) {
+            $pricing['mode'] = 'rule_based';
+            $pricing['scenarios'] = $this->scenariosFromDynamicPricing($legacy['pricing_data']);
+            $pricing['quantity_price_table'] = [];
+        } elseif (is_array($legacy['quantity_price_table'] ?? null)) {
+            $pricing['quantity_price_table'] = array_values($legacy['quantity_price_table']);
+        }
+
+        $config['pricing'] = $pricing;
+        $config['faq'] = $this->faqFromLegacy($legacy);
+        $config['detail_sections'] = is_array($legacy['detail_sections'] ?? null)
+            ? $legacy['detail_sections']
+            : ($config['detail_sections'] ?? []);
+
+        return $config;
     }
 
     /**
@@ -1168,35 +1250,24 @@ class ProductConfigurationService
      */
     private function loadLegacyOptions(Product $product): ?array
     {
-        if (is_array($product->product_options) && $product->product_options !== []) {
-            return $product->product_options;
-        }
-
-        $categorySlug = $product->category?->slug;
-
-        if (! $categorySlug || ! $product->slug) {
-            return null;
-        }
-
-        $path = base_path("content/product-options/{$categorySlug}/{$product->slug}.json");
-
-        if (! file_exists($path)) {
-            return null;
-        }
-
-        $content = file_get_contents($path);
-        $decoded = $content === false ? null : json_decode($content, true);
-
-        return is_array($decoded) ? $decoded : null;
+        return $this->databaseLegacyOptions($product)
+            ?? $this->loadHardcodedProductOptions($product);
     }
 
     /**
+     * Build an editable canonical shape from a legacy payload. Repository
+     * JSON contributes only option metadata and galleries; the old
+     * product_options database column may also carry its existing pricing,
+     * FAQ, and detail data for backward compatibility.
+     *
      * @param  array<string, mixed>  $legacy
      * @return array<string, mixed>
      */
-    private function fromLegacyOptions(Product $product, array $legacy): array
-    {
-        $pricingData = $this->loadDynamicPricingData($product->slug ?? '');
+    private function fromLegacyOptions(
+        Product $product,
+        array $legacy,
+        bool $legacyDataIsDatabaseOwned = false,
+    ): array {
         $galleries = is_array($legacy['galleries'] ?? null) ? $legacy['galleries'] : [];
         $defaultGallery = collect($galleries)->first(function (mixed $gallery): bool {
             return is_array($gallery) && (
@@ -1211,7 +1282,7 @@ class ProductConfigurationService
             'product' => [
                 'slug' => $product->slug,
                 'name' => $product->name,
-                'subtitle' => $legacy['subtitle'] ?? $product->subtitle,
+                'subtitle' => $product->subtitle,
                 'description' => $product->description,
                 'description_title' => $product->description_title,
                 'bullet_points' => $product->bullet_points ?? [],
@@ -1229,18 +1300,23 @@ class ProductConfigurationService
                 'gallery_rules' => $this->galleryRulesFromLegacy($galleries),
             ],
             'pricing' => [
-                'mode' => $pricingData !== null ? 'rule_based' : 'fixed_tiers',
+                'mode' => $legacyDataIsDatabaseOwned && is_array($legacy['pricing_data'] ?? null)
+                    ? 'rule_based'
+                    : 'fixed_tiers',
                 'currency' => 'USD',
                 'total_rounding' => 'nearest_integer',
-                'scenarios' => $pricingData !== null
-                    ? $this->scenariosFromDynamicPricing($pricingData)
+                'scenarios' => $legacyDataIsDatabaseOwned && is_array($legacy['pricing_data'] ?? null)
+                    ? $this->scenariosFromDynamicPricing($legacy['pricing_data'])
                     : [],
-                'quantity_price_table' => $pricingData === null && is_array($legacy['quantity_price_table'] ?? null)
+                'quantity_price_table' => $legacyDataIsDatabaseOwned
+                    && is_array($legacy['quantity_price_table'] ?? null)
                     ? array_values($legacy['quantity_price_table'])
                     : [],
+                'rules' => [],
             ],
-            'faq' => $this->faqFromLegacy($legacy),
-            'detail_sections' => is_array($legacy['detail_sections'] ?? null)
+            'faq' => $legacyDataIsDatabaseOwned ? $this->faqFromLegacy($legacy) : [],
+            'detail_sections' => $legacyDataIsDatabaseOwned
+                && is_array($legacy['detail_sections'] ?? null)
                 ? $legacy['detail_sections']
                 : [],
         ];
@@ -1272,7 +1348,15 @@ class ProductConfigurationService
             }
         }
 
+        if (array_key_exists('finish', $legacy)) {
+            $groupLabels['finish'] = 'Finish';
+        }
+
         foreach ($groupLabels as $key => $label) {
+            if (! array_key_exists($key, $legacy)) {
+                continue;
+            }
+
             $items = is_array($legacy[$key] ?? null) ? $legacy[$key] : [];
 
             $options[$key] = [
@@ -1359,8 +1443,11 @@ class ProductConfigurationService
      * @param  array<string, mixed>  $config
      * @return array<string, mixed>
      */
-    private function toStorefrontOptions(array $config, Product $product): array
-    {
+    private function toStorefrontOptions(
+        array $config,
+        Product $product,
+        bool $hasExternalOptionSource = false,
+    ): array {
         $options = [];
         $optionGroups = [];
 
@@ -1408,7 +1495,8 @@ class ProductConfigurationService
             $options[$optionKey] = $values;
         }
 
-        $hasDynamicOptions = $this->hasCanonicalConfig($product)
+        $hasDynamicOptions = $hasExternalOptionSource
+            || $this->hasCanonicalConfig($product)
             || $product->slug === 'classic-special-business-cards'
             || BusinessCardOptionCatalog::supports((string) $product->slug);
 
@@ -1470,7 +1558,10 @@ class ProductConfigurationService
         $options['quantity_price_table'] = is_array(data_get($config, 'pricing.quantity_price_table'))
             ? array_values(data_get($config, 'pricing.quantity_price_table'))
             : [];
-        $options['subtitle'] = data_get($config, 'product.subtitle', $product->subtitle);
+        // Product copy belongs to the database projection. In particular,
+        // never fall back to `subtitle` from a legacy product-options file.
+        $options['subtitle'] = $product->subtitle;
+        $options['starting_price_text'] = $product->price_line;
 
         $details = is_array($config['detail_sections'] ?? null) ? $config['detail_sections'] : [];
         $faq = is_array($config['faq'] ?? null) ? $config['faq'] : [];
@@ -1728,6 +1819,7 @@ class ProductConfigurationService
             'meta_description' => $product->meta_description,
         ], is_array($config['product'] ?? null) ? $config['product'] : []);
         $config['options'] = is_array($config['options'] ?? null) ? $config['options'] : [];
+        $config['options'] = BusinessCardOptionCatalog::normalizeSharedSwatchImages($config['options']);
         $config['media'] = is_array($config['media'] ?? null) ? $config['media'] : [];
         $config['media']['gallery'] = is_array($config['media']['gallery'] ?? null)
             ? array_values($config['media']['gallery'])
@@ -1848,11 +1940,21 @@ class ProductConfigurationService
         $catalogOptions = BusinessCardOptionCatalog::normalize((string) $product->slug, $options);
 
         if ($catalogOptions !== null) {
-            return $this->orderedOptionGroups($catalogOptions);
+            return $this->orderedOptionGroups(
+                BusinessCardOptionCatalog::normalizeSharedSizeSwatches(
+                    $catalogOptions,
+                    (string) $product->slug,
+                ),
+            );
         }
 
         if ($product->slug !== 'classic-special-business-cards') {
-            return $this->orderedOptionGroups($options);
+            return $this->orderedOptionGroups(
+                BusinessCardOptionCatalog::normalizeSharedSizeSwatches(
+                    $options,
+                    (string) $product->slug,
+                ),
+            );
         }
 
         $group = static fn (string $label, array $values, string $default): array => [
@@ -1875,7 +1977,7 @@ class ProductConfigurationService
                     'description' => '2.0″ x 3.5″',
                     'width' => '2.0',
                     'height' => '3.5',
-                    'swatch_image' => '/images/product-options/business-cards/swatches/standard-size.webp',
+                    'swatch_image' => BusinessCardOptionCatalog::STANDARD_SIZE_SWATCH_IMAGE,
                 ],
             ),
             array_replace(
@@ -1889,13 +1991,13 @@ class ProductConfigurationService
                     'description' => '2.5″ x 2.5″',
                     'width' => '2.5',
                     'height' => '2.5',
-                    'swatch_image' => '/images/product-options/business-cards/swatches/square-size.webp',
+                    'swatch_image' => BusinessCardOptionCatalog::SQUARE_SIZE_SWATCH_IMAGE,
                 ],
             ),
             [
                 'code' => 'custom',
                 'label' => 'Custom',
-                'description' => 'Enter a custom width and height from 2.1 to 3.5 inches.',
+                'description' => BusinessCardOptionCatalog::CUSTOM_SIZE_DESCRIPTION,
                 'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
             ],
         ];
@@ -2044,19 +2146,20 @@ class ProductConfigurationService
             ],
         );
 
-        return $this->orderedOptionGroups([
+        return $this->orderedOptionGroups(BusinessCardOptionCatalog::normalizeSharedSizeSwatches([
             'sizes' => $group('Size', $sizes, 'standard'),
             'corners' => $group('Corners', $corners, 'square'),
             'paper_finish' => $group('Paper Finish', $paperFinish, 'matte'),
             'special_finish' => $group('Special Finish', $specialFinish, 'no_special_finish'),
             'special_finish_on_sides' => $group('Special Finish on Sides', $specialFinishOnSides, 'one_side'),
             'texture' => $group('Texture', $textures, 'pin_hole_paper'),
-        ]);
+        ], (string) $product->slug));
     }
 
     /**
-     * Order the four shared option groups consistently while preserving the
-     * relative order of product-specific groups that follow them.
+     * Order the shared option groups consistently while preserving the
+     * relative order of product-specific groups that follow them. Texture
+     * belongs immediately after size and corners when those groups exist.
      *
      * @param  array<string, mixed>  $groups
      * @return array<string, mixed>
@@ -2211,145 +2314,5 @@ class ProductConfigurationService
         }
 
         return Str::slug($name, '_') ?: 'process';
-    }
-
-    /**
-     * @return array<string, array{dir: string, files: array<string, string>}>
-     */
-    private function pricingFileMap(): array
-    {
-        return [
-            'classic-standard-business-cards' => [
-                'dir' => '300g铜版纸',
-                'files' => [
-                    'rectangle' => '300g铜版纸 长方形.json',
-                    'uv' => '300g铜版纸 uv.json',
-                    'square' => '300g铜版纸 正方形.json',
-                    'square_uv' => '300g铜版纸 正方形uv.json',
-                ],
-            ],
-            'classic-special-business-cards' => [
-                'dir' => '300g艺术纸',
-                'files' => [
-                    'rectangle' => '300g艺术纸-荷兰白卡.json',
-                    'square' => '300g艺术纸-荷兰白卡-正方形.json',
-                ],
-            ],
-            'classic-quality-business-cards' => [
-                'dir' => '320g铜版纸',
-                'files' => [
-                    'rectangle' => '320g铜版纸.json',
-                    'square' => '320g铜版纸-正方形.json',
-                ],
-            ],
-            'classic-solid-business-cards' => [
-                'dir' => '640g铜版纸',
-                'files' => [
-                    'rectangle' => '640g铜版纸.json',
-                    'square' => '640g铜版纸-正方形.json',
-                ],
-            ],
-            'basic-cotton-business-card' => [
-                'dir' => '棉纸',
-                'files' => ['rectangle' => '棉纸-基础型.json'],
-            ],
-            'classic-cotton-business-card' => [
-                'dir' => '棉纸',
-                'files' => ['rectangle' => '棉纸-经典型.json'],
-            ],
-            'premium-cotton-business-card' => [
-                'dir' => '棉纸',
-                'files' => ['rectangle' => '棉纸-高级型.json'],
-            ],
-            'luxe-cotton-business-card' => [
-                'dir' => '棉纸',
-                'files' => ['rectangle' => '棉纸-奢华型.json'],
-            ],
-            'grand-cotton-business-card' => [
-                'dir' => '棉纸',
-                'files' => ['rectangle' => '棉纸-豪华型.json'],
-            ],
-            'classic-metal-business-cards' => [
-                'dir' => '金卡',
-                'files' => [
-                    '0_3_mm' => '金卡-经典型薄款.json',
-                    '0_5_mm' => '金卡-经典型厚款.json',
-                ],
-            ],
-            'premium-metal-business-cards' => [
-                'dir' => '金卡',
-                'files' => [
-                    '0_3_mm' => '金卡-高级型薄款.json',
-                    '0_5_mm' => '金卡-高级型厚款.json',
-                ],
-            ],
-            'luxe-metal-business-cards' => [
-                'dir' => '金卡',
-                'files' => [
-                    '0_3_mm' => '金卡-豪华型薄款.json',
-                    '0_5_mm' => '金卡-豪华型厚款.json',
-                ],
-            ],
-            'basic-pvc-card' => [
-                'dir' => 'pvc',
-                'files' => ['rectangle' => 'pvc0.38.json'],
-            ],
-            'standard-pvc-card' => [
-                'dir' => 'pvc',
-                'files' => ['rectangle' => 'pvc0.76.json'],
-            ],
-            'premium-pvc-card' => [
-                'dir' => 'pvc',
-                'files' => ['rectangle' => 'pvc0.84.json'],
-            ],
-            'super-business-cards' => [
-                'dir' => '350g精品纸',
-                'files' => [
-                    'rectangle' => '350g精品纸.json',
-                    'square' => '350g精品纸-正方形.json',
-                ],
-            ],
-            'luxe-business-cards' => [
-                'dir' => '700g精品纸',
-                'files' => [
-                    'rectangle' => '700g精品纸.json',
-                    'square' => '700g精品纸-正方形.json',
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @return array<string, array<string, mixed>>|null
-     */
-    private function loadDynamicPricingData(string $slug): ?array
-    {
-        $config = $this->pricingFileMap()[$slug] ?? null;
-
-        if ($config === null) {
-            return null;
-        }
-
-        $basePath = base_path('storage/from-tool/数据文档/'.$config['dir']);
-        $data = [];
-
-        foreach ($config['files'] as $key => $file) {
-            $path = $basePath.'/'.$file;
-
-            if (! file_exists($path)) {
-                return null;
-            }
-
-            $content = file_get_contents($path);
-            $decoded = $content === false ? null : json_decode($content, true);
-
-            if (! is_array($decoded)) {
-                return null;
-            }
-
-            $data[$key] = $decoded;
-        }
-
-        return $data;
     }
 }

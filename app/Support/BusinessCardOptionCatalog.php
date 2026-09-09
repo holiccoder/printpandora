@@ -4,6 +4,33 @@ namespace App\Support;
 
 final class BusinessCardOptionCatalog
 {
+    public const STANDARD_SIZE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/standard-size.webp';
+
+    public const SQUARE_SIZE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/square-size.webp';
+
+    public const CUSTOM_SIZE_DESCRIPTION = 'max range: 2.1 - 3.5 inches';
+
+    public const NO_PRINT_CODE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/pvc-no-print-code.png';
+
+    public const PRINT_CODE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/pvc-print-code.png';
+
+    public const NO_DRILLING_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/drilling/no-drilling.png';
+
+    public const NEEDS_DRILLING_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/drilling/needs-drilling.png';
+
+    public const SIGNATURE_STRIPE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/pvc-signature-stripe.png';
+
+    /**
+     * @var array<string, string>
+     */
+    private const QUALITY_TEXTURE_SWATCH_IMAGES = [
+        'shattered_glass_film' => '/images/product-options/business-cards/swatches/quality/shattered-glass-film.png',
+        'holographic_film' => '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+        'starlight_film' => '/images/product-options/business-cards/swatches/quality/starlight-film.png',
+        'holographic_star_film' => '/images/product-options/business-cards/swatches/quality/holographic-star-film.png',
+        'soft_touch_film' => '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+    ];
+
     /**
      * @var array<int, string>
      */
@@ -30,6 +57,115 @@ final class BusinessCardOptionCatalog
     public static function supports(string $slug): bool
     {
         return in_array($slug, self::CONTRACT_SLUGS, true);
+    }
+
+    /**
+     * Apply the shared size metadata to any business-card option map that
+     * exposes standard, square, or custom sizes.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    public static function normalizeSharedSizeSwatches(array $options, ?string $slug = null): array
+    {
+        if (! is_array($options['sizes'] ?? null)) {
+            return $options;
+        }
+
+        $isCanonicalGroup = array_key_exists('values', $options['sizes']);
+
+        if ($isCanonicalGroup && ! is_array($options['sizes']['values'])) {
+            return $options;
+        }
+
+        $values = $isCanonicalGroup ? $options['sizes']['values'] : $options['sizes'];
+
+        $standardSwatchImage = self::STANDARD_SIZE_SWATCH_IMAGE;
+        $squareSwatchImage = self::SQUARE_SIZE_SWATCH_IMAGE;
+
+        foreach ($values as &$value) {
+            if (! is_array($value)) {
+                continue;
+            }
+
+            match ($value['code'] ?? null) {
+                'standard' => $value['swatch_image'] = $standardSwatchImage,
+                'square' => $value['swatch_image'] = $squareSwatchImage,
+                'custom' => $value['description'] = self::CUSTOM_SIZE_DESCRIPTION,
+                default => null,
+            };
+        }
+        unset($value);
+
+        if ($isCanonicalGroup) {
+            $options['sizes']['values'] = array_values($values);
+        } else {
+            $options['sizes'] = array_values($values);
+        }
+
+        return $options;
+    }
+
+    /**
+     * Fill missing shared swatches without replacing a product-specific image
+     * that is already present.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    public static function normalizeSharedSwatchImages(array $options): array
+    {
+        $fallbacks = [
+            'print_code' => [
+                'no_print_code' => self::NO_PRINT_CODE_SWATCH_IMAGE,
+                'print_code' => self::PRINT_CODE_SWATCH_IMAGE,
+                'need_print_code' => self::PRINT_CODE_SWATCH_IMAGE,
+            ],
+            'drill' => [
+                'no_drilling' => self::NO_DRILLING_SWATCH_IMAGE,
+                'needs_drilling' => self::NEEDS_DRILLING_SWATCH_IMAGE,
+            ],
+            'print_code_or_signature_stripe' => [
+                'no_print_code_or_signature_stripe' => self::NO_PRINT_CODE_SWATCH_IMAGE,
+                'print_code' => self::PRINT_CODE_SWATCH_IMAGE,
+                'signature_stripe' => self::SIGNATURE_STRIPE_SWATCH_IMAGE,
+            ],
+            'texture' => self::QUALITY_TEXTURE_SWATCH_IMAGES,
+        ];
+
+        foreach ($fallbacks as $groupKey => $groupFallbacks) {
+            if (! is_array($options[$groupKey] ?? null)) {
+                continue;
+            }
+
+            $isCanonicalGroup = array_key_exists('values', $options[$groupKey]);
+            $values = $isCanonicalGroup ? $options[$groupKey]['values'] ?? null : $options[$groupKey];
+
+            if (! is_array($values)) {
+                continue;
+            }
+
+            foreach ($values as &$value) {
+                if (! is_array($value)) {
+                    continue;
+                }
+
+                $swatchImage = $groupFallbacks[$value['code'] ?? ''] ?? null;
+
+                if ($swatchImage !== null && blank($value['swatch_image'] ?? null)) {
+                    $value['swatch_image'] = $swatchImage;
+                }
+            }
+            unset($value);
+
+            if ($isCanonicalGroup) {
+                $options[$groupKey]['values'] = array_values($values);
+            } else {
+                $options[$groupKey] = array_values($values);
+            }
+        }
+
+        return $options;
     }
 
     /**
@@ -71,7 +207,7 @@ final class BusinessCardOptionCatalog
         }
         unset($group);
 
-        return $normalized;
+        return self::normalizeSharedSwatchImages($normalized);
     }
 
     /**
@@ -83,6 +219,7 @@ final class BusinessCardOptionCatalog
         return [
             'sizes' => self::group('Size', self::sizeValues($options), 'standard'),
             'corners' => self::group('Corners', self::cornerValues($options), 'square'),
+            'texture' => self::group('Texture', self::textureValues($options), 'shattered_glass_film'),
             'paper_finish' => self::group('Paper Finish', self::paperFinishValues($options), 'matte'),
             'special_finish' => self::group(
                 'Special Finish',
@@ -94,7 +231,6 @@ final class BusinessCardOptionCatalog
                 self::specialFinishSideValues($options),
                 'one_side',
             ),
-            'texture' => self::group('Texture', self::textureValues($options), 'shattered_glass_film'),
         ];
     }
 
@@ -143,6 +279,7 @@ final class BusinessCardOptionCatalog
     private static function premiumPvc(array $options): array
     {
         return [
+            'paper_finish' => self::group('Paper Finish', self::pvcPaperFinishValues($options), 'matte'),
             'print_code' => self::group('Print Code', self::printCodeValues($options), 'no_print_code'),
         ];
     }
@@ -305,18 +442,18 @@ final class BusinessCardOptionCatalog
                 'description' => '2.0" x 3.5"',
                 'width' => '2.0',
                 'height' => '3.5',
-                'swatch_image' => '/images/product-options/business-cards/swatches/standard-size.webp',
+                'swatch_image' => self::STANDARD_SIZE_SWATCH_IMAGE,
             ]),
             self::value($options, 'sizes', 'square', [
                 'label' => 'Square',
                 'description' => '2.5" x 2.5"',
                 'width' => '2.5',
                 'height' => '2.5',
-                'swatch_image' => '/images/product-options/business-cards/swatches/square-size.webp',
+                'swatch_image' => self::SQUARE_SIZE_SWATCH_IMAGE,
             ]),
             self::value($options, 'sizes', 'custom', [
                 'label' => 'Custom',
-                'description' => 'Enter a custom width and height from 2.1 to 3.5 inches.',
+                'description' => self::CUSTOM_SIZE_DESCRIPTION,
                 'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
             ]),
         ];
@@ -377,12 +514,12 @@ final class BusinessCardOptionCatalog
             self::value($options, 'paper_finish', 'matte', [
                 'label' => 'Matte',
                 'description' => 'Smooth, non-reflective matte finish.',
-                'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
+                'swatch_image' => '/images/products/pvc/matte-pvc.png',
             ]),
             self::value($options, 'paper_finish', 'gloss', [
                 'label' => 'Gloss',
                 'description' => 'Shiny and highly reflective gloss finish.',
-                'swatch_image' => '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
+                'swatch_image' => '/images/products/pvc/gloss-pvc.png',
             ]),
             self::value($options, 'paper_finish', 'frosted', [
                 'label' => 'Frosted Glass',
@@ -432,6 +569,7 @@ final class BusinessCardOptionCatalog
             self::value($options, 'print_code_or_signature_stripe', 'signature_stripe', [
                 'label' => 'Signature stripe',
                 'description' => 'Add a writable signature stripe.',
+                'swatch_image' => self::SIGNATURE_STRIPE_SWATCH_IMAGE,
             ]),
         ];
     }
@@ -539,7 +677,7 @@ final class BusinessCardOptionCatalog
             fn (array $texture): array => self::value($options, 'texture', $texture['code'], [
                 'label' => $texture['label'],
                 'description' => '',
-                'swatch_image' => '',
+                'swatch_image' => self::QUALITY_TEXTURE_SWATCH_IMAGES[$texture['code']],
             ]),
             $textures,
         );

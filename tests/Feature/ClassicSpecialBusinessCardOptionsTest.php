@@ -36,6 +36,26 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
             data_get($product->product_config, 'options.sizes.values.*.code'),
         );
         $this->assertSame(
+            '/images/product-options/business-cards/swatches/standard-size.webp',
+            data_get($product->product_config, 'options.sizes.values.0.swatch_image'),
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/square-size.webp',
+            data_get($product->product_config, 'options.sizes.values.1.swatch_image'),
+        );
+        $this->assertSame(
+            'max range: 2.1 - 3.5 inches',
+            data_get($product->product_config, 'options.sizes.values.2.description'),
+        );
+        $defaultGallery = [
+            '/images/classic-special-business-cards/default01.png',
+            '/images/classic-special-business-cards/default02.png',
+            '/images/classic-special-business-cards/default03.png',
+            '/images/classic-special-business-cards/default04.png',
+        ];
+        $this->assertSame($defaultGallery, data_get($product->product_config, 'media.gallery'));
+        $this->assertSame($defaultGallery, data_get($product->product_config, 'media.gallery_rules.0.images'));
+        $this->assertSame(
             ['matte', 'gloss', 'uv'],
             data_get($product->product_config, 'options.paper_finish.values.*.code'),
         );
@@ -116,7 +136,7 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
         $options = app(ProductConfigurationService::class)->storefrontOptions($product);
 
         $this->assertSame(
-            ['sizes', 'corners', 'paper_finish', 'special_finish', 'special_finish_on_sides', 'texture'],
+            ['sizes', 'corners', 'texture', 'paper_finish', 'special_finish', 'special_finish_on_sides'],
             array_column(data_get($options, 'option_groups', []), 'key'),
         );
         $this->assertSame(
@@ -124,12 +144,24 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
             array_column(data_get($options, 'option_groups.0.values', []), 'code'),
         );
         $this->assertSame(
+            '/images/product-options/business-cards/swatches/standard-size.webp',
+            data_get($options, 'option_groups.0.values.0.swatch_image'),
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/square-size.webp',
+            data_get($options, 'option_groups.0.values.1.swatch_image'),
+        );
+        $this->assertSame(
+            'max range: 2.1 - 3.5 inches',
+            data_get($options, 'option_groups.0.values.2.description'),
+        );
+        $this->assertSame(
             ['matte', 'gloss', 'uv'],
-            array_column(data_get($options, 'option_groups.2.values', []), 'code'),
+            array_column(data_get($options, 'option_groups.3.values', []), 'code'),
         );
         $this->assertSame(
             ['pin_hole_paper', 'water_ripple_paper', 'linen_paper', 'eggshell_paper', 'white_cardstock', 'pearlized_paper'],
-            array_column(data_get($options, 'option_groups.5.values', []), 'code'),
+            array_column(data_get($options, 'option_groups.2.values', []), 'code'),
         );
         $this->assertArrayNotHasKey('print_code', $options);
         $this->assertArrayNotHasKey('drill', $options);

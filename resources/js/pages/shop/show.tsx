@@ -1,6 +1,7 @@
-// Content (labels, copy, images, FAQs) sourced from `content/hardcoded-content.json`
-// via useContent('product_detail_page'). Configurator state and price math stay
-// local to the page; JSON drives the labels and option metadata.
+// Global UI labels and common site copy come from
+// `content/hardcoded-content.json` via useContent('product_detail_page').
+// Product fields, pricing, FAQs, and detail sections come from the database;
+// the product-option JSON is limited to option metadata and galleries.
 import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Fragment, useMemo, useRef, useState } from 'react';
@@ -84,8 +85,9 @@ const OPTION_GROUP_ORDER: Record<string, number> = {
     size: 1,
     corners: 2,
     corner: 2,
-    paper_finish: 3,
-    special_finish: 4,
+    texture: 3,
+    paper_finish: 4,
+    special_finish: 5,
 };
 
 const OPTION_GROUP_FALLBACK_ORDER = Object.keys(OPTION_GROUP_ORDER).length + 1;
@@ -105,9 +107,11 @@ interface Product {
     id: number;
     name: string;
     slug: string;
+    subtitle: string | null;
     description: string | null;
     description_title: string | null;
     bullet_points: string[] | null;
+    price_line: string | null;
     price: string;
     featured_image: string | null;
     category: { id: number; name: string; slug: string };
@@ -134,8 +138,6 @@ interface ProductOptionGroup {
 interface ProductOptions {
     dynamic_options?: boolean;
     option_groups?: ProductOptionGroup[];
-    subtitle?: string;
-    starting_price_text?: string;
     sizes?: Array<{
         code?: string;
         name: string;
@@ -224,6 +226,10 @@ const generatedSizeSwatches: Record<string, string> = {
     square: `${reusableSwatchBase}/square-size.webp`,
     custom: `${reusableSwatchBase}/custom-size.webp`,
 };
+
+function sizeSwatchFor(code: string, fallback?: string): string | undefined {
+    return generatedSizeSwatches[code.toLowerCase()] ?? fallback;
+}
 
 const generatedFinishSwatches: Record<string, string> = {
     matte: `${reusableSwatchBase}/matte-paper-finish.webp`,
@@ -397,6 +403,9 @@ export default function ShopShow({
     const isPvcProduct =
         isPvcProductSlug(product.slug) ||
         product.category.slug === 'pvc-business-cards';
+    const isBusinessCardProduct =
+        product.slug.includes('business-card') ||
+        product.category?.slug.includes('business-card');
     const ACCENT = c.accent_color;
 
     const galleryThumbs: string[] = c.gallery_thumb_image_urls;
@@ -443,34 +452,38 @@ export default function ShopShow({
         return defaults;
     }, [dynamicOptionGroups]);
 
-    const sizes = useMemo(
-        () =>
-            hasProductOptions && Array.isArray(productOptions.sizes)
-                ? productOptions.sizes.map((s) => {
-                      const id = s.code ?? s.name.toLowerCase();
-                      const isCustom = id === 'custom';
+    const sizes = useMemo(() => {
+        const sizeSwatches = generatedSizeSwatches;
 
-                      return {
+        return hasProductOptions && Array.isArray(productOptions.sizes)
+            ? productOptions.sizes.map((s) => {
+                  const id = s.code ?? s.name.toLowerCase();
+                  const isCustom = id === 'custom';
+
+                  return {
+                      id,
+                      label: s.name.charAt(0).toUpperCase() + s.name.slice(1),
+                      dims: isCustom
+                          ? `${CUSTOM_SIZE_MIN}-${CUSTOM_SIZE_MAX} in`
+                          : s.width && s.height
+                            ? `${s.width}" x ${s.height}"`
+                            : '',
+                      swatch: sizeSwatchFor(
                           id,
-                          label:
-                              s.name.charAt(0).toUpperCase() + s.name.slice(1),
-                          dims: isCustom
-                              ? `${CUSTOM_SIZE_MIN}-${CUSTOM_SIZE_MAX} in`
-                              : s.width && s.height
-                                ? `${s.width}" x ${s.height}"`
-                                : '',
-                          swatch:
-                              generatedSizeSwatches[s.name.toLowerCase()] ??
-                              s.swatch_image,
-                      };
-                  })
-                : c.configurator_options.sizes.map((s: any) => ({
-                      ...s,
-                      swatch:
-                          generatedSizeSwatches[s.id.toLowerCase()] ?? s.swatch,
-                  })),
-        [hasProductOptions, productOptions, c.configurator_options.sizes],
-    );
+                          sizeSwatches[s.name.toLowerCase()] ?? s.swatch_image,
+                      ),
+                  };
+              })
+            : c.configurator_options.sizes.map((s: any) => ({
+                  ...s,
+                  swatch: sizeSwatches[s.id.toLowerCase()] ?? s.swatch,
+              }));
+    }, [
+        hasProductOptions,
+        productOptions,
+        c.configurator_options.sizes,
+        product.slug,
+    ]);
 
     const finishes = useMemo(
         () =>
@@ -561,8 +574,7 @@ export default function ShopShow({
         [hasProductOptions, productOptions],
     );
 
-    // Dynamic pricing is attached by the controller only for products
-    // that have pricing JSON configured (see loadDynamicPricingData).
+    // Dynamic pricing is read from the database-backed product configuration.
     const hasDynamicPricing =
         hasProductOptions &&
         (productOptions.pricing_data != null ||
@@ -626,12 +638,13 @@ export default function ShopShow({
             return `${pricing.startQuantity} cards from $${total}`;
         }
 
-        return productOptions?.starting_price_text;
+        return product.price_line ?? undefined;
     }, [
         dynamicOptionDefaults,
         dynamicOptionGroups,
         hasDynamicPricing,
         productOptions,
+        product.price_line,
     ]);
 
     const staticRecommendedQty = (() => {
@@ -816,6 +829,9 @@ export default function ShopShow({
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
     const [added, setAdded] = useState(false);
+    const [checkoutConfirmationOpen, setCheckoutConfirmationOpen] =
+        useState(false);
+    const [isSubmittingCart, setIsSubmittingCart] = useState(false);
     const [designModal, setDesignModal] = useState<
         'canva' | 'upload' | 'design-for-you' | null
     >(null);
@@ -1169,6 +1185,10 @@ export default function ShopShow({
             return;
         }
 
+        if (groupKey === 'paper_finish') {
+            setSelectedThumbnail(null);
+        }
+
         if (groupKey === 'sizes' && group.type !== 'multi_select') {
             setSelectedSize(value);
         }
@@ -1264,6 +1284,7 @@ export default function ShopShow({
                 break;
             case 'paper_finish':
                 setSelectedFinish(value);
+                setSelectedThumbnail(null);
 
                 // Gloss only allows "no special finish" — reset if needed
                 if (
@@ -1343,37 +1364,6 @@ export default function ShopShow({
     const showEmbossingOrSignaturePanelInSummary =
         embossingOrSignaturePanelList.length > 0;
 
-    const addToCart = () => {
-        if (!hasSubmittedDesign) {
-            const message =
-                c.design_cta?.required_error ??
-                'Please choose and submit one of the three design options before adding this product to your cart.';
-
-            setDesignSelectionError(message);
-            toast.error(message);
-
-            return;
-        }
-
-        setAdded(true);
-        router.post(
-            '/cart/add',
-            {
-                product_id: product.id,
-                // Only the code is submitted; the server resolves the fee.
-                options: selectedDesignService
-                    ? {
-                          ...selectedOptions,
-                          design_service: selectedDesignService,
-                      }
-                    : selectedOptions,
-            },
-            {
-                onFinish: () => setTimeout(() => setAdded(false), 2000),
-            },
-        );
-    };
-
     const breadcrumbs: string[] = c.breadcrumbs;
     const featureChips: string[] = c.feature_chips;
     const featureChipDescriptions: string[] = c.feature_chip_descriptions;
@@ -1388,6 +1378,72 @@ export default function ShopShow({
     const designServicesConfig: any = c.design_services;
     const designFeeLabel: string = c.design_fee_label;
     const pageUrl = usePage().url;
+
+    const submitAddToCart = (continueToCheckout = false) => {
+        setAdded(true);
+        setIsSubmittingCart(true);
+        router.post(
+            '/cart/add',
+            {
+                product_id: product.id,
+                // Only the code is submitted; the server resolves the fee.
+                options: selectedDesignService
+                    ? {
+                          ...selectedOptions,
+                          design_service: selectedDesignService,
+                      }
+                    : selectedOptions,
+            },
+            {
+                onSuccess: () => {
+                    setCheckoutConfirmationOpen(false);
+
+                    if (continueToCheckout) {
+                        router.visit('/checkout');
+                    }
+                },
+                onError: () => {
+                    setAdded(false);
+
+                    if (continueToCheckout) {
+                        setCheckoutConfirmationOpen(true);
+                    }
+                },
+                onFinish: () => {
+                    setIsSubmittingCart(false);
+
+                    if (!continueToCheckout) {
+                        setTimeout(() => setAdded(false), 2000);
+                    }
+                },
+            },
+        );
+    };
+
+    const addToCart = () => {
+        if (!hasSubmittedDesign) {
+            const message =
+                c.design_cta?.required_error ??
+                'Please choose and submit one of the three design options before adding this product to your cart.';
+
+            setDesignSelectionError(message);
+            toast.error(message);
+
+            return;
+        }
+
+        if (isBusinessCardProduct) {
+            setCheckoutConfirmationOpen(true);
+
+            return;
+        }
+
+        submitAddToCart();
+    };
+
+    const confirmAddToCart = () => {
+        submitAddToCart(true);
+    };
 
     return (
         <StorefrontLayout>
@@ -1462,133 +1518,6 @@ export default function ShopShow({
                                 </button>
                             ))}
                         </div>
-                        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <FeatureChip
-                                mobileCollapsible
-                                revealDetailsOnTitleHover
-                                icon={
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1.6"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="size-10 text-[#800020]"
-                                    >
-                                        <circle cx="12" cy="12" r="10" />
-                                        <polyline points="12 6 12 12 16 14" />
-                                    </svg>
-                                }
-                                label={
-                                    productTurnaround?.label ||
-                                    firstFeatureCard.title ||
-                                    featureChips[0]
-                                }
-                                description={
-                                    productTurnaround?.description ||
-                                    firstFeatureCard.description ||
-                                    featureChipDescriptions[0]
-                                }
-                                detailTitle={
-                                    firstFeatureCard.tooltip_title ||
-                                    turnaroundTooltip.title
-                                }
-                                details={
-                                    firstFeatureCardTooltip ? (
-                                        <div
-                                            dangerouslySetInnerHTML={{
-                                                __html: firstFeatureCardTooltip,
-                                            }}
-                                        />
-                                    ) : (
-                                        turnaroundTooltip.sections.map(
-                                            (section: any) => (
-                                                <p key={section.heading}>
-                                                    <span className="font-semibold">
-                                                        {section.heading}
-                                                    </span>
-                                                    <br />
-                                                    {section.body}
-                                                </p>
-                                            ),
-                                        )
-                                    )
-                                }
-                            />
-                            <FeatureChip
-                                mobileCollapsible
-                                revealDetailsOnTitleHover
-                                icon={
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1.6"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="size-10 text-[#800020]"
-                                    >
-                                        <rect
-                                            x="3"
-                                            y="6"
-                                            width="18"
-                                            height="14"
-                                            rx="2"
-                                        />
-                                        <path d="M3 10h18" />
-                                        <path d="M7 6V4h10v2" />
-                                        <circle cx="7" cy="14" r="1" />
-                                        <circle cx="11" cy="14" r="1" />
-                                        <circle cx="15" cy="14" r="1" />
-                                    </svg>
-                                }
-                                label={
-                                    secondFeatureCard.title || featureChips[1]
-                                }
-                                description={
-                                    secondFeatureCard.description ||
-                                    featureChipDescriptions[1]
-                                }
-                                detailTitle={
-                                    secondFeatureCard.tooltip_title ||
-                                    gangRunTooltip.title
-                                }
-                                details={
-                                    secondFeatureCardTooltip ? (
-                                        <div
-                                            dangerouslySetInnerHTML={{
-                                                __html: secondFeatureCardTooltip,
-                                            }}
-                                        />
-                                    ) : (
-                                        <>
-                                            <p>{gangRunTooltip.intro}</p>
-                                            <p className="font-semibold">
-                                                {gangRunTooltip.pros_title}
-                                            </p>
-                                            <ul className="list-disc space-y-1 pl-4">
-                                                {gangRunTooltip.pros.map(
-                                                    (pro: string) => (
-                                                        <li key={pro}>{pro}</li>
-                                                    ),
-                                                )}
-                                            </ul>
-                                            <p className="font-semibold">
-                                                {gangRunTooltip.cons_title}
-                                            </p>
-                                            <ul className="list-disc space-y-1 pl-4">
-                                                {gangRunTooltip.cons.map(
-                                                    (con: string) => (
-                                                        <li key={con}>{con}</li>
-                                                    ),
-                                                )}
-                                            </ul>
-                                        </>
-                                    )
-                                }
-                            />
-                        </div>
                     </div>
 
                     {/* options */}
@@ -1602,9 +1531,7 @@ export default function ShopShow({
                         <div
                             className="mt-4 text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-0 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
                             dangerouslySetInnerHTML={{
-                                __html:
-                                    productOptions?.subtitle ??
-                                    c.product_subtitle,
+                                __html: product.subtitle ?? '',
                             }}
                         />
                         {startingPriceText && (
@@ -1760,6 +1687,47 @@ export default function ShopShow({
                                                 selectOption('corners', cn.id)
                                             }
                                         />
+                                    ))}
+                                </div>
+                            </OptionGroup>
+                        )}
+
+                        {!usesDynamicOptions && textures.length > 0 && (
+                            <OptionGroup label="Texture">
+                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                    {textures.map((t: any) => (
+                                        <ChoiceTile
+                                            key={t.id}
+                                            active={
+                                                selectedTexture === t.id &&
+                                                hasInteracted
+                                            }
+                                            onClick={() =>
+                                                selectOption('texture', t.id)
+                                            }
+                                        >
+                                            {t.thumb ? (
+                                                <img
+                                                    src={t.thumb}
+                                                    alt=""
+                                                    className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
+                                                />
+                                            ) : (
+                                                <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50">
+                                                    <span className="text-xs text-neutral-400">
+                                                        Texture
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <p className="mt-2 text-sm font-semibold">
+                                                {t.label}
+                                            </p>
+                                            {t.description && (
+                                                <p className="text-xs text-neutral-500">
+                                                    {t.description}
+                                                </p>
+                                            )}
+                                        </ChoiceTile>
                                     ))}
                                 </div>
                             </OptionGroup>
@@ -1986,47 +1954,6 @@ export default function ShopShow({
                                     </>
                                 )}
                             </div>
-                        )}
-
-                        {!usesDynamicOptions && textures.length > 0 && (
-                            <OptionGroup label="Texture">
-                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                    {textures.map((t: any) => (
-                                        <ChoiceTile
-                                            key={t.id}
-                                            active={
-                                                selectedTexture === t.id &&
-                                                hasInteracted
-                                            }
-                                            onClick={() =>
-                                                selectOption('texture', t.id)
-                                            }
-                                        >
-                                            {t.thumb ? (
-                                                <img
-                                                    src={t.thumb}
-                                                    alt=""
-                                                    className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
-                                                />
-                                            ) : (
-                                                <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50">
-                                                    <span className="text-xs text-neutral-400">
-                                                        Texture
-                                                    </span>
-                                                </div>
-                                            )}
-                                            <p className="mt-2 text-sm font-semibold">
-                                                {t.label}
-                                            </p>
-                                            {t.description && (
-                                                <p className="text-xs text-neutral-500">
-                                                    {t.description}
-                                                </p>
-                                            )}
-                                        </ChoiceTile>
-                                    ))}
-                                </div>
-                            </OptionGroup>
                         )}
 
                         {!usesDynamicOptions &&
@@ -2718,8 +2645,8 @@ export default function ShopShow({
                     {productOptions.detail_sections.design_specifications && (
                         <DesignSpecificationsSection
                             content={
-                                c?.shared_detail_sections?.business_cards
-                                    ?.design_specifications
+                                productOptions.detail_sections
+                                    .design_specifications
                             }
                         />
                     )}
@@ -2753,6 +2680,168 @@ export default function ShopShow({
                 </>
             )}
 
+            <Dialog
+                open={checkoutConfirmationOpen}
+                onOpenChange={(open) => {
+                    if (!isSubmittingCart) {
+                        setCheckoutConfirmationOpen(open);
+                    }
+                }}
+            >
+                <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
+                    <DialogHeader>
+                        <DialogTitle>Review before checkout</DialogTitle>
+                        <DialogDescription>
+                            Please review these production details before adding
+                            your business cards to the cart and continuing to
+                            checkout.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <FeatureChip
+                            icon={
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="1.6"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="size-10 text-[#800020]"
+                                >
+                                    <circle cx="12" cy="12" r="10" />
+                                    <polyline points="12 6 12 12 16 14" />
+                                </svg>
+                            }
+                            label={
+                                productTurnaround?.label ||
+                                firstFeatureCard.title ||
+                                featureChips[0]
+                            }
+                            description={
+                                productTurnaround?.description ||
+                                firstFeatureCard.description ||
+                                featureChipDescriptions[0]
+                            }
+                            detailTitle={
+                                firstFeatureCard.tooltip_title ||
+                                turnaroundTooltip.title
+                            }
+                            details={
+                                firstFeatureCardTooltip ? (
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: firstFeatureCardTooltip,
+                                        }}
+                                    />
+                                ) : (
+                                    turnaroundTooltip.sections.map(
+                                        (section: any) => (
+                                            <p key={section.heading}>
+                                                <span className="font-semibold">
+                                                    {section.heading}
+                                                </span>
+                                                <br />
+                                                {section.body}
+                                            </p>
+                                        ),
+                                    )
+                                )
+                            }
+                        />
+                        <FeatureChip
+                            icon={
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="1.6"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="size-10 text-[#800020]"
+                                >
+                                    <rect
+                                        x="3"
+                                        y="6"
+                                        width="18"
+                                        height="14"
+                                        rx="2"
+                                    />
+                                    <path d="M3 10h18" />
+                                    <path d="M7 6V4h10v2" />
+                                    <circle cx="7" cy="14" r="1" />
+                                    <circle cx="11" cy="14" r="1" />
+                                    <circle cx="15" cy="14" r="1" />
+                                </svg>
+                            }
+                            label={secondFeatureCard.title || featureChips[1]}
+                            description={
+                                secondFeatureCard.description ||
+                                featureChipDescriptions[1]
+                            }
+                            detailTitle={
+                                secondFeatureCard.tooltip_title ||
+                                gangRunTooltip.title
+                            }
+                            details={
+                                secondFeatureCardTooltip ? (
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: secondFeatureCardTooltip,
+                                        }}
+                                    />
+                                ) : (
+                                    <>
+                                        <p>{gangRunTooltip.intro}</p>
+                                        <p className="font-semibold">
+                                            {gangRunTooltip.pros_title}
+                                        </p>
+                                        <ul className="list-disc space-y-1 pl-4">
+                                            {gangRunTooltip.pros.map(
+                                                (pro: string) => (
+                                                    <li key={pro}>{pro}</li>
+                                                ),
+                                            )}
+                                        </ul>
+                                        <p className="font-semibold">
+                                            {gangRunTooltip.cons_title}
+                                        </p>
+                                        <ul className="list-disc space-y-1 pl-4">
+                                            {gangRunTooltip.cons.map(
+                                                (con: string) => (
+                                                    <li key={con}>{con}</li>
+                                                ),
+                                            )}
+                                        </ul>
+                                    </>
+                                )
+                            }
+                        />
+                    </div>
+
+                    <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            disabled={isSubmittingCart}
+                            onClick={() => setCheckoutConfirmationOpen(false)}
+                        >
+                            Back to product
+                        </Button>
+                        <Button
+                            type="button"
+                            disabled={isSubmittingCart}
+                            onClick={confirmAddToCart}
+                        >
+                            {isSubmittingCart
+                                ? 'Adding to cart…'
+                                : 'Confirm and continue to checkout'}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
             {lightboxOpen && (
                 <LightboxGallery
                     open={lightboxOpen}
@@ -2775,22 +2864,13 @@ function FeatureChip({
     description,
     detailTitle,
     details,
-    mobileCollapsible = false,
-    revealDetailsOnTitleHover = false,
 }: {
     icon: React.ReactNode;
     label: string;
     description?: string;
     detailTitle?: string;
     details?: React.ReactNode;
-    mobileCollapsible?: boolean;
-    revealDetailsOnTitleHover?: boolean;
 }) {
-    const [mobileExpanded, setMobileExpanded] = useState(false);
-    const [titleHovered, setTitleHovered] = useState(false);
-    const canCollapse = mobileCollapsible && Boolean(detailTitle || details);
-    const canRevealOnHover = revealDetailsOnTitleHover && canCollapse;
-
     const detailContent = (detailTitle || details) && (
         <div className="mt-4 border-t border-neutral-100 pt-3">
             {detailTitle && (
@@ -2808,70 +2888,20 @@ function FeatureChip({
 
     return (
         <div className="flex h-full flex-col rounded-lg border border-neutral-200 bg-white p-4">
-            {canCollapse ? (
-                <button
-                    type="button"
-                    className={cn(
-                        'flex w-full items-start gap-3 text-left',
-                        !canRevealOnHover && 'md:pointer-events-none',
-                    )}
-                    onClick={() => setMobileExpanded((expanded) => !expanded)}
-                    onMouseEnter={() => setTitleHovered(true)}
-                    onMouseLeave={() => setTitleHovered(false)}
-                    aria-expanded={mobileExpanded || titleHovered}
-                >
-                    <span className="mt-0.5 shrink-0">{icon}</span>
-                    <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-bold text-neutral-900">
-                            {label}
-                        </span>
-                        {description && (
-                            <span className="mt-1 hidden text-xs leading-relaxed text-neutral-500 md:block">
-                                {description}
-                            </span>
-                        )}
-                    </span>
-                    <ChevronDown
-                        aria-hidden="true"
-                        className={cn(
-                            'mt-0.5 size-4 shrink-0 text-neutral-500 transition-transform md:hidden',
-                            mobileExpanded && 'rotate-180',
-                        )}
-                    />
-                </button>
-            ) : (
-                <div className="flex gap-3">
-                    <span className="mt-0.5 shrink-0">{icon}</span>
-                    <div className="min-w-0">
-                        <p className="text-sm font-bold text-neutral-900">
-                            {label}
-                        </p>
-                        {description && (
-                            <p className="mt-1 text-xs leading-relaxed text-neutral-500">
-                                {description}
-                            </p>
-                        )}
-                    </div>
-                </div>
-            )}
-            {canCollapse ? (
-                <div
-                    className={cn(
-                        'md:block',
-                        canRevealOnHover && !titleHovered && 'md:hidden',
-                        mobileExpanded ? 'block' : 'hidden',
-                    )}
-                >
+            <div className="flex gap-3">
+                <span className="mt-0.5 shrink-0">{icon}</span>
+                <div className="min-w-0">
+                    <p className="text-sm font-bold text-neutral-900">
+                        {label}
+                    </p>
                     {description && (
-                        <p className="mt-3 text-xs leading-relaxed text-neutral-500 md:hidden">
+                        <p className="mt-1 text-xs leading-relaxed text-neutral-500">
                             {description}
                         </p>
                     )}
-                    {detailContent}
                 </div>
-            ) : (
-                detailContent
-            )}
+            </div>
+            {detailContent}
         </div>
     );
 }
@@ -2956,7 +2986,12 @@ function DynamicOptionGroups({
                                     group.key === 'corners'
                                         ? (cornerSwatchFor(code) ??
                                           value.swatch_image)
-                                        : value.swatch_image;
+                                        : group.key === 'sizes'
+                                          ? sizeSwatchFor(
+                                                code,
+                                                value.swatch_image,
+                                            )
+                                          : value.swatch_image;
                                 const isCustomSize =
                                     group.key === 'sizes' && code === 'custom';
                                 const isSvg =

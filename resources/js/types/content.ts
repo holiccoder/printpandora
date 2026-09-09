@@ -364,8 +364,6 @@ export interface DesignerPartnerPageContent {
         eyebrow: string;
         heading: string;
         body: string;
-        cta: string;
-        cta_href: string;
     };
     application_form: {
         eyebrow: string;

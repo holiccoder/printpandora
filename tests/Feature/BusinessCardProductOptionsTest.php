@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Services\PricingService;
 use App\Services\ProductConfigurationService;
 use Database\Seeders\BusinessCardProductOptionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,7 +13,7 @@ class BusinessCardProductOptionsTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_seeder_applies_product_specific_gang_run_copy(): void
+    public function test_seeder_preserves_database_product_detail_copy(): void
     {
         $category = ProductCategory::create([
             'name' => 'Business Cards',
@@ -27,6 +26,15 @@ class BusinessCardProductOptionsTest extends TestCase
                 'slug' => $slug,
                 'product_category_id' => $category->id,
                 'product_config' => [
+                    'options' => [
+                        'sizes' => [
+                            'values' => [
+                                ['code' => 'standard', 'swatch_image' => '/legacy-standard.png'],
+                                ['code' => 'square', 'swatch_image' => '/legacy-square.png'],
+                                ['code' => 'custom', 'description' => 'Legacy custom range'],
+                            ],
+                        ],
+                    ],
                     'detail_sections' => [
                         'design_specifications' => ['heading' => 'Keep this section'],
                         'feature_cards' => [
@@ -52,13 +60,28 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get($special->product_config, 'detail_sections.design_specifications.heading'),
         );
         $this->assertStringContainsString(
-            'color reproduction is relatively less accurate',
+            'replace this copy',
             strtolower((string) data_get($standard->product_config, 'detail_sections.feature_cards.1.tooltip_content')),
         );
         $this->assertStringContainsString(
-            'as accurately as dedicated printing',
-            (string) data_get($special->product_config, 'detail_sections.feature_cards.1.tooltip_content'),
+            'replace this copy',
+            strtolower((string) data_get($special->product_config, 'detail_sections.feature_cards.1.tooltip_content')),
         );
+
+        foreach ([$standard, $special] as $product) {
+            $this->assertSame(
+                '/images/product-options/business-cards/swatches/standard-size.webp',
+                data_get($product->product_config, 'options.sizes.values.0.swatch_image'),
+            );
+            $this->assertSame(
+                '/images/product-options/business-cards/swatches/square-size.webp',
+                data_get($product->product_config, 'options.sizes.values.1.swatch_image'),
+            );
+            $this->assertSame(
+                'max range: 2.1 - 3.5 inches',
+                data_get($product->product_config, 'options.sizes.values.2.description'),
+            );
+        }
     }
 
     public function test_requested_contracts_are_applied_and_existing_content_is_preserved(): void
@@ -92,6 +115,8 @@ class BusinessCardProductOptionsTest extends TestCase
             Product::create([
                 'name' => $slug,
                 'slug' => $slug,
+                'subtitle' => "Database subtitle for {$slug}",
+                'description' => "Database description for {$slug}",
                 'product_category_id' => $pvc->id,
                 'product_config' => [],
             ]);
@@ -106,8 +131,30 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get($quality->product_config, 'options.sizes.values.*.code'),
         );
         $this->assertSame(
+            '/images/product-options/business-cards/swatches/standard-size.webp',
+            data_get($quality->product_config, 'options.sizes.values.0.swatch_image'),
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/square-size.webp',
+            data_get($quality->product_config, 'options.sizes.values.1.swatch_image'),
+        );
+        $this->assertSame(
+            'max range: 2.1 - 3.5 inches',
+            data_get($quality->product_config, 'options.sizes.values.2.description'),
+        );
+        $this->assertSame(
             ['shattered_glass_film', 'holographic_film', 'starlight_film', 'holographic_star_film', 'soft_touch_film'],
             data_get($quality->product_config, 'options.texture.values.*.code'),
+        );
+        $this->assertSame(
+            [
+                '/images/product-options/business-cards/swatches/quality/shattered-glass-film.png',
+                '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+                '/images/product-options/business-cards/swatches/quality/starlight-film.png',
+                '/images/product-options/business-cards/swatches/quality/holographic-star-film.png',
+                '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+            ],
+            data_get($quality->product_config, 'options.texture.values.*.swatch_image'),
         );
         $this->assertContains(
             'cold_bright_gold',
@@ -121,9 +168,35 @@ class BusinessCardProductOptionsTest extends TestCase
             ['matte', 'gloss', 'frosted'],
             data_get(Product::where('slug', 'basic-pvc-card')->firstOrFail()->product_config, 'options.paper_finish.values.*.code'),
         );
+        $expectedPvcSwatches = [
+            '/images/products/pvc/matte-pvc.png',
+            '/images/products/pvc/gloss-pvc.png',
+            '/images/products/pvc/frosted-pvc.png',
+        ];
+
+        foreach (['basic-pvc-card', 'standard-pvc-card', 'premium-pvc-card'] as $slug) {
+            $config = Product::where('slug', $slug)->firstOrFail()->product_config;
+
+            $this->assertSame(
+                ['matte', 'gloss', 'frosted'],
+                data_get($config, 'options.paper_finish.values.*.code'),
+            );
+            $this->assertSame(
+                $expectedPvcSwatches,
+                data_get($config, 'options.paper_finish.values.*.swatch_image'),
+            );
+        }
         $this->assertSame(
             ['no_print_code_or_signature_stripe', 'print_code', 'signature_stripe'],
             data_get(Product::where('slug', 'standard-pvc-card')->firstOrFail()->product_config, 'options.print_code_or_signature_stripe.values.*.code'),
+        );
+        $this->assertSame(
+            [
+                '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
+                '/images/product-options/business-cards/swatches/pvc-print-code.png',
+                '/images/product-options/business-cards/swatches/pvc-signature-stripe.png',
+            ],
+            data_get(Product::where('slug', 'standard-pvc-card')->firstOrFail()->product_config, 'options.print_code_or_signature_stripe.values.*.swatch_image'),
         );
         $this->assertSame(
             ['no_print_code', 'print_code'],
@@ -138,53 +211,39 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get(Product::where('slug', 'basic-pvc-card')->firstOrFail()->product_config, 'options.print_code.values.1.swatch_image'),
         );
 
-        $expectedPvcPricing = [
-            'basic-pvc-card' => 0.6,
-            'standard-pvc-card' => 1.6,
-            'premium-pvc-card' => 10,
-        ];
+        foreach (['basic-pvc-card', 'standard-pvc-card', 'premium-pvc-card'] as $slug) {
+            $product = Product::where('slug', $slug)->firstOrFail();
 
-        foreach ($expectedPvcPricing as $slug => $basePrice) {
-            $config = Product::where('slug', $slug)->firstOrFail()->product_config;
-
-            $this->assertSame('rule_based', data_get($config, 'pricing.mode'));
-            $this->assertSame($basePrice, data_get($config, 'pricing.scenarios.rectangle.base_price_per_card'));
-            $this->assertSame(50, data_get($config, 'pricing.scenarios.rectangle.start_quantity'));
+            $this->assertSame("Database description for {$slug}", $product->description);
+            $this->assertSame("Database subtitle for {$slug}", $product->subtitle);
+            $this->assertSame("Database description for {$slug}", data_get($product->product_config, 'product.description'));
+            $this->assertSame("Database subtitle for {$slug}", data_get($product->product_config, 'product.subtitle'));
         }
 
-        $pricing = app(PricingService::class);
+        foreach (['basic-pvc-card', 'standard-pvc-card', 'premium-pvc-card'] as $slug) {
+            $product = Product::where('slug', $slug)->firstOrFail();
+            $storefront = app(ProductConfigurationService::class)->storefrontOptions($product);
+            $paperFinishGroup = collect($storefront['option_groups'] ?? [])->firstWhere('key', 'paper_finish');
 
-        $this->assertSame(
-            30.0,
-            $pricing->calculate(Product::where('slug', 'basic-pvc-card')->firstOrFail()->id, [
-                'quantity' => '50',
-                'paper_finish' => 'matte',
-                'print_code' => 'no_print_code',
-            ]),
-        );
-        $this->assertSame(
-            43.0,
-            $pricing->calculate(Product::where('slug', 'basic-pvc-card')->firstOrFail()->id, [
-                'quantity' => '50',
-                'paper_finish' => 'matte',
-                'print_code' => 'print_code',
-            ]),
-        );
-        $this->assertSame(
-            80.0,
-            $pricing->calculate(Product::where('slug', 'standard-pvc-card')->firstOrFail()->id, [
-                'quantity' => '50',
-                'paper_finish' => 'matte',
-                'print_code_or_signature_stripe' => 'no_print_code_or_signature_stripe',
-            ]),
-        );
-        $this->assertSame(
-            500.0,
-            $pricing->calculate(Product::where('slug', 'premium-pvc-card')->firstOrFail()->id, [
-                'quantity' => '50',
-                'print_code' => 'no_print_code',
-            ]),
-        );
+            $this->assertSame(
+                [
+                    '/images/products/pvc/matte-pvc.webp',
+                    '/images/products/pvc/gloss-pvc.webp',
+                    '/images/products/pvc/frosted-pvc.webp',
+                ],
+                data_get($paperFinishGroup, 'values.*.swatch_image'),
+            );
+
+            foreach ([
+                'matte_gallery' => '/images/products/pvc/matte-pvc-main.webp',
+                'gloss_gallery' => '/images/products/pvc/gloss-pvc-main.webp',
+                'frosted_gallery' => '/images/products/pvc/frosted-pvc-main.webp',
+            ] as $galleryId => $expectedPrimary) {
+                $gallery = collect($storefront['galleries'] ?? [])->firstWhere('id', $galleryId);
+
+                $this->assertSame($expectedPrimary, data_get($gallery, 'images.0'));
+            }
+        }
     }
 
     public function test_missing_metal_products_are_created_under_business_cards(): void
@@ -248,32 +307,9 @@ class BusinessCardProductOptionsTest extends TestCase
                 );
             }
 
-            $expectedBasePrices = [
-                'classic-metal-business-cards' => ['0_3_mm' => 4.6, '0_5_mm' => 5.4],
-                'premium-metal-business-cards' => ['0_3_mm' => 5.6, '0_5_mm' => 6.4],
-                'luxe-metal-business-cards' => ['0_3_mm' => 7.2, '0_5_mm' => 8],
-            ];
-
-            $this->assertSame('rule_based', data_get($config, 'pricing.mode'));
+            $this->assertSame('fixed_tiers', data_get($config, 'pricing.mode'));
             $this->assertSame([], data_get($config, 'pricing.scenarios'));
-            $this->assertSame(
-                ['0_3_mm', '0_5_mm'],
-                data_get($config, 'pricing.rules.*.match.thickness'),
-            );
-            $this->assertSame(
-                [$expectedBasePrices[$slug]['0_3_mm'], $expectedBasePrices[$slug]['0_5_mm']],
-                data_get($config, 'pricing.rules.*.pricing.basePrice'),
-            );
-            $this->assertSame(
-                [
-                    ['print_code_or_magnetic_stripe', 'special_finish'],
-                    ['print_code_or_magnetic_stripe', 'special_finish'],
-                ],
-                array_map(
-                    fn (array $rule): array => data_get($rule, 'pricing.processes.*.code'),
-                    data_get($config, 'pricing.rules', []),
-                ),
-            );
+            $this->assertSame([], data_get($config, 'pricing.rules'));
         }
 
         $expectedGalleries = [
@@ -305,41 +341,9 @@ class BusinessCardProductOptionsTest extends TestCase
             $this->assertSame($gallery[0], data_get($product->product_config, 'media.gallery_rules.0.primary'));
         }
 
-        $pricing = app(PricingService::class);
-        $classic = Product::where('slug', 'classic-metal-business-cards')->firstOrFail();
-        $premium = Product::where('slug', 'premium-metal-business-cards')->firstOrFail();
-
-        $this->assertSame(
-            230.0,
-            $pricing->calculate($classic->id, [
-                'quantity' => '50',
-                'thickness' => '0_3_mm',
-                'sizes' => '89x51_mm',
-                'print_code_or_magnetic_stripe' => 'no_print_code_or_magnetic_stripe',
-            ]),
-        );
-        $this->assertSame(
-            280.0,
-            $pricing->calculate($classic->id, [
-                'quantity' => '50',
-                'thickness' => '0_3_mm',
-                'sizes' => '89x51_mm',
-                'print_code_or_magnetic_stripe' => 'print_code',
-            ]),
-        );
-        $this->assertSame(
-            470.0,
-            $pricing->calculate($premium->id, [
-                'quantity' => '50',
-                'thickness' => '0_3_mm',
-                'sizes' => '89x51_mm',
-                'print_code_or_magnetic_stripe' => 'print_code',
-                'special_finish' => 'laser_engraving',
-            ]),
-        );
     }
 
-    public function test_classic_solid_uses_the_imported_640g_pricing_files(): void
+    public function test_classic_solid_keeps_database_pricing_and_imports_option_gallery_data(): void
     {
         $businessCards = ProductCategory::create([
             'name' => 'Business Cards',
@@ -350,6 +354,21 @@ class BusinessCardProductOptionsTest extends TestCase
             'name' => 'Classic Solid Business Cards',
             'slug' => 'classic-solid-business-cards',
             'product_category_id' => $businessCards->id,
+            'product_config' => [
+                'pricing' => [
+                    'mode' => 'rule_based',
+                    'currency' => 'USD',
+                    'total_rounding' => 'nearest_integer',
+                    'scenarios' => [
+                        'database' => [
+                            'base_price_per_card' => 0.91,
+                            'start_quantity' => 75,
+                        ],
+                    ],
+                    'quantity_price_table' => [],
+                    'rules' => [],
+                ],
+            ],
         ]);
 
         (new BusinessCardProductOptionsSeeder)->run();
@@ -358,46 +377,39 @@ class BusinessCardProductOptionsTest extends TestCase
         $config = $product->product_config;
 
         $this->assertSame('rule_based', data_get($config, 'pricing.mode'));
-        $this->assertSame(0.6, data_get($config, 'pricing.scenarios.rectangle.base_price_per_card'));
-        $this->assertSame(0.8, data_get($config, 'pricing.scenarios.square.base_price_per_card'));
-        $this->assertSame(200, data_get($config, 'pricing.scenarios.rectangle.start_quantity'));
+        $this->assertSame(0.91, data_get($config, 'pricing.scenarios.database.base_price_per_card'));
+        $this->assertSame(75, data_get($config, 'pricing.scenarios.database.start_quantity'));
         $this->assertSame(
-            ['rounded_corners', 'special_finish'],
-            data_get($config, 'pricing.scenarios.rectangle.processes.*.code'),
-        );
-
-        $pricing = app(PricingService::class);
-
-        $this->assertSame(
-            120.0,
-            $pricing->calculate($product->id, [
-                'quantity' => '200',
-                'sizes' => 'standard',
-                'paper_finish' => 'matte',
-                'corners' => 'square',
-                'special_finish' => 'no_special_finish',
-            ]),
+            '/images/product-options/business-cards/swatches/standard-size.webp',
+            data_get($config, 'options.sizes.values.0.swatch_image'),
         );
         $this->assertSame(
-            145.0,
-            $pricing->calculate($product->id, [
-                'quantity' => '500',
-                'sizes' => 'standard',
-                'paper_finish' => 'matte',
-                'corners' => 'rounded',
-                'special_finish' => 'black_gold',
-            ]),
+            '/images/product-options/business-cards/swatches/square-size.webp',
+            data_get($config, 'options.sizes.values.1.swatch_image'),
         );
         $this->assertSame(
-            170.0,
-            $pricing->calculate($product->id, [
-                'quantity' => '500',
-                'sizes' => 'square',
-                'paper_finish' => 'matte',
-                'corners' => 'rounded',
-                'special_finish' => 'black_gold',
-            ]),
+            ['no_print_code', 'need_print_code'],
+            data_get($config, 'options.print_code.values.*.code'),
         );
+        $this->assertSame(
+            [
+                '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
+                '/images/product-options/business-cards/swatches/pvc-print-code.png',
+            ],
+            data_get($config, 'options.print_code.values.*.swatch_image'),
+        );
+        $this->assertSame(
+            ['no_drilling', 'needs_drilling'],
+            data_get($config, 'options.drill.values.*.code'),
+        );
+        $this->assertSame(
+            [
+                '/images/product-options/business-cards/swatches/drilling/no-drilling.png',
+                '/images/product-options/business-cards/swatches/drilling/needs-drilling.png',
+            ],
+            data_get($config, 'options.drill.values.*.swatch_image'),
+        );
+        $this->assertArrayNotHasKey('rectangle', data_get($config, 'pricing.scenarios'));
     }
 
     public function test_legacy_products_are_normalized_to_the_same_contract(): void
@@ -434,6 +446,13 @@ class BusinessCardProductOptionsTest extends TestCase
         $this->assertSame(
             ['no_print_code', 'print_code'],
             array_column(data_get($options, 'option_groups.1.values', []), 'code'),
+        );
+        $this->assertSame(
+            [
+                '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
+                '/images/product-options/business-cards/swatches/pvc-print-code.png',
+            ],
+            array_column(data_get($options, 'option_groups.1.values', []), 'swatch_image'),
         );
     }
 
@@ -579,10 +598,22 @@ class BusinessCardProductOptionsTest extends TestCase
         ];
 
         $this->assertSame(
-            ['sizes', 'corners', 'special_finish', 'texture'],
+            ['sizes', 'corners', 'texture', 'special_finish'],
             array_keys($config['options']),
         );
         $this->assertSame(['standard', 'square', 'custom'], data_get($config, 'options.sizes.values.*.code'));
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/standard-size.webp',
+            data_get($config, 'options.sizes.values.0.swatch_image'),
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/square-size.webp',
+            data_get($config, 'options.sizes.values.1.swatch_image'),
+        );
+        $this->assertSame(
+            'max range: 2.1 - 3.5 inches',
+            data_get($config, 'options.sizes.values.2.description'),
+        );
         $this->assertSame(['square', 'rounded'], data_get($config, 'options.corners.values.*.code'));
         $this->assertSame($textureCodes, data_get($config, 'options.texture.values.*.code'));
         $this->assertSame(
@@ -648,7 +679,7 @@ class BusinessCardProductOptionsTest extends TestCase
 
         $this->assertTrue((bool) data_get($options, 'dynamic_options'));
         $this->assertSame(
-            ['sizes', 'corners', 'special_finish', 'texture'],
+            ['sizes', 'corners', 'texture', 'special_finish'],
             array_column(data_get($options, 'option_groups', []), 'key'),
         );
         $this->assertSame(
@@ -657,7 +688,7 @@ class BusinessCardProductOptionsTest extends TestCase
         );
         $this->assertSame(
             ['inkpavo_j1', 'inkpavo_j2', 'inkpavo_j3', 'inkpavo_j4', 'inkpavo_j5', 'inkpavo_j6', 'inkpavo_j7', 'inkpavo_j8'],
-            array_column(data_get($options, 'option_groups.3.values', []), 'code'),
+            array_column(data_get($options, 'option_groups.2.values', []), 'code'),
         );
         $this->assertSame(
             '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j6.webp',
@@ -709,10 +740,22 @@ class BusinessCardProductOptionsTest extends TestCase
         ];
 
         $this->assertSame(
-            ['sizes', 'corners', 'special_finish', 'texture'],
+            ['sizes', 'corners', 'texture', 'special_finish'],
             array_keys($config['options']),
         );
         $this->assertSame(['standard', 'square', 'custom'], data_get($config, 'options.sizes.values.*.code'));
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/standard-size.webp',
+            data_get($config, 'options.sizes.values.0.swatch_image'),
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/square-size.webp',
+            data_get($config, 'options.sizes.values.1.swatch_image'),
+        );
+        $this->assertSame(
+            'max range: 2.1 - 3.5 inches',
+            data_get($config, 'options.sizes.values.2.description'),
+        );
         $this->assertSame(['square', 'rounded'], data_get($config, 'options.corners.values.*.code'));
         $this->assertSame($textureCodes, data_get($config, 'options.texture.values.*.code'));
         $this->assertSame(
@@ -790,7 +833,7 @@ class BusinessCardProductOptionsTest extends TestCase
 
         $this->assertTrue((bool) data_get($options, 'dynamic_options'));
         $this->assertSame(
-            ['sizes', 'corners', 'special_finish', 'texture'],
+            ['sizes', 'corners', 'texture', 'special_finish'],
             array_column(data_get($options, 'option_groups', []), 'key'),
         );
         $this->assertSame(
@@ -799,7 +842,7 @@ class BusinessCardProductOptionsTest extends TestCase
         );
         $this->assertSame(
             ['j1_water_ripple_paper', 'j2_cloth_texture_paper', 'j3_eggshell_texture', 'j4_high_grade_paper', 'j5_pearlescent_paper', 'j6_kraft_paper', 'j7_absorbent_cotton_paper', 'j8_pinhole_paper'],
-            array_column(data_get($options, 'option_groups.3.values', []), 'code'),
+            array_column(data_get($options, 'option_groups.2.values', []), 'code'),
         );
         $this->assertSame(
             '/images/products/super-business-cards/super-business-cards-rounded-j3-eggshell-texture.webp',

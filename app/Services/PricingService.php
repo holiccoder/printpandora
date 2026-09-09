@@ -16,8 +16,8 @@ class PricingService
     /**
      * Calculate the line price for a product with the given options.
      *
-     * Returns the dynamic subtotal when the product has pricing JSON configured;
-     * otherwise falls back to the product's static price.
+     * Returns the dynamic subtotal when the product has database-backed
+     * pricing configured; otherwise falls back to the product's static price.
      *
      * @param  array<string, mixed>  $options
      */
@@ -450,6 +450,10 @@ class PricingService
         $list = $productOptions[$key] ?? [];
 
         if (! is_array($list) || $list === []) {
+            return 0;
+        }
+
+        if ($value === null || $value === '' || (is_array($value) && $value === [])) {
             return 0;
         }
 

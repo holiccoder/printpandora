@@ -4,13 +4,24 @@ namespace Database\Seeders;
 
 use App\Models\Product;
 use App\Services\ProductConfigurationService;
+use App\Support\BusinessCardOptionCatalog;
 use Illuminate\Database\Seeder;
 
 class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
 {
     private const PRODUCT_SLUG = 'classic-special-business-cards';
 
-    private const REMOVED_DEFAULT_IMAGE = '/images/classic-special-business-cards/default04.png';
+    /**
+     * The four shared default gallery images for the classic special card.
+     *
+     * @var array<int, string>
+     */
+    public const DEFAULT_GALLERY = [
+        '/images/classic-special-business-cards/default01.png',
+        '/images/classic-special-business-cards/default02.png',
+        '/images/classic-special-business-cards/default03.png',
+        '/images/classic-special-business-cards/default04.png',
+    ];
 
     public function run(): void
     {
@@ -26,7 +37,7 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
 
         $configuration = app(ProductConfigurationService::class);
         $config = $configuration->canonicalConfig($product);
-        $config['media'] = $this->removeDefaultFourthImage(
+        $config['media'] = self::synchronizeDefaultGallery(
             is_array($config['media'] ?? null) ? $config['media'] : [],
         );
         $existing = is_array($config['options'] ?? null) ? $config['options'] : [];
@@ -49,7 +60,7 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
                             'description' => '2.0″ x 3.5″',
                             'width' => '2.0',
                             'height' => '3.5',
-                            'swatch_image' => '/images/product-options/business-cards/swatches/standard-size.webp',
+                            'swatch_image' => BusinessCardOptionCatalog::STANDARD_SIZE_SWATCH_IMAGE,
                         ],
                     ),
                     array_replace(
@@ -63,13 +74,13 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
                             'description' => '2.5″ x 2.5″',
                             'width' => '2.5',
                             'height' => '2.5',
-                            'swatch_image' => '/images/product-options/business-cards/swatches/square-size.webp',
+                            'swatch_image' => BusinessCardOptionCatalog::SQUARE_SIZE_SWATCH_IMAGE,
                         ],
                     ),
                     [
                         'code' => 'custom',
                         'label' => 'Custom',
-                        'description' => 'Enter a custom width and height from 2.1 to 3.5 inches.',
+                        'description' => BusinessCardOptionCatalog::CUSTOM_SIZE_DESCRIPTION,
                         'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
                     ],
                 ],
@@ -229,40 +240,57 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
     }
 
     /**
-     * Keep re-seeding existing canonical products in sync with the reduced
-     * default gallery from the legacy content file.
+     * Keep the canonical product gallery in sync with the four imported
+     * default images while preserving shared foil-specific rules.
      *
      * @param  array<string, mixed>  $media
      * @return array<string, mixed>
      */
-    private function removeDefaultFourthImage(array $media): array
+    public static function synchronizeDefaultGallery(array $media): array
     {
-        if (is_array($media['gallery'] ?? null)) {
-            $media['gallery'] = array_values(array_filter(
-                $media['gallery'],
-                fn (mixed $image): bool => $image !== self::REMOVED_DEFAULT_IMAGE,
-            ));
-        }
+        $media['gallery'] = self::DEFAULT_GALLERY;
+        $galleryRules = is_array($media['gallery_rules'] ?? null)
+            ? array_values($media['gallery_rules'])
+            : [];
+        $hasDefaultRule = false;
 
-        if (is_array($media['gallery_rules'] ?? null)) {
-            foreach ($media['gallery_rules'] as &$rule) {
-                if (! is_array($rule)) {
-                    continue;
-                }
-
-                if (is_array($rule['images'] ?? null)) {
-                    $rule['images'] = array_values(array_filter(
-                        $rule['images'],
-                        fn (mixed $image): bool => $image !== self::REMOVED_DEFAULT_IMAGE,
-                    ));
-                }
-
-                if (($rule['primary'] ?? null) === self::REMOVED_DEFAULT_IMAGE) {
-                    $rule['primary'] = $rule['images'][0] ?? null;
-                }
+        foreach ($galleryRules as &$rule) {
+            if (! is_array($rule)) {
+                continue;
             }
-            unset($rule);
+
+            $images = is_array($rule['images'] ?? null) ? $rule['images'] : [];
+            $containsClassicSpecialImage = count(array_filter(
+                $images,
+                fn (mixed $image): bool => is_string($image)
+                    && str_starts_with($image, '/images/classic-special-business-cards/'),
+            )) > 0;
+            $isDefaultRule = ($rule['id'] ?? null) === 'default'
+                || ($rule['match'] ?? []) === [];
+
+            if (! $isDefaultRule && ! $containsClassicSpecialImage) {
+                continue;
+            }
+
+            $rule['images'] = self::DEFAULT_GALLERY;
+            $rule['primary'] = self::DEFAULT_GALLERY[0];
+
+            if (($rule['id'] ?? null) === 'default' || $isDefaultRule) {
+                $hasDefaultRule = true;
+            }
         }
+        unset($rule);
+
+        if (! $hasDefaultRule) {
+            $galleryRules[] = [
+                'id' => 'default',
+                'match' => [],
+                'images' => self::DEFAULT_GALLERY,
+                'primary' => self::DEFAULT_GALLERY[0],
+            ];
+        }
+
+        $media['gallery_rules'] = $galleryRules;
 
         return $media;
     }

@@ -57,7 +57,7 @@ class ProductConfigurationServiceTest extends TestCase
         $this->assertSame('/storage/'.$webpPath, data_get($ready, 'galleries.0.images.0'));
     }
 
-    public function test_legacy_classic_standard_data_is_exposed_as_form_state(): void
+    public function test_product_json_form_state_contains_only_options_and_gallery_data(): void
     {
         $product = new Product([
             'name' => 'Classic Standard Business Cards',
@@ -69,23 +69,22 @@ class ProductConfigurationServiceTest extends TestCase
         $state = app(ProductConfigurationService::class)->formState($product);
 
         $this->assertSame('Classic Standard Business Cards', data_get($state, 'product.name'));
-        $this->assertSame('rule_based', data_get($state, 'pricing.mode'));
-        $this->assertSame(['rectangle', 'uv', 'square', 'square_uv'], array_keys($state['pricing']['scenarios']));
+        $this->assertNull(data_get($state, 'product.subtitle'));
+        $this->assertSame('fixed_tiers', data_get($state, 'pricing.mode'));
+        $this->assertSame([], data_get($state, 'pricing.scenarios'));
+        $this->assertSame([], data_get($state, 'pricing.quantity_price_table'));
+        $this->assertSame([], data_get($state, 'pricing.rules'));
         $this->assertCount(7, $state['options']);
         $this->assertCount(24, $state['media']['gallery_rules']);
-        $this->assertCount(6, $state['faq']);
+        $this->assertSame([], $state['faq']);
         $this->assertArrayNotHasKey('detail_sections', $state);
-        $this->assertContains(
-            '200',
-            array_column($state['pricing']['scenarios']['rectangle']['quantity_discounts'], 'quantity'),
-        );
     }
 
     public function test_canonical_data_is_adapted_for_the_existing_storefront(): void
     {
         $product = new Product([
-            'name' => 'Classic Standard Business Cards',
-            'slug' => 'classic-standard-business-cards',
+            'name' => 'Database Only Business Card',
+            'slug' => 'database-only-business-card',
             'product_config' => [
                 'schema_version' => 1,
                 'product' => [
@@ -137,7 +136,70 @@ class ProductConfigurationServiceTest extends TestCase
         $this->assertSame('Keep me', data_get($options, 'detail_sections.design_specifications.heading'));
     }
 
-    public function test_central_business_card_sections_override_canonical_product_copies(): void
+    public function test_product_json_only_supplies_detail_options_and_galleries(): void
+    {
+        $product = new Product([
+            'name' => 'Database Product Name',
+            'slug' => 'classic-special-business-cards',
+            'subtitle' => '<p>Database subtitle</p>',
+            'price_line' => 'Database price line',
+            'description' => '<p>Database description</p>',
+            'product_config' => [
+                'product' => [
+                    'subtitle' => '<p>Stale file subtitle</p>',
+                ],
+                'options' => [
+                    'sizes' => [
+                        'values' => [
+                            ['code' => 'database-size', 'label' => 'Database size'],
+                        ],
+                    ],
+                ],
+                'media' => [
+                    'gallery' => ['/images/database-gallery.jpg'],
+                ],
+                'pricing' => [
+                    'mode' => 'fixed_tiers',
+                    'quantity_price_table' => [[
+                        'quantity' => '50',
+                        'price_per_card' => '0.42',
+                        'pack_price' => '21',
+                        'pack_original_price' => '',
+                        'is_recommended' => true,
+                    ]],
+                ],
+                'faq' => [[
+                    'question' => 'Database FAQ',
+                    'answer' => 'Database answer',
+                ]],
+                'detail_sections' => [
+                    'design_service_banner' => ['heading' => 'Database detail'],
+                ],
+            ],
+        ]);
+        $product->setRelation('category', new ProductCategory(['slug' => 'classic-business-cards']));
+
+        $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+
+        $this->assertSame('<p>Database subtitle</p>', data_get($options, 'subtitle'));
+        $this->assertSame('Database price line', data_get($options, 'starting_price_text'));
+        $this->assertNotSame(
+            'database-size',
+            data_get($options, 'option_groups.0.values.0.code'),
+        );
+        $this->assertNotSame(
+            '/images/database-gallery.jpg',
+            data_get($options, 'galleries.0.images.0'),
+        );
+        $this->assertSame('50', data_get($options, 'quantity_price_table.0.quantity'));
+        $this->assertSame('Database FAQ', data_get($options, 'detail_sections.faq.items.0.question'));
+        $this->assertSame(
+            'Database detail',
+            data_get($options, 'detail_sections.design_service_banner.heading'),
+        );
+    }
+
+    public function test_database_detail_sections_are_not_overridden_by_global_content(): void
     {
         $product = new Product([
             'name' => 'Configured business card',
@@ -172,40 +234,22 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($options, 'detail_sections.design_specifications.heading'),
         );
         $this->assertSame(
-            'Need help designing your Business Cards?',
+            'Stale banner copy',
             data_get($options, 'detail_sections.design_service_banner.heading'),
         );
         $this->assertSame(
-            'Check out our other paper stocks',
+            'Stale paper copy',
             data_get($options, 'detail_sections.paper_stocks.heading'),
         );
-        $this->assertCount(4, data_get($options, 'detail_sections.paper_stocks.items'));
+        $this->assertSame([], data_get($options, 'detail_sections.paper_stocks.items'));
         $this->assertSame(
-            [
-                '/images/product-detail/paper-stocks/premium-paper.webp',
-                '/images/product-detail/paper-stocks/luxury-paper.webp',
-                '/images/product-detail/paper-stocks/pvc-card.webp',
-                '/images/product-detail/paper-stocks/paper-stock-four.webp',
-            ],
-            data_get($options, 'detail_sections.paper_stocks.items.*.image_url'),
-        );
-        $this->assertSame(
-            'Even more good stuff',
+            'Stale cross-sell content',
             data_get($options, 'detail_sections.more_good_stuff.heading'),
-        );
-        $this->assertSame(
-            [
-                '/images/product-detail/even-more/even-more-one.webp',
-                '/images/product-detail/even-more/super-postcards.png',
-                '/images/product-detail/even-more/premium-flyers.png',
-                '/images/product-detail/even-more/folded-brochure.webp',
-            ],
-            data_get($options, 'detail_sections.more_good_stuff.items.*.image_url'),
         );
         $this->assertSame('Keep this FAQ content', data_get($options, 'detail_sections.faq.heading'));
     }
 
-    public function test_legacy_basic_pvc_data_receives_shared_sections_and_keeps_its_specs(): void
+    public function test_database_legacy_product_data_keeps_its_detail_sections_without_global_overlay(): void
     {
         $product = new Product([
             'name' => 'Basic PVC Card',
@@ -242,16 +286,16 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($options, 'detail_sections.design_specifications.diagram.safe_area.dimensions'),
         );
         $this->assertSame(
-            'Need help designing your Business Cards?',
+            null,
             data_get($options, 'detail_sections.design_service_banner.heading'),
         );
         $this->assertSame(
-            'Check out our other paper stocks',
+            null,
             data_get($options, 'detail_sections.paper_stocks.heading'),
         );
     }
 
-    public function test_direct_business_card_category_receives_shared_sections_without_design_specs(): void
+    public function test_direct_business_card_category_does_not_receive_global_product_sections(): void
     {
         $product = new Product([
             'name' => 'Test Product 2',
@@ -264,23 +308,7 @@ class ProductConfigurationServiceTest extends TestCase
 
         $options = app(ProductConfigurationService::class)->storefrontOptions($product);
 
-        $this->assertSame(
-            'Need help designing your Business Cards?',
-            data_get($options, 'detail_sections.design_service_banner.heading'),
-        );
-        $this->assertSame(
-            'Check out our other paper stocks',
-            data_get($options, 'detail_sections.paper_stocks.heading'),
-        );
-        $this->assertSame(
-            'Design Specifications',
-            data_get($options, 'detail_sections.design_specifications.heading'),
-        );
-        $this->assertSame(
-            '3.34" x 1.84"',
-            data_get($options, 'detail_sections.design_specifications.diagram.safe_area.dimensions'),
-        );
-        $this->assertCount(4, data_get($options, 'detail_sections.design_specifications.downloads'));
+        $this->assertSame([], data_get($options, 'detail_sections'));
     }
 
     public function test_non_business_card_categories_do_not_receive_shared_sections(): void

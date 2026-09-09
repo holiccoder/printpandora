@@ -1,6 +1,26 @@
 {
-    "subtitle": "<p>Please supply artwork with square corners at 88.5 x 57 mm. Keep all text and important design elements at least 4 mm from the edge, and remove the finished-size/cut line. When these specifications are followed, the finished card size is fixed at 85.5 x 54 mm.</p><p><strong>Available finishes:</strong></p><ul><li>Frosted</li><li>Matte</li><li>Gloss</li></ul>",
+    "subtitle": "<p><strong>Finished card size: 3.37 x 2.13 inches.</strong></p><p>Please supply artwork with square corners at 3.48 x 2.24 inches. Keep all text and important design elements at least 0.16 inches from the edge, and remove the finished-size/cut line.</p><p><strong>Available finishes:</strong></p><ul><li>Frosted</li><li>Matte</li><li>Gloss</li></ul>",
     "starting_price_text": "50 cards from 0",
+    "paper_finish": [
+        {
+            "code": "matte",
+            "name": "Matte",
+            "description": "Smooth, non-reflective matte finish.",
+            "swatch_image": "/images/products/pvc/matte-pvc.png"
+        },
+        {
+            "code": "gloss",
+            "name": "Gloss",
+            "description": "Shiny and highly reflective gloss finish.",
+            "swatch_image": "/images/products/pvc/gloss-pvc.png"
+        },
+        {
+            "code": "frosted",
+            "name": "Frosted Glass",
+            "description": "A translucent frosted-glass finish with a soft, elegant look.",
+            "swatch_image": "/images/products/pvc/frosted-pvc.png"
+        }
+    ],
     "quantity_price_table": [
         {
             "quantity": "50",
@@ -17,6 +37,42 @@
             "match": {},
             "images": [
                 "/images/products/pvc/pvc-01.jpg",
+                "/images/products/pvc/pvc-02.jpg",
+                "/images/products/pvc/pvc-03.jpg",
+                "/images/products/pvc/pvc-04.jpg"
+            ]
+        },
+        {
+            "id": "matte_gallery",
+            "match": {
+                "paper_finish": "matte"
+            },
+            "images": [
+                "/images/products/pvc/matte-pvc-main.png",
+                "/images/products/pvc/pvc-02.jpg",
+                "/images/products/pvc/pvc-03.jpg",
+                "/images/products/pvc/pvc-04.jpg"
+            ]
+        },
+        {
+            "id": "gloss_gallery",
+            "match": {
+                "paper_finish": "gloss"
+            },
+            "images": [
+                "/images/products/pvc/gloss-pvc-main.png",
+                "/images/products/pvc/pvc-02.jpg",
+                "/images/products/pvc/pvc-03.jpg",
+                "/images/products/pvc/pvc-04.jpg"
+            ]
+        },
+        {
+            "id": "frosted_gallery",
+            "match": {
+                "paper_finish": "frosted"
+            },
+            "images": [
+                "/images/products/pvc/frosted-pvc-main.png",
                 "/images/products/pvc/pvc-02.jpg",
                 "/images/products/pvc/pvc-03.jpg",
                 "/images/products/pvc/pvc-04.jpg"

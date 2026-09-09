@@ -5,13 +5,12 @@ namespace Database\Seeders;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductConfigurationService;
+use App\Support\BusinessCardOptionCatalog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class BusinessCardProductOptionsSeeder extends Seeder
 {
-    private const DELIVERY_FAQ_ANSWER = 'Standard shipping takes 7 - 12 business days. Express shipping takes 2 - 5 business days.';
-
     /**
      * @var array<int, array{slug: string, name: string, subtitle: string, description: string}>
      */
@@ -61,47 +60,42 @@ class BusinessCardProductOptionsSeeder extends Seeder
     ];
 
     /**
-     * @var array<string, array{description: string}>
+     * @var array<string, array{id: string, match: array<string, string>, images: array<int, string>, primary: string}>
      */
-    private const PVC_PRODUCT_DETAILS = [
-        'basic-pvc-card' => [
-            'description' => '<p>Basic PVC cards at 0.38mm are lightweight, durable, and waterproof.</p>',
+    private const PVC_FINISH_GALLERY_RULES = [
+        'matte' => [
+            'id' => 'matte_gallery',
+            'match' => ['paper_finish' => 'matte'],
+            'images' => [
+                '/images/products/pvc/matte-pvc-main.png',
+                '/images/products/pvc/pvc-02.jpg',
+                '/images/products/pvc/pvc-03.jpg',
+                '/images/products/pvc/pvc-04.jpg',
+            ],
+            'primary' => '/images/products/pvc/matte-pvc-main.png',
         ],
-        'standard-pvc-card' => [
-            'description' => '<p>Standard PVC cards at 0.76mm offer durable, waterproof construction with flexible print and finish options.</p>',
+        'gloss' => [
+            'id' => 'gloss_gallery',
+            'match' => ['paper_finish' => 'gloss'],
+            'images' => [
+                '/images/products/pvc/gloss-pvc-main.png',
+                '/images/products/pvc/pvc-02.jpg',
+                '/images/products/pvc/pvc-03.jpg',
+                '/images/products/pvc/pvc-04.jpg',
+            ],
+            'primary' => '/images/products/pvc/gloss-pvc-main.png',
         ],
-        'premium-pvc-card' => [
-            'description' => '<p>Premium PVC NFC cards at 0.84mm combine durable construction with optional print-code functionality.</p>',
+        'frosted' => [
+            'id' => 'frosted_gallery',
+            'match' => ['paper_finish' => 'frosted'],
+            'images' => [
+                '/images/products/pvc/frosted-pvc-main.png',
+                '/images/products/pvc/pvc-02.jpg',
+                '/images/products/pvc/pvc-03.jpg',
+                '/images/products/pvc/pvc-04.jpg',
+            ],
+            'primary' => '/images/products/pvc/frosted-pvc-main.png',
         ],
-    ];
-
-    /**
-     * @var array<string, string>
-     */
-    private const PRODUCT_SUBTITLE_FILES = [
-        'classic-standard-business-cards' => 'content/product-options/business-cards/classic-standard-business-cards.json',
-        'classic-special-business-cards' => 'content/product-options/business-cards/classic-special-business-cards.json',
-        'classic-quality-business-cards' => 'content/product-options/business-cards/classic-quality-business-cards.json',
-        'classic-solid-business-cards' => 'content/product-options/business-cards/classic-solid-business-cards.json',
-        'basic-cotton-business-card' => 'content/product-options/cotton-business-cards/basic-cotton-business-card.json',
-        'classic-cotton-business-card' => 'content/product-options/cotton-business-cards/classic-cotton-business-card.json',
-        'premium-cotton-business-card' => 'content/product-options/cotton-business-cards/premium-cotton-business-card.json',
-        'luxe-cotton-business-card' => 'content/product-options/cotton-business-cards/luxe-cotton-business-card.json',
-        'grand-cotton-business-card' => 'content/product-options/cotton-business-cards/grand-cotton-business-card.json',
-        'basic-pvc-card' => 'content/product-options/pvc-business-cards/basic-pvc-card.json',
-        'standard-pvc-card' => 'content/product-options/pvc-business-cards/standard-pvc-card.json',
-        'premium-pvc-card' => 'content/product-options/pvc-business-cards/premium-pvc-card.json',
-    ];
-
-    /**
-     * The gang-run copy is product-specific, so keep its source beside each
-     * product's existing detail-section configuration.
-     *
-     * @var array<string, string>
-     */
-    private const PRODUCT_FEATURE_CARD_FILES = [
-        'classic-standard-business-cards' => 'content/product-options/business-cards/classic-standard-business-cards.json',
-        'classic-special-business-cards' => 'content/product-options/business-cards/classic-special-business-cards.json',
     ];
 
     /**
@@ -236,26 +230,19 @@ class BusinessCardProductOptionsSeeder extends Seeder
                     ]);
                 }
 
-                $product->name = $definition['name'];
-                $product->subtitle = $definition['subtitle'];
-                $product->description = $definition['description'];
                 $product->product_category_id = $metalCategory->getKey();
-                $product->save();
 
-                $config = $configuration->canonicalConfig($product);
-                $pricingRules = $configuration->dynamicPricingRules($product);
-
-                if ($pricingRules !== null) {
-                    $pricing = is_array($config['pricing'] ?? null) ? $config['pricing'] : [];
-                    $config['pricing'] = array_replace($pricing, [
-                        'mode' => 'rule_based',
-                        'currency' => (string) ($pricing['currency'] ?? 'USD'),
-                        'total_rounding' => (string) ($pricing['total_rounding'] ?? 'nearest_integer'),
-                        'rules' => $pricingRules,
-                        'scenarios' => [],
-                        'quantity_price_table' => [],
+                if (! $product->exists) {
+                    $product->forceFill([
+                        'name' => $definition['name'],
+                        'subtitle' => $definition['subtitle'],
+                        'description' => $definition['description'],
                     ]);
                 }
+
+                $product->save();
+
+                $config = $this->databaseConfigForProduct($product);
 
                 $gallery = self::METAL_GALLERIES[$definition['slug']];
                 $config['media']['gallery'] = $gallery;
@@ -294,6 +281,8 @@ class BusinessCardProductOptionsSeeder extends Seeder
             }
 
             foreach ([
+                'classic-standard-business-cards',
+                'classic-special-business-cards',
                 'classic-quality-business-cards',
                 'classic-solid-business-cards',
                 'basic-pvc-card',
@@ -306,23 +295,22 @@ class BusinessCardProductOptionsSeeder extends Seeder
                     continue;
                 }
 
-                if (isset(self::PVC_PRODUCT_DETAILS[$slug])) {
-                    $product->forceFill(self::PVC_PRODUCT_DETAILS[$slug])->save();
+                $config = $this->canonicalConfigForProduct($product, $configuration);
+
+                if ($slug === 'classic-special-business-cards') {
+                    $config['media'] = ClassicSpecialBusinessCardOptionsSeeder::synchronizeDefaultGallery(
+                        is_array($config['media'] ?? null) ? $config['media'] : [],
+                    );
                 }
 
-                $config = $this->canonicalConfigForProduct($product, $configuration);
-                $pricingScenarios = $configuration->dynamicPricingScenarios($product);
-
-                if ($pricingScenarios !== null) {
-                    $pricing = is_array($config['pricing'] ?? null) ? $config['pricing'] : [];
-                    $config['pricing'] = array_replace($pricing, [
-                        'mode' => 'rule_based',
-                        'currency' => (string) ($pricing['currency'] ?? 'USD'),
-                        'total_rounding' => (string) ($pricing['total_rounding'] ?? 'nearest_integer'),
-                        'rules' => [],
-                        'scenarios' => $pricingScenarios,
-                        'quantity_price_table' => [],
-                    ]);
+                if (in_array($slug, ['basic-pvc-card', 'standard-pvc-card', 'premium-pvc-card'], true)) {
+                    // Re-apply the central PVC contract so existing rows receive
+                    // newly added options and the current swatch asset paths.
+                    $config['options'] = BusinessCardOptionCatalog::normalize(
+                        $slug,
+                        is_array($config['options'] ?? null) ? $config['options'] : [],
+                    ) ?? [];
+                    $config = $this->withPvcFinishGalleryRules($config);
                 }
 
                 $product->forceFill([
@@ -339,20 +327,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
                     continue;
                 }
 
-                $config = $configuration->canonicalConfig($product);
-                $pricingScenarios = $configuration->dynamicPricingScenarios($product);
-
-                if ($pricingScenarios !== null) {
-                    $pricing = is_array($config['pricing'] ?? null) ? $config['pricing'] : [];
-                    $config['pricing'] = array_replace($pricing, [
-                        'mode' => 'rule_based',
-                        'currency' => (string) ($pricing['currency'] ?? 'USD'),
-                        'total_rounding' => (string) ($pricing['total_rounding'] ?? 'nearest_integer'),
-                        'rules' => [],
-                        'scenarios' => $pricingScenarios,
-                        'quantity_price_table' => [],
-                    ]);
-                }
+                $config = $this->databaseConfigForProduct($product);
 
                 $config['media']['gallery'] = $gallery;
 
@@ -381,7 +356,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
             $product = Product::query()->where('slug', 'luxe-business-cards')->first();
 
             if ($product) {
-                $config = $configuration->canonicalConfig($product);
+                $config = $this->databaseConfigForProduct($product);
                 $defaultGallery = self::LUXE_BUSINESS_CARD_GALLERY['default'];
                 $galleryRules = [[
                     'id' => 'default',
@@ -416,7 +391,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
             $product = Product::query()->where('slug', 'super-business-cards')->first();
 
             if ($product) {
-                $config = $configuration->canonicalConfig($product);
+                $config = $this->databaseConfigForProduct($product);
                 $defaultGallery = self::SUPER_BUSINESS_CARD_GALLERY['default'];
                 $galleryRules = [[
                     'id' => 'default',
@@ -459,9 +434,6 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 $configuration->syncProductProjection($product->fresh());
             }
 
-            $this->syncProductSubtitles($configuration);
-            $this->syncDeliveryFaqs();
-            $this->syncFeatureCards();
         });
 
         if ($this->command !== null) {
@@ -471,9 +443,8 @@ class BusinessCardProductOptionsSeeder extends Seeder
 
     /**
      * The solid-card product keeps its editable legacy option definition in
-     * the business-cards content directory. Rebuild its canonical database
-     * configuration from that file so seeded products receive the same
-     * options and gallery rules as legacy imports.
+     * the business-cards content directory. Import only its options and
+     * gallery rules; product copy and pricing remain database-owned.
      *
      * @return array<string, mixed>
      */
@@ -481,8 +452,10 @@ class BusinessCardProductOptionsSeeder extends Seeder
         Product $product,
         ProductConfigurationService $configuration,
     ): array {
+        $current = $this->databaseConfigForProduct($product);
+
         if ($product->slug !== 'classic-solid-business-cards') {
-            return $configuration->canonicalConfig($product);
+            return $current;
         }
 
         $path = base_path('content/product-options/business-cards/classic-solid-business-cards.json');
@@ -501,108 +474,76 @@ class BusinessCardProductOptionsSeeder extends Seeder
             JSON_THROW_ON_ERROR,
         ));
 
-        return $configuration->canonicalConfig($legacyProduct);
+        $imported = $configuration->canonicalConfig($legacyProduct);
+
+        // This legacy file is retained as an option/gallery source only. Do
+        // not copy its subtitle, pricing, FAQ, or detail sections into the
+        // database when the maintenance seeder runs.
+        $current['options'] = is_array($imported['options'] ?? null)
+            ? $imported['options']
+            : [];
+        $current['media'] = is_array($imported['media'] ?? null)
+            ? $imported['media']
+            : [];
+
+        return $current;
     }
 
-    private function syncProductSubtitles(ProductConfigurationService $configuration): void
+    /**
+     * Keep the finish-specific PVC galleries pointed at product images rather
+     * than the swatch assets used by the option tiles.
+     *
+     * @param  array<string, mixed>  $config
+     * @return array<string, mixed>
+     */
+    private function withPvcFinishGalleryRules(array $config): array
     {
-        foreach (self::PRODUCT_SUBTITLE_FILES as $slug => $relativePath) {
-            $product = Product::query()->where('slug', $slug)->first();
+        $media = is_array($config['media'] ?? null) ? $config['media'] : [];
+        $rules = is_array($media['gallery_rules'] ?? null) ? $media['gallery_rules'] : [];
+        $finishCodes = array_keys(self::PVC_FINISH_GALLERY_RULES);
 
-            if (! $product) {
-                continue;
-            }
-
-            $path = base_path($relativePath);
-            $contents = file_get_contents($path);
-
-            if ($contents === false) {
-                throw new \RuntimeException("Unable to read {$path}.");
-            }
-
-            $options = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
-            $subtitle = $options['subtitle'] ?? null;
-
-            if (! is_string($subtitle)) {
-                continue;
-            }
-
-            $product->forceFill(['subtitle' => $subtitle])->save();
-            $configuration->syncProductProjection($product->fresh());
-        }
-    }
-
-    private function syncDeliveryFaqs(): void
-    {
-        Product::query()
-            ->whereNotNull('product_config')
-            ->eachById(function (Product $product): void {
-                $config = is_array($product->product_config) ? $product->product_config : [];
-                $faqs = is_array($config['faq'] ?? null) ? $config['faq'] : [];
-                $changed = false;
-
-                foreach ($faqs as &$faq) {
-                    if (! is_array($faq) || ($faq['question'] ?? null) !== 'How long does delivery take?') {
-                        continue;
-                    }
-
-                    if (($faq['answer'] ?? null) !== self::DELIVERY_FAQ_ANSWER) {
-                        $faq['answer'] = self::DELIVERY_FAQ_ANSWER;
-                        $changed = true;
-                    }
+        $rules = array_values(array_filter(
+            $rules,
+            static function (mixed $rule) use ($finishCodes): bool {
+                if (! is_array($rule)) {
+                    return false;
                 }
 
-                unset($faq);
+                $match = is_array($rule['match'] ?? null) ? $rule['match'] : [];
 
-                if ($changed) {
-                    $config['faq'] = array_values($faqs);
-                    $product->forceFill(['product_config' => $config])->saveQuietly();
-                }
-            });
+                return ! in_array((string) ($match['paper_finish'] ?? ''), $finishCodes, true);
+            },
+        ));
+
+        $media['gallery_rules'] = [
+            ...$rules,
+            ...array_values(self::PVC_FINISH_GALLERY_RULES),
+        ];
+        $config['media'] = $media;
+
+        return $config;
     }
 
-    private function syncFeatureCards(): void
+    /**
+     * Return the stored canonical payload without importing repository
+     * product content. Galleries and option contracts are updated explicitly
+     * by the seeder callers above.
+     *
+     * @return array<string, mixed>
+     */
+    private function databaseConfigForProduct(Product $product): array
     {
-        foreach (self::PRODUCT_FEATURE_CARD_FILES as $slug => $relativePath) {
-            $product = Product::query()->where('slug', $slug)->first();
+        $config = is_array($product->product_config) ? $product->product_config : [];
 
-            if (! $product || ! is_array($product->product_config) || $product->product_config === []) {
-                continue;
-            }
-
-            $path = base_path($relativePath);
-            $contents = file_get_contents($path);
-
-            if ($contents === false) {
-                throw new \RuntimeException("Unable to read {$path}.");
-            }
-
-            $source = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
-            $featureCards = is_array($source['detail_sections']['feature_cards'] ?? null)
-                ? $source['detail_sections']['feature_cards']
-                : [];
-            $gangRunCard = is_array($featureCards[1] ?? null) ? $featureCards[1] : [];
-
-            if ($gangRunCard === []) {
-                continue;
-            }
-
-            $config = $product->product_config;
-            $details = is_array($config['detail_sections'] ?? null)
-                ? $config['detail_sections']
-                : [];
-            $cards = is_array($details['feature_cards'] ?? null)
-                ? array_values($details['feature_cards'])
-                : [];
-            $cards[0] = is_array($cards[0] ?? null) ? $cards[0] : [];
-            $cards[1] = array_replace(
-                is_array($cards[1] ?? null) ? $cards[1] : [],
-                $gangRunCard,
+        if (is_array($config['options'] ?? null)) {
+            $config['options'] = BusinessCardOptionCatalog::normalizeSharedSwatchImages(
+                BusinessCardOptionCatalog::normalizeSharedSizeSwatches(
+                    $config['options'],
+                    (string) $product->slug,
+                ),
             );
-            $details['feature_cards'] = array_values($cards);
-            $config['detail_sections'] = $details;
-
-            $product->forceFill(['product_config' => $config])->saveQuietly();
         }
+
+        return $config;
     }
 }

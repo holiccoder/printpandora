@@ -19,14 +19,14 @@
         {
           "code": "standard",
           "label": "Standard",
-          "swatch_image": "/images/product-options/business-cards/sizes/business_card-standard-526x325.jpg",
+          "swatch_image": "/images/product-options/business-cards/swatches/standard-size.webp",
           "width": "2.0",
           "height": "3.5"
         },
         {
           "code": "square",
           "label": "Square",
-          "swatch_image": "/images/product-options/business-cards/sizes/business_card-square-526x325.jpg",
+          "swatch_image": "/images/product-options/business-cards/swatches/square-size.webp",
           "width": "2.16",
           "height": "3.3"
         }
@@ -186,12 +186,14 @@
         {
           "code": "no_print_code",
           "label": "no print code",
-          "description": "no need to print codes"
+          "description": "no need to print codes",
+          "swatch_image": "/images/product-options/business-cards/swatches/pvc-no-print-code.png"
         },
         {
           "code": "need_print_code",
           "label": "need print code",
-          "description": "no need to print codes"
+          "description": "no need to print codes",
+          "swatch_image": "/images/product-options/business-cards/swatches/pvc-print-code.png"
         }
       ]
     },
@@ -203,11 +205,13 @@
       "values": [
         {
           "code": "no_drilling",
-          "label": "no drilling"
+          "label": "no drilling",
+          "swatch_image": "/images/product-options/business-cards/swatches/drilling/no-drilling.png"
         },
         {
           "code": "needs_drilling",
-          "label": "needs drilling"
+          "label": "needs drilling",
+          "swatch_image": "/images/product-options/business-cards/swatches/drilling/needs-drilling.png"
         }
       ]
     }

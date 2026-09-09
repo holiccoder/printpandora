@@ -154,6 +154,10 @@
         scroll-behavior: smooth;
         scroll-padding-top: 110px;
     }
+
+    a {
+        cursor: pointer;
+    }
 }
 
 @layer utilities {
