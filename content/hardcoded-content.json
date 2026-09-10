@@ -1231,10 +1231,10 @@
                     "items": [
                         {
                             "id": "original-postcards",
-                            "name": "Original Postcards",
+                            "name": "PVC Business Cards",
                             "image_url": "/images/product-detail/even-more/even-more-one.webp",
                             "href": "/postcards",
-                            "link_label": "Original Postcards →"
+                            "link_label": "PVC Business Cards →"
                         },
                         {
                             "id": "super-postcards",

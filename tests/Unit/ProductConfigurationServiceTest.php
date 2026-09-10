@@ -308,6 +308,14 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($options, 'detail_sections.more_good_stuff.items.0.image_url'),
         );
         $this->assertSame(
+            'PVC Business Cards',
+            data_get($options, 'detail_sections.more_good_stuff.items.0.name'),
+        );
+        $this->assertSame(
+            'PVC Business Cards →',
+            data_get($options, 'detail_sections.more_good_stuff.items.0.link_label'),
+        );
+        $this->assertSame(
             'Keep PVC specifications',
             data_get($options, 'detail_sections.design_specifications.heading'),
         );
