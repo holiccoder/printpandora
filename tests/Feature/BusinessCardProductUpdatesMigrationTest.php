@@ -162,4 +162,276 @@ class BusinessCardProductUpdatesMigrationTest extends TestCase
             data_get($product->product_config, 'detail_sections.design_specifications.heading'),
         );
     }
+
+    public function test_migration_adds_basic_pvc_design_guideline_downloads_without_replacing_existing_specs(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'PVC Business Cards',
+            'slug' => 'pvc-business-cards',
+        ]);
+
+        Product::create([
+            'name' => 'Basic PVC Card',
+            'slug' => 'basic-pvc-card',
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'detail_sections' => [
+                    'design_specifications' => [
+                        'heading' => 'Keep this heading',
+                        'diagram' => [
+                            'trim' => [
+                                'dimensions' => 'Keep this diagram',
+                            ],
+                        ],
+                        'downloads' => [],
+                    ],
+                ],
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_10_000002_add_basic_pvc_design_guideline_downloads.php',
+        );
+        $migration->up();
+        $migration->up();
+
+        $product = Product::where('slug', 'basic-pvc-card')->firstOrFail();
+
+        $this->assertSame(
+            ['pdf', 'illustrator', 'indesign', 'jpeg'],
+            array_column(data_get($product->product_config, 'detail_sections.design_specifications.downloads'), 'id'),
+        );
+        $this->assertSame(
+            'Keep this heading',
+            data_get($product->product_config, 'detail_sections.design_specifications.heading'),
+        );
+        $this->assertSame(
+            'Keep this diagram',
+            data_get($product->product_config, 'detail_sections.design_specifications.diagram.trim.dimensions'),
+        );
+    }
+
+    public function test_migration_uses_standard_pvc_finish_swatches_for_basic_and_premium(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'PVC Business Cards',
+            'slug' => 'pvc-business-cards',
+        ]);
+
+        Product::create([
+            'name' => 'Basic PVC Card',
+            'slug' => 'basic-pvc-card',
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'paper_finish' => [
+                        'values' => [
+                            ['code' => 'matte', 'swatch_image' => '/images/old-matte.png'],
+                            ['code' => 'gloss', 'swatch_image' => '/images/old-gloss.png'],
+                            ['code' => 'frosted', 'swatch_image' => '/images/old-frosted.png'],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        Product::create([
+            'name' => 'Premium PVC Card',
+            'slug' => 'premium-pvc-card',
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'print_code' => [
+                        'values' => [['code' => 'print_code']],
+                    ],
+                ],
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_10_000003_use_standard_pvc_finish_swatches_for_basic_and_premium.php',
+        );
+        $migration->up();
+        $migration->up();
+
+        $expectedSwatches = [
+            '/images/products/pvc/standard-pvc-matte.png',
+            '/images/products/pvc/standard-pvc-gloss.png',
+            '/images/products/pvc/standard-pvc-frosted.png',
+        ];
+
+        foreach (['basic-pvc-card', 'premium-pvc-card'] as $slug) {
+            $product = Product::where('slug', $slug)->firstOrFail();
+
+            $this->assertSame(
+                $expectedSwatches,
+                data_get($product->product_config, 'options.paper_finish.values.*.swatch_image'),
+            );
+        }
+
+        $this->assertSame(
+            ['print_code'],
+            data_get(
+                Product::where('slug', 'premium-pvc-card')->firstOrFail()->product_config,
+                'options.print_code.values.*.code',
+            ),
+        );
+    }
+
+    public function test_migration_updates_pvc_print_code_and_signature_stripe_images(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'PVC Business Cards',
+            'slug' => 'pvc-business-cards',
+        ]);
+
+        Product::create([
+            'name' => 'Basic PVC Card',
+            'slug' => 'basic-pvc-card',
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'print_code' => [
+                        'values' => [
+                            ['code' => 'no_print_code', 'swatch_image' => '/images/old-none.png'],
+                            ['code' => 'print_code', 'swatch_image' => '/images/old-print.png'],
+                        ],
+                    ],
+                ],
+                'media' => [
+                    'gallery_rules' => [
+                        [
+                            'id' => 'default',
+                            'match' => [],
+                            'images' => ['/images/default.png'],
+                            'primary' => '/images/default.png',
+                        ],
+                        [
+                            'id' => 'matte_gallery',
+                            'match' => ['paper_finish' => 'matte'],
+                            'images' => ['/images/matte.png'],
+                            'primary' => '/images/matte.png',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        Product::create([
+            'name' => 'Standard PVC Card',
+            'slug' => 'standard-pvc-card',
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'print_code_or_signature_stripe' => [
+                        'values' => [
+                            ['code' => 'no_print_code_or_signature_stripe'],
+                            ['code' => 'print_code', 'swatch_image' => '/images/old-print.png'],
+                            ['code' => 'signature_stripe', 'swatch_image' => '/images/old-signature.png'],
+                        ],
+                    ],
+                ],
+                'media' => [
+                    'gallery_rules' => [
+                        [
+                            'id' => 'default',
+                            'match' => [],
+                            'images' => ['/images/default.png'],
+                            'primary' => '/images/default.png',
+                        ],
+                        [
+                            'id' => 'old_signature_gallery',
+                            'match' => ['print_code_or_signature_stripe' => 'signature_stripe'],
+                            'images' => ['/images/old-signature.png'],
+                            'primary' => '/images/old-signature.png',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        Product::create([
+            'name' => 'Premium PVC Card',
+            'slug' => 'premium-pvc-card',
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'print_code' => [
+                        'values' => [['code' => 'print_code']],
+                    ],
+                ],
+                'media' => [
+                    'gallery_rules' => [
+                        [
+                            'id' => 'default',
+                            'match' => [],
+                            'images' => ['/images/default.png'],
+                            'primary' => '/images/default.png',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_10_000004_update_pvc_print_code_and_signature_images.php',
+        );
+        $migration->up();
+        $migration->up();
+
+        $expected = [
+            'basic-pvc-card' => [
+                'option_path' => 'options.print_code.values.*.swatch_image',
+                'swatches' => [
+                    '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
+                    '/images/products/pvc/pvc-print-code.png',
+                ],
+                'gallery_ids' => ['print_code_gallery'],
+            ],
+            'standard-pvc-card' => [
+                'option_path' => 'options.print_code_or_signature_stripe.values.*.swatch_image',
+                'swatches' => [
+                    '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
+                    '/images/products/pvc/pvc-print-code.png',
+                    '/images/products/pvc/pvc-signature-stripe.png',
+                ],
+                'gallery_ids' => ['print_code_gallery', 'signature_stripe_gallery'],
+            ],
+            'premium-pvc-card' => [
+                'option_path' => 'options.print_code.values.*.swatch_image',
+                'swatches' => [
+                    '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
+                    '/images/products/pvc/pvc-print-code.png',
+                ],
+                'gallery_ids' => ['print_code_gallery'],
+            ],
+        ];
+
+        foreach ($expected as $slug => $expectation) {
+            $product = Product::where('slug', $slug)->firstOrFail();
+
+            $this->assertSame(
+                $expectation['swatches'],
+                data_get($product->product_config, $expectation['option_path']),
+            );
+
+            foreach ($expectation['gallery_ids'] as $galleryId) {
+                $rule = collect(data_get($product->product_config, 'media.gallery_rules', []))
+                    ->firstWhere('id', $galleryId);
+
+                $this->assertSame(
+                    $galleryId === 'signature_stripe_gallery'
+                        ? '/images/products/pvc/pvc-signature-stripe.png'
+                        : '/images/products/pvc/pvc-print-code.png',
+                    data_get($rule, 'primary'),
+                );
+            }
+        }
+
+        $basicRules = data_get(
+            Product::where('slug', 'basic-pvc-card')->firstOrFail()->product_config,
+            'media.gallery_rules',
+        );
+        $this->assertSame(
+            '/images/matte.png',
+            data_get(collect($basicRules)->firstWhere('id', 'matte_gallery'), 'primary'),
+        );
+    }
 }

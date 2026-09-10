@@ -171,9 +171,21 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get(Product::where('slug', 'basic-pvc-card')->firstOrFail()->product_config, 'options.paper_finish.values.*.code'),
         );
         $expectedPvcSwatches = [
-            '/images/products/pvc/matte-pvc.png',
-            '/images/products/pvc/gloss-pvc.png',
-            '/images/products/pvc/frosted-pvc.png',
+            'basic-pvc-card' => [
+                '/images/products/pvc/standard-pvc-matte.png',
+                '/images/products/pvc/standard-pvc-gloss.png',
+                '/images/products/pvc/standard-pvc-frosted.png',
+            ],
+            'standard-pvc-card' => [
+                '/images/products/pvc/standard-pvc-matte.png',
+                '/images/products/pvc/standard-pvc-gloss.png',
+                '/images/products/pvc/standard-pvc-frosted.png',
+            ],
+            'premium-pvc-card' => [
+                '/images/products/pvc/standard-pvc-matte.png',
+                '/images/products/pvc/standard-pvc-gloss.png',
+                '/images/products/pvc/standard-pvc-frosted.png',
+            ],
         ];
 
         foreach (['basic-pvc-card', 'standard-pvc-card', 'premium-pvc-card'] as $slug) {
@@ -184,7 +196,7 @@ class BusinessCardProductOptionsTest extends TestCase
                 data_get($config, 'options.paper_finish.values.*.code'),
             );
             $this->assertSame(
-                $expectedPvcSwatches,
+                $expectedPvcSwatches[$slug],
                 data_get($config, 'options.paper_finish.values.*.swatch_image'),
             );
         }
@@ -195,8 +207,8 @@ class BusinessCardProductOptionsTest extends TestCase
         $this->assertSame(
             [
                 '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
-                '/images/product-options/business-cards/swatches/pvc-print-code.png',
-                '/images/product-options/business-cards/swatches/pvc-signature-stripe.png',
+                '/images/products/pvc/pvc-print-code.png',
+                '/images/products/pvc/pvc-signature-stripe.png',
             ],
             data_get(Product::where('slug', 'standard-pvc-card')->firstOrFail()->product_config, 'options.print_code_or_signature_stripe.values.*.swatch_image'),
         );
@@ -205,11 +217,15 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get(Product::where('slug', 'premium-pvc-card')->firstOrFail()->product_config, 'options.print_code.values.*.code'),
         );
         $this->assertSame(
+            '/images/products/pvc/pvc-print-code.png',
+            data_get(Product::where('slug', 'premium-pvc-card')->firstOrFail()->product_config, 'options.print_code.values.1.swatch_image'),
+        );
+        $this->assertSame(
             '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
             data_get(Product::where('slug', 'basic-pvc-card')->firstOrFail()->product_config, 'options.print_code.values.0.swatch_image'),
         );
         $this->assertSame(
-            '/images/product-options/business-cards/swatches/pvc-print-code.png',
+            '/images/products/pvc/pvc-print-code.png',
             data_get(Product::where('slug', 'basic-pvc-card')->firstOrFail()->product_config, 'options.print_code.values.1.swatch_image'),
         );
 
@@ -227,23 +243,68 @@ class BusinessCardProductOptionsTest extends TestCase
             $storefront = app(ProductConfigurationService::class)->storefrontOptions($product);
             $paperFinishGroup = collect($storefront['option_groups'] ?? [])->firstWhere('key', 'paper_finish');
 
+            $expectedFinishImages = [
+                '/images/products/pvc/standard-pvc-matte.webp',
+                '/images/products/pvc/standard-pvc-gloss.webp',
+                '/images/products/pvc/standard-pvc-frosted.webp',
+            ];
+
             $this->assertSame(
-                [
-                    '/images/products/pvc/matte-pvc.webp',
-                    '/images/products/pvc/gloss-pvc.webp',
-                    '/images/products/pvc/frosted-pvc.webp',
-                ],
+                $expectedFinishImages,
                 data_get($paperFinishGroup, 'values.*.swatch_image'),
             );
 
+            $expectedGalleryPrimaries = $slug === 'standard-pvc-card'
+                ? [
+                    'matte_gallery' => '/images/products/pvc/standard-pvc-matte.webp',
+                    'gloss_gallery' => '/images/products/pvc/standard-pvc-gloss.webp',
+                    'frosted_gallery' => '/images/products/pvc/standard-pvc-frosted.webp',
+                ]
+                : [
+                    'matte_gallery' => '/images/products/pvc/matte-pvc-main.webp',
+                    'gloss_gallery' => '/images/products/pvc/gloss-pvc-main.webp',
+                    'frosted_gallery' => '/images/products/pvc/frosted-pvc-main.webp',
+                ];
+
             foreach ([
-                'matte_gallery' => '/images/products/pvc/matte-pvc-main.webp',
-                'gloss_gallery' => '/images/products/pvc/gloss-pvc-main.webp',
-                'frosted_gallery' => '/images/products/pvc/frosted-pvc-main.webp',
-            ] as $galleryId => $expectedPrimary) {
+                'matte_gallery',
+                'gloss_gallery',
+                'frosted_gallery',
+            ] as $galleryId) {
+                $gallery = collect($storefront['galleries'] ?? [])->firstWhere('id', $galleryId);
+
+                $this->assertSame($expectedGalleryPrimaries[$galleryId], data_get($gallery, 'images.0'));
+
+                $storedGalleryRule = collect(data_get($product->product_config, 'media.gallery_rules', []))
+                    ->firstWhere('id', $galleryId);
+
+                $this->assertSame(
+                    str_replace('.webp', '.png', $expectedGalleryPrimaries[$galleryId]),
+                    data_get($storedGalleryRule, 'primary'),
+                );
+            }
+
+            $expectedOptionGalleryPrimaries = $slug === 'standard-pvc-card'
+                ? [
+                    'print_code_gallery' => '/images/products/pvc/pvc-print-code.webp',
+                    'signature_stripe_gallery' => '/images/products/pvc/pvc-signature-stripe.webp',
+                ]
+                : [
+                    'print_code_gallery' => '/images/products/pvc/pvc-print-code.webp',
+                ];
+
+            foreach ($expectedOptionGalleryPrimaries as $galleryId => $expectedPrimary) {
                 $gallery = collect($storefront['galleries'] ?? [])->firstWhere('id', $galleryId);
 
                 $this->assertSame($expectedPrimary, data_get($gallery, 'images.0'));
+
+                $storedGalleryRule = collect(data_get($product->product_config, 'media.gallery_rules', []))
+                    ->firstWhere('id', $galleryId);
+
+                $this->assertSame(
+                    str_replace('.webp', '.png', $expectedPrimary),
+                    data_get($storedGalleryRule, 'primary'),
+                );
             }
         }
     }
@@ -452,7 +513,7 @@ class BusinessCardProductOptionsTest extends TestCase
         $this->assertSame(
             [
                 '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
-                '/images/product-options/business-cards/swatches/pvc-print-code.png',
+                '/images/products/pvc/pvc-print-code.webp',
             ],
             array_column(data_get($options, 'option_groups.1.values', []), 'swatch_image'),
         );

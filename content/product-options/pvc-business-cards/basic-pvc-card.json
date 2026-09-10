@@ -6,7 +6,7 @@
             "name": "Matte",
             "code": "matte",
             "description": "Smooth, non-reflective matte finish.",
-            "swatch_image": "/images/products/pvc/matte-pvc.png",
+            "swatch_image": "/images/products/pvc/standard-pvc-matte.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -54,7 +54,7 @@
             "name": "Gloss",
             "code": "gloss",
             "description": "Shiny and highly reflective gloss finish.",
-            "swatch_image": "/images/products/pvc/gloss-pvc.png",
+            "swatch_image": "/images/products/pvc/standard-pvc-gloss.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -102,7 +102,7 @@
             "name": "Frosted Glass",
             "code": "frosted",
             "description": "A translucent frosted-glass finish with a soft, elegant look.",
-            "swatch_image": "/images/products/pvc/frosted-pvc.png",
+            "swatch_image": "/images/products/pvc/standard-pvc-frosted.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -169,6 +169,15 @@
             ]
         },
         {
+            "id": "print_code_gallery",
+            "match": {
+                "print_code": "print_code"
+            },
+            "images": [
+                "/images/products/pvc/pvc-print-code.png"
+            ]
+        },
+        {
             "id": "matte_gallery",
             "match": {
                 "paper_finish": "matte"
@@ -225,7 +234,36 @@
                     "description": "Keep text and important design elements inside the safe zone."
                 }
             },
-            "downloads": []
+            "downloads": [
+                {
+                    "id": "pdf",
+                    "label": "PDF",
+                    "extension": ".pdf",
+                    "href": "/templates/pdf.zip",
+                    "color": "#dc2626"
+                },
+                {
+                    "id": "illustrator",
+                    "label": "Illustrator",
+                    "extension": ".ai",
+                    "href": "/templates/ai.zip",
+                    "color": "#f97316"
+                },
+                {
+                    "id": "indesign",
+                    "label": "InDesign",
+                    "extension": ".indd",
+                    "href": "/templates/indd.zip",
+                    "color": "#ec4899"
+                },
+                {
+                    "id": "jpeg",
+                    "label": "Jpeg",
+                    "extension": ".jpg",
+                    "href": "/templates/jpg.zip",
+                    "color": "#0f766e"
+                }
+            ]
         }
     },
     "print_code": [
@@ -239,7 +277,7 @@
             "code": "print_code",
             "name": "Print code",
             "description": "Add a print code to the card.",
-            "swatch_image": "/images/product-options/business-cards/swatches/pvc-print-code.png"
+            "swatch_image": "/images/products/pvc/pvc-print-code.png"
         }
     ]
 }

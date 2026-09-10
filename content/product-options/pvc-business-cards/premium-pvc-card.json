@@ -6,19 +6,19 @@
             "code": "matte",
             "name": "Matte",
             "description": "Smooth, non-reflective matte finish.",
-            "swatch_image": "/images/products/pvc/matte-pvc.png"
+            "swatch_image": "/images/products/pvc/standard-pvc-matte.png"
         },
         {
             "code": "gloss",
             "name": "Gloss",
             "description": "Shiny and highly reflective gloss finish.",
-            "swatch_image": "/images/products/pvc/gloss-pvc.png"
+            "swatch_image": "/images/products/pvc/standard-pvc-gloss.png"
         },
         {
             "code": "frosted",
             "name": "Frosted Glass",
             "description": "A translucent frosted-glass finish with a soft, elegant look.",
-            "swatch_image": "/images/products/pvc/frosted-pvc.png"
+            "swatch_image": "/images/products/pvc/standard-pvc-frosted.png"
         }
     ],
     "quantity_price_table": [
@@ -40,6 +40,15 @@
                 "/images/products/pvc/pvc-02.jpg",
                 "/images/products/pvc/pvc-03.jpg",
                 "/images/products/pvc/pvc-04.jpg"
+            ]
+        },
+        {
+            "id": "print_code_gallery",
+            "match": {
+                "print_code": "print_code"
+            },
+            "images": [
+                "/images/products/pvc/pvc-print-code.png"
             ]
         },
         {
@@ -278,7 +287,7 @@
             "code": "print_code",
             "name": "Print code",
             "description": "Add a print code to the card.",
-            "swatch_image": "/images/product-options/business-cards/swatches/pvc-print-code.png"
+            "swatch_image": "/images/products/pvc/pvc-print-code.png"
         }
     ]
 }

@@ -325,6 +325,39 @@ class ProductConfigurationServiceTest extends TestCase
         );
     }
 
+    public function test_basic_pvc_design_guideline_downloads_match_shared_business_card_content(): void
+    {
+        $product = new Product([
+            'name' => 'Basic PVC Card',
+            'slug' => 'basic-pvc-card',
+            'product_config' => [
+                'detail_sections' => [
+                    'design_specifications' => [
+                        'heading' => 'Design Specifications',
+                        'downloads' => [],
+                    ],
+                ],
+            ],
+        ]);
+        $businessCards = new ProductCategory([
+            'id' => 1,
+            'slug' => 'business-cards',
+        ]);
+        $pvcCards = new ProductCategory([
+            'slug' => 'pvc-business-cards',
+            'parent_id' => 1,
+        ]);
+        $pvcCards->setRelation('parent', $businessCards);
+        $product->setRelation('category', $pvcCards);
+
+        $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+
+        $this->assertSame(
+            ['pdf', 'illustrator', 'indesign', 'jpeg'],
+            data_get($options, 'detail_sections.design_specifications.downloads.*.id'),
+        );
+    }
+
     public function test_database_legacy_product_data_gets_shared_cross_sell_sections(): void
     {
         $product = new Product([

@@ -1066,10 +1066,9 @@ class ProductConfigurationService
     }
 
     /**
-     * Apply the centrally maintained business-card cross-sell sections. A
-     * shared design specification is used only when the product does not
-     * define one; product-specific specifications and FAQs remain
-     * authoritative.
+     * Apply the centrally maintained business-card detail sections. Shared
+     * design specifications are used only for missing fields; product-specific
+     * specifications and FAQs remain authoritative.
      *
      * @param  array<string, mixed>  $options
      * @return array<string, mixed>
@@ -1092,11 +1091,21 @@ class ProductConfigurationService
             return $options;
         }
 
-        if (
-            ! is_array($details['design_specifications'] ?? null)
-            && is_array($shared['design_specifications'] ?? null)
-        ) {
-            $details['design_specifications'] = $shared['design_specifications'];
+        $hasDesignSpecifications = is_array($details['design_specifications'] ?? null);
+        $sharedDesignSpecifications = $shared['design_specifications'] ?? null;
+
+        if (! $hasDesignSpecifications && is_array($sharedDesignSpecifications)) {
+            $details['design_specifications'] = $sharedDesignSpecifications;
+        } elseif ($hasDesignSpecifications && is_array($sharedDesignSpecifications)) {
+            $downloads = $details['design_specifications']['downloads'] ?? null;
+            $sharedDownloads = $sharedDesignSpecifications['downloads'] ?? null;
+
+            if (
+                is_array($sharedDownloads)
+                && (! is_array($downloads) || $downloads === [])
+            ) {
+                $details['design_specifications']['downloads'] = $sharedDownloads;
+            }
         }
 
         foreach (['design_service_banner', 'paper_stocks', 'more_good_stuff'] as $key) {

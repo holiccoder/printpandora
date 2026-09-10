@@ -6,19 +6,19 @@
             "code": "matte",
             "name": "Matte",
             "description": "Smooth, non-reflective matte finish.",
-            "swatch_image": "/images/products/pvc/matte-pvc.png"
+            "swatch_image": "/images/products/pvc/standard-pvc-matte.png"
         },
         {
             "code": "gloss",
             "name": "Gloss",
             "description": "Shiny and highly reflective gloss finish.",
-            "swatch_image": "/images/products/pvc/gloss-pvc.png"
+            "swatch_image": "/images/products/pvc/standard-pvc-gloss.png"
         },
         {
             "code": "frosted",
             "name": "Frosted Glass",
             "description": "A translucent frosted-glass finish with a soft, elegant look.",
-            "swatch_image": "/images/products/pvc/frosted-pvc.png"
+            "swatch_image": "/images/products/pvc/standard-pvc-frosted.png"
         }
     ],
     "special_finish": [
@@ -117,12 +117,30 @@
             ]
         },
         {
+            "id": "print_code_gallery",
+            "match": {
+                "print_code_or_signature_stripe": "print_code"
+            },
+            "images": [
+                "/images/products/pvc/pvc-print-code.png"
+            ]
+        },
+        {
+            "id": "signature_stripe_gallery",
+            "match": {
+                "print_code_or_signature_stripe": "signature_stripe"
+            },
+            "images": [
+                "/images/products/pvc/pvc-signature-stripe.png"
+            ]
+        },
+        {
             "id": "matte_gallery",
             "match": {
                 "paper_finish": "matte"
             },
             "images": [
-                "/images/products/pvc/matte-pvc-main.png",
+                "/images/products/pvc/standard-pvc-matte.png",
                 "/images/products/pvc/pvc-02.jpg",
                 "/images/products/pvc/pvc-03.jpg",
                 "/images/products/pvc/pvc-04.jpg"
@@ -134,7 +152,7 @@
                 "paper_finish": "gloss"
             },
             "images": [
-                "/images/products/pvc/gloss-pvc-main.png",
+                "/images/products/pvc/standard-pvc-gloss.png",
                 "/images/products/pvc/pvc-02.jpg",
                 "/images/products/pvc/pvc-03.jpg",
                 "/images/products/pvc/pvc-04.jpg"
@@ -146,7 +164,7 @@
                 "paper_finish": "frosted"
             },
             "images": [
-                "/images/products/pvc/frosted-pvc-main.png",
+                "/images/products/pvc/standard-pvc-frosted.png",
                 "/images/products/pvc/pvc-02.jpg",
                 "/images/products/pvc/pvc-03.jpg",
                 "/images/products/pvc/pvc-04.jpg"
@@ -352,13 +370,13 @@
             "code": "print_code",
             "name": "Print code",
             "description": "Add a print code to the card.",
-            "swatch_image": "/images/product-options/business-cards/swatches/pvc-print-code.png"
+            "swatch_image": "/images/products/pvc/pvc-print-code.png"
         },
         {
             "code": "signature_stripe",
             "name": "Signature stripe",
             "description": "Add a writable signature stripe.",
-            "swatch_image": "/images/product-options/business-cards/swatches/pvc-signature-stripe.png"
+            "swatch_image": "/images/products/pvc/pvc-signature-stripe.png"
         }
     ],
     "special_finish_on_sides": [

@@ -20,11 +20,24 @@ final class BusinessCardOptionCatalog
 
     public const PRINT_CODE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/pvc-print-code.png';
 
+    public const PVC_PRINT_CODE_SWATCH_IMAGE = '/images/products/pvc/pvc-print-code.png';
+
     public const NO_DRILLING_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/drilling/no-drilling.png';
 
     public const NEEDS_DRILLING_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/drilling/needs-drilling.png';
 
     public const SIGNATURE_STRIPE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/pvc-signature-stripe.png';
+
+    public const PVC_SIGNATURE_STRIPE_SWATCH_IMAGE = '/images/products/pvc/pvc-signature-stripe.png';
+
+    /**
+     * @var array<string, string>
+     */
+    private const PVC_FINISH_SWATCH_IMAGES = [
+        'matte' => '/images/products/pvc/standard-pvc-matte.png',
+        'gloss' => '/images/products/pvc/standard-pvc-gloss.png',
+        'frosted' => '/images/products/pvc/standard-pvc-frosted.png',
+    ];
 
     /**
      * @var array<string, string>
@@ -260,8 +273,16 @@ final class BusinessCardOptionCatalog
     private static function basicPvc(array $options): array
     {
         return [
-            'paper_finish' => self::group('Paper Finish', self::pvcPaperFinishValues($options), 'matte'),
-            'print_code' => self::group('Print Code', self::printCodeValues($options), 'no_print_code'),
+            'paper_finish' => self::group(
+                'Paper Finish',
+                self::pvcPaperFinishValues($options, self::PVC_FINISH_SWATCH_IMAGES),
+                'matte',
+            ),
+            'print_code' => self::group(
+                'Print Code',
+                self::printCodeValues($options, self::PVC_PRINT_CODE_SWATCH_IMAGE),
+                'no_print_code',
+            ),
         ];
     }
 
@@ -272,10 +293,18 @@ final class BusinessCardOptionCatalog
     private static function standardPvc(array $options): array
     {
         return [
-            'paper_finish' => self::group('Paper Finish', self::pvcPaperFinishValues($options), 'matte'),
+            'paper_finish' => self::group(
+                'Paper Finish',
+                self::pvcPaperFinishValues($options, self::PVC_FINISH_SWATCH_IMAGES),
+                'matte',
+            ),
             'print_code_or_signature_stripe' => self::group(
                 'Print Code or Signature Stripe',
-                self::printCodeOrSignatureStripeValues($options),
+                self::printCodeOrSignatureStripeValues(
+                    $options,
+                    self::PVC_PRINT_CODE_SWATCH_IMAGE,
+                    self::PVC_SIGNATURE_STRIPE_SWATCH_IMAGE,
+                ),
                 'no_print_code_or_signature_stripe',
             ),
             'special_finish_on_sides' => self::group(
@@ -298,8 +327,16 @@ final class BusinessCardOptionCatalog
     private static function premiumPvc(array $options): array
     {
         return [
-            'paper_finish' => self::group('Paper Finish', self::pvcPaperFinishValues($options), 'matte'),
-            'print_code' => self::group('Print Code', self::printCodeValues($options), 'no_print_code'),
+            'paper_finish' => self::group(
+                'Paper Finish',
+                self::pvcPaperFinishValues($options, self::PVC_FINISH_SWATCH_IMAGES),
+                'matte',
+            ),
+            'print_code' => self::group(
+                'Print Code',
+                self::printCodeValues($options, self::PVC_PRINT_CODE_SWATCH_IMAGE),
+                'no_print_code',
+            ),
         ];
     }
 
@@ -525,25 +562,32 @@ final class BusinessCardOptionCatalog
 
     /**
      * @param  array<string, mixed>  $options
+     * @param  array<string, string>|null  $swatchImages
      * @return array<int, array<string, mixed>>
      */
-    private static function pvcPaperFinishValues(array $options): array
+    private static function pvcPaperFinishValues(array $options, ?array $swatchImages = null): array
     {
+        $swatchImages ??= [
+            'matte' => '/images/products/pvc/matte-pvc.png',
+            'gloss' => '/images/products/pvc/gloss-pvc.png',
+            'frosted' => '/images/products/pvc/frosted-pvc.png',
+        ];
+
         return [
             self::value($options, 'paper_finish', 'matte', [
                 'label' => 'Matte',
                 'description' => 'Smooth, non-reflective matte finish.',
-                'swatch_image' => '/images/products/pvc/matte-pvc.png',
+                'swatch_image' => $swatchImages['matte'],
             ]),
             self::value($options, 'paper_finish', 'gloss', [
                 'label' => 'Gloss',
                 'description' => 'Shiny and highly reflective gloss finish.',
-                'swatch_image' => '/images/products/pvc/gloss-pvc.png',
+                'swatch_image' => $swatchImages['gloss'],
             ]),
             self::value($options, 'paper_finish', 'frosted', [
                 'label' => 'Frosted Glass',
                 'description' => 'A translucent frosted-glass finish with a soft, elegant look.',
-                'swatch_image' => '/images/products/pvc/frosted-pvc.png',
+                'swatch_image' => $swatchImages['frosted'],
             ]),
         ];
     }
@@ -552,8 +596,10 @@ final class BusinessCardOptionCatalog
      * @param  array<string, mixed>  $options
      * @return array<int, array<string, mixed>>
      */
-    private static function printCodeValues(array $options): array
+    private static function printCodeValues(array $options, ?string $printCodeSwatchImage = null): array
     {
+        $printCodeSwatchImage ??= self::PRINT_CODE_SWATCH_IMAGE;
+
         return [
             self::value($options, 'print_code', 'no_print_code', [
                 'label' => 'No print code',
@@ -563,7 +609,7 @@ final class BusinessCardOptionCatalog
             self::value($options, 'print_code', 'print_code', [
                 'label' => 'Print code',
                 'description' => 'Add a print code to the card.',
-                'swatch_image' => '/images/product-options/business-cards/swatches/pvc-print-code.png',
+                'swatch_image' => $printCodeSwatchImage,
             ]),
         ];
     }
@@ -572,8 +618,14 @@ final class BusinessCardOptionCatalog
      * @param  array<string, mixed>  $options
      * @return array<int, array<string, mixed>>
      */
-    private static function printCodeOrSignatureStripeValues(array $options): array
-    {
+    private static function printCodeOrSignatureStripeValues(
+        array $options,
+        ?string $printCodeSwatchImage = null,
+        ?string $signatureStripeSwatchImage = null,
+    ): array {
+        $printCodeSwatchImage ??= self::PRINT_CODE_SWATCH_IMAGE;
+        $signatureStripeSwatchImage ??= self::SIGNATURE_STRIPE_SWATCH_IMAGE;
+
         return [
             self::value($options, 'print_code_or_signature_stripe', 'no_print_code_or_signature_stripe', [
                 'label' => 'No print code or signature stripe',
@@ -583,12 +635,12 @@ final class BusinessCardOptionCatalog
             self::value($options, 'print_code_or_signature_stripe', 'print_code', [
                 'label' => 'Print code',
                 'description' => 'Add a print code to the card.',
-                'swatch_image' => '/images/product-options/business-cards/swatches/pvc-print-code.png',
+                'swatch_image' => $printCodeSwatchImage,
             ]),
             self::value($options, 'print_code_or_signature_stripe', 'signature_stripe', [
                 'label' => 'Signature stripe',
                 'description' => 'Add a writable signature stripe.',
-                'swatch_image' => self::SIGNATURE_STRIPE_SWATCH_IMAGE,
+                'swatch_image' => $signatureStripeSwatchImage,
             ]),
         ];
     }

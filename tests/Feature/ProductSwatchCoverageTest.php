@@ -134,8 +134,8 @@ class ProductSwatchCoverageTest extends TestCase
             'pvc-business-cards/standard-pvc-card.json' => [
                 'print_code_or_signature_stripe' => [
                     'no_print_code_or_signature_stripe' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
-                    'print_code' => '/images/product-options/business-cards/swatches/pvc-print-code.png',
-                    'signature_stripe' => '/images/product-options/business-cards/swatches/pvc-signature-stripe.png',
+                    'print_code' => '/images/products/pvc/pvc-print-code.png',
+                    'signature_stripe' => '/images/products/pvc/pvc-signature-stripe.png',
                 ],
             ],
         ];
@@ -178,13 +178,13 @@ class ProductSwatchCoverageTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $options
-     * @param list<string> $failures
+     * @param  array<string, mixed>  $options
+     * @param  list<string>  $failures
      */
     private function collectSwatchFailures(array $options, string $source, array &$failures): void
     {
         foreach (self::USER_FACING_GROUPS as $groupKey) {
-            if (!array_key_exists($groupKey, $options)) {
+            if (! array_key_exists($groupKey, $options)) {
                 continue;
             }
 
@@ -193,25 +193,28 @@ class ProductSwatchCoverageTest extends TestCase
                 ? $group['values']
                 : $group;
 
-            if (!is_array($values)) {
+            if (! is_array($values)) {
                 $failures[] = "{$source}: {$groupKey} does not contain a value list";
+
                 continue;
             }
 
             foreach ($values as $index => $value) {
-                if (!is_array($value)) {
+                if (! is_array($value)) {
                     $failures[] = "{$source}: {$groupKey}[{$index}] is not an option value";
+
                     continue;
                 }
 
                 $swatch = $value['swatch_image'] ?? null;
-                if (!is_string($swatch) || trim($swatch) === '') {
+                if (! is_string($swatch) || trim($swatch) === '') {
                     $code = $value['code'] ?? 'unknown';
                     $failures[] = "{$source}: {$groupKey}[{$index}] ({$code}) has no swatch_image";
+
                     continue;
                 }
 
-                if (str_starts_with($swatch, '/images/') && !is_file(public_path(ltrim($swatch, '/')))) {
+                if (str_starts_with($swatch, '/images/') && ! is_file(public_path(ltrim($swatch, '/')))) {
                     $failures[] = "{$source}: {$groupKey}[{$index}] references missing {$swatch}";
                 }
             }
@@ -219,7 +222,7 @@ class ProductSwatchCoverageTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      * @return list<array<string, mixed>>
      */
     private function optionValues(array $options, string $groupKey): array
