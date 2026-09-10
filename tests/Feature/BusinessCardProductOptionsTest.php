@@ -78,7 +78,9 @@ class BusinessCardProductOptionsTest extends TestCase
                 data_get($product->product_config, 'options.sizes.values.1.swatch_image'),
             );
             $this->assertSame(
-                'max range: 2.1 - 3.5 inches',
+                $product->slug === 'classic-standard-business-cards'
+                    ? '2.1 - 3.5 inches'
+                    : 'max range: 2.1 - 3.5 inches',
                 data_get($product->product_config, 'options.sizes.values.2.description'),
             );
         }

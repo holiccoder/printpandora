@@ -7,6 +7,7 @@
             "code": "standard",
             "width": "2.0",
             "height": "3.5",
+            "description": "2.0 x 3.5 inches",
             "swatch_image": "/images/product-options/business-cards/swatches/standard-size.webp",
             "added_price": [
                 {
@@ -72,6 +73,7 @@
             "code": "square",
             "width": "2.16",
             "height": "3.3",
+            "description": "2.5 x 2.5 inches",
             "swatch_image": "/images/product-options/business-cards/swatches/square-size.webp",
             "added_price": [
                 {
@@ -131,6 +133,12 @@
                     "price_per_card": 0
                 }
             ]
+        },
+        {
+            "name": "Custom",
+            "code": "custom",
+            "description": "2.1 - 3.5 inches",
+            "swatch_image": "/images/product-options/business-cards/swatches/custom-size.webp"
         }
     ],
     "paper_finish": [

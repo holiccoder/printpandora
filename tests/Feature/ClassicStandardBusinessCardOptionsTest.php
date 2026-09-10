@@ -60,11 +60,11 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
             data_get($product->product_config, 'options.sizes.values.0.swatch_image'),
         );
         $this->assertSame(
-            '2.0x3.5  ',
+            '2.0 x 3.5 inches',
             data_get($product->product_config, 'options.sizes.values.0.description'),
         );
         $this->assertSame(
-            '2.5x2.5',
+            '2.5 x 2.5 inches',
             data_get($product->product_config, 'options.sizes.values.1.description'),
         );
         $this->assertSame(
@@ -93,7 +93,7 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
             data_get($product->product_config, 'options.sizes.values.1.swatch_image'),
         );
         $this->assertSame(
-            'max range: 2.1 - 3.5 inches',
+            '2.1 - 3.5 inches',
             data_get($product->product_config, 'options.sizes.values.2.description'),
         );
         $this->assertSame(

@@ -72,7 +72,13 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                 $slug,
             );
 
-            if ($slug !== 'classic-solid-business-cards') {
+            if ($slug === 'classic-standard-business-cards') {
+                $this->assertSame(
+                    '2.1 - 3.5 inches',
+                    data_get($values, 'custom.description'),
+                    $slug,
+                );
+            } elseif ($slug !== 'classic-solid-business-cards') {
                 $this->assertSame(
                     'max range: 2.1 - 3.5 inches',
                     data_get($values, 'custom.description'),
@@ -151,7 +157,18 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                 $slug,
             );
 
-            if ($slug !== 'classic-solid-business-cards' && $slug !== 'classic-standard-business-cards') {
+            if ($slug === 'classic-standard-business-cards') {
+                $this->assertSame(
+                    '2.1 - 3.5 inches',
+                    data_get($values, 'custom.description'),
+                    $slug,
+                );
+                $this->assertSame(
+                    '2.1 - 3.5 inches',
+                    data_get($storefront, 'sizes.2.description'),
+                    $slug,
+                );
+            } elseif ($slug !== 'classic-solid-business-cards') {
                 $this->assertSame(
                     'max range: 2.1 - 3.5 inches',
                     data_get($values, 'custom.description'),
@@ -237,7 +254,13 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                 $slug,
             );
 
-            if ($slug !== 'classic-solid-business-cards') {
+            if ($slug === 'classic-standard-business-cards') {
+                $this->assertSame(
+                    '2.1 - 3.5 inches',
+                    data_get($config, 'options.sizes.values.2.description'),
+                    $slug,
+                );
+            } elseif ($slug !== 'classic-solid-business-cards') {
                 $this->assertSame(
                     'max range: 2.1 - 3.5 inches',
                     data_get($config, 'options.sizes.values.2.description'),

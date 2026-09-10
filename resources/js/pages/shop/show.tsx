@@ -871,6 +871,7 @@ export default function ShopShow({
 
     const markInteracted = () => {
         setHasInteracted(true);
+        setSelectedThumbnail(null);
     };
 
     const hasSelection = usesDynamicOptions
@@ -1040,7 +1041,16 @@ export default function ShopShow({
         confirmedCustomSize,
     ]);
 
+    const defaultGallery = useMemo(
+        () => configuredGalleries.find((g) => g.is_default) ?? fallbackGallery,
+        [configuredGalleries, fallbackGallery],
+    );
+
     const activeGallery = useMemo(() => {
+        if (!hasInteracted) {
+            return defaultGallery;
+        }
+
         if (configuredGalleries.length > 0) {
             const matched = findMatchingGallery(
                 configuredGalleries,
@@ -1053,12 +1063,13 @@ export default function ShopShow({
         }
 
         return fallbackGallery;
-    }, [configuredGalleries, selectedOptions, fallbackGallery]);
-
-    const defaultGallery = useMemo(
-        () => configuredGalleries.find((g) => g.is_default) ?? fallbackGallery,
-        [configuredGalleries, fallbackGallery],
-    );
+    }, [
+        hasInteracted,
+        configuredGalleries,
+        selectedOptions,
+        defaultGallery,
+        fallbackGallery,
+    ]);
 
     const displayImages = useMemo(() => {
         const hero = activeGallery.images[0] ?? defaultGallery.images[0];

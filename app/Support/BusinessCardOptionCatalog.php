@@ -10,6 +10,12 @@ final class BusinessCardOptionCatalog
 
     public const CUSTOM_SIZE_DESCRIPTION = 'max range: 2.1 - 3.5 inches';
 
+    public const CLASSIC_STANDARD_STANDARD_SIZE_DESCRIPTION = '2.0 x 3.5 inches';
+
+    public const CLASSIC_STANDARD_SQUARE_SIZE_DESCRIPTION = '2.5 x 2.5 inches';
+
+    public const CLASSIC_STANDARD_CUSTOM_SIZE_DESCRIPTION = '2.1 - 3.5 inches';
+
     public const NO_PRINT_CODE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/pvc-no-print-code.png';
 
     public const PRINT_CODE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/pvc-print-code.png';
@@ -88,12 +94,25 @@ final class BusinessCardOptionCatalog
                 continue;
             }
 
-            match ($value['code'] ?? null) {
-                'standard' => $value['swatch_image'] = $standardSwatchImage,
-                'square' => $value['swatch_image'] = $squareSwatchImage,
-                'custom' => $value['description'] = self::CUSTOM_SIZE_DESCRIPTION,
-                default => null,
-            };
+            $code = $value['code'] ?? null;
+
+            if ($code === 'standard') {
+                $value['swatch_image'] = $standardSwatchImage;
+
+                if ($slug === 'classic-standard-business-cards') {
+                    $value['description'] = self::CLASSIC_STANDARD_STANDARD_SIZE_DESCRIPTION;
+                }
+            } elseif ($code === 'square') {
+                $value['swatch_image'] = $squareSwatchImage;
+
+                if ($slug === 'classic-standard-business-cards') {
+                    $value['description'] = self::CLASSIC_STANDARD_SQUARE_SIZE_DESCRIPTION;
+                }
+            } elseif ($code === 'custom') {
+                $value['description'] = $slug === 'classic-standard-business-cards'
+                    ? self::CLASSIC_STANDARD_CUSTOM_SIZE_DESCRIPTION
+                    : self::CUSTOM_SIZE_DESCRIPTION;
+            }
         }
         unset($value);
 

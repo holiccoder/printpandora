@@ -43,7 +43,7 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                             'height' => '3.5',
                         ]),
                         [
-                            'description' => '2.0x3.5  ',
+                            'description' => BusinessCardOptionCatalog::CLASSIC_STANDARD_STANDARD_SIZE_DESCRIPTION,
                             'swatch_image' => BusinessCardOptionCatalog::STANDARD_SIZE_SWATCH_IMAGE,
                         ],
                     ),
@@ -54,14 +54,14 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                             'height' => '2.5',
                         ]),
                         [
-                            'description' => '2.5x2.5',
+                            'description' => BusinessCardOptionCatalog::CLASSIC_STANDARD_SQUARE_SIZE_DESCRIPTION,
                             'swatch_image' => BusinessCardOptionCatalog::SQUARE_SIZE_SWATCH_IMAGE,
                         ],
                     ),
                     [
                         'code' => 'custom',
                         'label' => 'Custom',
-                        'description' => BusinessCardOptionCatalog::CUSTOM_SIZE_DESCRIPTION,
+                        'description' => BusinessCardOptionCatalog::CLASSIC_STANDARD_CUSTOM_SIZE_DESCRIPTION,
                         'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
                     ],
                 ],
