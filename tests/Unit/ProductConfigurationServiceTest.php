@@ -199,7 +199,7 @@ class ProductConfigurationServiceTest extends TestCase
         );
     }
 
-    public function test_database_detail_sections_are_not_overridden_by_global_content(): void
+    public function test_database_detail_sections_keep_product_specific_data_except_shared_cross_sell_sections(): void
     {
         $product = new Product([
             'name' => 'Configured business card',
@@ -234,22 +234,90 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($options, 'detail_sections.design_specifications.heading'),
         );
         $this->assertSame(
-            'Stale banner copy',
+            'Need help designing your Business Cards?',
             data_get($options, 'detail_sections.design_service_banner.heading'),
         );
         $this->assertSame(
-            'Stale paper copy',
+            '/images/product-detail/business-design-banner.webp',
+            data_get($options, 'detail_sections.design_service_banner.image_url'),
+        );
+        $this->assertSame(
+            'Check out our other paper stocks',
             data_get($options, 'detail_sections.paper_stocks.heading'),
         );
-        $this->assertSame([], data_get($options, 'detail_sections.paper_stocks.items'));
+        $this->assertCount(4, data_get($options, 'detail_sections.paper_stocks.items'));
         $this->assertSame(
-            'Stale cross-sell content',
+            'Even more good stuff',
             data_get($options, 'detail_sections.more_good_stuff.heading'),
         );
         $this->assertSame('Keep this FAQ content', data_get($options, 'detail_sections.faq.heading'));
     }
 
-    public function test_database_legacy_product_data_keeps_its_detail_sections_without_global_overlay(): void
+    public function test_business_card_cross_sell_sections_always_use_shared_content_for_pvc_products(): void
+    {
+        $product = new Product([
+            'name' => 'Basic PVC Card',
+            'slug' => 'basic-pvc-card',
+            'product_config' => [
+                'detail_sections' => [
+                    'design_specifications' => [
+                        'heading' => 'Keep PVC specifications',
+                    ],
+                    'design_service_banner' => [
+                        'image_url' => '/images/stale-banner.png',
+                    ],
+                    'paper_stocks' => [
+                        'items' => [
+                            ['image_url' => '/images/stale-paper.png'],
+                        ],
+                    ],
+                    'more_good_stuff' => [
+                        'items' => [
+                            ['image_url' => '/images/stale-cross-sell.png'],
+                        ],
+                    ],
+                    'faq' => [
+                        'heading' => 'Keep PVC FAQ',
+                    ],
+                ],
+            ],
+        ]);
+        $businessCards = new ProductCategory([
+            'id' => 1,
+            'slug' => 'business-cards',
+        ]);
+        $pvcCards = new ProductCategory([
+            'slug' => 'pvc-business-cards',
+            'parent_id' => 1,
+        ]);
+        $pvcCards->setRelation('parent', $businessCards);
+        $product->setRelation('category', $pvcCards);
+
+        $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+
+        $this->assertSame(
+            '/images/product-detail/business-design-banner.webp',
+            data_get($options, 'detail_sections.design_service_banner.image_url'),
+        );
+        $this->assertSame(
+            '/images/product-detail/paper-stocks/premium-paper.webp',
+            data_get($options, 'detail_sections.paper_stocks.items.0.image_url'),
+        );
+        $this->assertSame(
+            '/images/product-detail/even-more/even-more-one.webp',
+            data_get($options, 'detail_sections.more_good_stuff.items.0.image_url'),
+        );
+        $this->assertSame(
+            'Keep PVC specifications',
+            data_get($options, 'detail_sections.design_specifications.heading'),
+        );
+        $this->assertSame(
+            'Keep PVC FAQ',
+            data_get($options, 'detail_sections.faq.heading'),
+        );
+    }
+
+    public function test_database_legacy_product_data_gets_shared_cross_sell_sections(): void
     {
         $product = new Product([
             'name' => 'Basic PVC Card',
@@ -286,16 +354,20 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($options, 'detail_sections.design_specifications.diagram.safe_area.dimensions'),
         );
         $this->assertSame(
-            null,
+            'Need help designing your Business Cards?',
             data_get($options, 'detail_sections.design_service_banner.heading'),
         );
         $this->assertSame(
-            null,
+            'Check out our other paper stocks',
             data_get($options, 'detail_sections.paper_stocks.heading'),
+        );
+        $this->assertSame(
+            'Even more good stuff',
+            data_get($options, 'detail_sections.more_good_stuff.heading'),
         );
     }
 
-    public function test_direct_business_card_category_does_not_receive_global_product_sections(): void
+    public function test_direct_business_card_category_receives_shared_product_sections(): void
     {
         $product = new Product([
             'name' => 'Test Product 2',
@@ -308,7 +380,18 @@ class ProductConfigurationServiceTest extends TestCase
 
         $options = app(ProductConfigurationService::class)->storefrontOptions($product);
 
-        $this->assertSame([], data_get($options, 'detail_sections'));
+        $this->assertSame(
+            'Need help designing your Business Cards?',
+            data_get($options, 'detail_sections.design_service_banner.heading'),
+        );
+        $this->assertSame(
+            'Check out our other paper stocks',
+            data_get($options, 'detail_sections.paper_stocks.heading'),
+        );
+        $this->assertSame(
+            'Even more good stuff',
+            data_get($options, 'detail_sections.more_good_stuff.heading'),
+        );
     }
 
     public function test_non_business_card_categories_do_not_receive_shared_sections(): void

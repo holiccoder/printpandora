@@ -13,10 +13,10 @@ use Illuminate\Validation\ValidationException;
  *
  * The new configuration is stored in products.product_config. During the
  * migration period this service can still read the old product_options JSON
- * or the category product-option files. The storefront deliberately keeps a
- * narrower boundary: product copy, pricing, FAQs, and detail sections come
- * from the database, while the legacy product files can provide only option
- * metadata and galleries.
+ * or the category product-option files. The storefront keeps product copy,
+ * pricing, FAQs, and product-specific detail data in the database, while
+ * shared business-card cross-sell sections come from hardcoded content and
+ * legacy product files can provide only option metadata and galleries.
  */
 class ProductConfigurationService
 {
@@ -1054,12 +1054,92 @@ class ProductConfigurationService
         }
 
         return $this->withResolvedStorefrontImages(
-            $this->toStorefrontOptions(
-                $config,
+            $this->withSharedBusinessCardDetailSections(
+                $this->toStorefrontOptions(
+                    $config,
+                    $product,
+                    $hardcodedProductOptions !== null || $databaseLegacyOptions !== null,
+                ),
                 $product,
-                $hardcodedProductOptions !== null || $databaseLegacyOptions !== null,
             ),
         );
+    }
+
+    /**
+     * Apply the centrally maintained business-card cross-sell sections. A
+     * shared design specification is used only when the product does not
+     * define one; product-specific specifications and FAQs remain
+     * authoritative.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private function withSharedBusinessCardDetailSections(array $options, Product $product): array
+    {
+        if (! $this->belongsToBusinessCardCategory($product)) {
+            return $options;
+        }
+
+        $details = is_array($options['detail_sections'] ?? null)
+            ? $options['detail_sections']
+            : [];
+        $shared = $this->content->section(
+            'product_detail_page.shared_detail_sections.business_cards',
+            [],
+        );
+
+        if (! is_array($shared)) {
+            return $options;
+        }
+
+        if (
+            ! is_array($details['design_specifications'] ?? null)
+            && is_array($shared['design_specifications'] ?? null)
+        ) {
+            $details['design_specifications'] = $shared['design_specifications'];
+        }
+
+        foreach (['design_service_banner', 'paper_stocks', 'more_good_stuff'] as $key) {
+            if (is_array($shared[$key] ?? null)) {
+                $details[$key] = $shared[$key];
+            }
+        }
+
+        $options['detail_sections'] = $details;
+
+        return $options;
+    }
+
+    private function belongsToBusinessCardCategory(Product $product): bool
+    {
+        $category = $product->category;
+        $visited = [];
+
+        while ($category !== null) {
+            if ($category->slug === 'business-cards') {
+                return true;
+            }
+
+            $categoryId = $category->getKey();
+
+            if ($categoryId !== null) {
+                if (isset($visited[$categoryId])) {
+                    return false;
+                }
+
+                $visited[$categoryId] = true;
+            }
+
+            if (! $category->parent_id) {
+                return false;
+            }
+
+            $category = $category->relationLoaded('parent')
+                ? $category->getRelation('parent')
+                : $category->parent()->first();
+        }
+
+        return false;
     }
 
     /**
