@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Affiliate;
 use App\Models\AffiliateCommission;
 use App\Models\AffiliateReferral;
+use App\Models\DesignServiceRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PayPalWebhookEvent;
@@ -857,6 +858,7 @@ class CheckoutController extends Controller
             $lockedOrder->update($attributes);
             $this->replaceOrderItems($lockedOrder, $cart);
             $this->attachPendingProductDesignRequests($request, $lockedOrder, $cart);
+            $this->attachPendingDesignServiceRequests($request, $lockedOrder, $cart);
 
             if ($redeemDiscount) {
                 $this->applyPendingCheckoutFinancials($lockedOrder, $quote, $request);
@@ -1028,6 +1030,78 @@ class CheckoutController extends Controller
                     $remainingRequestIds,
                 );
             }
+        }
+    }
+
+    protected function attachPendingDesignServiceRequests(
+        Request $request,
+        Order $order,
+        Cart $cart,
+    ): void {
+        $pendingRequestIds = $request->session()->get(
+            'pending_design_service_request_ids',
+            [],
+        );
+
+        if (! is_array($pendingRequestIds) || $pendingRequestIds === []) {
+            return;
+        }
+
+        $cartRequestIds = [];
+
+        foreach ($cart->all() as $item) {
+            $requestId = (int) data_get(
+                $item,
+                'options.design_service_request_id',
+                0,
+            );
+
+            if ($requestId > 0) {
+                $cartRequestIds[$requestId] = true;
+            }
+        }
+
+        if ($cartRequestIds === []) {
+            return;
+        }
+
+        $designRequests = DesignServiceRequest::query()
+            ->whereIn('id', array_map('intval', $pendingRequestIds))
+            ->get();
+        $resolvedRequestIds = [];
+
+        foreach ($designRequests as $designRequest) {
+            if ($designRequest->order_id !== null) {
+                $resolvedRequestIds[] = (int) $designRequest->getKey();
+
+                continue;
+            }
+
+            if (! isset($cartRequestIds[(int) $designRequest->getKey()])) {
+                continue;
+            }
+
+            $designRequest->order()->associate($order);
+            $designRequest->save();
+            $resolvedRequestIds[] = (int) $designRequest->getKey();
+        }
+
+        if ($resolvedRequestIds === []) {
+            return;
+        }
+
+        $remainingRequestIds = array_values(array_diff(
+            array_map('intval', $pendingRequestIds),
+            $resolvedRequestIds,
+        ));
+
+        if ($remainingRequestIds === []) {
+            $request->session()->forget('pending_design_service_request_ids');
+        } else {
+            $request->session()->put(
+                'pending_design_service_request_ids',
+                $remainingRequestIds,
+            );
         }
     }
 

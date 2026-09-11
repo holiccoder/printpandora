@@ -161,6 +161,7 @@ export default function BusinessCardDesignService() {
                             onDesignServiceCodeChange={setSelectedService}
                             designServicesHeading="Choose a design service"
                             designServicesRequiredError="Please choose a design service."
+                            returnTo="/checkout"
                             hideDesignServices
                         />
                     </div>

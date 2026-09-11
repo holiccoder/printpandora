@@ -420,18 +420,18 @@ final class BusinessCardOptionCatalog
             ], '0_3_mm'),
             'sizes' => self::group('Size', [
                 self::value($options, 'sizes', '89x51_mm', [
-                    'label' => '4x2 inches',
-                    'description' => '4x2 inches metal business card.',
+                    'label' => '3.5 × 2.0 inches',
+                    'description' => '3.5 × 2.0 inches metal business card.',
                     'swatch_image' => '/images/product-options/business-cards/swatches/metal/size-89x51mm.png',
                 ]),
                 self::value($options, 'sizes', '85x54_mm', [
-                    'label' => '3x2 inches',
-                    'description' => '3x2 inches metal business card.',
+                    'label' => '3.35 × 2.13 inches',
+                    'description' => '3.35 × 2.13 inches metal business card.',
                     'swatch_image' => '/images/product-options/business-cards/swatches/metal/size-85x54mm.png',
                 ]),
                 self::value($options, 'sizes', '80x50_mm', [
-                    'label' => '3x2 inches',
-                    'description' => '3x2 inches metal business card.',
+                    'label' => '3.15 × 1.97 inches',
+                    'description' => '3.15 × 1.97 inches metal business card.',
                     'swatch_image' => '/images/product-options/business-cards/swatches/metal/size-80x50mm.png',
                 ]),
             ], '89x51_mm'),

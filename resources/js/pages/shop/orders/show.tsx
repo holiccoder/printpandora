@@ -18,6 +18,11 @@ interface OrderItem {
     };
 }
 
+interface OrderAttachment {
+    label: string;
+    url: string;
+}
+
 interface Order {
     id: number;
     status: string;
@@ -38,6 +43,7 @@ interface Order {
     notes: string | null;
     created_at: string;
     items: OrderItem[];
+    design_service_attachments?: OrderAttachment[];
 }
 
 interface Props {
@@ -157,6 +163,39 @@ export default function OrderShow({ order }: Props) {
                                 {c.total_label} $
                                 {parseFloat(order.total).toFixed(2)}
                             </div>
+
+                            {(order.design_service_attachments?.length ?? 0) >
+                                0 && (
+                                <div className="rounded-lg border border-[#e3e3e0] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615]">
+                                    <h2 className="mb-3 text-lg font-semibold">
+                                        {c.section_headings
+                                            .design_service_files ??
+                                            'Design service files'}
+                                    </h2>
+                                    <div className="space-y-2">
+                                        {order.design_service_attachments!.map(
+                                            (attachment) => (
+                                                <div
+                                                    key={attachment.url}
+                                                    className="flex items-center justify-between gap-4 rounded-md border border-[#e3e3e0] px-3 py-2 dark:border-[#3E3E3A]"
+                                                >
+                                                    <span className="text-sm">
+                                                        {attachment.label}
+                                                    </span>
+                                                    <a
+                                                        href={attachment.url}
+                                                        download
+                                                        className="text-sm font-medium underline"
+                                                    >
+                                                        {c.download_label ??
+                                                            'Download'}
+                                                    </a>
+                                                </div>
+                                            ),
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="space-y-4">

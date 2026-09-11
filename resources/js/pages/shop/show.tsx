@@ -79,6 +79,19 @@ const NO_SPECIAL_FINISH_CODES = [
     'no-special-finish',
     'no_special_finish',
 ];
+const HOT_FOIL_CODES = new Set([
+    'black gold',
+    'blue gold',
+    'bright gold',
+    'bright silver',
+    'green gold',
+    'matte gold',
+    'matte silver',
+    'red gold',
+    'rose gold',
+    'aged gold',
+    'muted purple gold',
+]);
 
 const OPTION_GROUP_ORDER: Record<string, number> = {
     sizes: 1,
@@ -137,6 +150,7 @@ interface ProductOptionGroup {
 
 interface ProductOptions {
     dynamic_options?: boolean;
+    show_gang_run_printing?: boolean;
     option_groups?: ProductOptionGroup[];
     sizes?: Array<{
         code?: string;
@@ -298,6 +312,89 @@ function optionValueCode(value: ProductOptionValue): string {
     );
 }
 
+interface SelectedOptionDetails {
+    groupKey: string;
+    code?: string | null;
+    label?: string | null;
+    description?: string | null;
+}
+
+function normalizeOptionText(value?: string | null): string {
+    return value?.trim().toLowerCase().replace(/[_-]+/g, ' ') ?? '';
+}
+
+function optionAddsTurnaroundTime(option: SelectedOptionDetails): boolean {
+    const group = normalizeOptionText(option.groupKey);
+    const code = normalizeOptionText(option.code);
+    const text = [group, code, option.label, option.description]
+        .map(normalizeOptionText)
+        .filter(Boolean)
+        .join(' ');
+    const isNoSpecialFinish =
+        NO_SPECIAL_FINISH_CODES.some(
+            (value) => normalizeOptionText(value) === code,
+        ) || /\bno\s+(?:special\s+)?finish\b/.test(text);
+
+    if (isNoSpecialFinish) {
+        return false;
+    }
+
+    const isFoil =
+        text.includes('foil') ||
+        (group.includes('special finish') &&
+            (HOT_FOIL_CODES.has(code) || code.startsWith('cold ')));
+    const isThreeDUv =
+        /\b3d\s+uv\b/.test(text) || (code === 'uv' && group.includes('finish'));
+    const isCustomDieCut =
+        /\bdie\s+cut\b/.test(text) ||
+        (code === 'custom' && /(corner|shape|die)/.test(group));
+
+    return isFoil || isThreeDUv || isCustomDieCut;
+}
+
+function hasAdditionalTurnaroundTime(
+    options: SelectedOptionDetails[],
+): boolean {
+    return options.some(optionAddsTurnaroundTime);
+}
+
+function selectedDynamicOptionDetails(
+    groups: ProductOptionGroup[],
+    selected: Record<string, string | string[]>,
+): SelectedOptionDetails[] {
+    return groups.flatMap((group) => {
+        const selectedValues = selected[group.key];
+        const selectedCodes = Array.isArray(selectedValues)
+            ? selectedValues
+            : selectedValues != null
+              ? [selectedValues]
+              : [];
+
+        return selectedCodes.map((code) => {
+            const value = group.values.find(
+                (candidate) => optionValueCode(candidate) === code,
+            );
+
+            return {
+                groupKey: group.key,
+                code,
+                label: value?.name,
+                description: value?.description,
+            };
+        });
+    });
+}
+
+function addTurnaroundTime(workdays: string): string {
+    const range = workdays.match(/(\d+)\s*-\s*(\d+)/);
+
+    if (!range) {
+        return `${workdays} + 5 - 7 Business Days`;
+    }
+
+    return `${Number(range[1]) + 5} - ${Number(range[2]) + 7} Workdays`;
+}
+
 function orderOptionGroups(groups: ProductOptionGroup[]): ProductOptionGroup[] {
     return groups
         .map((group, index) => ({ group, index }))
@@ -316,14 +413,11 @@ function orderOptionGroups(groups: ProductOptionGroup[]): ProductOptionGroup[] {
 
 function getProductTurnaround(
     product: Product,
-    specialFinish: string | null,
+    hasAdditionalTurnaround: boolean,
 ): { label: string; description: string } | null {
     const slug = product.slug.toLowerCase();
     const name = product.name.toLowerCase();
     const category = product.category?.slug.toLowerCase();
-    const hasSpecialFinish =
-        specialFinish != null &&
-        !NO_SPECIAL_FINISH_CODES.includes(specialFinish);
 
     let workdays: string | null = null;
 
@@ -355,12 +449,12 @@ function getProductTurnaround(
         slug === 'super-business-cards' ||
         name.includes('super business card')
     ) {
-        workdays = hasSpecialFinish ? '4 - 5 Workdays' : '2 - 3 Workdays';
+        workdays = '2 - 3 Workdays';
     } else if (
         slug.includes('classic') ||
         name.includes('classic business card')
     ) {
-        workdays = hasSpecialFinish ? '4 - 5 Workdays' : '2 - 3 Workdays';
+        workdays = '2 - 3 Workdays';
     }
 
     if (workdays === null) {
@@ -368,8 +462,10 @@ function getProductTurnaround(
     }
 
     return {
-        label: `${workdays} Turnaround Time`,
-        description: `Custom business days for ${product.name}${hasSpecialFinish ? ' with a hot foil/cold foil special finish' : ''}.`,
+        label: `${hasAdditionalTurnaround ? addTurnaroundTime(workdays) : workdays} Turnaround Time`,
+        description: hasAdditionalTurnaround
+            ? `Custom business days for ${product.name}. The selected option adds 5 - 7 business days.`
+            : `Custom business days for ${product.name}.`,
     };
 }
 
@@ -412,6 +508,7 @@ export default function ShopShow({
     const finishThumbs: string[] = c.finish_thumb_image_urls;
 
     const hasProductOptions = productOptions != null;
+    const showGangRunPrinting = productOptions?.show_gang_run_printing === true;
     const isCottonBusinessCards =
         product.category?.slug === 'cotton-business-cards';
     const supportsColdFoil = ![
@@ -1364,9 +1461,44 @@ export default function ShopShow({
         typeof selectedDynamicOptions.special_finish === 'string'
             ? selectedDynamicOptions.special_finish
             : selectedSpecialFinish;
+    const selectedSpecialFinishOption =
+        specialFinishes.find(
+            (finish: any) => finish.id === selectedProductSpecialFinish,
+        ) ??
+        COLD_FOIL_OPTIONS.find(
+            (finish) => finish.id === selectedProductSpecialFinish,
+        );
+    const selectedTurnaroundOptions: SelectedOptionDetails[] = [
+        {
+            groupKey: 'paper_finish',
+            code: selectedFinish,
+            label: finishLabel,
+        },
+        {
+            groupKey: 'corners',
+            code: selectedCorners,
+            label: cornersLabel,
+        },
+        {
+            groupKey: 'special_finish',
+            code: selectedProductSpecialFinish,
+            label: selectedSpecialFinishOption?.label,
+            description: selectedSpecialFinishOption?.description,
+        },
+    ];
+
+    if (usesDynamicOptions) {
+        selectedTurnaroundOptions.push(
+            ...selectedDynamicOptionDetails(
+                dynamicOptionGroups,
+                selectedDynamicOptions,
+            ),
+        );
+    }
+
     const productTurnaround = getProductTurnaround(
         product,
-        selectedProductSpecialFinish,
+        hasAdditionalTurnaroundTime(selectedTurnaroundOptions),
     );
 
     const showSpecialFinishInSummary = specialFinishes.length > 0;
@@ -1494,7 +1626,7 @@ export default function ShopShow({
                     {/* gallery */}
                     <div className="lg:sticky lg:top-[10px] lg:self-start">
                         <div
-                            className="cursor-zoom-in overflow-hidden rounded-lg bg-neutral-100 transition-all duration-300 hover:opacity-95"
+                            className="aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-lg bg-neutral-100 transition-all duration-300 hover:opacity-95"
                             onClick={() => {
                                 const index =
                                     displayImages.indexOf(activeImage);
@@ -1506,7 +1638,7 @@ export default function ShopShow({
                             <img
                                 src={activeImage}
                                 alt={product.name}
-                                className="h-[420px] w-full transform object-contain transition-transform duration-500 hover:scale-[1.02] sm:h-[540px] lg:h-[650px]"
+                                className="h-full w-full transform object-contain transition-transform duration-500 hover:scale-[1.02]"
                             />
                         </div>
                         <div className="mt-3 grid grid-cols-4 gap-2">
@@ -1515,7 +1647,7 @@ export default function ShopShow({
                                     key={src}
                                     type="button"
                                     onClick={() => setSelectedThumbnail(src)}
-                                    className={`overflow-hidden rounded-md border-2 transition-colors ${
+                                    className={`aspect-[4/3] overflow-hidden rounded-md border-2 transition-colors ${
                                         activeImage === src
                                             ? 'border-[#800020]'
                                             : 'border-transparent hover:border-neutral-200'
@@ -1524,7 +1656,7 @@ export default function ShopShow({
                                     <img
                                         src={src}
                                         alt=""
-                                        className="aspect-square w-full bg-neutral-100 object-contain"
+                                        className="h-full w-full bg-neutral-100 object-contain"
                                     />
                                 </button>
                             ))}
@@ -2709,7 +2841,12 @@ export default function ShopShow({
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div
+                        className={cn(
+                            'grid grid-cols-1 gap-4',
+                            showGangRunPrinting && 'sm:grid-cols-2',
+                        )}
+                    >
                         <FeatureChip
                             icon={
                                 <svg
@@ -2761,74 +2898,78 @@ export default function ShopShow({
                                 )
                             }
                         />
-                        <FeatureChip
-                            icon={
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.6"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="size-10 text-[#800020]"
-                                >
-                                    <rect
-                                        x="3"
-                                        y="6"
-                                        width="18"
-                                        height="14"
-                                        rx="2"
-                                    />
-                                    <path d="M3 10h18" />
-                                    <path d="M7 6V4h10v2" />
-                                    <circle cx="7" cy="14" r="1" />
-                                    <circle cx="11" cy="14" r="1" />
-                                    <circle cx="15" cy="14" r="1" />
-                                </svg>
-                            }
-                            label={secondFeatureCard.title || featureChips[1]}
-                            description={
-                                secondFeatureCard.description ||
-                                featureChipDescriptions[1]
-                            }
-                            detailTitle={
-                                secondFeatureCard.tooltip_title ||
-                                gangRunTooltip.title
-                            }
-                            details={
-                                secondFeatureCardTooltip ? (
-                                    <div
-                                        dangerouslySetInnerHTML={{
-                                            __html: secondFeatureCardTooltip,
-                                        }}
-                                    />
-                                ) : (
-                                    <>
-                                        <p>{gangRunTooltip.intro}</p>
-                                        <p className="font-semibold">
-                                            {gangRunTooltip.pros_title}
-                                        </p>
-                                        <ul className="list-disc space-y-1 pl-4">
-                                            {gangRunTooltip.pros.map(
-                                                (pro: string) => (
-                                                    <li key={pro}>{pro}</li>
-                                                ),
-                                            )}
-                                        </ul>
-                                        <p className="font-semibold">
-                                            {gangRunTooltip.cons_title}
-                                        </p>
-                                        <ul className="list-disc space-y-1 pl-4">
-                                            {gangRunTooltip.cons.map(
-                                                (con: string) => (
-                                                    <li key={con}>{con}</li>
-                                                ),
-                                            )}
-                                        </ul>
-                                    </>
-                                )
-                            }
-                        />
+                        {showGangRunPrinting && (
+                            <FeatureChip
+                                icon={
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="1.6"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="size-10 text-[#800020]"
+                                    >
+                                        <rect
+                                            x="3"
+                                            y="6"
+                                            width="18"
+                                            height="14"
+                                            rx="2"
+                                        />
+                                        <path d="M3 10h18" />
+                                        <path d="M7 6V4h10v2" />
+                                        <circle cx="7" cy="14" r="1" />
+                                        <circle cx="11" cy="14" r="1" />
+                                        <circle cx="15" cy="14" r="1" />
+                                    </svg>
+                                }
+                                label={
+                                    secondFeatureCard.title || featureChips[1]
+                                }
+                                description={
+                                    secondFeatureCard.description ||
+                                    featureChipDescriptions[1]
+                                }
+                                detailTitle={
+                                    secondFeatureCard.tooltip_title ||
+                                    gangRunTooltip.title
+                                }
+                                details={
+                                    secondFeatureCardTooltip ? (
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: secondFeatureCardTooltip,
+                                            }}
+                                        />
+                                    ) : (
+                                        <>
+                                            <p>{gangRunTooltip.intro}</p>
+                                            <p className="font-semibold">
+                                                {gangRunTooltip.pros_title}
+                                            </p>
+                                            <ul className="list-disc space-y-1 pl-4">
+                                                {gangRunTooltip.pros.map(
+                                                    (pro: string) => (
+                                                        <li key={pro}>{pro}</li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                            <p className="font-semibold">
+                                                {gangRunTooltip.cons_title}
+                                            </p>
+                                            <ul className="list-disc space-y-1 pl-4">
+                                                {gangRunTooltip.cons.map(
+                                                    (con: string) => (
+                                                        <li key={con}>{con}</li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        </>
+                                    )
+                                }
+                            />
+                        )}
                     </div>
 
                     <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -2885,12 +3026,12 @@ function FeatureChip({
     const detailContent = (detailTitle || details) && (
         <div className="mt-4 border-t border-neutral-100 pt-3">
             {detailTitle && (
-                <p className="text-xs font-semibold text-neutral-700">
+                <p className="text-sm font-semibold text-neutral-700">
                     {detailTitle}
                 </p>
             )}
             {details && (
-                <div className="mt-1 text-xs leading-relaxed text-neutral-600 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-4 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-4">
+                <div className="mt-1 text-sm leading-relaxed text-neutral-600 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-4 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-4">
                     {details}
                 </div>
             )}
@@ -2902,11 +3043,11 @@ function FeatureChip({
             <div className="flex gap-3">
                 <span className="mt-0.5 shrink-0">{icon}</span>
                 <div className="min-w-0">
-                    <p className="text-sm font-bold text-neutral-900">
+                    <p className="text-base font-bold text-neutral-900">
                         {label}
                     </p>
                     {description && (
-                        <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+                        <p className="mt-1 text-sm leading-relaxed text-neutral-500">
                             {description}
                         </p>
                     )}

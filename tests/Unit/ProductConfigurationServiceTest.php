@@ -435,6 +435,39 @@ class ProductConfigurationServiceTest extends TestCase
         );
     }
 
+    public function test_review_modal_gang_run_feature_is_limited_to_classic_and_pvc_products(): void
+    {
+        $businessCards = new ProductCategory(['slug' => 'business-cards']);
+        $pvcCards = new ProductCategory(['slug' => 'pvc-business-cards']);
+        $cases = [
+            'classic-standard-business-cards' => [$businessCards, true],
+            'classic-special-business-cards' => [$businessCards, true],
+            'basic-pvc-card' => [$pvcCards, true],
+            'standard-pvc-card' => [$pvcCards, true],
+            'premium-pvc-card' => [$pvcCards, true],
+            'custom-pvc-card' => [$pvcCards, true],
+            'basic-cotton-business-card' => [$businessCards, false],
+            'classic-quality-business-cards' => [$businessCards, false],
+            'classic-solid-business-cards' => [$businessCards, false],
+            'super-business-cards' => [$businessCards, false],
+            'classic-metal-business-cards' => [$businessCards, false],
+        ];
+
+        foreach ($cases as $slug => [$category, $expected]) {
+            $product = new Product([
+                'name' => $slug,
+                'slug' => $slug,
+                'product_config' => ['detail_sections' => []],
+            ]);
+            $product->setRelation('category', $category);
+
+            $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+
+            $this->assertIsArray($options, $slug);
+            $this->assertSame($expected, data_get($options, 'show_gang_run_printing'), $slug);
+        }
+    }
+
     public function test_non_business_card_categories_do_not_receive_shared_sections(): void
     {
         $product = new Product([

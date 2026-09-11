@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DesignServiceRequest extends Model
 {
@@ -16,6 +17,7 @@ class DesignServiceRequest extends Model
     ];
 
     protected $fillable = [
+        'order_id',
         'email',
         'business_name',
         'card_info',
@@ -39,5 +41,13 @@ class DesignServiceRequest extends Model
             'handled_at' => 'datetime',
             'design_service_fee' => 'decimal:2',
         ];
+    }
+
+    /**
+     * @return BelongsTo<Order, $this>
+     */
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
     }
 }

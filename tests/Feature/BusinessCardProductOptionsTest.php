@@ -350,6 +350,16 @@ class BusinessCardProductOptionsTest extends TestCase
                 '/images/product-options/business-cards/swatches/metal/magnetic-stripe.png',
             ],
         ];
+        $expectedMetalSizeTitles = [
+            '3.5 × 2.0 inches',
+            '3.35 × 2.13 inches',
+            '3.15 × 1.97 inches',
+        ];
+        $expectedMetalSizeDescriptions = [
+            '3.5 × 2.0 inches metal business card.',
+            '3.35 × 2.13 inches metal business card.',
+            '3.15 × 1.97 inches metal business card.',
+        ];
 
         foreach (['classic-metal-business-cards', 'premium-metal-business-cards', 'luxe-metal-business-cards'] as $slug) {
             $config = Product::where('slug', $slug)->firstOrFail()->product_config;
@@ -357,6 +367,12 @@ class BusinessCardProductOptionsTest extends TestCase
             foreach ($expectedMetalSwatches as $group => $swatches) {
                 $this->assertSame($swatches, data_get($config, "options.{$group}.values.*.swatch_image"));
             }
+
+            $this->assertSame($expectedMetalSizeTitles, data_get($config, 'options.sizes.values.*.label'));
+            $this->assertSame(
+                $expectedMetalSizeDescriptions,
+                data_get($config, 'options.sizes.values.*.description'),
+            );
 
             if ($slug !== 'classic-metal-business-cards') {
                 $this->assertSame(

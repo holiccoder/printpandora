@@ -65,6 +65,18 @@ class ProductConfigurationService
     ];
 
     /**
+     * These products retain the shared Gang Run Printing review detail. PVC
+     * products are included by their category so newly added PVC products
+     * inherit the same behavior automatically.
+     *
+     * @var array<int, string>
+     */
+    private const GANG_RUN_PRINTING_PRODUCT_SLUGS = [
+        'classic-standard-business-cards',
+        'classic-special-business-cards',
+    ];
+
+    /**
      * Foil option images are shared across business-card products. The
      * source artwork lives with the classic solid card product, but the
      * storefront should show the same primary image wherever the same foil
@@ -1053,15 +1065,15 @@ class ProductConfigurationService
             );
         }
 
+        $options = $this->toStorefrontOptions(
+            $config,
+            $product,
+            $hardcodedProductOptions !== null || $databaseLegacyOptions !== null,
+        );
+        $options['show_gang_run_printing'] = $this->supportsGangRunPrinting($product);
+
         return $this->withResolvedStorefrontImages(
-            $this->withSharedBusinessCardDetailSections(
-                $this->toStorefrontOptions(
-                    $config,
-                    $product,
-                    $hardcodedProductOptions !== null || $databaseLegacyOptions !== null,
-                ),
-                $product,
-            ),
+            $this->withSharedBusinessCardDetailSections($options, $product),
         );
     }
 
@@ -1121,11 +1133,22 @@ class ProductConfigurationService
 
     private function belongsToBusinessCardCategory(Product $product): bool
     {
+        return $this->belongsToCategorySlug($product, 'business-cards');
+    }
+
+    private function supportsGangRunPrinting(Product $product): bool
+    {
+        return in_array((string) $product->slug, self::GANG_RUN_PRINTING_PRODUCT_SLUGS, true)
+            || $this->belongsToCategorySlug($product, 'pvc-business-cards');
+    }
+
+    private function belongsToCategorySlug(Product $product, string $categorySlug): bool
+    {
         $category = $product->category;
         $visited = [];
 
         while ($category !== null) {
-            if ($category->slug === 'business-cards') {
+            if ($category->slug === $categorySlug) {
                 return true;
             }
 

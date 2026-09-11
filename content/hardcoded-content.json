@@ -1165,63 +1165,63 @@
                     "subtitle": "We start at premium and go all the way to extra fancy.",
                     "items": [
                         {
-                            "id": "cotton",
-                            "name": "Cotton Business Cards",
-                            "price": "50 cards from $33.00",
+                            "id": "classic-special",
+                            "name": "classic special business cards",
+                            "price": "200 cards，from $18.00",
                             "image_url": "/images/product-detail/paper-stocks/premium-paper.webp",
-                            "href": "/business-cards/classic-cotton",
-                            "cta": "Shop Cotton Business Cards ›",
+                            "href": "/business-cards/classic-special",
+                            "cta": "Shop classic special business cards →",
                             "features": [
-                                "17pt thickness",
-                                "Made from cotton linters",
-                                "Uncoated bright white",
-                                "Lightweight & durable",
-                                "Sustainably sourced"
+                                "12.6pt thickness",
+                                "Multiple artistic textures available",
+                                "Soft and elegant printed colors",
+                                "Natural, textured surface",
+                                "Uncoated for easy writing"
                             ]
                         },
                         {
                             "id": "super",
-                            "name": "Super Business Cards",
-                            "price": "50 cards from $33.00",
+                            "name": "super business cards",
+                            "price": "50 cards，from $14.00",
                             "image_url": "/images/product-detail/paper-stocks/luxury-paper.webp",
                             "href": "/business-cards/super",
-                            "cta": "Shop Super Business Cards ›",
-                            "features": [
-                                "18pt thickness",
-                                "Silky smooth",
-                                "Soft Touch or High Gloss",
-                                "Foils & special finishes",
-                                "FSC® Certified"
-                            ]
-                        },
-                        {
-                            "id": "pvc",
-                            "name": "PVC Business Cards",
-                            "price": "50 cards from $43.00",
-                            "image_url": "/images/product-detail/paper-stocks/pvc-card.webp",
-                            "href": "/business-cards/standard-pvc",
-                            "cta": "Shop PVC Business Cards ›",
-                            "features": [
-                                "0.03 inches thickness",
-                                "Durable and waterproof",
-                                "Sharp full-colour printing",
-                                "Flexible finish options",
-                                "Easy to clean"
-                            ]
-                        },
-                        {
-                            "id": "classic",
-                            "name": "Classic Business Cards",
-                            "price": "50 cards from $23.00",
-                            "image_url": "/images/product-detail/paper-stocks/paper-stock-four.webp",
-                            "href": "/business-cards/classic-standard",
-                            "cta": "Shop Classic Business Cards ›",
+                            "cta": "Shop super business cards →",
                             "features": [
                                 "16pt thickness",
-                                "Premium paper",
-                                "Matte or Gloss finish",
-                                "Quality and value",
-                                "FSC® Certified"
+                                "Heavy, natural texture",
+                                "More lustrous ink colors",
+                                "Greater printing flexibility",
+                                "Multiple special finishes available"
+                            ]
+                        },
+                        {
+                            "id": "basic-pvc",
+                            "name": "basic pvc card",
+                            "price": "50 cards，from $30.00",
+                            "image_url": "/images/product-detail/paper-stocks/pvc-card.webp",
+                            "href": "/business-cards/basic-pvc",
+                            "cta": "Shop basic pvc card →",
+                            "features": [
+                                "16pt thickness",
+                                "Heavy, natural texture",
+                                "More lustrous ink colors",
+                                "Greater printing flexibility",
+                                "Multiple special finishes available"
+                            ]
+                        },
+                        {
+                            "id": "classic-solid",
+                            "name": "classic solid business cards",
+                            "price": "50 cards，from $14.00",
+                            "image_url": "/images/product-detail/paper-stocks/paper-stock-four.webp",
+                            "href": "/business-cards/classic-solid",
+                            "cta": "Shop classic solid business cards →",
+                            "features": [
+                                "15pt thickness",
+                                "Silky smooth",
+                                "Better print color reproduction",
+                                "Suitable for large-area multicolor gradient printing",
+                                "Multiple refined laminations available"
                             ]
                         }
                     ]
@@ -2467,6 +2467,7 @@
         "page_heading_prefix": "Order #",
         "section_headings": {
             "items": "Items",
+            "design_service_files": "Design service files",
             "customer": "Customer",
             "shipping": "Shipping",
             "notes": "Notes"
@@ -2476,7 +2477,8 @@
         "tracking_label": "Tracking number",
         "track_package_label": "Track package",
         "qty_label": "Qty:",
-        "total_label": "Total:"
+        "total_label": "Total:",
+        "download_label": "Download"
     },
     "shop_thank_you_page": {
         "_source_file": "resources/js/pages/shop/thank-you.tsx",

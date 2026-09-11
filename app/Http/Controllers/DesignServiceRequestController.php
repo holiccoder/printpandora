@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\DesignServiceRequest;
+use App\Services\Cart;
+use App\Support\DesignServiceProduct;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -17,7 +19,7 @@ class DesignServiceRequestController extends Controller
         return Inertia::render('business-card-design-service');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, Cart $cart): RedirectResponse
     {
         $validated = $request->validate([
             'email' => 'required|email|max:255',
@@ -67,7 +69,7 @@ class DesignServiceRequestController extends Controller
             }
         }
 
-        DesignServiceRequest::create([
+        $designServiceRequest = DesignServiceRequest::create([
             'email' => $validated['email'],
             'business_name' => $validated['business_name'],
             'card_info' => $validated['card_info'] ?? null,
@@ -83,8 +85,36 @@ class DesignServiceRequestController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
+        if ($designServiceCode !== null) {
+            $cart->add(
+                DesignServiceProduct::resolve()->getKey(),
+                [
+                    'design_service' => $designServiceCode,
+                    'design_service_request_id' => (int) $designServiceRequest->getKey(),
+                ],
+            );
+
+            $pendingRequestIds = $request->session()->get(
+                'pending_design_service_request_ids',
+                [],
+            );
+
+            if (! is_array($pendingRequestIds)) {
+                $pendingRequestIds = [];
+            }
+
+            $request->session()->put(
+                'pending_design_service_request_ids',
+                array_values(array_unique([
+                    ...array_map('intval', $pendingRequestIds),
+                    (int) $designServiceRequest->getKey(),
+                ])),
+            );
+        }
+
         // Product-page modals pass return_to so the shopper lands back on the
-        // product detail page instead of the standalone design service page.
+        // product detail page. The standalone page passes /checkout after a
+        // paid design service has been added to the cart.
         $returnTo = $validated['return_to'] ?? null;
 
         if ($returnTo !== null && str_starts_with($returnTo, '/') && ! str_starts_with($returnTo, '//')) {

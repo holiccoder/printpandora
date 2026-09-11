@@ -16,6 +16,7 @@ const BUSINESS_CARD_PRODUCT_PATHS: Record<string, string> = {
     'classic-special-business-cards': '/business-cards/classic-special',
     'classic-quality-business-cards': '/business-cards/classic-quality',
     'classic-solid-business-cards': '/business-cards/classic-solid',
+    'design-service': '/business-card-design-service',
 };
 
 export function productHref(slug: string): string {

@@ -27,6 +27,7 @@ final class BusinessCardRoutes
         'classic-special-business-cards' => 'classic-special',
         'classic-quality-business-cards' => 'classic-quality',
         'classic-solid-business-cards' => 'classic-solid',
+        'design-service' => 'business-card-design-service',
     ];
 
     public static function productSlugForSegment(string $segment): ?string

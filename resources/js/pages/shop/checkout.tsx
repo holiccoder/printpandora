@@ -971,6 +971,7 @@ export default function Checkout({
 
 function formatOptions(options: Record<string, string>): string {
     return Object.entries(options)
+        .filter(([key]) => key !== 'design_service_request_id')
         .map(([key, value]) => {
             const label = key
                 .replace(/_/g, ' ')
