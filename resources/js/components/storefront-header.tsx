@@ -10,7 +10,7 @@ import {
     User,
     UserCog,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import AnnouncementBar from '@/components/announcement-bar';
 import { CartDrawer } from '@/components/cart-drawer';
 import type { CartItem } from '@/components/cart-drawer';
@@ -84,6 +84,9 @@ type HeaderPageProps = {
 
 const ACTIVE_GREEN = 'text-[#800020]';
 const INACTIVE_GREY = 'text-neutral-700 hover:text-neutral-950';
+const DEFAULT_STICKY_HEADER_BOTTOM = 128;
+const useIsomorphicLayoutEffect =
+    typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 export function StorefrontHeader({
     activeCategory,
@@ -94,10 +97,57 @@ export function StorefrontHeader({
     const { auth, global_cart: globalCart } =
         page.props as unknown as HeaderPageProps;
     const user = auth?.user;
+    const [megaMenuTop, setMegaMenuTop] = useState(
+        DEFAULT_STICKY_HEADER_BOTTOM,
+    );
+    const stickyHeaderRef = useRef<HTMLElement>(null);
 
-    // Product detail pages have their own sticky gallery; keep the header
-    // static there so the two sticky elements don't overlap.
-    const isProductPage = page.component === 'shop/show';
+    useIsomorphicLayoutEffect(() => {
+        const element = stickyHeaderRef.current;
+
+        if (!element) {
+            return;
+        }
+
+        let animationFrame = 0;
+
+        const measureMegaMenuPosition = () => {
+            const nextTop = Math.max(
+                DEFAULT_STICKY_HEADER_BOTTOM,
+                Math.round(element.getBoundingClientRect().bottom),
+            );
+
+            setMegaMenuTop((currentTop) =>
+                currentTop === nextTop ? currentTop : nextTop,
+            );
+        };
+
+        const updateMegaMenuPosition = () => {
+            if (animationFrame !== 0) {
+                return;
+            }
+
+            animationFrame = window.requestAnimationFrame(() => {
+                animationFrame = 0;
+                measureMegaMenuPosition();
+            });
+        };
+
+        measureMegaMenuPosition();
+        window.addEventListener('scroll', updateMegaMenuPosition, {
+            passive: true,
+        });
+        window.addEventListener('resize', updateMegaMenuPosition);
+
+        return () => {
+            window.removeEventListener('scroll', updateMegaMenuPosition);
+            window.removeEventListener('resize', updateMegaMenuPosition);
+
+            if (animationFrame !== 0) {
+                window.cancelAnimationFrame(animationFrame);
+            }
+        };
+    }, []);
 
     // Build nav categories from JSON content
     const navCategories: NavCategory[] = h.top_navigation.map(
@@ -125,15 +175,12 @@ export function StorefrontHeader({
     );
 
     return (
-        <div
-            className={cn(
-                'z-40 w-full',
-                !isProductPage && 'sticky top-0',
-                isProductPage && 'relative',
-            )}
-        >
+        <>
             <AnnouncementBar />
-            <header className="w-full border-b border-neutral-200 bg-white [--popover:#ffffff]">
+            <header
+                ref={stickyHeaderRef}
+                className="sticky top-0 z-40 w-full border-b border-neutral-200 bg-white [--popover:#ffffff]"
+            >
                 {/* top row — mobile menu / logo / search / cart.
                     Desktop uses equal-width side tracks so the search box is
                     geometrically centered against the whole header. */}
@@ -366,13 +413,11 @@ export function StorefrontHeader({
                                                 )}
                                             </NavigationMenuTrigger>
                                             <NavigationMenuContent
-                                                // Pinned to the viewport. Offset = announcement bar (h-9 = 36px)
-                                                // + top row (h-20 = 80px) + nav row (h-12 = 48px) so the panel
-                                                // sits flush under the nav. The trust bar below the nav is
-                                                // intentionally covered while the dropdown is open. z-50 keeps
-                                                // it above sibling sections (hero carousel, banners) that open
-                                                // their own stacking context with `position: relative`.
-                                                className="!fixed !inset-x-0 !top-[164px] !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 !bg-white p-0 shadow-lg data-[state=closed]:hidden data-[state=open]:visible"
+                                                // Pinned to the viewport below the visible main header.
+                                                // The measured offset accounts for the announcement bar
+                                                // before it scrolls away and the sticky header afterward.
+                                                style={{ top: megaMenuTop }}
+                                                className="!fixed !inset-x-0 !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 !bg-white p-0 shadow-lg data-[state=closed]:hidden data-[state=open]:visible"
                                             >
                                                 <MegaPanel mega={cat.mega} />
                                             </NavigationMenuContent>
@@ -384,7 +429,7 @@ export function StorefrontHeader({
                     </div>
                 </div>
             </header>
-        </div>
+        </>
     );
 }
 

@@ -304,16 +304,32 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($options, 'detail_sections.paper_stocks.items.0.image_url'),
         );
         $this->assertSame(
-            '/images/product-detail/even-more/even-more-one.webp',
+            '/images/product-detail/even-more/classic-metal-business-cards.webp',
             data_get($options, 'detail_sections.more_good_stuff.items.0.image_url'),
         );
         $this->assertSame(
-            'PVC Business Cards',
+            'Metal Business cards',
             data_get($options, 'detail_sections.more_good_stuff.items.0.name'),
         );
         $this->assertSame(
-            'PVC Business Cards →',
+            'Metal Business cards →',
             data_get($options, 'detail_sections.more_good_stuff.items.0.link_label'),
+        );
+        $this->assertSame(
+            '/business-cards/classic-metal',
+            data_get($options, 'detail_sections.more_good_stuff.items.0.href'),
+        );
+        $this->assertSame(
+            ['Stickers and Labels', 'Postcards', 'Flyers and Brochures'],
+            array_slice(data_get($options, 'detail_sections.more_good_stuff.items.*.name'), 1),
+        );
+        $this->assertSame(
+            ['/stickers-and-labels', '/postcards', '/flyers-and-brochures'],
+            array_slice(data_get($options, 'detail_sections.more_good_stuff.items.*.href'), 1),
+        );
+        $this->assertSame(
+            ['Stickers and Labels →', 'Postcards →', 'Flyers and Brochures →'],
+            array_slice(data_get($options, 'detail_sections.more_good_stuff.items.*.link_label'), 1),
         );
         $this->assertSame(
             'Keep PVC specifications',

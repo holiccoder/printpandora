@@ -1231,31 +1231,31 @@
                     "items": [
                         {
                             "id": "original-postcards",
-                            "name": "PVC Business Cards",
-                            "image_url": "/images/product-detail/even-more/even-more-one.webp",
-                            "href": "/postcards",
-                            "link_label": "PVC Business Cards →"
+                            "name": "Metal Business cards",
+                            "image_url": "/images/product-detail/even-more/classic-metal-business-cards.webp",
+                            "href": "/business-cards/classic-metal",
+                            "link_label": "Metal Business cards →"
                         },
                         {
                             "id": "super-postcards",
-                            "name": "Premium Flyers",
+                            "name": "Stickers and Labels",
                             "image_url": "/images/product-detail/even-more/stickers.webp",
-                            "href": "/postcards",
-                            "link_label": "Premium Flyers →"
+                            "href": "/stickers-and-labels",
+                            "link_label": "Stickers and Labels →"
                         },
                         {
                             "id": "premium-flyers",
-                            "name": "Super Postcards",
+                            "name": "Postcards",
                             "image_url": "/images/product-detail/even-more/postcards.webp",
-                            "href": "/flyers-and-brochures",
-                            "link_label": "Super Postcards →"
+                            "href": "/postcards",
+                            "link_label": "Postcards →"
                         },
                         {
                             "id": "brochures",
-                            "name": "Brochures",
+                            "name": "Flyers and Brochures",
                             "image_url": "/images/product-detail/even-more/folded-brochure.webp",
                             "href": "/flyers-and-brochures",
-                            "link_label": "Brochures →"
+                            "link_label": "Flyers and Brochures →"
                         }
                     ]
                 }

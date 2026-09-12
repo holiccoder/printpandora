@@ -1623,8 +1623,8 @@ export default function ShopShow({
             {/* 1. configurator */}
             <section className="bg-white">
                 <div className="product-detail-container mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 lg:grid-cols-2">
-                    {/* gallery */}
-                    <div className="lg:sticky lg:top-[10px] lg:self-start">
+                    {/* Keep the gallery below the sticky desktop storefront header. */}
+                    <div className="lg:sticky lg:top-[140px] lg:self-start">
                         <div
                             className="aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-lg bg-neutral-100 transition-all duration-300 hover:opacity-95"
                             onClick={() => {
