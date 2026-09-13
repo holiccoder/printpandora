@@ -960,13 +960,13 @@
             "Classic Special Business Cards",
             "Classic Quality Business Cards",
             "Classic Solid Business Cards",
-            "Basic cotton business card",
-            "Classic cotton business card",
-            "Premium cotton business card",
-            "Luxe cotton business card",
-            "Grand cotton business card",
-            "Standard PVC card",
-            "Premium PVC card"
+            "Basic Cotton Business Card",
+            "Classic Cotton Business Card",
+            "Premium Cotton Business Card",
+            "Luxe Cotton Business Card",
+            "Grand Cotton Business Card",
+            "Standard PVC Card",
+            "Premium PVC Card"
         ],
         "configurator_labels": {
             "size": "Size",
@@ -1161,16 +1161,16 @@
                     "image_alt": "Two angled business card design concepts"
                 },
                 "paper_stocks": {
-                    "heading": "Check out our other paper stocks",
+                    "heading": "Check Out Our Other Paper Stocks",
                     "subtitle": "We start at premium and go all the way to extra fancy.",
                     "items": [
                         {
                             "id": "classic-special",
-                            "name": "classic special business cards",
+                            "name": "Classic Special Business Cards",
                             "price": "200 cards，from $18.00",
                             "image_url": "/images/product-detail/paper-stocks/premium-paper.webp",
                             "href": "/business-cards/classic-special",
-                            "cta": "Shop classic special business cards →",
+                            "cta": "Shop Classic Special Business Cards →",
                             "features": [
                                 "12.6pt thickness",
                                 "Multiple artistic textures available",
@@ -1181,11 +1181,11 @@
                         },
                         {
                             "id": "super",
-                            "name": "super business cards",
+                            "name": "Super Business Cards",
                             "price": "50 cards，from $14.00",
                             "image_url": "/images/product-detail/paper-stocks/luxury-paper.webp",
                             "href": "/business-cards/super",
-                            "cta": "Shop super business cards →",
+                            "cta": "Shop Super Business Cards →",
                             "features": [
                                 "16pt thickness",
                                 "Heavy, natural texture",
@@ -1196,11 +1196,11 @@
                         },
                         {
                             "id": "basic-pvc",
-                            "name": "basic pvc card",
+                            "name": "Basic PVC Card",
                             "price": "50 cards，from $30.00",
                             "image_url": "/images/product-detail/paper-stocks/pvc-card.webp",
                             "href": "/business-cards/basic-pvc",
-                            "cta": "Shop basic pvc card →",
+                            "cta": "Shop Basic PVC Card →",
                             "features": [
                                 "16pt thickness",
                                 "Heavy, natural texture",
@@ -1211,11 +1211,11 @@
                         },
                         {
                             "id": "classic-solid",
-                            "name": "classic solid business cards",
+                            "name": "Classic Solid Business Cards",
                             "price": "50 cards，from $14.00",
                             "image_url": "/images/product-detail/paper-stocks/paper-stock-four.webp",
                             "href": "/business-cards/classic-solid",
-                            "cta": "Shop classic solid business cards →",
+                            "cta": "Shop Classic Solid Business Cards →",
                             "features": [
                                 "15pt thickness",
                                 "Silky smooth",
@@ -1231,10 +1231,10 @@
                     "items": [
                         {
                             "id": "original-postcards",
-                            "name": "Metal Business cards",
+                            "name": "Metal Business Cards",
                             "image_url": "/images/product-detail/even-more/classic-metal-business-cards.webp",
                             "href": "/business-cards/classic-metal",
-                            "link_label": "Metal Business cards →"
+                            "link_label": "Metal Business Cards →"
                         },
                         {
                             "id": "super-postcards",
@@ -1403,13 +1403,13 @@
             "Classic Special Business Cards",
             "Classic Quality Business Cards",
             "Classic Solid Business Cards",
-            "Basic cotton business card",
-            "Classic cotton business card",
-            "Premium cotton business card",
-            "Luxe cotton business card",
-            "Grand cotton business card",
-            "Standard PVC card",
-            "Premium PVC card"
+            "Basic Cotton Business Card",
+            "Classic Cotton Business Card",
+            "Premium Cotton Business Card",
+            "Luxe Cotton Business Card",
+            "Grand Cotton Business Card",
+            "Standard PVC Card",
+            "Premium PVC Card"
         ]
     },
     "designer_partner_page": {
@@ -1461,43 +1461,43 @@
         ],
         "benefits": {
             "eyebrow": "Partner benefits",
-            "heading": "Make more room for the creative work.",
+            "heading": "Make More Room For The Creative Work.",
             "body": "Spend more time on the idea. Leave the paper, processes, file checks, and production questions to InkPavo.",
             "items": [
                 {
                     "icon": "badge-percent",
-                    "title": "Exclusive designer pricing",
+                    "title": "Exclusive Designer Pricing",
                     "description": "Get a Designer Account with pricing assigned to your partnership tier.",
-                    "image_url": "/images/home/designer-partner-benefit-pricing-success.png",
-                    "image_alt": "Designer reviewing a successful print project with a laptop, calculator, and completed samples"
+                    "image_url": "/images/home/designer-partner-benefit-exclusive-pricing.png",
+                    "image_alt": "White SALE letters hanging against a bright red background"
                 },
                 {
                     "icon": "printer",
-                    "title": "Professional print support",
+                    "title": "Professional Print Support",
                     "description": "Get practical guidance on paper, materials, and special finishes so your designs can be produced with confidence.",
-                    "image_url": "/images/home/designer-partner-benefit-print-support.png",
-                    "image_alt": "Designer working at a computer in a print studio surrounded by card samples"
+                    "image_url": "/images/home/designer-partner-benefit-professional-print-support.png",
+                    "image_alt": "Designer reviewing business card concepts on a computer in a bright studio"
                 },
                 {
                     "icon": "file-check",
-                    "title": "File and production support",
+                    "title": "File And Production Support",
                     "description": "Receive a basic pre-production file check and a clear warning when we spot an obvious production risk.",
-                    "image_url": "/images/business-cards/finish/linen-embossed.webp",
-                    "image_alt": "Textured linen business card showing a subtle embossed finish"
+                    "image_url": "/images/home/designer-partner-benefit-file-production.png",
+                    "image_alt": "Designer working on business card layouts with a tablet and monitor"
                 },
                 {
                     "icon": "layers",
-                    "title": "Sample and material support",
+                    "title": "Sample And Material Support",
                     "description": "Eligible partners can access sample sets, paper samples, and finishing references for client projects.",
-                    "image_url": "/images/home/designer-partner-benefit-print-range.png",
-                    "image_alt": "Assorted business cards, flyers, postcards, stickers, labels, and brochures arranged as a print sample pack"
+                    "image_url": "/images/home/designer-partner-benefit-material-support.png",
+                    "image_alt": "Hands comparing colorful paper and material swatches"
                 },
                 {
                     "icon": "handshake",
-                    "title": "Long-term partnership benefits",
+                    "title": "Long-Term Partnership Benefits",
                     "description": "Your partner tier can grow with order volume, collaboration frequency, and annual purchasing.",
-                    "image_url": "/images/home/designer-partner-benefit-collaboration.png",
-                    "image_alt": "Two creative professionals reviewing printed card and finishing samples together"
+                    "image_url": "/images/home/designer-partner-benefit-long-term-partnership.png",
+                    "image_alt": "Two creative professionals reviewing business card designs together"
                 }
             ]
         },

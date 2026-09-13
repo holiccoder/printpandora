@@ -21,7 +21,8 @@ class BlogTest extends TestCase
             'slug' => 'test-category',
         ]);
 
-        $createPost = function (int $daysAgo, string $suffix) use ($admin, $category): Post {
+        // Keep fixture dates tightly ordered so they remain newer than content seeded by migrations.
+        $createPost = function (int $secondsAgo, string $suffix) use ($admin, $category): Post {
             return Post::query()->create([
                 'title' => "Blog post {$suffix}",
                 'slug' => "blog-post-{$suffix}",
@@ -30,7 +31,7 @@ class BlogTest extends TestCase
                 'category_id' => $category->id,
                 'admin_id' => $admin->id,
                 'is_published' => true,
-                'published_at' => now()->subDays($daysAgo),
+                'published_at' => now()->subSeconds($secondsAgo * 10),
             ]);
         };
 

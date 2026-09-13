@@ -242,10 +242,28 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($options, 'detail_sections.design_service_banner.image_url'),
         );
         $this->assertSame(
-            'Check out our other paper stocks',
+            'Check Out Our Other Paper Stocks',
             data_get($options, 'detail_sections.paper_stocks.heading'),
         );
         $this->assertCount(4, data_get($options, 'detail_sections.paper_stocks.items'));
+        $this->assertSame(
+            [
+                'Classic Special Business Cards',
+                'Super Business Cards',
+                'Basic PVC Card',
+                'Classic Solid Business Cards',
+            ],
+            data_get($options, 'detail_sections.paper_stocks.items.*.name'),
+        );
+        $this->assertSame(
+            [
+                'Shop Classic Special Business Cards →',
+                'Shop Super Business Cards →',
+                'Shop Basic PVC Card →',
+                'Shop Classic Solid Business Cards →',
+            ],
+            data_get($options, 'detail_sections.paper_stocks.items.*.cta'),
+        );
         $this->assertSame(
             'Even more good stuff',
             data_get($options, 'detail_sections.more_good_stuff.heading'),
@@ -308,11 +326,11 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($options, 'detail_sections.more_good_stuff.items.0.image_url'),
         );
         $this->assertSame(
-            'Metal Business cards',
+            'Metal Business Cards',
             data_get($options, 'detail_sections.more_good_stuff.items.0.name'),
         );
         $this->assertSame(
-            'Metal Business cards →',
+            'Metal Business Cards →',
             data_get($options, 'detail_sections.more_good_stuff.items.0.link_label'),
         );
         $this->assertSame(
@@ -415,7 +433,7 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($options, 'detail_sections.design_service_banner.heading'),
         );
         $this->assertSame(
-            'Check out our other paper stocks',
+            'Check Out Our Other Paper Stocks',
             data_get($options, 'detail_sections.paper_stocks.heading'),
         );
         $this->assertSame(
@@ -442,7 +460,7 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($options, 'detail_sections.design_service_banner.heading'),
         );
         $this->assertSame(
-            'Check out our other paper stocks',
+            'Check Out Our Other Paper Stocks',
             data_get($options, 'detail_sections.paper_stocks.heading'),
         );
         $this->assertSame(
