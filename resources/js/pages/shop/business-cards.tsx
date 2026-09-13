@@ -20,14 +20,6 @@ import StorefrontLayout from '@/layouts/storefront-layout';
 /* Layout-only data (hrefs, icons, positional CSS) — not in the JSON          */
 /* -------------------------------------------------------------------------- */
 
-const heroCollageClasses = [
-    'top-4 left-2 w-44 rotate-[-9deg] sm:w-52 lg:w-60',
-    'top-2 right-4 w-44 rotate-[6deg] sm:w-52 lg:w-60',
-    'bottom-2 left-1/2 w-48 -translate-x-1/2 rotate-[2deg] sm:w-56 lg:w-64',
-    'bottom-6 left-4 w-40 rotate-[-3deg] sm:w-48 lg:w-52',
-    'bottom-10 right-2 w-36 rotate-[10deg] sm:w-44 lg:w-48',
-];
-
 const paperHrefs = [
     '/business-cards/classic-standard',
     '/business-cards/super',
@@ -152,17 +144,15 @@ export default function BusinessCardsLanding() {
                         </div>
                     </div>
 
-                    {/* Collage panel — absolutely-positioned, rotated cards */}
-                    <div className="relative h-[420px] sm:h-[520px] lg:h-[560px]">
-                        {c.hero_collage.map((card: any, i: number) => (
-                            <img
-                                key={card.alt}
-                                src={card.image_url}
-                                alt={card.alt}
-                                loading="lazy"
-                                className={`absolute rounded-md shadow-xl ring-1 ring-black/5 ${heroCollageClasses[i] ?? ''}`}
-                            />
-                        ))}
+                    {/* Hero image */}
+                    <div className="overflow-hidden rounded-lg bg-neutral-100 shadow-xl ring-1 ring-black/5">
+                        <img
+                            src={c.hero.image_url}
+                            alt={c.hero.image_alt}
+                            loading="eager"
+                            decoding="async"
+                            className="block h-auto w-full"
+                        />
                     </div>
                 </div>
             </section>

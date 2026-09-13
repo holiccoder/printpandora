@@ -176,44 +176,6 @@
           "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-both-sides.png"
         }
       ]
-    },
-    "print_code": {
-      "label": "Print Code",
-      "type": "select",
-      "required": true,
-      "default": "no_print_code",
-      "values": [
-        {
-          "code": "no_print_code",
-          "label": "no print code",
-          "description": "no need to print codes",
-          "swatch_image": "/images/product-options/business-cards/swatches/pvc-no-print-code.png"
-        },
-        {
-          "code": "need_print_code",
-          "label": "need print code",
-          "description": "no need to print codes",
-          "swatch_image": "/images/product-options/business-cards/swatches/pvc-print-code.png"
-        }
-      ]
-    },
-    "drill": {
-      "label": "Drilling",
-      "type": "select",
-      "required": true,
-      "default": "no_drilling",
-      "values": [
-        {
-          "code": "no_drilling",
-          "label": "no drilling",
-          "swatch_image": "/images/product-options/business-cards/swatches/drilling/no-drilling.png"
-        },
-        {
-          "code": "needs_drilling",
-          "label": "needs drilling",
-          "swatch_image": "/images/product-options/business-cards/swatches/drilling/needs-drilling.png"
-        }
-      ]
     }
   },
   "media": {

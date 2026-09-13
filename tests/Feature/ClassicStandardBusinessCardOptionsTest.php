@@ -132,28 +132,8 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
             '',
             data_get($product->product_config, 'options.corners.values.1.description'),
         );
-        $this->assertSame(
-            ['no_print_code', 'need_print_code'],
-            data_get($product->product_config, 'options.print_code.values.*.code'),
-        );
-        $this->assertSame(
-            [
-                '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
-                '/images/product-options/business-cards/swatches/pvc-print-code.png',
-            ],
-            data_get($product->product_config, 'options.print_code.values.*.swatch_image'),
-        );
-        $this->assertSame(
-            ['no_drilling', 'needs_drilling'],
-            data_get($product->product_config, 'options.drill.values.*.code'),
-        );
-        $this->assertSame(
-            [
-                '/images/product-options/business-cards/swatches/drilling/no-drilling.png',
-                '/images/product-options/business-cards/swatches/drilling/needs-drilling.png',
-            ],
-            data_get($product->product_config, 'options.drill.values.*.swatch_image'),
-        );
+        $this->assertArrayNotHasKey('print_code', $product->product_config['options']);
+        $this->assertArrayNotHasKey('drill', $product->product_config['options']);
         $this->assertSame('Keep this FAQ', data_get($product->product_config, 'faq.0.question'));
     }
 

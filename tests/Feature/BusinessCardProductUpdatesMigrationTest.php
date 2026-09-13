@@ -163,6 +163,69 @@ class BusinessCardProductUpdatesMigrationTest extends TestCase
         );
     }
 
+    public function test_migration_removes_classic_standard_print_code_and_drilling_options(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        Product::create([
+            'name' => 'Classic Standard Business Cards',
+            'slug' => 'classic-standard-business-cards',
+            'product_category_id' => $category->id,
+            'product_options' => [
+                'sizes' => [
+                    ['code' => 'standard'],
+                ],
+                'print_code' => [
+                    ['code' => 'no_print_code'],
+                ],
+                'drill' => [
+                    ['code' => 'no_drilling'],
+                ],
+            ],
+            'product_config' => [
+                'options' => [
+                    'sizes' => [
+                        'values' => [
+                            ['code' => 'standard'],
+                        ],
+                    ],
+                    'print_code' => [
+                        'default' => 'no_print_code',
+                        'values' => [['code' => 'no_print_code']],
+                    ],
+                    'drill' => [
+                        'default' => 'no_drilling',
+                        'values' => [['code' => 'no_drilling']],
+                    ],
+                ],
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_14_000002_remove_classic_standard_print_code_and_drilling_options.php',
+        );
+        $migration->up();
+        $migration->up();
+
+        $product = Product::where('slug', 'classic-standard-business-cards')->firstOrFail();
+
+        $this->assertArrayNotHasKey('print_code', $product->product_config['options']);
+        $this->assertArrayNotHasKey('drill', $product->product_config['options']);
+        $this->assertSame(
+            ['standard'],
+            data_get($product->product_config, 'options.sizes.values.*.code'),
+        );
+        $this->assertArrayNotHasKey('print_code', $product->product_options);
+        $this->assertArrayNotHasKey('drill', $product->product_options);
+        $this->assertSame(
+            ['standard'],
+            data_get($product->product_options, 'sizes.*.code'),
+        );
+    }
+
     public function test_migration_adds_basic_pvc_design_guideline_downloads_without_replacing_existing_specs(): void
     {
         $category = ProductCategory::create([

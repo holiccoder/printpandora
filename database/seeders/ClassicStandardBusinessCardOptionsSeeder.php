@@ -215,48 +215,6 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                 'Special Finish on Sides',
                 ['one_side', 'both_sides'],
             ),
-            'print_code' => [
-                ...$this->copyGroup($existing, 'print_code', 'Print Code', [
-                    'no_print_code',
-                    'need_print_code',
-                ]),
-                'default' => 'no_print_code',
-                'values' => [
-                    $this->withSwatch(
-                        $existing,
-                        'print_code',
-                        'no_print_code',
-                        BusinessCardOptionCatalog::NO_PRINT_CODE_SWATCH_IMAGE,
-                    ),
-                    $this->withSwatch(
-                        $existing,
-                        'print_code',
-                        'need_print_code',
-                        BusinessCardOptionCatalog::PRINT_CODE_SWATCH_IMAGE,
-                    ),
-                ],
-            ],
-            'drill' => [
-                ...$this->copyGroup($existing, 'drill', 'Drilling', [
-                    'no_drilling',
-                    'needs_drilling',
-                ]),
-                'default' => 'no_drilling',
-                'values' => [
-                    $this->withSwatch(
-                        $existing,
-                        'drill',
-                        'no_drilling',
-                        BusinessCardOptionCatalog::NO_DRILLING_SWATCH_IMAGE,
-                    ),
-                    $this->withSwatch(
-                        $existing,
-                        'drill',
-                        'needs_drilling',
-                        BusinessCardOptionCatalog::NEEDS_DRILLING_SWATCH_IMAGE,
-                    ),
-                ],
-            ],
         ];
 
         $normalizedProduct = clone $product;

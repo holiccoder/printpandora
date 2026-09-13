@@ -90,18 +90,12 @@ class ProductSwatchCoverageTest extends TestCase
         $this->assertArrayNotHasKey('drill', $canonicalOptions['classic-special-business-cards']);
         $this->assertArrayNotHasKey('print_code', $legacyOptions['classic-special-business-cards']);
         $this->assertArrayNotHasKey('drill', $legacyOptions['classic-special-business-cards']);
+        $this->assertArrayNotHasKey('print_code', $canonicalOptions['classic-standard-business-cards']);
+        $this->assertArrayNotHasKey('drill', $canonicalOptions['classic-standard-business-cards']);
+        $this->assertArrayNotHasKey('print_code', $legacyOptions['classic-standard-business-cards']);
+        $this->assertArrayNotHasKey('drill', $legacyOptions['classic-standard-business-cards']);
 
         $expectedLegacySwatches = [
-            'business-cards/classic-standard-business-cards.json' => [
-                'print_code' => [
-                    'no_print_code' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
-                    'need_print_code' => '/images/product-options/business-cards/swatches/pvc-print-code.png',
-                ],
-                'drill' => [
-                    'no_drilling' => '/images/product-options/business-cards/swatches/drilling/no-drilling.png',
-                    'needs_drilling' => '/images/product-options/business-cards/swatches/drilling/needs-drilling.png',
-                ],
-            ],
             'business-cards/classic-business-cards.json' => [
                 'print_code' => [
                     'no_print_code' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',

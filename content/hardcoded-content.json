@@ -1664,30 +1664,10 @@
             "heading": "Business Cards that mean business.",
             "body": "As a forward-thinking print company, we offer unique paper, colours, shapes, and textures to help your card stand out the moment it leaves your hand.",
             "offer": "15% off your first order",
-            "cta": "Browse all Business Cards"
+            "cta": "Browse all Business Cards",
+            "image_url": "/images/business-cards/hero/business-cards-hero.png",
+            "image_alt": "Distinctive business cards arranged in a premium studio scene"
         },
-        "hero_collage": [
-            {
-                "alt": "Burgundy and ivory printed business cards",
-                "image_url": "/images/business-cards/hero/classic-burgundy.webp"
-            },
-            {
-                "alt": "Business card with coloured edges",
-                "image_url": "/images/business-cards/hero/coloured-edge.webp"
-            },
-            {
-                "alt": "Black letterpress cotton business card",
-                "image_url": "/images/business-cards/hero/letterpress-cotton.webp"
-            },
-            {
-                "alt": "Textured cotton business cards",
-                "image_url": "/images/business-cards/hero/cotton-tactile.webp"
-            },
-            {
-                "alt": "Square business card",
-                "image_url": "/images/business-cards/hero/square-cards.webp"
-            }
-        ],
         "sections": {
             "shop_by_paper": {
                 "heading": "Shop Business Cards by Paper",
@@ -1697,22 +1677,22 @@
                     {
                         "name": "Original Business Cards",
                         "blurb": "The 98% customer favourite, available in white or premium cardstock.",
-                        "image_url": "/images/business-cards/paper/original-classic.webp"
+                        "image_url": "/images/business-cards/paper/shop-by-paper-floral.webp"
                     },
                     {
                         "name": "Super Business Cards",
                         "blurb": "320 gsm thick paper available in four colour options.",
-                        "image_url": "/images/business-cards/paper/super-coloured-edge.webp"
+                        "image_url": "/images/business-cards/paper/shop-by-paper-gradient.webp"
                     },
                     {
                         "name": "Luxe Business Cards",
                         "blurb": "100% cotton rag paper with a thick, tactile feel.",
-                        "image_url": "/images/business-cards/paper/luxe-letterpress.webp"
+                        "image_url": "/images/business-cards/paper/shop-by-paper-yellow-taxi.webp"
                     },
                     {
                         "name": "Cotton Business Cards",
                         "blurb": "100% recycled cotton with a fibrous, hand-finished texture.",
-                        "image_url": "/images/business-cards/paper/cotton-deckled.webp"
+                        "image_url": "/images/business-cards/paper/shop-by-paper-brushed-metal.webp"
                     }
                 ]
             },
@@ -1780,8 +1760,8 @@
                     "heading": "Choose the delivery speed that suits you",
                     "body": "Shipping is calculated at checkout based on your destination, parcel weight, and selected method. Standard shipping takes 7 - 12 business days. Express shipping takes 2 - 5 business days.",
                     "cta": "View shipping policy",
-                    "image_url": "/images/business-cards/packing/shipping-promo.webp",
-                    "image_alt": "Packed business card order ready for shipping"
+                    "image_url": "/images/business-cards/packing/airplane-shipping-promo.webp",
+                    "image_alt": "Cargo airplane ready for delivery at an airport"
                 }
             },
             "make_your_own": {
