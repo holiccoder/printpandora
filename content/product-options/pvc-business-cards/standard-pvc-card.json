@@ -24,7 +24,7 @@
     "special_finish": [
         {
             "code": "no_special_finish",
-            "name": "No special finish",
+            "name": "No finish",
             "description": "No special finish, thanks.",
             "swatch_image": "/images/product-options/no-foil.png"
         },
@@ -114,6 +114,15 @@
                 "/images/products/pvc/pvc-02.jpg",
                 "/images/products/pvc/pvc-03.jpg",
                 "/images/products/pvc/pvc-04.jpg"
+            ]
+        },
+        {
+            "id": "no_print_code_gallery",
+            "match": {
+                "print_code_or_signature_stripe": "no_print_code_or_signature_stripe"
+            },
+            "images": [
+                "/images/product-options/business-cards/swatches/pvc-no-print-code.png"
             ]
         },
         {
@@ -377,20 +386,6 @@
             "name": "Signature stripe",
             "description": "Add a writable signature stripe.",
             "swatch_image": "/images/products/pvc/pvc-signature-stripe.png"
-        }
-    ],
-    "special_finish_on_sides": [
-        {
-            "code": "one_side",
-            "name": "One side",
-            "description": "Special finish applied to one side only.",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-one-side.png"
-        },
-        {
-            "code": "both_sides",
-            "name": "Both sides",
-            "description": "Special finish applied to both sides.",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-both-sides.png"
         }
     ]
 }

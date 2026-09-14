@@ -20,14 +20,12 @@ class ProductSwatchCoverageTest extends TestCase
         'corners',
         'paper_finish',
         'special_finish',
-        'special_finish_on_sides',
         'print_code',
         'drill',
         'texture',
         'thickness',
         'print_code_or_signature_stripe',
         'print_code_or_magnetic_stripe',
-        'with_nfc',
         'finish',
     ];
 
@@ -88,12 +86,32 @@ class ProductSwatchCoverageTest extends TestCase
 
         $this->assertArrayNotHasKey('print_code', $canonicalOptions['classic-special-business-cards']);
         $this->assertArrayNotHasKey('drill', $canonicalOptions['classic-special-business-cards']);
+        $this->assertArrayNotHasKey('paper_finish', $canonicalOptions['classic-special-business-cards']);
+        $this->assertArrayNotHasKey('paper_finish', $canonicalOptions['classic-quality-business-cards']);
         $this->assertArrayNotHasKey('print_code', $legacyOptions['classic-special-business-cards']);
         $this->assertArrayNotHasKey('drill', $legacyOptions['classic-special-business-cards']);
+        $this->assertArrayNotHasKey('paper_finish', $legacyOptions['classic-special-business-cards']);
+        $this->assertArrayNotHasKey('paper_finish', $legacyOptions['classic-quality-business-cards']);
         $this->assertArrayNotHasKey('print_code', $canonicalOptions['classic-standard-business-cards']);
         $this->assertArrayNotHasKey('drill', $canonicalOptions['classic-standard-business-cards']);
         $this->assertArrayNotHasKey('print_code', $legacyOptions['classic-standard-business-cards']);
         $this->assertArrayNotHasKey('drill', $legacyOptions['classic-standard-business-cards']);
+
+        foreach ($canonicalOptions as $slug => $options) {
+            $this->assertArrayNotHasKey(
+                'special_finish_on_sides',
+                $options,
+                $slug.' canonical options',
+            );
+        }
+
+        foreach ($legacyOptions as $slug => $options) {
+            $this->assertArrayNotHasKey(
+                'special_finish_on_sides',
+                $options,
+                $slug.' legacy options',
+            );
+        }
 
         $expectedLegacySwatches = [
             'business-cards/classic-business-cards.json' => [
@@ -113,6 +131,8 @@ class ProductSwatchCoverageTest extends TestCase
                     'starlight_film' => '/images/product-options/business-cards/swatches/quality/starlight-film.png',
                     'holographic_star_film' => '/images/product-options/business-cards/swatches/quality/holographic-star-film.png',
                     'soft_touch_film' => '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+                    'matte' => '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
+                    'gloss' => '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
                 ],
             ],
             'business-cards/classic-solid-business-cards.json' => [

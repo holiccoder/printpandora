@@ -53,6 +53,11 @@ export interface BusinessCardsMegaMenu {
     promo_cards: PromoCard[];
 }
 
+export interface StickersLabelsMegaMenu {
+    link_groups: LinkGroup[];
+    promo_cards: PromoCard[];
+}
+
 export interface HeaderContent {
     logo: {
         image_url: string;
@@ -88,6 +93,7 @@ export interface HeaderContent {
     };
     top_navigation: NavLink[];
     business_cards_mega_menu: BusinessCardsMegaMenu;
+    stickers_labels_mega_menu: StickersLabelsMegaMenu;
 }
 
 export interface FooterLegalLink {

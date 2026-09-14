@@ -43,6 +43,15 @@
             ]
         },
         {
+            "id": "no_print_code_gallery",
+            "match": {
+                "print_code": "no_print_code"
+            },
+            "images": [
+                "/images/product-options/business-cards/swatches/pvc-no-print-code.png"
+            ]
+        },
+        {
             "id": "print_code_gallery",
             "match": {
                 "print_code": "print_code"

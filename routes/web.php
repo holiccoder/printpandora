@@ -109,6 +109,9 @@ Route::inertia('/business-cards', 'shop/business-cards')->name('shop.business-ca
 Route::get('business-cards/{slug}', [ProductController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('shop.business-card.show');
+Route::get('stickers/{slug}', [ProductController::class, 'show'])
+    ->where('slug', '[a-z0-9-]+')
+    ->name('shop.sticker.show');
 
 // Referral
 Route::get('ref/{code}', [ReferralController::class, 'show'])->name('referral.show');

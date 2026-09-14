@@ -3,6 +3,8 @@ export interface PricingScenario {
     basePrice: number;
     startQuantity: number;
     paperRates: Record<string, number>;
+    unitMultipliers?: Record<string, number>;
+    area_based?: boolean;
     processes: Array<{
         code?: string;
         name: string;
@@ -46,7 +48,13 @@ export function resolvePricingScenario(
         return isUv ? 'uv' : 'rectangle';
     }
 
-    return isUv ? 'square_uv' : 'square';
+    const preferred = isUv ? 'square_uv' : 'square';
+
+    if (data[preferred] != null) {
+        return preferred;
+    }
+
+    return isUv ? 'uv' : 'rectangle';
 }
 
 function normalizeOptionValue(value: string): string {
@@ -65,7 +73,6 @@ function hasPositiveSelection(value: string | string[] | undefined): boolean {
         'no-special-finish',
         'no-print-code',
         'no-print-code-or-magnetic-stripe',
-        'no-nfc',
         'no-magnetic-stripe',
         'no-signature-stripe',
     ]);
@@ -148,6 +155,9 @@ export function computeDynamicTiers(
             ...Object.keys(scenario.paperRates)
                 .map((q) => parseInt(q, 10))
                 .filter((q) => q >= scenario.startQuantity),
+            ...Object.keys(scenario.unitMultipliers ?? {})
+                .map((q) => parseInt(q, 10))
+                .filter((q) => q >= scenario.startQuantity),
         ]),
     ].sort((a, b) => a - b);
 
@@ -168,15 +178,13 @@ export function computeDynamicTiers(
 
         return (
             code === 'foil' ||
-            code === 'nfc' ||
             code === 'special-finish' ||
             name.includes('foil') ||
             name.includes('烫金') ||
             name.includes('special finish') ||
             name.includes('激光雕刻') ||
             name.includes('彩印') ||
-            name.includes('镀色') ||
-            name === 'nfc'
+            name.includes('镀色')
         );
     });
     const printCodeProcess = scenario.processes.find((p) => {
@@ -230,17 +238,18 @@ export function computeDynamicTiers(
         hasPositiveSelection(selectedOptions.print_code_or_magnetic_stripe);
     const effectivePrintCodeSelected =
         printCodeSelected || printCodeOrMagneticStripeSelected;
-    const nfcSelected = hasPositiveSelection(selectedOptions.with_nfc);
-
     const rounded = roundedSelected && roundedProcess != null;
-    const foiled = (foiledSelected || nfcSelected) && foilProcess != null;
+    const foiled = foiledSelected && foilProcess != null;
 
     return quantities.map((qty) => {
         const isStart = qty === scenario.startQuantity;
 
         let unit = scenario.basePrice;
+        const unitMultiplier = scenario.unitMultipliers?.[String(qty)];
 
-        if (!isStart) {
+        if (unitMultiplier != null && Number.isFinite(unitMultiplier)) {
+            unit = scenario.basePrice * unitMultiplier;
+        } else if (!isStart) {
             const paperRate = scenario.paperRates[String(qty)] ?? 0;
             unit -= scenario.basePrice * (paperRate / 100);
         }
@@ -272,10 +281,16 @@ export function computeDynamicTiers(
             }
         }
 
+        const paperArea = scenario.area_based
+            ? Number(selectedOptions.paper_area ?? 0)
+            : 1;
+        const adjustedUnit =
+            Number.isFinite(paperArea) && paperArea > 0 ? unit * paperArea : 0;
+
         return {
             qty,
-            pricePerCard: unit,
-            currentPrice: Math.round(qty * unit),
+            pricePerCard: adjustedUnit,
+            currentPrice: Math.round(qty * adjustedUnit),
             originalPrice: null,
             recommended: isStart,
         };

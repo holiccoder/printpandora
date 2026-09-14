@@ -78,6 +78,8 @@ const NO_SPECIAL_FINISH_CODES = [
     'none',
     'no-special-finish',
     'no_special_finish',
+    'no-foil',
+    'no_foil',
 ];
 const HOT_FOIL_CODES = new Set([
     'black gold',
@@ -93,6 +95,18 @@ const HOT_FOIL_CODES = new Set([
     'muted purple gold',
 ]);
 
+type SpecialFinishSide = 'one_side' | 'both_sides';
+
+const DEFAULT_SPECIAL_FINISH_SIDE: SpecialFinishSide = 'one_side';
+const SPECIAL_FINISH_SIDE_OPTIONS: Array<{
+    value: SpecialFinishSide;
+    label: string;
+    position: 'left' | 'right';
+}> = [
+    { value: 'one_side', label: 'single side', position: 'left' },
+    { value: 'both_sides', label: 'both sides', position: 'right' },
+];
+
 const OPTION_GROUP_ORDER: Record<string, number> = {
     sizes: 1,
     size: 1,
@@ -100,7 +114,8 @@ const OPTION_GROUP_ORDER: Record<string, number> = {
     corner: 2,
     texture: 3,
     paper_finish: 4,
-    special_finish: 5,
+    uv_finish: 5,
+    special_finish: 6,
 };
 
 const OPTION_GROUP_FALLBACK_ORDER = Object.keys(OPTION_GROUP_ORDER).length + 1;
@@ -135,8 +150,13 @@ interface ProductOptionValue {
     name: string;
     description?: string;
     swatch_image?: string;
+    area_sq_m?: string | number;
     width?: string;
     height?: string;
+    min_width?: string;
+    max_width?: string;
+    min_height?: string;
+    max_height?: string;
 }
 
 interface ProductOptionGroup {
@@ -144,7 +164,7 @@ interface ProductOptionGroup {
     label: string;
     type: 'select' | 'multi_select';
     required?: boolean;
-    default?: string;
+    default?: string | string[];
     values: ProductOptionValue[];
 }
 
@@ -155,9 +175,15 @@ interface ProductOptions {
     sizes?: Array<{
         code?: string;
         name: string;
+        description?: string;
         width?: string;
         height?: string;
         swatch_image?: string;
+        area_sq_m?: string | number;
+        min_width?: string;
+        max_width?: string;
+        min_height?: string;
+        max_height?: string;
     }>;
     paper_finish?: Array<{
         code?: string;
@@ -211,6 +237,86 @@ interface ProductOptions {
     pricing_data?: DynamicPricingData;
     pricing_rules?: PricingRule[];
     detail_sections?: ProductDetailSections;
+}
+
+interface CustomSizeLimits {
+    minWidth: number;
+    maxWidth: number;
+    minHeight: number;
+    maxHeight: number;
+}
+
+const DEFAULT_CUSTOM_SIZE_LIMITS: CustomSizeLimits = {
+    minWidth: CUSTOM_SIZE_MIN,
+    maxWidth: CUSTOM_SIZE_MAX,
+    minHeight: CUSTOM_SIZE_MIN,
+    maxHeight: CUSTOM_SIZE_MAX,
+};
+
+function customSizeLimitsForValue(
+    value?: Pick<
+        ProductOptionValue,
+        'min_width' | 'max_width' | 'min_height' | 'max_height'
+    >,
+): CustomSizeLimits {
+    const read = (candidate: string | undefined, fallback: number) => {
+        const parsed = Number(candidate);
+
+        return Number.isFinite(parsed) ? parsed : fallback;
+    };
+
+    return {
+        minWidth: read(value?.min_width, DEFAULT_CUSTOM_SIZE_LIMITS.minWidth),
+        maxWidth: read(value?.max_width, DEFAULT_CUSTOM_SIZE_LIMITS.maxWidth),
+        minHeight: read(
+            value?.min_height,
+            DEFAULT_CUSTOM_SIZE_LIMITS.minHeight,
+        ),
+        maxHeight: read(
+            value?.max_height,
+            DEFAULT_CUSTOM_SIZE_LIMITS.maxHeight,
+        ),
+    };
+}
+
+function formatSizeLimit(value: number): string {
+    return value.toFixed(2);
+}
+
+const STICKER_PRODUCT_SLUGS = [
+    'classic-stickers',
+    'premium-stickers',
+    'super-stickers',
+] as const;
+
+function isStickerProductSlug(slug: string): boolean {
+    return (STICKER_PRODUCT_SLUGS as readonly string[]).includes(slug);
+}
+
+function stickerAreaForSize(
+    groups: ProductOptionGroup[],
+    selected?: string | string[],
+): number {
+    const code = Array.isArray(selected) ? selected[0] : selected;
+
+    if (!code) {
+        return 0;
+    }
+
+    const value = groups
+        .find((group) => group.key === 'sizes')
+        ?.values.find((candidate) => optionValueCode(candidate) === code);
+    const area = Number(value?.area_sq_m ?? 0);
+
+    return Number.isFinite(area) && area > 0 ? area : 0;
+}
+
+function stickerAreaForCustomSize(width: number, height: number): number {
+    return width * height * 0.00064516;
+}
+
+function formatStickerArea(area: number): string {
+    return area > 0 ? area.toFixed(6) : '';
 }
 
 interface Props {
@@ -312,6 +418,32 @@ function optionValueCode(value: ProductOptionValue): string {
     );
 }
 
+function isColdFoilCode(value?: string | null): boolean {
+    return normalizeOptionText(value).startsWith('cold ');
+}
+
+function isFoilOption(
+    code?: string | null,
+    label?: string | null,
+    description?: string | null,
+): boolean {
+    if (isNoSpecialFinishCode(code)) {
+        return false;
+    }
+
+    const normalizedCode = normalizeOptionText(code);
+    const text = [normalizedCode, label, description]
+        .map(normalizeOptionText)
+        .filter(Boolean)
+        .join(' ');
+
+    return (
+        isColdFoilCode(code) ||
+        HOT_FOIL_CODES.has(normalizedCode) ||
+        text.includes('foil')
+    );
+}
+
 interface SelectedOptionDetails {
     groupKey: string;
     code?: string | null;
@@ -321,6 +453,37 @@ interface SelectedOptionDetails {
 
 function normalizeOptionText(value?: string | null): string {
     return value?.trim().toLowerCase().replace(/[_-]+/g, ' ') ?? '';
+}
+
+function isNoSpecialFinishCode(value?: string | null): boolean {
+    const normalized = normalizeOptionText(value).replace(/\s+/g, '_');
+
+    return NO_SPECIAL_FINISH_CODES.includes(normalized);
+}
+
+function selectedSpecialFinishCodes(
+    value: string | string[] | null | undefined,
+): string[] {
+    const values = Array.isArray(value) ? value : value ? [value] : [];
+
+    return [...new Set(values.filter((code) => !isNoSpecialFinishCode(code)))];
+}
+
+function specialFinishSidesForSelection(
+    value: string | string[] | null | undefined,
+    sides: Record<string, SpecialFinishSide>,
+): Record<string, SpecialFinishSide> | undefined {
+    const codes = selectedSpecialFinishCodes(value);
+
+    if (codes.length === 0) {
+        return undefined;
+    }
+
+    return codes.reduce<Record<string, SpecialFinishSide>>((result, code) => {
+        result[code] = sides[code] ?? DEFAULT_SPECIAL_FINISH_SIDE;
+
+        return result;
+    }, {});
 }
 
 function optionAddsTurnaroundTime(option: SelectedOptionDetails): boolean {
@@ -450,6 +613,8 @@ function getProductTurnaround(
         name.includes('super business card')
     ) {
         workdays = '2 - 3 Workdays';
+    } else if (category === 'stickers-and-labels' || slug.includes('sticker')) {
+        workdays = '3 - 4 Workdays';
     } else if (
         slug.includes('classic') ||
         name.includes('classic business card')
@@ -502,6 +667,7 @@ export default function ShopShow({
     const isBusinessCardProduct =
         product.slug.includes('business-card') ||
         product.category?.slug.includes('business-card');
+    const isStickerProduct = isStickerProductSlug(product.slug);
     const ACCENT = c.accent_color;
 
     const galleryThumbs: string[] = c.gallery_thumb_image_urls;
@@ -533,21 +699,47 @@ export default function ShopShow({
         for (const group of dynamicOptionGroups) {
             const valueCodes = group.values.map(optionValueCode);
             const firstCode = valueCodes[0] ?? '';
-            const configuredDefault = group.default?.trim() ?? '';
-            const defaultCode = valueCodes.includes(configuredDefault)
+
+            if (group.type === 'multi_select') {
+                const configuredDefaults = Array.isArray(group.default)
+                    ? group.default
+                    : typeof group.default === 'string'
+                      ? [group.default]
+                      : null;
+
+                defaults[group.key] =
+                    configuredDefaults !== null
+                        ? configuredDefaults.filter((code) =>
+                              valueCodes.includes(code),
+                          )
+                        : firstCode
+                          ? [firstCode]
+                          : [];
+
+                continue;
+            }
+
+            const configuredDefault =
+                typeof group.default === 'string' ? group.default.trim() : '';
+
+            defaults[group.key] = valueCodes.includes(configuredDefault)
                 ? configuredDefault
                 : firstCode;
-
-            defaults[group.key] =
-                group.type === 'multi_select'
-                    ? defaultCode
-                        ? [defaultCode]
-                        : []
-                    : defaultCode;
         }
 
         return defaults;
     }, [dynamicOptionGroups]);
+
+    const customSizeLimits = useMemo(() => {
+        const dynamicCustomSize = dynamicOptionGroups
+            .find((group) => group.key === 'sizes')
+            ?.values.find((value) => optionValueCode(value) === 'custom');
+        const staticCustomSize = productOptions?.sizes?.find(
+            (value) => (value.code ?? '').trim() === 'custom',
+        );
+
+        return customSizeLimitsForValue(dynamicCustomSize ?? staticCustomSize);
+    }, [dynamicOptionGroups, productOptions]);
 
     const sizes = useMemo(() => {
         const sizeSwatches = generatedSizeSwatches;
@@ -561,7 +753,8 @@ export default function ShopShow({
                       id,
                       label: s.name.charAt(0).toUpperCase() + s.name.slice(1),
                       dims: isCustom
-                          ? `${CUSTOM_SIZE_MIN}-${CUSTOM_SIZE_MAX} in`
+                          ? (s.description ??
+                            `W ${formatSizeLimit(customSizeLimits.minWidth)}-${formatSizeLimit(customSizeLimits.maxWidth)} in × H ${formatSizeLimit(customSizeLimits.minHeight)}-${formatSizeLimit(customSizeLimits.maxHeight)} in`)
                           : s.width && s.height
                             ? `${s.width}" x ${s.height}"`
                             : '',
@@ -580,6 +773,7 @@ export default function ShopShow({
         productOptions,
         c.configurator_options.sizes,
         product.slug,
+        customSizeLimits,
     ]);
 
     const finishes = useMemo(
@@ -654,23 +848,6 @@ export default function ShopShow({
         [hasProductOptions, productOptions],
     );
 
-    const specialFinishOnSidesList = useMemo(
-        () =>
-            hasProductOptions && (productOptions as any).special_finish_on_sides
-                ? (productOptions as any).special_finish_on_sides.map(
-                      (s: any) => ({
-                          id:
-                              s.code ??
-                              s.name.toLowerCase().replace(/\s+/g, '-'),
-                          label: s.name,
-                          description: s.description,
-                          thumb: s.swatch_image,
-                      }),
-                  )
-                : [],
-        [hasProductOptions, productOptions],
-    );
-
     // Dynamic pricing is read from the database-backed product configuration.
     const hasDynamicPricing =
         hasProductOptions &&
@@ -701,7 +878,7 @@ export default function ShopShow({
             )[0];
 
             if (firstTier) {
-                return `${firstTier.qty} cards from $${firstTier.currentPrice}`;
+                return `${firstTier.qty} ${isStickerProduct ? 'stickers' : 'cards'} from $${firstTier.currentPrice}`;
             }
         }
 
@@ -716,6 +893,15 @@ export default function ShopShow({
                 }
             }
 
+            if (isStickerProduct) {
+                defaultPricingOptions.paper_area = formatStickerArea(
+                    stickerAreaForSize(
+                        dynamicOptionGroups,
+                        dynamicOptionDefaults.sizes,
+                    ),
+                );
+            }
+
             const firstTier = computeDynamicTiers(
                 { rules: productOptions.pricing_rules },
                 0,
@@ -726,13 +912,26 @@ export default function ShopShow({
             )[0];
 
             if (firstTier) {
-                return `${firstTier.qty} cards from $${firstTier.currentPrice}`;
+                return `${firstTier.qty} ${isStickerProduct ? 'stickers' : 'cards'} from $${firstTier.currentPrice}`;
             }
 
             const pricing = productOptions.pricing_rules[0].pricing;
-            const total = Math.round(pricing.startQuantity * pricing.basePrice);
+            const defaultArea = isStickerProduct
+                ? stickerAreaForSize(
+                      dynamicOptionGroups,
+                      dynamicOptionDefaults.sizes,
+                  )
+                : 1;
+            const defaultMultiplier =
+                pricing.unitMultipliers?.[String(pricing.startQuantity)] ?? 1;
+            const total = Math.round(
+                pricing.startQuantity *
+                    pricing.basePrice *
+                    defaultMultiplier *
+                    defaultArea,
+            );
 
-            return `${pricing.startQuantity} cards from $${total}`;
+            return `${pricing.startQuantity} ${isStickerProduct ? 'stickers' : 'cards'} from $${total}`;
         }
 
         return product.price_line ?? undefined;
@@ -740,6 +939,7 @@ export default function ShopShow({
         dynamicOptionDefaults,
         dynamicOptionGroups,
         hasDynamicPricing,
+        isStickerProduct,
         productOptions,
         product.price_line,
     ]);
@@ -823,6 +1023,14 @@ export default function ShopShow({
     const [selectedDynamicOptions, setSelectedDynamicOptions] = useState<
         Record<string, string | string[]>
     >(dynamicOptionDefaults);
+    const [stickerPaperArea, setStickerPaperArea] = useState<string>(() =>
+        formatStickerArea(
+            stickerAreaForSize(
+                dynamicOptionGroups,
+                dynamicOptionDefaults.sizes,
+            ),
+        ),
+    );
     const [selectedTexture, setSelectedTexture] = useState<string | null>(
         () => {
             return textures.length > 0 ? textures[0].id : 'none';
@@ -833,7 +1041,8 @@ export default function ShopShow({
     >(() => {
         return specialFinishes.length > 0 ? specialFinishes[0].id : 'none';
     });
-
+    const [selectedSpecialFinishSides, setSelectedSpecialFinishSides] =
+        useState<Record<string, SpecialFinishSide>>({});
     const [foilTab, setFoilTab] = useState<'hot' | 'cold'>(() => {
         if (
             supportsColdFoil &&
@@ -852,22 +1061,6 @@ export default function ShopShow({
 
         setFoilTab(tab);
         markInteracted();
-        if (tab === 'hot') {
-            if (
-                selectedSpecialFinish &&
-                selectedSpecialFinish.startsWith('cold_')
-            ) {
-                const firstHot = specialFinishes[0]?.id ?? 'no-special-finish';
-                setSelectedSpecialFinish(firstHot);
-            }
-        } else {
-            if (
-                !selectedSpecialFinish ||
-                !selectedSpecialFinish.startsWith('cold_')
-            ) {
-                setSelectedSpecialFinish('cold_bright_gold');
-            }
-        }
     };
     const embossingList = useMemo(() => {
         if (!hasProductOptions || !(productOptions as any).embossing) {
@@ -911,12 +1104,6 @@ export default function ShopShow({
             : 'none';
     });
 
-    const [selectedSpecialFinishOnSides, setSelectedSpecialFinishOnSides] =
-        useState<string | null>(() => {
-            return specialFinishOnSidesList.length > 0
-                ? specialFinishOnSidesList[0].id
-                : 'none';
-        });
     const [selectedQty, setSelectedQty] = useState<number | null>(
         RECOMMENDED_QTY,
     );
@@ -982,7 +1169,8 @@ export default function ShopShow({
                         (group.key !== 'sizes' ||
                             selected !== 'custom' ||
                             confirmedCustomSize != null);
-          })
+          }) &&
+          (!isStickerProduct || Number(stickerPaperArea) > 0)
         : (sizes.length === 0 ||
               (selectedSize !== 'custom'
                   ? selectedSize != null
@@ -991,8 +1179,6 @@ export default function ShopShow({
           (cornersList.length === 0 || selectedCorners != null) &&
           (textures.length === 0 || selectedTexture != null) &&
           (specialFinishes.length === 0 || selectedSpecialFinish != null) &&
-          (specialFinishOnSidesList.length === 0 ||
-              selectedSpecialFinishOnSides != null) &&
           (embossingList.length === 0 || selectedEmbossing != null) &&
           (embossingOrSignaturePanelList.length === 0 ||
               selectedEmbossingOrSignaturePanel != null);
@@ -1013,6 +1199,15 @@ export default function ShopShow({
                 }
             }
 
+            if (isStickerProduct) {
+                opts.paper_area = formatStickerArea(
+                    stickerAreaForSize(
+                        dynamicOptionGroups,
+                        dynamicOptionDefaults.sizes,
+                    ),
+                );
+            }
+
             return opts;
         }
 
@@ -1020,11 +1215,9 @@ export default function ShopShow({
         if (finishes.length > 0) opts['paper_finish'] = finishes[0]?.id;
         if (cornersList.length > 0) opts['corners'] = cornersList[0]?.id;
         if (textures.length > 0) opts['texture'] = textures[0]?.id ?? 'none';
-        if (specialFinishes.length > 0)
+        if (specialFinishes.length > 0) {
             opts['special_finish'] = specialFinishes[0]?.id ?? 'none';
-        if (specialFinishOnSidesList.length > 0)
-            opts['special_finish_on_sides'] =
-                specialFinishOnSidesList[0]?.id ?? 'none';
+        }
         if (embossingList.length > 0)
             opts['embossing'] = embossingList[0]?.id ?? 'none';
         if (embossingOrSignaturePanelList.length > 0)
@@ -1037,13 +1230,13 @@ export default function ShopShow({
         cornersList,
         textures,
         specialFinishes,
-        specialFinishOnSidesList,
         embossingList,
         embossingOrSignaturePanelList,
         RECOMMENDED_QTY,
         usesDynamicOptions,
         dynamicOptionGroups,
         dynamicOptionDefaults,
+        isStickerProduct,
     ]);
 
     const selectedOptions = useMemo<Record<string, string | string[]>>(() => {
@@ -1075,6 +1268,10 @@ export default function ShopShow({
                 }
             }
 
+            if (isStickerProduct) {
+                opts.paper_area = stickerPaperArea;
+            }
+
             return opts;
         }
 
@@ -1096,10 +1293,9 @@ export default function ShopShow({
             opts['corners'] = selectedCorners;
         if (textures.length > 0 && selectedTexture)
             opts['texture'] = selectedTexture;
-        if (specialFinishes.length > 0 && selectedSpecialFinish)
+        if (specialFinishes.length > 0 && selectedSpecialFinish) {
             opts['special_finish'] = selectedSpecialFinish;
-        if (specialFinishOnSidesList.length > 0 && selectedSpecialFinishOnSides)
-            opts['special_finish_on_sides'] = selectedSpecialFinishOnSides;
+        }
         if (embossingList.length > 0 && selectedEmbossing)
             opts['embossing'] = selectedEmbossing;
         if (
@@ -1118,7 +1314,6 @@ export default function ShopShow({
         selectedCorners,
         selectedTexture,
         selectedSpecialFinish,
-        selectedSpecialFinishOnSides,
         selectedEmbossing,
         selectedEmbossingOrSignaturePanel,
         selectedQty,
@@ -1128,7 +1323,6 @@ export default function ShopShow({
         cornersList,
         textures,
         specialFinishes,
-        specialFinishOnSidesList,
         embossingList,
         embossingOrSignaturePanelList,
         usesDynamicOptions,
@@ -1136,7 +1330,22 @@ export default function ShopShow({
         selectedDynamicOptions,
         dynamicOptionDefaults,
         confirmedCustomSize,
+        isStickerProduct,
+        stickerPaperArea,
     ]);
+
+    const cartOptions = useMemo<
+        Record<string, string | string[] | Record<string, SpecialFinishSide>>
+    >(() => {
+        const sides = specialFinishSidesForSelection(
+            selectedOptions.special_finish,
+            selectedSpecialFinishSides,
+        );
+
+        return sides
+            ? { ...selectedOptions, special_finish_on_sides: sides }
+            : selectedOptions;
+    }, [selectedOptions, selectedSpecialFinishSides]);
 
     const defaultGallery = useMemo(
         () => configuredGalleries.find((g) => g.is_default) ?? fallbackGallery,
@@ -1169,21 +1378,32 @@ export default function ShopShow({
     ]);
 
     const displayImages = useMemo(() => {
+        if (isStickerProduct) {
+            return Array.from(new Set(defaultGallery.images));
+        }
+
         const hero = activeGallery.images[0] ?? defaultGallery.images[0];
         const persistent = (defaultGallery.images ?? []).slice(1);
 
         return hero ? [hero, ...persistent] : persistent;
-    }, [activeGallery, defaultGallery]);
+    }, [activeGallery, defaultGallery, isStickerProduct]);
 
     const activeImage = useMemo(() => {
         if (selectedThumbnail && displayImages.includes(selectedThumbnail)) {
             return selectedThumbnail;
         }
 
+        if (isStickerProduct && hasInteracted && activeGallery.images[0]) {
+            return activeGallery.images[0];
+        }
+
         return displayImages[0] ?? product.featured_image ?? galleryThumbs[0];
     }, [
         selectedThumbnail,
         displayImages,
+        isStickerProduct,
+        hasInteracted,
+        activeGallery,
         product.featured_image,
         galleryThumbs,
     ]);
@@ -1299,6 +1519,43 @@ export default function ShopShow({
 
         if (groupKey === 'sizes' && group.type !== 'multi_select') {
             setSelectedSize(value);
+
+            if (isStickerProduct) {
+                setStickerPaperArea(
+                    formatStickerArea(
+                        stickerAreaForSize(dynamicOptionGroups, value),
+                    ),
+                );
+            }
+        }
+
+        if (groupKey === 'special_finish') {
+            if (isNoSpecialFinishCode(value)) {
+                setSelectedSpecialFinishSides({});
+            } else if (group.type === 'multi_select') {
+                const selectedValues = Array.isArray(
+                    selectedDynamicOptions.special_finish,
+                )
+                    ? selectedDynamicOptions.special_finish
+                    : [];
+
+                setSelectedSpecialFinishSides((current) => {
+                    const next = { ...current };
+
+                    if (selectedValues.includes(value)) {
+                        delete next[value];
+                    } else {
+                        next[value] ??= DEFAULT_SPECIAL_FINISH_SIDE;
+                    }
+
+                    return next;
+                });
+            } else {
+                setSelectedSpecialFinishSides((current) => ({
+                    ...current,
+                    [value]: current[value] ?? DEFAULT_SPECIAL_FINISH_SIDE,
+                }));
+            }
         }
 
         setSelectedDynamicOptions((current) => {
@@ -1310,6 +1567,32 @@ export default function ShopShow({
                 ? current[groupKey]
                 : [];
 
+            if (groupKey === 'special_finish') {
+                if (isNoSpecialFinishCode(value)) {
+                    return { ...current, [groupKey]: [value] };
+                }
+
+                const finishSelections = selected.filter(
+                    (item) => !isNoSpecialFinishCode(item),
+                );
+                const next = finishSelections.includes(value)
+                    ? finishSelections.filter((item) => item !== value)
+                    : [...finishSelections, value];
+                const noFinishValue = group.values.find((item) =>
+                    isNoSpecialFinishCode(optionValueCode(item)),
+                );
+
+                return {
+                    ...current,
+                    [groupKey]:
+                        next.length > 0
+                            ? next
+                            : noFinishValue
+                              ? [optionValueCode(noFinishValue)]
+                              : [],
+                };
+            }
+
             return {
                 ...current,
                 [groupKey]: selected.includes(value)
@@ -1318,6 +1601,32 @@ export default function ShopShow({
             };
         });
 
+        markInteracted();
+    }
+
+    function selectSpecialFinishSide(
+        side: SpecialFinishSide,
+        finishCode: string,
+    ) {
+        if (usesDynamicOptions) {
+            const selected = selectedDynamicOptions.special_finish;
+            const selectedValues = Array.isArray(selected)
+                ? selected
+                : selected
+                  ? [selected]
+                  : [];
+
+            if (!selectedValues.includes(finishCode)) {
+                selectDynamicOption('special_finish', finishCode);
+            }
+        } else if (selectedSpecialFinish !== finishCode) {
+            selectOption('special_finish', finishCode);
+        }
+
+        setSelectedSpecialFinishSides((current) => ({
+            ...current,
+            [finishCode]: side,
+        }));
         markInteracted();
     }
 
@@ -1346,13 +1655,13 @@ export default function ShopShow({
         if (
             !Number.isFinite(width) ||
             !Number.isFinite(height) ||
-            width < CUSTOM_SIZE_MIN ||
-            width > CUSTOM_SIZE_MAX ||
-            height < CUSTOM_SIZE_MIN ||
-            height > CUSTOM_SIZE_MAX
+            width < customSizeLimits.minWidth ||
+            width > customSizeLimits.maxWidth ||
+            height < customSizeLimits.minHeight ||
+            height > customSizeLimits.maxHeight
         ) {
             setCustomSizeError(
-                `Enter both dimensions between ${CUSTOM_SIZE_MIN} and ${CUSTOM_SIZE_MAX} inches.`,
+                `Enter a width between ${formatSizeLimit(customSizeLimits.minWidth)} and ${formatSizeLimit(customSizeLimits.maxWidth)} inches and a height between ${formatSizeLimit(customSizeLimits.minHeight)} and ${formatSizeLimit(customSizeLimits.maxHeight)} inches.`,
             );
 
             return;
@@ -1363,6 +1672,13 @@ export default function ShopShow({
             height: Number(height.toFixed(2)),
         });
         setSelectedSize('custom');
+
+        if (isStickerProduct) {
+            setStickerPaperArea(
+                formatStickerArea(stickerAreaForCustomSize(width, height)),
+            );
+        }
+
         markInteracted();
         if (usesDynamicOptions) {
             setSelectedDynamicOptions((current) => ({
@@ -1381,7 +1697,6 @@ export default function ShopShow({
             | 'corners'
             | 'texture'
             | 'special_finish'
-            | 'special_finish_on_sides'
             | 'embossing'
             | 'embossing_or_signature_panel',
         value: string,
@@ -1398,11 +1713,11 @@ export default function ShopShow({
                 if (
                     value === 'gloss' &&
                     selectedSpecialFinish != null &&
-                    !NO_SPECIAL_FINISH_CODES.includes(selectedSpecialFinish)
+                    !isNoSpecialFinishCode(selectedSpecialFinish)
                 ) {
                     setSelectedSpecialFinish(
                         specialFinishes.find((finish: any) =>
-                            NO_SPECIAL_FINISH_CODES.includes(finish.id),
+                            isNoSpecialFinishCode(finish.id),
                         )?.id ?? 'no_special_finish',
                     );
                 }
@@ -1416,9 +1731,14 @@ export default function ShopShow({
                 break;
             case 'special_finish':
                 setSelectedSpecialFinish(value);
-                break;
-            case 'special_finish_on_sides':
-                setSelectedSpecialFinishOnSides(value);
+                if (isNoSpecialFinishCode(value)) {
+                    setSelectedSpecialFinishSides({});
+                } else {
+                    setSelectedSpecialFinishSides((current) => ({
+                        ...current,
+                        [value]: current[value] ?? DEFAULT_SPECIAL_FINISH_SIDE,
+                    }));
+                }
                 break;
             case 'embossing':
                 setSelectedEmbossing(value);
@@ -1458,9 +1778,11 @@ export default function ShopShow({
 
     const selectedProductSpecialFinish =
         usesDynamicOptions &&
-        typeof selectedDynamicOptions.special_finish === 'string'
-            ? selectedDynamicOptions.special_finish
-            : selectedSpecialFinish;
+        Array.isArray(selectedDynamicOptions.special_finish)
+            ? (selectedDynamicOptions.special_finish[0] ?? null)
+            : typeof selectedDynamicOptions.special_finish === 'string'
+              ? selectedDynamicOptions.special_finish
+              : selectedSpecialFinish;
     const selectedSpecialFinishOption =
         specialFinishes.find(
             (finish: any) => finish.id === selectedProductSpecialFinish,
@@ -1468,6 +1790,16 @@ export default function ShopShow({
         COLD_FOIL_OPTIONS.find(
             (finish) => finish.id === selectedProductSpecialFinish,
         );
+    const hotFoilFinishes = specialFinishes.filter(
+        (finish: any) => !isColdFoilCode(finish.id),
+    );
+    const configuredColdFoilFinishes = specialFinishes.filter((finish: any) =>
+        isColdFoilCode(finish.id),
+    );
+    const coldFoilFinishes =
+        configuredColdFoilFinishes.length > 0
+            ? configuredColdFoilFinishes
+            : COLD_FOIL_OPTIONS;
     const selectedTurnaroundOptions: SelectedOptionDetails[] = [
         {
             groupKey: 'paper_finish',
@@ -1479,12 +1811,6 @@ export default function ShopShow({
             code: selectedCorners,
             label: cornersLabel,
         },
-        {
-            groupKey: 'special_finish',
-            code: selectedProductSpecialFinish,
-            label: selectedSpecialFinishOption?.label,
-            description: selectedSpecialFinishOption?.description,
-        },
     ];
 
     if (usesDynamicOptions) {
@@ -1494,6 +1820,13 @@ export default function ShopShow({
                 selectedDynamicOptions,
             ),
         );
+    } else {
+        selectedTurnaroundOptions.push({
+            groupKey: 'special_finish',
+            code: selectedProductSpecialFinish,
+            label: selectedSpecialFinishOption?.label,
+            description: selectedSpecialFinishOption?.description,
+        });
     }
 
     const productTurnaround = getProductTurnaround(
@@ -1532,10 +1865,10 @@ export default function ShopShow({
                 // Only the code is submitted; the server resolves the fee.
                 options: selectedDesignService
                     ? {
-                          ...selectedOptions,
+                          ...cartOptions,
                           design_service: selectedDesignService,
                       }
-                    : selectedOptions,
+                    : cartOptions,
             },
             {
                 onSuccess: () => {
@@ -1752,6 +2085,21 @@ export default function ShopShow({
                                 onSelect={selectDynamicOption}
                                 customSize={confirmedCustomSize}
                                 onCustomSizeSelect={openCustomSizeModal}
+                                showSpecialFinishSides={!isCottonBusinessCards}
+                                specialFinishSides={selectedSpecialFinishSides}
+                                onSpecialFinishSideChange={
+                                    selectSpecialFinishSide
+                                }
+                            />
+                        )}
+
+                        {isStickerProduct && (
+                            <StickerPaperAreaInput
+                                value={stickerPaperArea}
+                                onChange={(value) => {
+                                    setStickerPaperArea(value);
+                                    markInteracted();
+                                }}
                             />
                         )}
 
@@ -1775,6 +2123,12 @@ export default function ShopShow({
                                                     onClick={() =>
                                                         selectSize(s.id)
                                                     }
+                                                    label={
+                                                        s.id === 'custom' &&
+                                                        confirmedCustomSize
+                                                            ? `${s.label} (${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}")`
+                                                            : s.label
+                                                    }
                                                 >
                                                     <div className="flex h-16 items-center justify-center">
                                                         {hasSwatch ? (
@@ -1795,12 +2149,6 @@ export default function ShopShow({
                                                             />
                                                         )}
                                                     </div>
-                                                    <p className="mt-2 text-sm font-semibold">
-                                                        {s.id === 'custom' &&
-                                                        confirmedCustomSize
-                                                            ? `${s.label} (${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}")`
-                                                            : s.label}
-                                                    </p>
                                                     <p className="text-xs text-neutral-500">
                                                         {s.id === 'custom' &&
                                                         confirmedCustomSize
@@ -1848,6 +2196,7 @@ export default function ShopShow({
                                             onClick={() =>
                                                 selectOption('texture', t.id)
                                             }
+                                            label={t.label}
                                         >
                                             {t.thumb ? (
                                                 <img
@@ -1862,9 +2211,6 @@ export default function ShopShow({
                                                     </span>
                                                 </div>
                                             )}
-                                            <p className="mt-2 text-sm font-semibold">
-                                                {t.label}
-                                            </p>
                                             {t.description && (
                                                 <p className="text-xs text-neutral-500">
                                                     {t.description}
@@ -1894,15 +2240,13 @@ export default function ShopShow({
                                                     f.id,
                                                 )
                                             }
+                                            label={f.label}
                                         >
                                             <img
                                                 src={f.thumb}
                                                 alt=""
                                                 className="aspect-[3/2] w-full rounded-sm object-cover"
                                             />
-                                            <p className="mt-2 text-sm font-semibold">
-                                                {f.label}
-                                            </p>
                                             {f.description && (
                                                 <p className="text-xs text-neutral-500">
                                                     {f.description}
@@ -1914,55 +2258,10 @@ export default function ShopShow({
                             </OptionGroup>
                         )}
 
-                        {!usesDynamicOptions && specialFinishes.length > 0 && (
-                            <div className="mt-6">
-                                {isCottonBusinessCards ? (
-                                    <OptionGroup label="With NFC">
-                                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                            {specialFinishes.map((f: any) => (
-                                                <ChoiceTile
-                                                    key={f.id}
-                                                    active={
-                                                        selectedSpecialFinish ===
-                                                            f.id &&
-                                                        hasInteracted
-                                                    }
-                                                    onClick={() =>
-                                                        selectOption(
-                                                            'special_finish',
-                                                            f.id,
-                                                        )
-                                                    }
-                                                >
-                                                    <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-2">
-                                                        {f.thumb ? (
-                                                            <img
-                                                                src={f.thumb}
-                                                                alt=""
-                                                                className="h-full w-full rounded-sm object-contain"
-                                                            />
-                                                        ) : (
-                                                            <span className="text-xs text-neutral-400">
-                                                                {f.id ===
-                                                                'nfc_card'
-                                                                    ? 'NFC CHIP'
-                                                                    : 'NO CHIP'}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <p className="mt-2 text-sm font-semibold">
-                                                        {f.label}
-                                                    </p>
-                                                    {f.description && (
-                                                        <p className="text-xs text-neutral-500">
-                                                            {f.description}
-                                                        </p>
-                                                    )}
-                                                </ChoiceTile>
-                                            ))}
-                                        </div>
-                                    </OptionGroup>
-                                ) : (
+                        {!usesDynamicOptions &&
+                            !isCottonBusinessCards &&
+                            specialFinishes.length > 0 && (
+                                <div className="mt-6">
                                     <>
                                         <div className="mb-3 flex items-center justify-between border-b border-neutral-100 pb-2">
                                             <span className="text-sm font-bold text-neutral-900">
@@ -2007,29 +2306,134 @@ export default function ShopShow({
                                         {foilTab === 'hot' ||
                                         !supportsColdFoil ? (
                                             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                                {specialFinishes.map(
+                                                {hotFoilFinishes.map(
                                                     (f: any) => {
                                                         const glossLimited =
                                                             selectedFinish ===
                                                                 'gloss' &&
-                                                            !NO_SPECIAL_FINISH_CODES.includes(
+                                                            !isNoSpecialFinishCode(
                                                                 f.id,
                                                             );
+                                                        const active =
+                                                            selectedSpecialFinish ===
+                                                                f.id &&
+                                                            hasInteracted;
+                                                        const tileContent = (
+                                                            <>
+                                                                <img
+                                                                    src={
+                                                                        f.thumb
+                                                                    }
+                                                                    alt=""
+                                                                    className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
+                                                                />
+                                                                {f.description && (
+                                                                    <p className="text-xs text-neutral-500">
+                                                                        {
+                                                                            f.description
+                                                                        }
+                                                                    </p>
+                                                                )}
+                                                            </>
+                                                        );
+
+                                                        if (
+                                                            !isNoSpecialFinishCode(
+                                                                f.id,
+                                                            )
+                                                        ) {
+                                                            return (
+                                                                <SpecialFinishChoiceTile
+                                                                    key={f.id}
+                                                                    active={
+                                                                        active
+                                                                    }
+                                                                    disabled={
+                                                                        glossLimited
+                                                                    }
+                                                                    onClick={() =>
+                                                                        selectOption(
+                                                                            'special_finish',
+                                                                            f.id,
+                                                                        )
+                                                                    }
+                                                                    label={
+                                                                        f.label
+                                                                    }
+                                                                    finishSide={
+                                                                        selectedSpecialFinishSides[
+                                                                            f.id
+                                                                        ] ??
+                                                                        DEFAULT_SPECIAL_FINISH_SIDE
+                                                                    }
+                                                                    onFinishSideChange={(
+                                                                        side,
+                                                                    ) =>
+                                                                        selectSpecialFinishSide(
+                                                                            side,
+                                                                            f.id,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        tileContent
+                                                                    }
+                                                                </SpecialFinishChoiceTile>
+                                                            );
+                                                        }
 
                                                         return (
                                                             <ChoiceTile
                                                                 key={f.id}
-                                                                active={
-                                                                    selectedSpecialFinish ===
-                                                                        f.id &&
-                                                                    hasInteracted
-                                                                }
+                                                                active={active}
                                                                 disabled={
                                                                     glossLimited
                                                                 }
                                                                 onClick={() =>
                                                                     selectOption(
                                                                         'special_finish',
+                                                                        f.id,
+                                                                    )
+                                                                }
+                                                                label={f.label}
+                                                            >
+                                                                {tileContent}
+                                                            </ChoiceTile>
+                                                        );
+                                                    },
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                                {coldFoilFinishes.map(
+                                                    (f: any) => {
+                                                        const active =
+                                                            selectedSpecialFinish ===
+                                                                f.id &&
+                                                            hasInteracted;
+
+                                                        return (
+                                                            <SpecialFinishChoiceTile
+                                                                key={f.id}
+                                                                active={active}
+                                                                onClick={() =>
+                                                                    selectOption(
+                                                                        'special_finish',
+                                                                        f.id,
+                                                                    )
+                                                                }
+                                                                label={f.label}
+                                                                finishSide={
+                                                                    selectedSpecialFinishSides[
+                                                                        f.id
+                                                                    ] ??
+                                                                    DEFAULT_SPECIAL_FINISH_SIDE
+                                                                }
+                                                                onFinishSideChange={(
+                                                                    side,
+                                                                ) =>
+                                                                    selectSpecialFinishSide(
+                                                                        side,
                                                                         f.id,
                                                                     )
                                                                 }
@@ -2041,9 +2445,6 @@ export default function ShopShow({
                                                                     alt=""
                                                                     className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
                                                                 />
-                                                                <p className="mt-2 text-sm font-semibold">
-                                                                    {f.label}
-                                                                </p>
                                                                 {f.description && (
                                                                     <p className="text-xs text-neutral-500">
                                                                         {
@@ -2051,100 +2452,14 @@ export default function ShopShow({
                                                                         }
                                                                     </p>
                                                                 )}
-                                                            </ChoiceTile>
+                                                            </SpecialFinishChoiceTile>
                                                         );
                                                     },
                                                 )}
                                             </div>
-                                        ) : (
-                                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                                {COLD_FOIL_OPTIONS.map(
-                                                    (f: any) => (
-                                                        <ChoiceTile
-                                                            key={f.id}
-                                                            active={
-                                                                selectedSpecialFinish ===
-                                                                    f.id &&
-                                                                hasInteracted
-                                                            }
-                                                            onClick={() =>
-                                                                selectOption(
-                                                                    'special_finish',
-                                                                    f.id,
-                                                                )
-                                                            }
-                                                        >
-                                                            <img
-                                                                src={f.thumb}
-                                                                alt=""
-                                                                className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
-                                                            />
-                                                            <p className="mt-2 text-sm font-semibold">
-                                                                {f.label}
-                                                            </p>
-                                                            {f.description && (
-                                                                <p className="text-xs text-neutral-500">
-                                                                    {
-                                                                        f.description
-                                                                    }
-                                                                </p>
-                                                            )}
-                                                        </ChoiceTile>
-                                                    ),
-                                                )}
-                                            </div>
                                         )}
                                     </>
-                                )}
-                            </div>
-                        )}
-
-                        {!usesDynamicOptions &&
-                            specialFinishOnSidesList.length > 0 && (
-                                <OptionGroup label="Special finish on sides">
-                                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                        {specialFinishOnSidesList.map(
-                                            (s: any) => (
-                                                <ChoiceTile
-                                                    key={s.id}
-                                                    active={
-                                                        selectedSpecialFinishOnSides ===
-                                                            s.id &&
-                                                        hasInteracted
-                                                    }
-                                                    onClick={() =>
-                                                        selectOption(
-                                                            'special_finish_on_sides',
-                                                            s.id,
-                                                        )
-                                                    }
-                                                >
-                                                    {s.thumb ? (
-                                                        <img
-                                                            src={s.thumb}
-                                                            alt=""
-                                                            className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
-                                                        />
-                                                    ) : (
-                                                        <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50">
-                                                            <span className="text-xs text-neutral-400">
-                                                                Finish on sides
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                    <p className="mt-2 text-sm font-semibold">
-                                                        {s.label}
-                                                    </p>
-                                                    {s.description && (
-                                                        <p className="text-xs text-neutral-500">
-                                                            {s.description}
-                                                        </p>
-                                                    )}
-                                                </ChoiceTile>
-                                            ),
-                                        )}
-                                    </div>
-                                </OptionGroup>
+                                </div>
                             )}
 
                         {!usesDynamicOptions && embossingList.length > 0 && (
@@ -2160,6 +2475,7 @@ export default function ShopShow({
                                             onClick={() =>
                                                 selectOption('embossing', e.id)
                                             }
+                                            label={e.label}
                                         >
                                             <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-4">
                                                 {e.id === 'embossing' ? (
@@ -2172,9 +2488,6 @@ export default function ShopShow({
                                                     </span>
                                                 )}
                                             </div>
-                                            <p className="mt-2 text-sm font-semibold">
-                                                {e.label}
-                                            </p>
                                             {e.description && (
                                                 <p className="text-xs text-neutral-500">
                                                     {e.description}
@@ -2205,6 +2518,7 @@ export default function ShopShow({
                                                             e.id,
                                                         )
                                                     }
+                                                    label={e.label}
                                                 >
                                                     <div className="flex aspect-square w-full items-center justify-center rounded-sm bg-neutral-50 p-4">
                                                         {e.id ===
@@ -2223,9 +2537,6 @@ export default function ShopShow({
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <p className="mt-2 text-sm font-semibold">
-                                                        {e.label}
-                                                    </p>
                                                     {e.description && (
                                                         <p className="text-xs text-neutral-500">
                                                             {e.description}
@@ -2432,6 +2743,18 @@ export default function ShopShow({
                                                         </Fragment>
                                                     );
                                                 },
+                                            )}
+                                            {isStickerProduct && (
+                                                <>
+                                                    <dt className="text-neutral-500">
+                                                        Paper area
+                                                    </dt>
+                                                    <dd className="text-right font-medium">
+                                                        <LiveText
+                                                            text={`${stickerPaperArea} m²`}
+                                                        />
+                                                    </dd>
+                                                </>
                                             )}
                                             <dt className="text-neutral-500">
                                                 {summaryLabels[2]}
@@ -2747,6 +3070,10 @@ export default function ShopShow({
                             onOpenChange={setCustomSizeOpen}
                             width={customWidth}
                             height={customHeight}
+                            minWidth={customSizeLimits.minWidth}
+                            maxWidth={customSizeLimits.maxWidth}
+                            minHeight={customSizeLimits.minHeight}
+                            maxHeight={customSizeLimits.maxHeight}
                             error={customSizeError}
                             onWidthChange={setCustomWidth}
                             onHeightChange={setCustomHeight}
@@ -3064,12 +3391,21 @@ function DynamicOptionGroups({
     onSelect,
     customSize,
     onCustomSizeSelect,
+    showSpecialFinishSides,
+    specialFinishSides,
+    onSpecialFinishSideChange,
 }: {
     groups: ProductOptionGroup[];
     selected: Record<string, string | string[]>;
     onSelect: (groupKey: string, value: string) => void;
     customSize?: { width: number; height: number } | null;
     onCustomSizeSelect?: () => void;
+    showSpecialFinishSides: boolean;
+    specialFinishSides: Record<string, SpecialFinishSide>;
+    onSpecialFinishSideChange: (
+        side: SpecialFinishSide,
+        finishCode: string,
+    ) => void;
 }) {
     const [foilTab, setFoilTab] = useState<'hot' | 'cold'>('hot');
     const [hasInteracted, setHasInteracted] = useState(false);
@@ -3096,35 +3432,54 @@ function DynamicOptionGroups({
 
                 return (
                     <OptionGroup key={group.key} label={group.label}>
-                        {hasColdFoilValues && (
-                            <div className="mb-3 flex items-center justify-between border-b border-neutral-100 pb-2">
-                                <span className="text-sm font-semibold text-neutral-700">
-                                    Choose a foil type
-                                </span>
-                                <div className="flex rounded-md bg-neutral-100 p-0.5">
-                                    {(['hot', 'cold'] as const).map((tab) => (
-                                        <button
-                                            key={tab}
-                                            type="button"
-                                            onClick={() => {
-                                                setFoilTab(tab);
-                                                markInteracted();
-                                            }}
-                                            className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
-                                                foilTab === tab
-                                                    ? 'bg-white text-[#800020] shadow-sm'
-                                                    : 'text-neutral-500 hover:text-neutral-800'
-                                            }`}
-                                        >
-                                            {tab === 'hot'
-                                                ? 'Hot Foil'
-                                                : 'Cold Foil'}
-                                        </button>
-                                    ))}
+                        {group.key === 'special_finish' &&
+                            group.type === 'multi_select' && (
+                                <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-neutral-100 pb-2">
+                                    <span className="text-sm font-semibold text-neutral-700">
+                                        {group.values.some((value) =>
+                                            isFoilOption(
+                                                optionValueCode(value),
+                                                value.name,
+                                                value.description,
+                                            ),
+                                        )
+                                            ? 'Choose one or more foil colors'
+                                            : 'Choose one or more finishes'}
+                                    </span>
+                                    {hasColdFoilValues && (
+                                        <div className="flex rounded-md bg-neutral-100 p-0.5">
+                                            {(['hot', 'cold'] as const).map(
+                                                (tab) => (
+                                                    <button
+                                                        key={tab}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setFoilTab(tab);
+                                                            markInteracted();
+                                                        }}
+                                                        className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
+                                                            foilTab === tab
+                                                                ? 'bg-white text-[#800020] shadow-sm'
+                                                                : 'text-neutral-500 hover:text-neutral-800'
+                                                        }`}
+                                                    >
+                                                        {tab === 'hot'
+                                                            ? 'Hot Foil'
+                                                            : 'Cold Foil'}
+                                                    </button>
+                                                ),
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
-                        )}
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                            )}
+                        <div
+                            className={`grid grid-cols-2 gap-3 ${
+                                group.key === 'texture'
+                                    ? 'sm:grid-cols-3'
+                                    : 'sm:grid-cols-4'
+                            }`}
+                        >
                             {values.map((value) => {
                                 const code = optionValueCode(value);
                                 const selectedValue = selected[group.key];
@@ -3146,6 +3501,10 @@ function DynamicOptionGroups({
                                           : value.swatch_image;
                                 const isCustomSize =
                                     group.key === 'sizes' && code === 'custom';
+                                const hasSpecialFinishSide =
+                                    showSpecialFinishSides &&
+                                    group.key === 'special_finish' &&
+                                    !isNoSpecialFinishCode(code);
                                 const isSvg =
                                     typeof swatch === 'string' &&
                                     swatch.trimStart().startsWith('<svg');
@@ -3158,25 +3517,8 @@ function DynamicOptionGroups({
                                     }
                                     markInteracted();
                                 };
-
-                                if (group.key === 'corners') {
-                                    return (
-                                        <CornerChoiceCard
-                                            key={code}
-                                            label={value.name}
-                                            swatch={swatch}
-                                            active={active}
-                                            onClick={handleSelect}
-                                        />
-                                    );
-                                }
-
-                                return (
-                                    <ChoiceTile
-                                        key={code}
-                                        active={active}
-                                        onClick={handleSelect}
-                                    >
+                                const tileContent = (
+                                    <>
                                         <div className="flex min-h-16 items-center justify-center">
                                             {isSvg ? (
                                                 <div
@@ -3200,13 +3542,6 @@ function DynamicOptionGroups({
                                                 </span>
                                             )}
                                         </div>
-                                        <p className="mt-2 text-base font-semibold">
-                                            {isCustomSize &&
-                                            active &&
-                                            customSize
-                                                ? `${value.name} (${customSize.width.toFixed(2)}" x ${customSize.height.toFixed(2)}")`
-                                                : value.name}
-                                        </p>
                                         {isCustomSize &&
                                         active &&
                                         customSize ? (
@@ -3219,6 +3554,57 @@ function DynamicOptionGroups({
                                                 {value.description}
                                             </p>
                                         ) : null}
+                                    </>
+                                );
+
+                                if (hasSpecialFinishSide) {
+                                    return (
+                                        <SpecialFinishChoiceTile
+                                            key={code}
+                                            active={active}
+                                            onClick={handleSelect}
+                                            label={value.name}
+                                            finishSide={
+                                                specialFinishSides[code] ??
+                                                DEFAULT_SPECIAL_FINISH_SIDE
+                                            }
+                                            onFinishSideChange={(side) => {
+                                                onSpecialFinishSideChange(
+                                                    side,
+                                                    code,
+                                                );
+                                                markInteracted();
+                                            }}
+                                        >
+                                            {tileContent}
+                                        </SpecialFinishChoiceTile>
+                                    );
+                                }
+
+                                if (group.key === 'corners') {
+                                    return (
+                                        <CornerChoiceCard
+                                            key={code}
+                                            label={value.name}
+                                            swatch={swatch}
+                                            active={active}
+                                            onClick={handleSelect}
+                                        />
+                                    );
+                                }
+
+                                return (
+                                    <ChoiceTile
+                                        key={code}
+                                        active={active}
+                                        onClick={handleSelect}
+                                        label={
+                                            isCustomSize && active && customSize
+                                                ? `${value.name} (${customSize.width.toFixed(2)}" x ${customSize.height.toFixed(2)}")`
+                                                : value.name
+                                        }
+                                    >
+                                        {tileContent}
                                     </ChoiceTile>
                                 );
                             })}
@@ -3227,6 +3613,42 @@ function DynamicOptionGroups({
                 );
             })}
         </>
+    );
+}
+
+function StickerPaperAreaInput({
+    value,
+    onChange,
+}: {
+    value: string;
+    onChange: (value: string) => void;
+}) {
+    return (
+        <fieldset className="mt-6">
+            <legend className="mb-3 text-base font-bold text-neutral-900">
+                Paper area
+            </legend>
+            <label className="block max-w-xs space-y-1.5 text-sm font-medium text-neutral-900">
+                Area (m²)
+                <Input
+                    type="number"
+                    inputMode="decimal"
+                    min="0.000001"
+                    step="0.000001"
+                    value={value}
+                    onChange={(event) => onChange(event.target.value)}
+                    aria-describedby="sticker-paper-area-help"
+                    required
+                />
+            </label>
+            <p
+                id="sticker-paper-area-help"
+                className="mt-2 max-w-xl text-xs leading-relaxed text-neutral-500"
+            >
+                This fills from the selected sticker size and can be adjusted
+                when you need to price a different paper area.
+            </p>
+        </fieldset>
     );
 }
 
@@ -3293,23 +3715,94 @@ function CornerChoiceCard({
     );
 }
 
+function SpecialFinishChoiceTile({
+    active,
+    disabled,
+    onClick,
+    label,
+    children,
+    finishSide,
+    onFinishSideChange,
+}: {
+    active: boolean;
+    disabled?: boolean;
+    onClick: () => void;
+    label: React.ReactNode;
+    children: React.ReactNode;
+    finishSide: SpecialFinishSide;
+    onFinishSideChange: (side: SpecialFinishSide) => void;
+}) {
+    const tileClassName = `group relative h-full min-h-0 overflow-hidden rounded-md border-2 text-left transition-colors ${
+        disabled
+            ? 'cursor-not-allowed border-neutral-100 bg-neutral-50 opacity-50'
+            : active
+              ? 'border-[#800020] bg-[#800020]/5'
+              : 'border-neutral-200 hover:border-neutral-300'
+    }`;
+
+    return (
+        <div className={tileClassName}>
+            <button
+                type="button"
+                aria-label={typeof label === 'string' ? label : undefined}
+                aria-pressed={active}
+                disabled={disabled}
+                onClick={onClick}
+                className="absolute inset-0 z-0 rounded-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-inset"
+            />
+            <div className="pointer-events-none relative z-10 p-2">
+                <div className="relative">
+                    {children}
+                    <div className="pointer-events-none absolute inset-0">
+                        {SPECIAL_FINISH_SIDE_OPTIONS.map((option) => (
+                            <button
+                                key={option.value}
+                                type="button"
+                                aria-label={`Apply finish to ${option.label}`}
+                                aria-pressed={finishSide === option.value}
+                                disabled={disabled}
+                                onClick={() => onFinishSideChange(option.value)}
+                                className={`pointer-events-auto absolute top-0 rounded-md border px-2 py-1 text-[10px] leading-tight font-semibold shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                                    option.position === 'left'
+                                        ? 'left-0'
+                                        : 'right-0'
+                                } ${
+                                    finishSide === option.value
+                                        ? 'border-primary bg-primary text-primary-foreground hover:bg-[#800020]'
+                                        : 'border-white/80 bg-white/90 text-neutral-800 backdrop-blur-sm hover:bg-white'
+                                }`}
+                            >
+                                {option.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                {label && <p className="mt-2 text-sm font-semibold">{label}</p>}
+            </div>
+        </div>
+    );
+}
+
 function ChoiceTile({
     active,
     disabled,
     onClick,
+    label,
     children,
 }: {
     active: boolean;
     disabled?: boolean;
     onClick: () => void;
+    label?: React.ReactNode;
     children: React.ReactNode;
 }) {
     return (
         <button
             type="button"
+            aria-pressed={active}
             disabled={disabled}
             onClick={onClick}
-            className={`rounded-md border-2 p-2 text-left transition-colors ${
+            className={`group relative overflow-hidden rounded-md border-2 p-2 text-left transition-colors ${
                 disabled
                     ? 'cursor-not-allowed border-neutral-100 bg-neutral-50 opacity-50'
                     : active
@@ -3318,6 +3811,7 @@ function ChoiceTile({
             }`}
         >
             {children}
+            {label && <p className="mt-2 text-sm font-semibold">{label}</p>}
         </button>
     );
 }
@@ -3360,6 +3854,10 @@ function CustomSizeModal({
     onOpenChange,
     width,
     height,
+    minWidth,
+    maxWidth,
+    minHeight,
+    maxHeight,
     error,
     onWidthChange,
     onHeightChange,
@@ -3369,6 +3867,10 @@ function CustomSizeModal({
     onOpenChange: (open: boolean) => void;
     width: string;
     height: string;
+    minWidth: number;
+    maxWidth: number;
+    minHeight: number;
+    maxHeight: number;
     error: string | null;
     onWidthChange: (value: string) => void;
     onHeightChange: (value: string) => void;
@@ -3380,8 +3882,11 @@ function CustomSizeModal({
                 <DialogHeader>
                     <DialogTitle>Enter a custom card size</DialogTitle>
                     <DialogDescription>
-                        Enter the width and height in inches. Each dimension
-                        must be between 2.1 and 3.5 inches.
+                        Enter the width and height in inches. Width must be
+                        between {formatSizeLimit(minWidth)} and{' '}
+                        {formatSizeLimit(maxWidth)} inches; height must be
+                        between {formatSizeLimit(minHeight)} and{' '}
+                        {formatSizeLimit(maxHeight)} inches.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -3398,14 +3903,14 @@ function CustomSizeModal({
                             <Input
                                 type="number"
                                 inputMode="decimal"
-                                min={CUSTOM_SIZE_MIN}
-                                max={CUSTOM_SIZE_MAX}
+                                min={minWidth}
+                                max={maxWidth}
                                 step="0.01"
                                 value={width}
                                 onChange={(event) =>
                                     onWidthChange(event.target.value)
                                 }
-                                placeholder="2.10"
+                                placeholder={formatSizeLimit(minWidth)}
                                 required
                             />
                         </label>
@@ -3414,14 +3919,14 @@ function CustomSizeModal({
                             <Input
                                 type="number"
                                 inputMode="decimal"
-                                min={CUSTOM_SIZE_MIN}
-                                max={CUSTOM_SIZE_MAX}
+                                min={minHeight}
+                                max={maxHeight}
                                 step="0.01"
                                 value={height}
                                 onChange={(event) =>
                                     onHeightChange(event.target.value)
                                 }
-                                placeholder="3.50"
+                                placeholder={formatSizeLimit(minHeight)}
                                 required
                             />
                         </label>

@@ -1,5 +1,5 @@
 {
-    "subtitle": "<p>Made from 120 lb coated stock at approximately 15pt thick, these cards have a coating on both sides for vivid, accurate color reproduction. They are ideal for full-bleed backgrounds or designs with one white side and one full-color side.</p><p><strong>Available options:</strong></p><ul><li>Square or rounded corners</li><li>Gloss, matte, starry, soft-touch, starry holographic, or rainbow holographic film</li><li>Hot foil stamping, custom die-cut shapes, cold foil, or raised UV <em>(5-7 business days)</em></li></ul>",
+    "subtitle": "<p>Made from 120 lb coated stock at approximately 15pt thick, these cards have a coating on both sides for vivid, accurate color reproduction. They are ideal for full-bleed backgrounds or designs with one white side and one full-color side.</p><p><strong>Available options:</strong></p><ul><li>Square or rounded corners</li><li>Gloss, matte, starry, soft-touch, starry holographic, or rainbow holographic film</li><li>Hot foil stamping, custom die-cut shapes, or cold foil <em>(5-7 business days)</em></li></ul>",
     "starting_price_text": "50 cards from $14",
     "sizes": [
         {
@@ -141,142 +141,6 @@
             "swatch_image": "/images/product-options/business-cards/swatches/custom-size.webp"
         }
     ],
-    "paper_finish": [
-        {
-            "name": "Matte",
-            "code": "matte",
-            "description": "With a smooth feel. Shine-free so no glare.",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Gloss",
-            "code": "gloss",
-            "description": "Eye-catchingly shiny. Makes color photos pop.",
-            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "code": "uv",
-            "name": "3D UV",
-            "description": "Raised gloss highlights with a dimensional feel.",
-            "swatch_image": "/images/product-options/uv-swatch.png"
-        }
-    ],
     "corners": [
         {
             "name": "Square",
@@ -409,7 +273,7 @@
     ],
     "special_finish": [
         {
-            "name": "No special finish",
+            "name": "No finish",
             "code": "no_special_finish",
             "description": "No special finish, thanks.",
             "swatch_image": "/images/product-options/no-foil.png",
@@ -1258,7 +1122,7 @@
             "id": "spot-glass",
             "match": {
                 "sizes": "Standard",
-                "paper_finish": "Matte",
+                "texture": "matte",
                 "corners": "Square",
                 "special_finish": "spot glass"
             },
@@ -1271,7 +1135,7 @@
             "id": "raised-spot-glass",
             "match": {
                 "sizes": "Standard",
-                "paper_finish": "Matte",
+                "texture": "matte",
                 "corners": "Square",
                 "special_finish": "raised spot glass"
             },
@@ -1284,7 +1148,7 @@
             "id": "gold-foil",
             "match": {
                 "sizes": "Standard",
-                "paper_finish": "Matte",
+                "texture": "matte",
                 "corners": "Square",
                 "special_finish": "gold foil"
             },
@@ -1298,7 +1162,7 @@
             "id": "silver-foil",
             "match": {
                 "sizes": "Standard",
-                "paper_finish": "Matte",
+                "texture": "matte",
                 "corners": "Square",
                 "special_finish": "silver foil"
             },
@@ -1311,7 +1175,7 @@
             "id": "gloss-square",
             "match": {
                 "sizes": "Square",
-                "paper_finish": "Gloss",
+                "texture": "gloss",
                 "corners": "Square",
                 "special_finish": "no special finish"
             },
@@ -1324,7 +1188,7 @@
             "id": "gloss",
             "match": {
                 "sizes": "Standard",
-                "paper_finish": "Gloss",
+                "texture": "gloss",
                 "corners": "Square",
                 "special_finish": "no special finish"
             },
@@ -1338,7 +1202,7 @@
             "id": "matte-rounded",
             "match": {
                 "sizes": "Standard",
-                "paper_finish": "Matte",
+                "texture": "matte",
                 "corners": "Rounded",
                 "special_finish": "no special finish"
             },
@@ -1351,7 +1215,7 @@
             "id": "matte",
             "match": {
                 "sizes": "Standard",
-                "paper_finish": "Matte",
+                "texture": "matte",
                 "corners": "Square",
                 "special_finish": "no special finish"
             },
@@ -1366,7 +1230,7 @@
             "id": "square",
             "match": {
                 "sizes": "Square",
-                "paper_finish": "Matte",
+                "texture": "matte",
                 "corners": "Square",
                 "special_finish": "no special finish"
             },
@@ -1564,136 +1428,6 @@
             ]
         }
     },
-    "special_finish_on_sides": [
-        {
-            "name": "One side",
-            "code": "one_side",
-            "description": "Special finish applied to one side only.",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-one-side.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Both sides",
-            "code": "both_sides",
-            "description": "Special finish applied to both sides.",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-both-sides.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
     "texture": [
         {
             "code": "shattered_glass_film",
@@ -1724,6 +1458,18 @@
             "name": "Soft-Touch Film",
             "description": "",
             "swatch_image": "/images/product-options/business-cards/swatches/quality/soft-touch-film.png"
+        },
+        {
+            "code": "matte",
+            "name": "Matte",
+            "description": "With a smooth feel. Shine-free so no glare.",
+            "swatch_image": "/images/product-options/business-cards/swatches/matte-paper-finish.webp"
+        },
+        {
+            "code": "gloss",
+            "name": "Gloss",
+            "description": "Eye-catchingly shiny. Makes color photos pop.",
+            "swatch_image": "/images/product-options/business-cards/swatches/gloss-paper-finish.webp"
         }
     ]
 }

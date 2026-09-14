@@ -24,14 +24,14 @@ class BusinessCardProductOptionsSeeder extends Seeder
         [
             'slug' => 'premium-metal-business-cards',
             'name' => 'Premium Metal Business Cards',
-            'subtitle' => 'Premium metal business cards with engraving, color, plating, or NFC options.',
+            'subtitle' => 'Premium metal business cards with engraving, color, or plating options.',
             'description' => '<p>Premium metal business cards with a choice of thickness, size, code or stripe finish, and a signature special finish.</p>',
         ],
         [
             'slug' => 'luxe-metal-business-cards',
             'name' => 'Luxe Metal Business Cards',
             'subtitle' => 'Luxury metal business cards with premium special finishes.',
-            'description' => '<p>Luxe metal business cards designed for standout introductions, with premium engraving, color, plating, and NFC options.</p>',
+            'description' => '<p>Luxe metal business cards designed for standout introductions, with premium engraving, color, and plating options.</p>',
         ],
     ];
 
@@ -141,12 +141,18 @@ class BusinessCardProductOptionsSeeder extends Seeder
     ];
 
     /**
-     * PVC print-code and signature-stripe selections use the supplied images
-     * as their swatches and their selected-gallery primary images.
+     * PVC print-code, no-print-code, and signature-stripe selections use the
+     * supplied images as their swatches and selected-gallery primary images.
      *
      * @var array<string, array{id: string, match: array<string, string>, images: array<int, string>, primary: string}>
      */
     private const PVC_OPTION_GALLERY_RULES = [
+        'no_print_code' => [
+            'id' => 'no_print_code_gallery',
+            'match' => ['print_code' => 'no_print_code'],
+            'images' => ['/images/product-options/business-cards/swatches/pvc-no-print-code.png'],
+            'primary' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
+        ],
         'print_code' => [
             'id' => 'print_code_gallery',
             'match' => ['print_code' => 'print_code'],
@@ -391,6 +397,10 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 }
 
                 $config = $this->databaseConfigForProduct($product);
+                $config['options'] = BusinessCardOptionCatalog::normalize(
+                    $slug,
+                    is_array($config['options'] ?? null) ? $config['options'] : [],
+                ) ?? [];
 
                 $config['media']['gallery'] = $gallery;
 
@@ -398,15 +408,48 @@ class BusinessCardProductOptionsSeeder extends Seeder
                     ? $config['media']['gallery_rules']
                     : [];
 
+                $hasDefaultGalleryRule = false;
+
                 foreach ($galleryRules as &$rule) {
-                    if (is_array($rule) && (($rule['id'] ?? null) === 'default' || ($rule['match'] ?? []) === [])) {
+                    if (! is_array($rule)) {
+                        continue;
+                    }
+
+                    $match = is_array($rule['match'] ?? null) ? $rule['match'] : [];
+
+                    if (($rule['id'] ?? null) === 'default' || $match === []) {
+                        if ($hasDefaultGalleryRule) {
+                            $rule = null;
+
+                            continue;
+                        }
+
+                        $hasDefaultGalleryRule = true;
+                        $rule['id'] = 'default';
+                        $rule['match'] = [];
                         $rule['images'] = $gallery;
                         $rule['primary'] = $gallery[0];
                     }
                 }
                 unset($rule);
 
-                $config['media']['gallery_rules'] = $galleryRules;
+                $galleryRules = array_values(array_filter(
+                    $galleryRules,
+                    static fn (mixed $rule): bool => is_array($rule),
+                ));
+
+                if (! $hasDefaultGalleryRule) {
+                    array_unshift($galleryRules, [
+                        'id' => 'default',
+                        'match' => [],
+                        'images' => $gallery,
+                        'primary' => $gallery[0],
+                    ]);
+                }
+
+                $config['media']['gallery_rules'] = BusinessCardOptionCatalog::normalizeCottonGalleryRules(
+                    $galleryRules,
+                );
                 $config['product']['featured_image'] = $gallery[0];
                 $product->forceFill([
                     'featured_image' => $gallery[0],
@@ -567,6 +610,14 @@ class BusinessCardProductOptionsSeeder extends Seeder
             ? self::STANDARD_PVC_FINISH_GALLERY_RULES
             : self::PVC_FINISH_GALLERY_RULES;
         $optionGalleryRules = [
+            'no_print_code' => array_replace(
+                self::PVC_OPTION_GALLERY_RULES['no_print_code'],
+                [
+                    'match' => $slug === 'standard-pvc-card'
+                        ? ['print_code_or_signature_stripe' => 'no_print_code_or_signature_stripe']
+                        : ['print_code' => 'no_print_code'],
+                ],
+            ),
             'print_code' => array_replace(
                 self::PVC_OPTION_GALLERY_RULES['print_code'],
                 [
@@ -594,7 +645,12 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 $option = (string) ($match['print_code'] ?? $match['print_code_or_signature_stripe'] ?? '');
 
                 return ! in_array((string) ($match['paper_finish'] ?? ''), $finishCodes, true)
-                    && ! in_array($option, ['print_code', 'signature_stripe'], true);
+                    && ! in_array($option, [
+                        'no_print_code',
+                        'no_print_code_or_signature_stripe',
+                        'print_code',
+                        'signature_stripe',
+                    ], true);
             },
         ));
 
@@ -627,6 +683,89 @@ class BusinessCardProductOptionsSeeder extends Seeder
     }
 
     /**
+     * Business cards no longer expose NFC, so remove obsolete options and
+     * pricing processes when the maintenance seeder runs against an older
+     * snapshot.
+     *
+     * @param  array<string, mixed>  $config
+     * @return array<string, mixed>
+     */
+    private function removeBusinessCardNfc(array $config): array
+    {
+        if (is_array($config['options'] ?? null)) {
+            $config['options'] = BusinessCardOptionCatalog::withoutNfcOptions($config['options']);
+        }
+
+        if (is_array($config['pricing'] ?? null)) {
+            $config['pricing'] = $this->removeNfcPricingProcesses($config['pricing']);
+        }
+
+        return $config;
+    }
+
+    /**
+     * @param  array<string, mixed>  $pricing
+     * @return array<string, mixed>
+     */
+    private function removeNfcPricingProcesses(array $pricing): array
+    {
+        if (is_array($pricing['processes'] ?? null)) {
+            $pricing['processes'] = array_values(array_filter(
+                $pricing['processes'],
+                fn (mixed $process): bool => ! $this->isNfcProcess($process),
+            ));
+        }
+
+        foreach (['scenarios', 'rules', 'pricing_data'] as $key) {
+            if (! is_array($pricing[$key] ?? null)) {
+                continue;
+            }
+
+            foreach ($pricing[$key] as $entryKey => $entry) {
+                if (is_array($entry)) {
+                    $pricing[$key][$entryKey] = $this->removeNfcPricingProcesses($entry);
+                }
+            }
+        }
+
+        if (is_array($pricing['pricing'] ?? null)) {
+            $pricing['pricing'] = $this->removeNfcPricingProcesses($pricing['pricing']);
+        }
+
+        return $pricing;
+    }
+
+    private function isNfcProcess(mixed $process): bool
+    {
+        if (is_scalar($process)) {
+            return $this->isNfcToken($process);
+        }
+
+        if (! is_array($process)) {
+            return false;
+        }
+
+        foreach (['code', 'name', 'label'] as $key) {
+            if ($this->isNfcToken($process[$key] ?? null)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isNfcToken(mixed $value): bool
+    {
+        if (! is_scalar($value) && $value !== null) {
+            return false;
+        }
+
+        $token = str_replace(['-', ' '], '_', strtolower(trim((string) $value)));
+
+        return in_array($token, ['nfc', 'with_nfc', 'no_nfc'], true);
+    }
+
+    /**
      * Return the stored canonical payload without importing repository
      * product content. Galleries and option contracts are updated explicitly
      * by the seeder callers above.
@@ -638,6 +777,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
         $config = is_array($product->product_config) ? $product->product_config : [];
 
         if (is_array($config['options'] ?? null)) {
+            unset($config['options']['special_finish_on_sides']);
             $config['options'] = BusinessCardOptionCatalog::normalizeSharedSwatchImages(
                 BusinessCardOptionCatalog::normalizeSharedSizeSwatches(
                     $config['options'],
@@ -646,6 +786,6 @@ class BusinessCardProductOptionsSeeder extends Seeder
             );
         }
 
-        return $config;
+        return $this->removeBusinessCardNfc($config);
     }
 }

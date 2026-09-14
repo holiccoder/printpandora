@@ -85,6 +85,14 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
             data_get($product->product_config, 'options.special_finish.values.*.code'),
         );
         $this->assertSame(
+            'multi_select',
+            data_get($product->product_config, 'options.special_finish.type'),
+        );
+        $this->assertSame(
+            'No finish',
+            data_get($product->product_config, 'options.special_finish.values.0.label'),
+        );
+        $this->assertSame(
             'Custom',
             data_get($product->product_config, 'options.sizes.values.2.label'),
         );
@@ -134,6 +142,7 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
         );
         $this->assertArrayNotHasKey('print_code', $product->product_config['options']);
         $this->assertArrayNotHasKey('drill', $product->product_config['options']);
+        $this->assertArrayNotHasKey('special_finish_on_sides', $product->product_config['options']);
         $this->assertSame('Keep this FAQ', data_get($product->product_config, 'faq.0.question'));
     }
 

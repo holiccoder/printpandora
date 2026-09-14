@@ -145,7 +145,7 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get($quality->product_config, 'options.sizes.values.2.description'),
         );
         $this->assertSame(
-            ['shattered_glass_film', 'holographic_film', 'starlight_film', 'holographic_star_film', 'soft_touch_film'],
+            ['shattered_glass_film', 'holographic_film', 'starlight_film', 'holographic_star_film', 'soft_touch_film', 'matte', 'gloss'],
             data_get($quality->product_config, 'options.texture.values.*.code'),
         );
         $this->assertSame(
@@ -155,9 +155,12 @@ class BusinessCardProductOptionsTest extends TestCase
                 '/images/product-options/business-cards/swatches/quality/starlight-film.png',
                 '/images/product-options/business-cards/swatches/quality/holographic-star-film.png',
                 '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+                '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
+                '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
             ],
             data_get($quality->product_config, 'options.texture.values.*.swatch_image'),
         );
+        $this->assertArrayNotHasKey('paper_finish', $quality->product_config['options']);
         $this->assertContains(
             'cold_bright_gold',
             data_get($quality->product_config, 'options.special_finish.values.*.code'),
@@ -286,10 +289,12 @@ class BusinessCardProductOptionsTest extends TestCase
 
             $expectedOptionGalleryPrimaries = $slug === 'standard-pvc-card'
                 ? [
+                    'no_print_code_gallery' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
                     'print_code_gallery' => '/images/products/pvc/pvc-print-code.webp',
                     'signature_stripe_gallery' => '/images/products/pvc/pvc-signature-stripe.webp',
                 ]
                 : [
+                    'no_print_code_gallery' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
                     'print_code_gallery' => '/images/products/pvc/pvc-print-code.webp',
                 ];
 
@@ -330,7 +335,7 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get(Product::where('slug', 'classic-metal-business-cards')->firstOrFail()->product_config, 'options.thickness.values.*.code'),
         );
         $this->assertSame(
-            ['laser_engraving', 'color_printing', 'plating', 'nfc'],
+            ['laser_engraving', 'color_printing', 'plating'],
             data_get(Product::where('slug', 'premium-metal-business-cards')->firstOrFail()->product_config, 'options.special_finish.values.*.code'),
         );
 
@@ -380,7 +385,6 @@ class BusinessCardProductOptionsTest extends TestCase
                         '/images/product-options/business-cards/swatches/metal/laser-engraving.png',
                         '/images/product-options/business-cards/swatches/metal/color-printing.png',
                         '/images/product-options/business-cards/swatches/metal/plating.png',
-                        '/images/product-options/business-cards/swatches/metal/nfc.png',
                     ],
                     data_get($config, 'options.special_finish.values.*.swatch_image'),
                 );
@@ -488,6 +492,35 @@ class BusinessCardProductOptionsTest extends TestCase
             ],
             data_get($config, 'options.drill.values.*.swatch_image'),
         );
+        $this->assertArrayNotHasKey('texture', $config['options']);
+        $this->assertSame(
+            ['matte', 'gloss', 'starry_film', 'soft_touch_film', 'holo_film'],
+            data_get($config, 'options.paper_finish.values.*.code'),
+        );
+        $this->assertSame(
+            [
+                'Matte Lamination',
+                'Gloss Lamination',
+                'Starlight Film',
+                'Soft-Touch Lamination',
+                'Laser Film',
+            ],
+            data_get($config, 'options.paper_finish.values.*.label'),
+        );
+        $this->assertSame(
+            ['no_3d_uv', '3d_uv'],
+            data_get($config, 'options.uv_finish.values.*.code'),
+        );
+        $this->assertSame('no_3d_uv', data_get($config, 'options.uv_finish.default'));
+        $this->assertSame('select', data_get($config, 'options.uv_finish.type'));
+        $uvGalleryRule = collect(data_get($config, 'media.gallery_rules', []))
+            ->firstWhere('id', '3d-uv');
+        $this->assertSame(['uv_finish' => '3d_uv'], $uvGalleryRule['match'] ?? null);
+        $storefront = app(ProductConfigurationService::class)->storefrontOptions($product);
+        $this->assertSame(
+            ['sizes', 'corners', 'paper_finish', 'uv_finish', 'special_finish', 'print_code', 'drill'],
+            collect($storefront['option_groups'] ?? [])->pluck('key')->all(),
+        );
         $this->assertArrayNotHasKey('rectangle', data_get($config, 'pricing.scenarios'));
     }
 
@@ -556,6 +589,22 @@ class BusinessCardProductOptionsTest extends TestCase
                 'slug' => $slug,
                 'product_category_id' => $cotton->id,
                 'product_config' => [
+                    'media' => [
+                        'gallery_rules' => [
+                            [
+                                'id' => 'default',
+                                'match' => [],
+                                'images' => ['/images/old-default.png'],
+                                'primary' => '/images/old-default.png',
+                            ],
+                            [
+                                'id' => 'rounded_corners',
+                                'match' => ['corners' => 'rounded'],
+                                'images' => ['/images/old-rounded.png'],
+                                'primary' => '/images/old-rounded.png',
+                            ],
+                        ],
+                    ],
                     'faq' => [['question' => 'Keep this FAQ', 'answer' => 'Yes']],
                     'detail_sections' => [
                         'design_specifications' => ['heading' => 'Keep this design spec'],
@@ -577,15 +626,110 @@ class BusinessCardProductOptionsTest extends TestCase
                 "/images/products/cotton/{$shortSlug}/{$shortSlug}-04.png",
             ];
 
-            $this->assertSame(['corners', 'with_nfc'], array_keys($options));
-            $this->assertSame(['square', 'rounded'], data_get($options, 'corners.values.*.code'));
-            $this->assertSame(['no_nfc', 'with_nfc'], data_get($options, 'with_nfc.values.*.code'));
             $this->assertSame(
-                '/images/product-options/business-cards/swatches/no-nfc-card.png',
-                data_get($options, 'with_nfc.values.0.swatch_image'),
+                ['sizes', 'corners', 'texture', 'special_finish'],
+                array_keys($options),
             );
+            $this->assertSame(
+                ['standard', 'compact', 'custom'],
+                data_get($options, 'sizes.values.*.code'),
+            );
+            $this->assertSame('3.54', data_get($options, 'sizes.values.0.width'));
+            $this->assertSame('2.13', data_get($options, 'sizes.values.0.height'));
+            $this->assertSame('3.5', data_get($options, 'sizes.values.1.width'));
+            $this->assertSame('2.0', data_get($options, 'sizes.values.1.height'));
+            $this->assertSame(
+                [
+                    '/images/product-options/business-cards/swatches/standard-size.webp',
+                    '/images/product-options/business-cards/swatches/standard-size.webp',
+                ],
+                data_get($options, 'sizes.values.*.swatch_image')
+                    ? array_slice(data_get($options, 'sizes.values.*.swatch_image'), 0, 2)
+                    : [],
+            );
+            $this->assertSame('0.70', data_get($options, 'sizes.values.2.min_width'));
+            $this->assertSame('3.54', data_get($options, 'sizes.values.2.max_width'));
+            $this->assertSame('0.70', data_get($options, 'sizes.values.2.min_height'));
+            $this->assertSame('2.13', data_get($options, 'sizes.values.2.max_height'));
+            $this->assertSame(['square', 'rounded'], data_get($options, 'corners.values.*.code'));
+            $this->assertSame(
+                [
+                    'wild_450gsm',
+                    'classic_crest_natural_white',
+                    'materica_cotton_white_530gsm',
+                    'classic_crest_white',
+                    'vent_nouveau_cream',
+                    'vent_nouveau_light_gray',
+                    'italian_deep_black_680gsm',
+                    'vent_nouveau_white',
+                    'vent_nouveau_warm_gray',
+                    'materica_paper_360gsm_black',
+                    'vent_nouveau_cream_v2',
+                    'classic_crest_natural_white_dark_texture',
+                    'italian_materica_specialty_paper',
+                    'vent_nouveau_brown',
+                    'fedrigoni_sirio_white_480gsm',
+                ],
+                data_get($options, 'texture.values.*.code'),
+            );
+            $this->assertSame(
+                [
+                    '/images/products/cotton/textures/01-wild-450gsm.png',
+                    '/images/products/cotton/textures/02-classic-crest-natural-white.png',
+                    '/images/products/cotton/textures/03-materica-cotton-white-530gsm.png',
+                    '/images/products/cotton/textures/04-classic-crest-white.png',
+                    '/images/products/cotton/textures/05-vent-nouveau-cream.png',
+                    '/images/products/cotton/textures/06-vent-nouveau-light-gray.png',
+                    '/images/products/cotton/textures/07-italian-deep-black-680gsm.png',
+                    '/images/products/cotton/textures/08-vent-nouveau-white.png',
+                    '/images/products/cotton/textures/09-vent-nouveau-warm-gray.png',
+                    '/images/products/cotton/textures/10-materica-paper-360gsm-black.png',
+                    '/images/products/cotton/textures/11-vent-nouveau-cream-v2.png',
+                    '/images/products/cotton/textures/12-classic-crest-natural-white-dark-texture.png',
+                    '/images/products/cotton/textures/13-italian-materica-specialty-paper.png',
+                    '/images/products/cotton/textures/14-vent-nouveau-brown.png',
+                    '/images/products/cotton/textures/15-fedrigoni-sirio-white-480gsm.png',
+                ],
+                data_get($options, 'texture.values.*.swatch_image'),
+            );
+            foreach (data_get($options, 'texture.values.*.swatch_image', []) as $image) {
+                $this->assertFileExists(
+                    public_path(str_replace('.png', '.webp', ltrim($image, '/'))),
+                );
+            }
+            $this->assertSame(
+                [
+                    'edge_coloring',
+                    'double_mounting',
+                    'custom_die_cut',
+                    'laser',
+                ],
+                data_get($options, 'special_finish.values.*.code'),
+            );
+            $this->assertSame('multi_select', data_get($options, 'special_finish.type'));
+            $this->assertSame([], data_get($options, 'special_finish.default'));
             $this->assertSame($gallery, data_get($product->product_config, 'media.gallery'));
             $this->assertSame($gallery[0], $product->featured_image);
+            $this->assertCount(17, data_get($product->product_config, 'media.gallery_rules'));
+            $this->assertSame(
+                ['corners' => 'rounded'],
+                data_get($product->product_config, 'media.gallery_rules.16.match'),
+            );
+            $this->assertSame(
+                ['texture' => 'vent_nouveau_cream_v2'],
+                data_get($product->product_config, 'media.gallery_rules.11.match'),
+            );
+            $this->assertSame(
+                '/images/products/cotton/textures/11-vent-nouveau-cream-v2.png',
+                data_get($product->product_config, 'media.gallery_rules.11.primary'),
+            );
+            $textureRules = collect(data_get($product->product_config, 'media.gallery_rules', []))
+                ->filter(fn (mixed $rule): bool => is_array($rule) && array_key_exists('texture', $rule['match'] ?? []));
+            $this->assertCount(15, $textureRules);
+            $this->assertSame(
+                data_get($options, 'texture.values.*.swatch_image'),
+                $textureRules->pluck('primary')->values()->all(),
+            );
             $this->assertSame('Keep this FAQ', data_get($product->product_config, 'faq.0.question'));
             $this->assertSame(
                 'Keep this design spec',
@@ -622,20 +766,30 @@ class BusinessCardProductOptionsTest extends TestCase
 
         $this->assertTrue((bool) data_get($options, 'dynamic_options'));
         $this->assertSame(
-            ['corners', 'with_nfc'],
+            ['sizes', 'corners', 'texture', 'special_finish'],
             array_column(data_get($options, 'option_groups', []), 'key'),
         );
         $this->assertSame(
-            ['square', 'rounded'],
+            ['standard', 'compact', 'custom'],
             array_column(data_get($options, 'option_groups.0.values', []), 'code'),
         );
         $this->assertSame(
-            ['no_nfc', 'with_nfc'],
-            array_column(data_get($options, 'option_groups.1.values', []), 'code'),
+            [
+                '/images/product-options/business-cards/swatches/standard-size.webp',
+                '/images/product-options/business-cards/swatches/standard-size.webp',
+            ],
+            array_slice(data_get($options, 'option_groups.0.values.*.swatch_image'), 0, 2),
         );
+        $this->assertSame('0.70', data_get($options, 'option_groups.0.values.2.min_width'));
+        $this->assertSame('3.54', data_get($options, 'option_groups.0.values.2.max_width'));
         $this->assertSame(
-            '/images/product-options/business-cards/swatches/no-nfc-card.png',
-            data_get($options, 'option_groups.1.values.0.swatch_image'),
+            ['edge_coloring', 'double_mounting', 'custom_die_cut', 'laser'],
+            array_column(data_get($options, 'option_groups.3.values', []), 'code'),
+        );
+        $this->assertSame([], data_get($options, 'option_groups.3.default'));
+        $this->assertSame(
+            '/images/products/cotton/textures/01-wild-450gsm.webp',
+            data_get($options, 'option_groups.2.values.0.swatch_image'),
         );
     }
 

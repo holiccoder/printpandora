@@ -331,7 +331,7 @@
   ],
   "special_finish": [
     {
-      "name": "No special finish",
+      "name": "No finish",
       "code": "no_special_finish",
       "description": "No special finish, thanks.",
       "swatch_image": "/images/product-options/no-foil.png",

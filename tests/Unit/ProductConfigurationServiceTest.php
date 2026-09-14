@@ -74,7 +74,7 @@ class ProductConfigurationServiceTest extends TestCase
         $this->assertSame([], data_get($state, 'pricing.scenarios'));
         $this->assertSame([], data_get($state, 'pricing.quantity_price_table'));
         $this->assertSame([], data_get($state, 'pricing.rules'));
-        $this->assertCount(7, $state['options']);
+        $this->assertCount(4, $state['options']);
         $this->assertCount(24, $state['media']['gallery_rules']);
         $this->assertSame([], $state['faq']);
         $this->assertArrayNotHasKey('detail_sections', $state);

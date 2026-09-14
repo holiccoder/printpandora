@@ -124,14 +124,14 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
             ],
             'special_finish' => [
                 'label' => 'Special Finish',
-                'type' => 'select',
+                'type' => 'multi_select',
                 'required' => true,
                 'default' => 'no_special_finish',
                 'values' => array_merge(
                     [
                         [
                             'code' => 'no_special_finish',
-                            'label' => 'No special finish',
+                            'label' => 'No finish',
                             'description' => 'No special finish, thanks.',
                             'swatch_image' => '/images/product-options/no-foil.png',
                         ],
@@ -209,12 +209,6 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                     ),
                 ),
             ],
-            'special_finish_on_sides' => $this->copyGroup(
-                $existing,
-                'special_finish_on_sides',
-                'Special Finish on Sides',
-                ['one_side', 'both_sides'],
-            ),
         ];
 
         $normalizedProduct = clone $product;

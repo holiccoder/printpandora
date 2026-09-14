@@ -262,6 +262,27 @@
                         "cta_href": "/business-cards/classic-cotton"
                     }
                 ]
+            },
+            "stickers_labels_mega_menu": {
+                "link_groups": [
+                    {
+                        "links": [
+                            {
+                                "label": "Classic Stickers",
+                                "href": "/stickers/classic"
+                            },
+                            {
+                                "label": "Premium Stickers",
+                                "href": "/stickers/premium"
+                            },
+                            {
+                                "label": "Super Stickers",
+                                "href": "/stickers/super"
+                            }
+                        ]
+                    }
+                ],
+                "promo_cards": []
             }
         },
         "footer": {
@@ -1671,88 +1692,80 @@
         "sections": {
             "shop_by_paper": {
                 "heading": "Shop Business Cards by Paper",
-                "subtitle": "Pick the stock that matches your brand — from everyday classics to triple-layered luxury.",
+                "subtitle": "Choose the stock that matches your brand, from classic paper to distinctive metal.",
                 "cta_template": "Shop {name}",
                 "items": [
                     {
-                        "name": "Original Business Cards",
-                        "blurb": "The 98% customer favourite, available in white or premium cardstock.",
+                        "name": "Luxe Business Cards",
+                        "blurb": "Luxurious cotton-rag paper with a thick, tactile feel.",
                         "image_url": "/images/business-cards/paper/shop-by-paper-floral.webp"
                     },
                     {
-                        "name": "Super Business Cards",
-                        "blurb": "320 gsm thick paper available in four colour options.",
+                        "name": "Classic Business Cards",
+                        "blurb": "Versatile, professional stock for an everyday classic.",
                         "image_url": "/images/business-cards/paper/shop-by-paper-gradient.webp"
                     },
                     {
-                        "name": "Luxe Business Cards",
-                        "blurb": "100% cotton rag paper with a thick, tactile feel.",
+                        "name": "Super Business Cards",
+                        "blurb": "Extra-thick paper with a substantial, premium feel.",
                         "image_url": "/images/business-cards/paper/shop-by-paper-yellow-taxi.webp"
                     },
                     {
-                        "name": "Cotton Business Cards",
-                        "blurb": "100% recycled cotton with a fibrous, hand-finished texture.",
+                        "name": "Metal Business Cards",
+                        "blurb": "A sleek, durable metal finish for a distinctive card.",
                         "image_url": "/images/business-cards/paper/shop-by-paper-brushed-metal.webp"
                     }
                 ]
             },
             "shop_by_size": {
                 "heading": "Shop Business Cards by Size",
-                "subtitle": "Classic, square, or somewhere in between — find the format that fits your style.",
+                "subtitle": "Choose a standard, square, or custom format for your brand.",
                 "cta_template": "Shop {name}",
                 "items": [
                     {
                         "name": "Standard",
-                        "blurb": "The classic US / EU size — fits every wallet.",
+                        "blurb": "The classic US / EU format for a card that fits every wallet.",
                         "image_url": "/images/business-cards/size/standard.webp"
                     },
                     {
                         "name": "Square",
-                        "blurb": "Stand out with a 2.56 × 2.56 inches square, finished in gold logo detail.",
+                        "blurb": "A bold square format that stands out from the stack.",
                         "image_url": "/images/business-cards/size/square.webp"
                     },
                     {
-                        "name": "Square — Premium",
-                        "blurb": "Same square cut, deep black stock, foil-stamped logo.",
+                        "name": "Custom",
+                        "blurb": "Choose a custom format to make your card uniquely yours.",
                         "image_url": "/images/business-cards/size/square-premium.webp"
                     }
                 ]
             },
             "shop_by_finish": {
                 "heading": "Shop by Special Finish",
-                "subtitle": "Foiled edges, neon edges, metallic stamps and tactile papers — make every handoff a moment.",
+                "subtitle": "Add tactile depth, layered construction, gold edges, laser cutouts, or foil to make every handoff memorable.",
                 "items": [
                     {
-                        "name": "Rose Gold Foil Edges",
-                        "image_url": "/images/business-cards/finish/rose-gold-edge.webp",
-                        "cta": "Shop finish"
+                        "name": "Embossing & Debossing",
+                        "image_url": "/images/business-cards/finish/rose-gold-edge.webp"
                     },
                     {
-                        "name": "Neon Edges",
-                        "image_url": "/images/business-cards/finish/neon-edge.webp",
-                        "cta": "Shop finish"
+                        "name": "Double Mounting",
+                        "image_url": "/images/business-cards/finish/neon-edge.webp"
                     },
                     {
-                        "name": "Silver Metal Edge",
-                        "image_url": "/images/business-cards/finish/silver-edge.webp",
-                        "cta": "Shop finish"
+                        "name": "Gold Edge Coloring",
+                        "image_url": "/images/business-cards/finish/silver-edge.webp"
                     },
                     {
-                        "name": "Gold Foil Edge",
-                        "image_url": "/images/business-cards/finish/gold-foil.webp",
-                        "cta": "Shop finish"
+                        "name": "Laser Cutouts",
+                        "image_url": "/images/business-cards/finish/gold-foil.webp"
                     },
                     {
-                        "name": "Matt Textured Thick Paper",
-                        "image_url": "/images/business-cards/finish/linen-embossed.webp",
-                        "cta": "Shop finish"
+                        "name": "Gold Foil",
+                        "image_url": "/images/business-cards/finish/linen-embossed.webp"
                     },
                     {
-                        "name": "Business Card Design Templates",
-                        "blurb": "Jump-start your card with our free in-browser design tool.",
-                        "image_url": "/images/business-cards/finish/design-templates.webp",
-                        "cta": "Start designing",
-                        "emphasised": true
+                        "name": "Debossing",
+                        "image_url": "/images/business-cards/finish/design-templates.webp"
                     }
                 ],
                 "shipping_info": {

@@ -359,6 +359,7 @@ HTML,
         $this->call(ClassicStandardBusinessCardOptionsSeeder::class);
         $this->call(ClassicSpecialBusinessCardOptionsSeeder::class);
         $this->call(BusinessCardProductOptionsSeeder::class);
+        $this->call(StickerProductOptionsSeeder::class);
         $this->call(HelpCenterSeeder::class);
     }
 }

@@ -19,8 +19,18 @@ const BUSINESS_CARD_PRODUCT_PATHS: Record<string, string> = {
     'design-service': '/business-card-design-service',
 };
 
+const STICKER_PRODUCT_PATHS: Record<string, string> = {
+    'classic-stickers': '/stickers/classic',
+    'premium-stickers': '/stickers/premium',
+    'super-stickers': '/stickers/super',
+};
+
 export function productHref(slug: string): string {
     const normalizedSlug = slug.replace(/^\/+/, '');
 
-    return BUSINESS_CARD_PRODUCT_PATHS[normalizedSlug] ?? `/${normalizedSlug}`;
+    return (
+        BUSINESS_CARD_PRODUCT_PATHS[normalizedSlug] ??
+        STICKER_PRODUCT_PATHS[normalizedSlug] ??
+        `/${normalizedSlug}`
+    );
 }

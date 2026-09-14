@@ -8,6 +8,7 @@ use App\Services\ProductConfigurationService;
 use App\Services\ProductImageService;
 use App\Services\ShippingService;
 use App\Support\BusinessCardRoutes;
+use App\Support\StickerProductCatalog;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -19,7 +20,9 @@ class ProductController extends Controller
         ProductImageService $imageService,
         ShippingService $shippingService,
     ): InertiaResponse|SymfonyResponse {
-        $productSlug = BusinessCardRoutes::productSlugForSegment($slug) ?? $slug;
+        $productSlug = request()->routeIs('shop.sticker.show')
+            ? (StickerProductCatalog::productSlugForSegment($slug) ?? $slug)
+            : (BusinessCardRoutes::productSlugForSegment($slug) ?? $slug);
         $product = Product::with('category')
             ->where('is_active', true)
             ->where('slug', $productSlug)
@@ -36,7 +39,8 @@ class ProductController extends Controller
         }
 
         if (request()->routeIs('shop.show')) {
-            $canonicalPath = BusinessCardRoutes::pathForProductSlug($productSlug);
+            $canonicalPath = BusinessCardRoutes::pathForProductSlug($productSlug)
+                ?? StickerProductCatalog::pathForProductSlug($productSlug);
 
             if ($canonicalPath !== null) {
                 return redirect()->to($canonicalPath, 301);

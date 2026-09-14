@@ -157,7 +157,7 @@
     ],
     "paper_finish": [
         {
-            "name": "Matte",
+            "name": "Matte Lamination",
             "code": "matte",
             "description": "With a smooth feel. Shine-free so no glare.",
             "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
@@ -221,7 +221,7 @@
             ]
         },
         {
-            "name": "Gloss",
+            "name": "Gloss Lamination",
             "code": "gloss",
             "description": "Eye-catchingly shiny. Makes color photos pop.",
             "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
@@ -285,16 +285,10 @@
             ]
         },
         {
-            "name": "3D UV",
-            "code": "uv",
-            "description": "Raised gloss highlights with a dimensional feel.",
-            "swatch_image": "/images/product-options/uv-swatch.png"
-        },
-        {
-            "name": "Starry Film",
+            "name": "Starlight Film",
             "code": "starry_film",
-            "description": "Enchanting glittering star effects",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
+            "description": "Enchanting glittering star effects.",
+            "swatch_image": "/images/product-options/business-cards/swatches/quality/starlight-film.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -355,10 +349,10 @@
             ]
         },
         {
-            "name": "Soft-touch Film",
+            "name": "Soft-Touch Lamination",
             "code": "soft_touch_film",
             "description": "Velvety, soft tactile premium laminate",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
+            "swatch_image": "/images/product-options/business-cards/swatches/quality/soft-touch-film.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -419,10 +413,10 @@
             ]
         },
         {
-            "name": "Holo Film",
+            "name": "Laser Film",
             "code": "holo_film",
-            "description": "Shimmering rainbow diffraction finish",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
+            "description": "Shimmering holographic laser diffraction finish.",
+            "swatch_image": "/images/product-options/business-cards/swatches/quality/holographic-film.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -481,6 +475,19 @@
                     "price_per_card": 0
                 }
             ]
+        }
+    ],
+    "uv_finish": [
+        {
+            "name": "No 3D UV",
+            "code": "no_3d_uv",
+            "description": "No 3D UV finish."
+        },
+        {
+            "name": "3D UV",
+            "code": "3d_uv",
+            "description": "Raised gloss highlights with a dimensional feel.",
+            "swatch_image": "/images/product-options/uv-swatch.png"
         }
     ],
     "corners": [
@@ -615,7 +622,7 @@
     ],
     "special_finish": [
         {
-            "name": "no special finish",
+            "name": "No finish",
             "code": "no_special_finish",
             "description": "no special finish, thanks",
             "swatch_image": "/images/product-options/no-foil.png",
@@ -1909,7 +1916,7 @@
         {
             "id": "3d-uv",
             "match": {
-                "paper_finish": "uv"
+                "uv_finish": "3d_uv"
             },
             "images": [
                 "/images/products/classic-solid/user-3d-uv.png"
@@ -2243,521 +2250,5 @@
                 }
             ]
         }
-    },
-    "special_finish_on_sides": [
-        {
-            "name": "One side",
-            "code": "one_side",
-            "description": "Special finish applied to one side only",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-one-side.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Both sides",
-            "code": "both_sides",
-            "description": "Special finish applied to both sides",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-both-sides.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "texture": [
-        {
-            "name": "Dutch White Cardstock",
-            "code": "dutch_white_cardstock",
-            "description": "Classic texture white cardstock",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Ice White Pearlescent Paper",
-            "code": "ice_white_pearlescent_paper",
-            "description": "Luminous metallic white pearlescent sheen",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Elegance Uncoated Paper",
-            "code": "elegance_uncoated_paper",
-            "description": "Premium smooth uncoated elegance",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Eggshell Texture",
-            "code": "eggshell_texture",
-            "description": "Classy fine-grained eggshell tactile feel",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Linen Texture",
-            "code": "linen_texture",
-            "description": "Exquisite woven crosshatch linen lines",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
-            "name": "Bamboo Grain Texture",
-            "code": "bamboo_grain_texture",
-            "description": "Distinct organic bamboo parallel grain texture",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ]
+    }
 }

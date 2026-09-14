@@ -114,47 +114,9 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
                     ),
                 ],
             ],
-            'paper_finish' => [
-                'label' => 'Paper Finish',
-                'type' => 'select',
-                'required' => true,
-                'default' => 'matte',
-                'values' => [
-                    array_replace(
-                        $this->existingValue($existing, 'paper_finish', 'matte', [
-                            'label' => 'Matte',
-                        ]),
-                        [
-                            'label' => 'Matte',
-                            'description' => 'With a smooth feel. Shine-free so no glare.',
-                            'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
-                        ],
-                    ),
-                    array_replace(
-                        $this->existingValue($existing, 'paper_finish', 'gloss', [
-                            'label' => 'Gloss',
-                        ]),
-                        [
-                            'label' => 'Gloss',
-                            'description' => 'Eye-catchingly shiny. Makes color photos pop.',
-                            'swatch_image' => '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
-                        ],
-                    ),
-                    array_replace(
-                        $this->existingValue($existing, 'paper_finish', 'uv', [
-                            'label' => '3D UV',
-                        ]),
-                        [
-                            'label' => '3D UV',
-                            'description' => 'Raised gloss highlights with a dimensional feel.',
-                            'swatch_image' => '/images/product-options/uv-swatch.png',
-                        ],
-                    ),
-                ],
-            ],
             'special_finish' => [
                 'label' => 'Special Finish',
-                'type' => 'select',
+                'type' => 'multi_select',
                 'required' => true,
                 'default' => 'no_special_finish',
                 'values' => array_merge(
@@ -162,7 +124,7 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
                         array_replace(
                             $this->existingValue($existing, 'special_finish', 'no_special_finish', []),
                             [
-                                'label' => 'No special finish',
+                                'label' => 'No finish',
                                 'description' => 'No special finish, thanks.',
                                 'swatch_image' => '/images/product-options/no-foil.png',
                             ],
@@ -183,39 +145,11 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
                     ),
                 ),
             ],
-            'special_finish_on_sides' => [
-                'label' => 'Special Finish on Sides',
-                'type' => 'select',
-                'required' => true,
-                'default' => 'one_side',
-                'values' => [
-                    array_replace(
-                        $this->existingValue($existing, 'special_finish_on_sides', 'one_side', [
-                            'label' => 'One side',
-                        ]),
-                        [
-                            'label' => 'One side',
-                            'description' => 'Special finish applied to one side only.',
-                            'swatch_image' => '/images/product-options/business-cards/special-finishes/special-finish-one-side.png',
-                        ],
-                    ),
-                    array_replace(
-                        $this->existingValue($existing, 'special_finish_on_sides', 'both_sides', [
-                            'label' => 'Both sides',
-                        ]),
-                        [
-                            'label' => 'Both sides',
-                            'description' => 'Special finish applied to both sides.',
-                            'swatch_image' => '/images/product-options/business-cards/special-finishes/special-finish-both-sides.png',
-                        ],
-                    ),
-                ],
-            ],
             'texture' => [
                 'label' => 'Texture',
                 'type' => 'select',
                 'required' => true,
-                'default' => 'pin_hole_paper',
+                'default' => 'matte',
                 'values' => array_map(
                     fn (array $texture): array => array_replace(
                         $this->existingValue($existing, 'texture', $texture['code'], []),
@@ -344,9 +278,9 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
     {
         return [
             [
-                'code' => 'pin_hole_paper',
-                'label' => 'Pin-hole Paper',
-                'swatch_image' => '/images/products/classic-special-business-cards/texture/pin-hole-paper.png',
+                'code' => 'matte',
+                'label' => 'Matte',
+                'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
             ],
             [
                 'code' => 'water_ripple_paper',

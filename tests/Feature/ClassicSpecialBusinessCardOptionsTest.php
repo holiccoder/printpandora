@@ -55,10 +55,7 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
         ];
         $this->assertSame($defaultGallery, data_get($product->product_config, 'media.gallery'));
         $this->assertSame($defaultGallery, data_get($product->product_config, 'media.gallery_rules.0.images'));
-        $this->assertSame(
-            ['matte', 'gloss', 'uv'],
-            data_get($product->product_config, 'options.paper_finish.values.*.code'),
-        );
+        $this->assertArrayNotHasKey('paper_finish', $product->product_config['options']);
         $this->assertSame(
             ['square', 'rounded'],
             data_get($product->product_config, 'options.corners.values.*.code'),
@@ -81,12 +78,16 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
             data_get($product->product_config, 'options.special_finish.values.*.code'),
         );
         $this->assertSame(
-            ['one_side', 'both_sides'],
-            data_get($product->product_config, 'options.special_finish_on_sides.values.*.code'),
+            'multi_select',
+            data_get($product->product_config, 'options.special_finish.type'),
+        );
+        $this->assertSame(
+            'matte',
+            data_get($product->product_config, 'options.texture.default'),
         );
         $this->assertSame(
             [
-                'pin_hole_paper',
+                'matte',
                 'water_ripple_paper',
                 'linen_paper',
                 'eggshell_paper',
@@ -97,7 +98,7 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
         );
         $this->assertSame(
             [
-                '/images/products/classic-special-business-cards/texture/pin-hole-paper.png',
+                '/images/product-options/business-cards/laminates/matte-526x251.jpg',
                 '/images/products/classic-special-business-cards/texture/water-ripple-paper.png',
                 '/images/products/classic-special-business-cards/texture/linen-paper.png',
                 '/images/products/classic-special-business-cards/texture/eggshell-paper.png',
@@ -106,8 +107,13 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
             ],
             data_get($product->product_config, 'options.texture.values.*.swatch_image'),
         );
+        $this->assertNotContains(
+            'pin_hole_paper',
+            data_get($product->product_config, 'options.texture.values.*.code'),
+        );
         $this->assertArrayNotHasKey('print_code', $product->product_config['options']);
         $this->assertArrayNotHasKey('drill', $product->product_config['options']);
+        $this->assertArrayNotHasKey('special_finish_on_sides', $product->product_config['options']);
     }
 
     public function test_legacy_and_canonical_configs_expose_the_same_option_contract(): void
@@ -136,7 +142,7 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
         $options = app(ProductConfigurationService::class)->storefrontOptions($product);
 
         $this->assertSame(
-            ['sizes', 'corners', 'texture', 'paper_finish', 'special_finish', 'special_finish_on_sides'],
+            ['sizes', 'corners', 'texture', 'special_finish'],
             array_column(data_get($options, 'option_groups', []), 'key'),
         );
         $this->assertSame(
@@ -156,15 +162,14 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
             data_get($options, 'option_groups.0.values.2.description'),
         );
         $this->assertSame(
-            ['matte', 'gloss', 'uv'],
-            array_column(data_get($options, 'option_groups.3.values', []), 'code'),
-        );
-        $this->assertSame(
-            ['pin_hole_paper', 'water_ripple_paper', 'linen_paper', 'eggshell_paper', 'white_cardstock', 'pearlized_paper'],
+            ['matte', 'water_ripple_paper', 'linen_paper', 'eggshell_paper', 'white_cardstock', 'pearlized_paper'],
             array_column(data_get($options, 'option_groups.2.values', []), 'code'),
         );
+        $this->assertSame('matte', data_get($options, 'option_groups.2.default'));
+        $this->assertArrayNotHasKey('paper_finish', $options);
         $this->assertArrayNotHasKey('print_code', $options);
         $this->assertArrayNotHasKey('drill', $options);
+        $this->assertArrayNotHasKey('special_finish_on_sides', $options);
     }
 
     public function test_legacy_product_options_are_normalized_for_the_storefront(): void
@@ -193,9 +198,16 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
                 data_get($options, 'sizes', []),
             ),
         );
-        $this->assertSame('3D UV', data_get($options, 'paper_finish.2.name'));
+        $this->assertArrayNotHasKey('paper_finish', $options);
         $this->assertSame(
-            ['pin_hole_paper', 'water_ripple_paper', 'linen_paper', 'eggshell_paper', 'white_cardstock', 'pearlized_paper'],
+            ['matte', 'water_ripple_paper', 'linen_paper', 'eggshell_paper', 'white_cardstock', 'pearlized_paper'],
+            array_map(
+                fn (array $value): string => $value['code'],
+                data_get($options, 'texture', []),
+            ),
+        );
+        $this->assertNotContains(
+            'pin_hole_paper',
             array_map(
                 fn (array $value): string => $value['code'],
                 data_get($options, 'texture', []),
@@ -203,5 +215,6 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
         );
         $this->assertArrayNotHasKey('print_code', $options);
         $this->assertArrayNotHasKey('drill', $options);
+        $this->assertArrayNotHasKey('special_finish_on_sides', $options);
     }
 }

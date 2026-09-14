@@ -10,6 +10,8 @@ final class BusinessCardOptionCatalog
 
     public const CUSTOM_SIZE_DESCRIPTION = 'max range: 2.1 - 3.5 inches';
 
+    public const COTTON_CUSTOM_SIZE_DESCRIPTION = 'Width 0.70-3.54 in; height 0.70-2.13 in.';
+
     public const CLASSIC_STANDARD_STANDARD_SIZE_DESCRIPTION = '2.0 x 3.5 inches';
 
     public const CLASSIC_STANDARD_SQUARE_SIZE_DESCRIPTION = '2.5 x 2.5 inches';
@@ -48,6 +50,44 @@ final class BusinessCardOptionCatalog
         'starlight_film' => '/images/product-options/business-cards/swatches/quality/starlight-film.png',
         'holographic_star_film' => '/images/product-options/business-cards/swatches/quality/holographic-star-film.png',
         'soft_touch_film' => '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+        'matte' => '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
+        'gloss' => '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
+    ];
+
+    /**
+     * Cotton texture artwork is shared by all five cotton-card products.
+     * Keep the source PNG path in the contract; the storefront image resolver
+     * serves the matching WebP derivative when it is available.
+     *
+     * @var array<int, array{code: string, label: string, image: string}>
+     */
+    private const COTTON_TEXTURES = [
+        ['code' => 'wild_450gsm', 'label' => 'Wild 450gsm', 'image' => '/images/products/cotton/textures/01-wild-450gsm.png'],
+        ['code' => 'classic_crest_natural_white', 'label' => 'Classic Crest Natural White', 'image' => '/images/products/cotton/textures/02-classic-crest-natural-white.png'],
+        ['code' => 'materica_cotton_white_530gsm', 'label' => 'Materica Cotton White 530gsm', 'image' => '/images/products/cotton/textures/03-materica-cotton-white-530gsm.png'],
+        ['code' => 'classic_crest_white', 'label' => 'Classic Crest White', 'image' => '/images/products/cotton/textures/04-classic-crest-white.png'],
+        ['code' => 'vent_nouveau_cream', 'label' => 'Vent Nouveau Cream', 'image' => '/images/products/cotton/textures/05-vent-nouveau-cream.png'],
+        ['code' => 'vent_nouveau_light_gray', 'label' => 'Vent Nouveau Light Gray', 'image' => '/images/products/cotton/textures/06-vent-nouveau-light-gray.png'],
+        ['code' => 'italian_deep_black_680gsm', 'label' => 'Italian Deep Black 680gsm', 'image' => '/images/products/cotton/textures/07-italian-deep-black-680gsm.png'],
+        ['code' => 'vent_nouveau_white', 'label' => 'Vent Nouveau White', 'image' => '/images/products/cotton/textures/08-vent-nouveau-white.png'],
+        ['code' => 'vent_nouveau_warm_gray', 'label' => 'Vent Nouveau Warm Gray', 'image' => '/images/products/cotton/textures/09-vent-nouveau-warm-gray.png'],
+        ['code' => 'materica_paper_360gsm_black', 'label' => 'Materica Paper 360gsm Black', 'image' => '/images/products/cotton/textures/10-materica-paper-360gsm-black.png'],
+        ['code' => 'vent_nouveau_cream_v2', 'label' => 'Vent Nouveau Cream V2', 'image' => '/images/products/cotton/textures/11-vent-nouveau-cream-v2.png'],
+        ['code' => 'classic_crest_natural_white_dark_texture', 'label' => 'Classic Crest Natural White Dark Texture', 'image' => '/images/products/cotton/textures/12-classic-crest-natural-white-dark-texture.png'],
+        ['code' => 'italian_materica_specialty_paper', 'label' => 'Italian Materica Specialty Paper', 'image' => '/images/products/cotton/textures/13-italian-materica-specialty-paper.png'],
+        ['code' => 'vent_nouveau_brown', 'label' => 'Vent Nouveau Brown', 'image' => '/images/products/cotton/textures/14-vent-nouveau-brown.png'],
+        ['code' => 'fedrigoni_sirio_white_480gsm', 'label' => 'Fedrigoni Sirio White 480gsm', 'image' => '/images/products/cotton/textures/15-fedrigoni-sirio-white-480gsm.png'],
+    ];
+
+    /**
+     * @var array<int, string>
+     */
+    private const COTTON_SLUGS = [
+        'basic-cotton-business-card',
+        'classic-cotton-business-card',
+        'premium-cotton-business-card',
+        'luxe-cotton-business-card',
+        'grand-cotton-business-card',
     ];
 
     /**
@@ -71,11 +111,107 @@ final class BusinessCardOptionCatalog
     ];
 
     /**
+     * All purchasable business-card product slugs. The design-service page is
+     * deliberately not part of this list.
+     *
+     * @var list<string>
+     */
+    private const BUSINESS_CARD_PRODUCT_SLUGS = [
+        'basic-cotton-business-card',
+        'classic-cotton-business-card',
+        'premium-cotton-business-card',
+        'luxe-cotton-business-card',
+        'grand-cotton-business-card',
+        'super-business-cards',
+        'luxe-business-cards',
+        'basic-pvc-card',
+        'standard-pvc-card',
+        'premium-pvc-card',
+        'classic-metal-business-cards',
+        'premium-metal-business-cards',
+        'luxe-metal-business-cards',
+        'classic-standard-business-cards',
+        'classic-special-business-cards',
+        'classic-quality-business-cards',
+        'classic-solid-business-cards',
+    ];
+
+    /**
      * Return whether the product has a centrally managed option contract.
      */
     public static function supports(string $slug): bool
     {
         return in_array($slug, self::CONTRACT_SLUGS, true);
+    }
+
+    public static function isBusinessCardProduct(string $slug): bool
+    {
+        return in_array($slug, self::BUSINESS_CARD_PRODUCT_SLUGS, true);
+    }
+
+    public static function isCottonBusinessCard(string $slug): bool
+    {
+        return in_array($slug, self::COTTON_SLUGS, true);
+    }
+
+    /**
+     * Add the shared cotton texture galleries ahead of less-specific rules.
+     * A texture gallery must win over the existing rounded-corner gallery when
+     * both options are selected.
+     *
+     * Obsolete texture, finish, NFC, and finish-side rules are removed while
+     * unrelated product-specific rules remain intact.
+     *
+     * @param  array<int, mixed>  $rules
+     * @return array<int, array<string, mixed>>
+     */
+    public static function normalizeCottonGalleryRules(array $rules): array
+    {
+        $defaultRules = [];
+        $otherRules = [];
+
+        foreach ($rules as $rule) {
+            if (! is_array($rule)) {
+                continue;
+            }
+
+            $match = is_array($rule['match'] ?? null) ? $rule['match'] : [];
+
+            if (
+                array_key_exists('texture', $match)
+                || array_key_exists('special_finish', $match)
+                || array_key_exists('special_finish_on_sides', $match)
+                || array_key_exists('with_nfc', $match)
+            ) {
+                continue;
+            }
+
+            if ($match === [] || ($rule['id'] ?? null) === 'default') {
+                if ($defaultRules === []) {
+                    $defaultRules[] = $rule;
+                }
+
+                continue;
+            }
+
+            $otherRules[] = $rule;
+        }
+
+        $textureRules = array_map(
+            static fn (array $texture): array => [
+                'id' => "texture_{$texture['code']}",
+                'match' => ['texture' => $texture['code']],
+                'images' => [$texture['image']],
+                'primary' => $texture['image'],
+            ],
+            self::COTTON_TEXTURES,
+        );
+
+        return [
+            ...$defaultRules,
+            ...$textureRules,
+            ...$otherRules,
+        ];
     }
 
     /**
@@ -87,6 +223,12 @@ final class BusinessCardOptionCatalog
      */
     public static function normalizeSharedSizeSwatches(array $options, ?string $slug = null): array
     {
+        // Sticker sizes carry their own square-inch area and custom bounds;
+        // the shared size contract belongs only to business-card products.
+        if ($slug !== null && ! self::isBusinessCardProduct($slug)) {
+            return $options;
+        }
+
         if (! is_array($options['sizes'] ?? null)) {
             return $options;
         }
@@ -122,9 +264,13 @@ final class BusinessCardOptionCatalog
                     $value['description'] = self::CLASSIC_STANDARD_SQUARE_SIZE_DESCRIPTION;
                 }
             } elseif ($code === 'custom') {
-                $value['description'] = $slug === 'classic-standard-business-cards'
-                    ? self::CLASSIC_STANDARD_CUSTOM_SIZE_DESCRIPTION
-                    : self::CUSTOM_SIZE_DESCRIPTION;
+                if ($slug === 'classic-standard-business-cards') {
+                    $value['description'] = self::CLASSIC_STANDARD_CUSTOM_SIZE_DESCRIPTION;
+                } elseif (self::isCottonBusinessCard((string) $slug)) {
+                    $value['description'] = self::COTTON_CUSTOM_SIZE_DESCRIPTION;
+                } else {
+                    $value['description'] = self::CUSTOM_SIZE_DESCRIPTION;
+                }
             }
         }
         unset($value);
@@ -201,6 +347,65 @@ final class BusinessCardOptionCatalog
     }
 
     /**
+     * Remove retired NFC option groups and values from a business-card option
+     * map. This accepts both canonical groups (`values`) and legacy flat
+     * arrays so stale data cannot reappear at the storefront boundary.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    public static function withoutNfcOptions(array $options): array
+    {
+        unset($options['with_nfc']);
+
+        foreach (array_keys($options) as $groupKey) {
+            if (self::isNfcOptionToken($groupKey)) {
+                unset($options[$groupKey]);
+
+                continue;
+            }
+
+            $group = $options[$groupKey] ?? null;
+
+            if (! is_array($group)) {
+                continue;
+            }
+
+            $isCanonicalGroup = array_key_exists('values', $group);
+            $values = $isCanonicalGroup ? ($group['values'] ?? null) : $group;
+
+            if (! is_array($values)) {
+                continue;
+            }
+
+            $filteredValues = array_values(array_filter(
+                $values,
+                static fn (mixed $value): bool => ! self::isNfcOptionValue($value),
+            ));
+
+            if ($values !== [] && $filteredValues === []) {
+                unset($options[$groupKey]);
+
+                continue;
+            }
+
+            if ($isCanonicalGroup) {
+                $group['values'] = $filteredValues;
+
+                if (self::isNfcOptionValue($group['default'] ?? null)) {
+                    $group['default'] = self::optionValueCode($filteredValues[0] ?? null);
+                }
+
+                $options[$groupKey] = $group;
+            } else {
+                $options[$groupKey] = $filteredValues;
+            }
+        }
+
+        return $options;
+    }
+
+    /**
      * Normalize an existing option map to the requested product contract.
      *
      * @param  array<string, mixed>  $options
@@ -252,16 +457,11 @@ final class BusinessCardOptionCatalog
             'sizes' => self::group('Size', self::sizeValues($options), 'standard'),
             'corners' => self::group('Corners', self::cornerValues($options), 'square'),
             'texture' => self::group('Texture', self::textureValues($options), 'shattered_glass_film'),
-            'paper_finish' => self::group('Paper Finish', self::paperFinishValues($options), 'matte'),
             'special_finish' => self::group(
                 'Special Finish',
                 [...self::hotFoilValues($options), ...self::coldFoilValues($options)],
                 'no_special_finish',
-            ),
-            'special_finish_on_sides' => self::group(
-                'Special Finish on Sides',
-                self::specialFinishSideValues($options),
-                'one_side',
+                true,
             ),
         ];
     }
@@ -307,15 +507,11 @@ final class BusinessCardOptionCatalog
                 ),
                 'no_print_code_or_signature_stripe',
             ),
-            'special_finish_on_sides' => self::group(
-                'Special Finish on Sides',
-                self::specialFinishSideValues($options),
-                'one_side',
-            ),
             'special_finish' => self::group(
                 'Special Finish',
                 self::hotFoilValues($options),
                 'no_special_finish',
+                true,
             ),
         ];
     }
@@ -347,19 +543,15 @@ final class BusinessCardOptionCatalog
     private static function cotton(array $options): array
     {
         return [
+            'sizes' => self::group('Size', self::cottonSizeValues($options), 'standard'),
             'corners' => self::group('Corners', self::cornerValues($options), 'square'),
-            'with_nfc' => self::group('With NFC', [
-                self::value($options, 'with_nfc', 'no_nfc', [
-                    'label' => 'No NFC',
-                    'description' => 'A standard cotton business card without NFC.',
-                    'swatch_image' => '/images/product-options/business-cards/swatches/no-nfc-card.png',
-                ]),
-                self::value($options, 'with_nfc', 'with_nfc', [
-                    'label' => 'With NFC',
-                    'description' => 'Add an NFC chip for contactless digital sharing.',
-                    'swatch_image' => '/images/product-options/business-cards/swatches/nfc-card.png',
-                ]),
-            ], 'no_nfc'),
+            'texture' => self::group('Texture', self::cottonTextureValues($options), 'wild_450gsm'),
+            'special_finish' => self::group(
+                'Special Finish',
+                self::cottonSpecialFinishValues($options),
+                [],
+                true,
+            ),
         ];
     }
 
@@ -377,6 +569,7 @@ final class BusinessCardOptionCatalog
                 'Special Finish',
                 self::hotFoilValues($options),
                 'no_special_finish',
+                true,
             ),
         ];
     }
@@ -395,6 +588,7 @@ final class BusinessCardOptionCatalog
                 'Special Finish',
                 self::hotFoilValues($options),
                 'no_special_finish',
+                true,
             ),
         ];
     }
@@ -475,11 +669,6 @@ final class BusinessCardOptionCatalog
                     'description' => 'Metal plating for a refined finish.',
                     'swatch_image' => '/images/product-options/business-cards/swatches/metal/plating.png',
                 ]),
-                self::value($options, 'special_finish', 'nfc', [
-                    'label' => 'NFC',
-                    'description' => 'Add NFC functionality to the card.',
-                    'swatch_image' => '/images/product-options/business-cards/swatches/metal/nfc.png',
-                ]),
             ], 'laser_engraving');
         }
 
@@ -519,6 +708,37 @@ final class BusinessCardOptionCatalog
      * @param  array<string, mixed>  $options
      * @return array<int, array<string, mixed>>
      */
+    private static function cottonSizeValues(array $options): array
+    {
+        return [
+            self::value($options, 'sizes', 'standard', [
+                'label' => '3.54 × 2.13 in',
+                'width' => '3.54',
+                'height' => '2.13',
+                'swatch_image' => self::STANDARD_SIZE_SWATCH_IMAGE,
+            ]),
+            self::value($options, 'sizes', 'compact', [
+                'label' => '3.5 × 2.0 in',
+                'width' => '3.5',
+                'height' => '2.0',
+                'swatch_image' => self::STANDARD_SIZE_SWATCH_IMAGE,
+            ]),
+            self::value($options, 'sizes', 'custom', [
+                'label' => 'Custom',
+                'description' => self::COTTON_CUSTOM_SIZE_DESCRIPTION,
+                'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
+                'min_width' => '0.70',
+                'max_width' => '3.54',
+                'min_height' => '0.70',
+                'max_height' => '2.13',
+            ]),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<int, array<string, mixed>>
+     */
     private static function cornerValues(array $options): array
     {
         return [
@@ -531,31 +751,6 @@ final class BusinessCardOptionCatalog
                 'label' => 'Rounded',
                 'description' => 'Smooth and rounded.',
                 'swatch_image' => '/images/product-options/business-cards/swatches/rounded.webp',
-            ]),
-        ];
-    }
-
-    /**
-     * @param  array<string, mixed>  $options
-     * @return array<int, array<string, mixed>>
-     */
-    private static function paperFinishValues(array $options): array
-    {
-        return [
-            self::value($options, 'paper_finish', 'matte', [
-                'label' => 'Matte',
-                'description' => 'With a smooth feel. Shine-free so no glare.',
-                'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
-            ]),
-            self::value($options, 'paper_finish', 'gloss', [
-                'label' => 'Gloss',
-                'description' => 'Eye-catchingly shiny. Makes color photos pop.',
-                'swatch_image' => '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
-            ]),
-            self::value($options, 'paper_finish', 'uv', [
-                'label' => '3D UV',
-                'description' => 'Raised gloss highlights with a dimensional feel.',
-                'swatch_image' => '/images/product-options/uv-swatch.png',
             ]),
         ];
     }
@@ -649,31 +844,11 @@ final class BusinessCardOptionCatalog
      * @param  array<string, mixed>  $options
      * @return array<int, array<string, mixed>>
      */
-    private static function specialFinishSideValues(array $options): array
-    {
-        return [
-            self::value($options, 'special_finish_on_sides', 'one_side', [
-                'label' => 'One side',
-                'description' => 'Special finish applied to one side only.',
-                'swatch_image' => '/images/product-options/business-cards/special-finishes/special-finish-one-side.png',
-            ]),
-            self::value($options, 'special_finish_on_sides', 'both_sides', [
-                'label' => 'Both sides',
-                'description' => 'Special finish applied to both sides.',
-                'swatch_image' => '/images/product-options/business-cards/special-finishes/special-finish-both-sides.png',
-            ]),
-        ];
-    }
-
-    /**
-     * @param  array<string, mixed>  $options
-     * @return array<int, array<string, mixed>>
-     */
     private static function hotFoilValues(array $options): array
     {
         $swatches = '/images/product-options/business-cards/swatches/';
         $foils = [
-            ['code' => 'no_special_finish', 'label' => 'No special finish', 'swatch_image' => '/images/product-options/no-foil.png', 'description' => 'No special finish, thanks.'],
+            ['code' => 'no_special_finish', 'label' => 'No finish', 'swatch_image' => '/images/product-options/no-foil.png', 'description' => 'No special finish, thanks.'],
             ['code' => 'black_gold', 'label' => 'Black Gold', 'swatch_image' => $swatches.'black-gold.png'],
             ['code' => 'blue_gold', 'label' => 'Blue Gold', 'swatch_image' => $swatches.'blue-gold.png'],
             ['code' => 'bright_gold', 'label' => 'Bright Gold', 'swatch_image' => $swatches.'bright-gold.png'],
@@ -695,7 +870,7 @@ final class BusinessCardOptionCatalog
                 array_replace(
                     [
                         'label' => $foil['label'],
-                        'description' => $foil['label'] === 'No special finish'
+                        'description' => $foil['code'] === 'no_special_finish'
                             ? 'No special finish, thanks.'
                             : $foil['label'].' hot foil.',
                         'swatch_image' => $foil['swatch_image'],
@@ -737,20 +912,91 @@ final class BusinessCardOptionCatalog
     private static function textureValues(array $options): array
     {
         $textures = [
-            ['code' => 'shattered_glass_film', 'label' => 'Shattered Glass Film'],
-            ['code' => 'holographic_film', 'label' => 'Holographic Film'],
-            ['code' => 'starlight_film', 'label' => 'Starlight Film'],
-            ['code' => 'holographic_star_film', 'label' => 'Holographic Star Film'],
-            ['code' => 'soft_touch_film', 'label' => 'Soft-Touch Film'],
+            ['code' => 'shattered_glass_film', 'label' => 'Shattered Glass Film', 'description' => ''],
+            ['code' => 'holographic_film', 'label' => 'Holographic Film', 'description' => ''],
+            ['code' => 'starlight_film', 'label' => 'Starlight Film', 'description' => ''],
+            ['code' => 'holographic_star_film', 'label' => 'Holographic Star Film', 'description' => ''],
+            ['code' => 'soft_touch_film', 'label' => 'Soft-Touch Film', 'description' => ''],
+            [
+                'code' => 'matte',
+                'label' => 'Matte',
+                'description' => 'With a smooth feel. Shine-free so no glare.',
+            ],
+            [
+                'code' => 'gloss',
+                'label' => 'Gloss',
+                'description' => 'Eye-catchingly shiny. Makes color photos pop.',
+            ],
         ];
 
         return array_map(
             fn (array $texture): array => self::value($options, 'texture', $texture['code'], [
                 'label' => $texture['label'],
-                'description' => '',
+                'description' => $texture['description'],
                 'swatch_image' => self::QUALITY_TEXTURE_SWATCH_IMAGES[$texture['code']],
             ]),
             $textures,
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<int, array<string, mixed>>
+     */
+    private static function cottonTextureValues(array $options): array
+    {
+        return array_map(
+            static fn (array $texture): array => self::value(
+                $options,
+                'texture',
+                $texture['code'],
+                [
+                    'label' => $texture['label'],
+                    'description' => $texture['label'].' texture.',
+                    'swatch_image' => $texture['image'],
+                ],
+            ),
+            self::COTTON_TEXTURES,
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<int, array<string, mixed>>
+     */
+    private static function cottonSpecialFinishValues(array $options): array
+    {
+        $finishes = [
+            [
+                'code' => 'edge_coloring',
+                'label' => 'Edge Coloring',
+                'description' => 'Color applied to the edges of the card.',
+            ],
+            [
+                'code' => 'double_mounting',
+                'label' => 'Double Mounting',
+                'description' => 'Two cotton paper layers mounted together.',
+            ],
+            [
+                'code' => 'custom_die_cut',
+                'label' => 'Custom Die-Cut',
+                'description' => 'A custom die-cut card shape.',
+            ],
+            [
+                'code' => 'laser',
+                'label' => 'Laser',
+                'description' => 'Precision laser cutting or detailing.',
+            ],
+        ];
+
+        return array_map(
+            fn (array $finish): array => self::value(
+                $options,
+                'special_finish',
+                $finish['code'],
+                $finish,
+            ),
+            $finishes,
         );
     }
 
@@ -807,11 +1053,15 @@ final class BusinessCardOptionCatalog
      * @param  array<int|string, array<string, mixed>>  $values
      * @return array<string, mixed>
      */
-    private static function group(string $label, array $values, string $default): array
-    {
+    private static function group(
+        string $label,
+        array $values,
+        string|array|null $default,
+        bool $multiSelect = false,
+    ): array {
         return [
             'label' => $label,
-            'type' => 'select',
+            'type' => $multiSelect ? 'multi_select' : 'select',
             'required' => true,
             'default' => $default,
             'values' => array_values($values),
@@ -836,5 +1086,51 @@ final class BusinessCardOptionCatalog
         }
 
         return array_replace(['code' => $code], $defaults);
+    }
+
+    private static function isNfcOptionValue(mixed $value): bool
+    {
+        if (is_array($value)) {
+            if (array_is_list($value) && ! array_key_exists('code', $value)) {
+                return array_any($value, self::isNfcOptionValue(...));
+            }
+
+            foreach (['code', 'label', 'name'] as $key) {
+                if (self::isNfcOptionToken($value[$key] ?? null)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return self::isNfcOptionToken($value);
+    }
+
+    private static function isNfcOptionToken(mixed $value): bool
+    {
+        return in_array(self::normalizeOptionToken($value), ['nfc', 'with_nfc', 'no_nfc'], true);
+    }
+
+    private static function normalizeOptionToken(mixed $value): string
+    {
+        return str_replace(['-', ' '], '_', strtolower(trim((string) $value)));
+    }
+
+    private static function optionValueCode(mixed $value): ?string
+    {
+        if (is_scalar($value)) {
+            $code = trim((string) $value);
+
+            return $code !== '' ? $code : null;
+        }
+
+        if (! is_array($value)) {
+            return null;
+        }
+
+        $code = trim((string) ($value['code'] ?? ''));
+
+        return $code !== '' ? $code : null;
     }
 }

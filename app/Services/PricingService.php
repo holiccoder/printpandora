@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\DesignServiceRequest;
 use App\Models\Product;
+use App\Support\BusinessCardOptionCatalog;
+use App\Support\StickerProductCatalog;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -46,14 +48,24 @@ class PricingService
      */
     public function validateOptions(Product $product, array $options): array
     {
+        $config = $this->configuration->canonicalConfig($product);
+
+        if (StickerProductCatalog::isStickerProduct((string) $product->slug)) {
+            $options = $this->validateStickerPaperArea($options);
+        }
+
+        if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {
+            $options = $this->validateCottonOptions($options, $config);
+        }
+
         $size = $options['sizes'] ?? null;
         $size = is_array($size) ? ($size[0] ?? null) : $size;
         $normalizedSize = $this->normalizeOptionValue($size);
-        $customSizeValues = data_get(
-            $this->configuration->canonicalConfig($product),
-            'options.sizes.values',
-            [],
-        );
+        $customSizeValues = data_get($config, 'options.sizes.values', []);
+        $customSizeValue = is_array($customSizeValues)
+            ? collect($customSizeValues)->first(fn (mixed $value): bool => is_array($value)
+                && $this->normalizeOptionValue($value['code'] ?? $value['label'] ?? '') === 'custom')
+            : null;
         $hasCustomSize = is_array($customSizeValues) && collect($customSizeValues)
             ->contains(fn (mixed $value): bool => is_array($value)
                 && $this->normalizeOptionValue($value['code'] ?? $value['label'] ?? '') === 'custom');
@@ -70,6 +82,7 @@ class PricingService
             ]);
         }
 
+        $bounds = $this->customSizeBounds(is_array($customSizeValue) ? $customSizeValue : []);
         $errors = [];
         $dimensions = [
             'custom_width' => '',
@@ -79,17 +92,20 @@ class PricingService
         foreach (['width', 'height'] as $dimension) {
             $key = "custom_{$dimension}";
             $value = $options[$key] ?? null;
+            $minimum = $bounds[$dimension]['min'];
+            $maximum = $bounds[$dimension]['max'];
+            $range = number_format($minimum, 2, '.', '').' and '.number_format($maximum, 2, '.', '');
 
             if (! is_numeric($value) || ! is_finite((float) $value)) {
-                $errors["options.{$key}"] = "Enter a {$dimension} between 2.1 and 3.5 inches.";
+                $errors["options.{$key}"] = "Enter a {$dimension} between {$range} inches.";
 
                 continue;
             }
 
             $numericValue = (float) $value;
 
-            if ($numericValue < 2.1 || $numericValue > 3.5) {
-                $errors["options.{$key}"] = "The {$dimension} must be between 2.1 and 3.5 inches.";
+            if ($numericValue < $minimum || $numericValue > $maximum) {
+                $errors["options.{$key}"] = "The {$dimension} must be between {$range} inches.";
 
                 continue;
             }
@@ -106,6 +122,210 @@ class PricingService
         $options['custom_height'] = $dimensions['custom_height'];
 
         return $options;
+    }
+
+    /**
+     * Sticker pricing uses the user-entered sheet area as a multiplier.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private function validateStickerPaperArea(array $options): array
+    {
+        $area = $options['paper_area'] ?? null;
+
+        if (! is_numeric($area) || ! is_finite((float) $area) || (float) $area <= 0) {
+            throw ValidationException::withMessages([
+                'options.paper_area' => 'Enter a paper area greater than 0 square metres.',
+            ]);
+        }
+
+        $options['paper_area'] = number_format((float) $area, 6, '.', '');
+
+        return $options;
+    }
+
+    /**
+     * Cotton option groups are intentionally validated from the same
+     * canonical catalog that renders them in the storefront.
+     *
+     * @param  array<string, mixed>  $options
+     * @param  array<string, mixed>  $config
+     * @return array<string, mixed>
+     */
+    private function validateCottonOptions(array $options, array $config): array
+    {
+        $groups = is_array($config['options'] ?? null) ? $config['options'] : [];
+        $normalized = $options;
+        $errors = [];
+
+        foreach (['sizes', 'corners', 'texture'] as $key) {
+            $allowed = $this->allowedOptionCodes($groups[$key] ?? []);
+            $submitted = $this->submittedOptionValues($options[$key] ?? null);
+            $resolved = $this->resolveAllowedOptionCodes($submitted, $allowed);
+
+            if (count($resolved) !== 1 || count($submitted) !== 1) {
+                $errors["options.{$key}"] = match ($key) {
+                    'sizes' => 'Select one size.',
+                    'corners' => 'Select one corner style.',
+                    default => 'Select one texture.',
+                };
+
+                continue;
+            }
+
+            $normalized[$key] = $resolved[0];
+        }
+
+        $specialFinishAllowed = $this->allowedOptionCodes($groups['special_finish'] ?? []);
+        $specialFinishSubmitted = $this->submittedOptionValues($options['special_finish'] ?? null);
+        $specialFinishResolved = $this->resolveAllowedOptionCodes(
+            $specialFinishSubmitted,
+            $specialFinishAllowed,
+        );
+
+        if ($specialFinishSubmitted === []) {
+            $errors['options.special_finish'] = 'Select at least one special finish.';
+        } elseif (
+            count($specialFinishResolved) !== count(array_unique(array_map(
+                fn (string $value): string => $this->normalizeOptionValue($value),
+                $specialFinishSubmitted,
+            )))
+        ) {
+            $errors['options.special_finish'] = 'Select only valid special finishes.';
+        } else {
+            $normalized['special_finish'] = $specialFinishResolved;
+            $normalized['special_finish_on_sides'] = $this->normalizeCottonSpecialFinishSides(
+                $specialFinishResolved,
+                $options['special_finish_on_sides'] ?? null,
+            );
+        }
+
+        if ($errors !== []) {
+            throw ValidationException::withMessages($errors);
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Keep side selection independent for each selected cotton finish.
+     * Missing or invalid side values intentionally fall back to single side.
+     *
+     * @param  array<int, string>  $selectedCodes
+     * @return array<string, string>
+     */
+    private function normalizeCottonSpecialFinishSides(
+        array $selectedCodes,
+        mixed $submitted,
+    ): array {
+        $submittedSides = [];
+
+        if (is_array($submitted)) {
+            foreach ($submitted as $code => $side) {
+                if (is_scalar($code) && is_scalar($side)) {
+                    $submittedSides[$this->normalizeOptionValue((string) $code)] = (string) $side;
+                }
+            }
+        } elseif (is_scalar($submitted)) {
+            $submittedSides['*'] = (string) $submitted;
+        }
+
+        $normalized = [];
+
+        foreach ($selectedCodes as $code) {
+            $submittedSide = $submittedSides[$this->normalizeOptionValue($code)]
+                ?? $submittedSides['*']
+                ?? 'one_side';
+
+            $normalized[$code] = in_array($submittedSide, ['one_side', 'both_sides'], true)
+                ? $submittedSide
+                : 'one_side';
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @param  array<string, mixed>  $group
+     * @return array<string, string>
+     */
+    private function allowedOptionCodes(array $group): array
+    {
+        $allowed = [];
+        $values = is_array($group['values'] ?? null) ? $group['values'] : [];
+
+        foreach ($values as $value) {
+            if (! is_array($value) || ! filled($value['code'] ?? null)) {
+                continue;
+            }
+
+            $code = (string) $value['code'];
+            $allowed[$this->normalizeOptionValue($code)] = $code;
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function submittedOptionValues(mixed $value): array
+    {
+        $values = is_array($value) ? $value : [$value];
+
+        return array_values(array_map(
+            static fn (mixed $item): string => (string) $item,
+            array_filter($values, static fn (mixed $item): bool => is_scalar($item)),
+        ));
+    }
+
+    /**
+     * @param  array<int, string>  $submitted
+     * @param  array<string, string>  $allowed
+     * @return array<int, string>
+     */
+    private function resolveAllowedOptionCodes(array $submitted, array $allowed): array
+    {
+        $resolved = [];
+
+        foreach ($submitted as $value) {
+            $normalized = $this->normalizeOptionValue($value);
+
+            if (! array_key_exists($normalized, $allowed)) {
+                continue;
+            }
+
+            if (! in_array($allowed[$normalized], $resolved, true)) {
+                $resolved[] = $allowed[$normalized];
+            }
+        }
+
+        return $resolved;
+    }
+
+    /**
+     * @param  array<string, mixed>  $customValue
+     * @return array<string, array{min: float, max: float}>
+     */
+    private function customSizeBounds(array $customValue): array
+    {
+        $read = static function (array $value, string $key, float $fallback): float {
+            return is_numeric($value[$key] ?? null)
+                ? (float) $value[$key]
+                : $fallback;
+        };
+
+        return [
+            'width' => [
+                'min' => $read($customValue, 'min_width', 2.1),
+                'max' => $read($customValue, 'max_width', 3.5),
+            ],
+            'height' => [
+                'min' => $read($customValue, 'min_height', 2.1),
+                'max' => $read($customValue, 'max_height', 3.5),
+            ],
+        ];
     }
 
     /**
@@ -155,7 +375,7 @@ class PricingService
         // Custom sizes use the same base pricing as the standard rectangular
         // card. The dimensions are still preserved in the cart options and
         // validated above; only the pricing rule key is normalized here.
-        $pricingOptions = $this->optionsForPricing($options);
+        $pricingOptions = $this->optionsForPricing($options, $product);
 
         if ($pricingRules !== []) {
             $rule = $this->findMatchingPricingRule($pricingRules, $pricingOptions);
@@ -201,9 +421,16 @@ class PricingService
      * @param  array<string, mixed>  $options
      * @return array<string, mixed>
      */
-    private function optionsForPricing(array $options): array
+    private function optionsForPricing(array $options, ?Product $product = null): array
     {
-        if ($this->normalizeOptionValue($options['sizes'] ?? '') === 'custom') {
+        $size = $this->normalizeOptionValue($options['sizes'] ?? '');
+
+        if (
+            $size === 'custom'
+            || ($product !== null
+                && BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)
+                && $size === 'compact')
+        ) {
             $options['sizes'] = 'standard';
         }
 
@@ -271,6 +498,9 @@ class PricingService
         $quantity = (int) ($options['quantity'] ?? 0);
         $basePrice = (float) ($pricing['basePrice'] ?? 0);
         $paperRates = is_array($pricing['paperRates'] ?? null) ? $pricing['paperRates'] : [];
+        $unitMultipliers = is_array($pricing['unitMultipliers'] ?? null)
+            ? $pricing['unitMultipliers']
+            : [];
 
         if ($startQuantity <= 0 || $quantity <= 0 || $basePrice < 0) {
             return null;
@@ -279,6 +509,7 @@ class PricingService
         $quantities = array_values(array_unique(array_merge(
             [$startQuantity],
             array_filter(array_map('intval', array_keys($paperRates)), static fn (int $value): bool => $value >= $startQuantity),
+            array_filter(array_map('intval', array_keys($unitMultipliers)), static fn (int $value): bool => $value >= $startQuantity),
         )));
         sort($quantities);
 
@@ -288,8 +519,11 @@ class PricingService
 
         $processes = is_array($pricing['processes'] ?? null) ? $pricing['processes'] : [];
         $unit = $basePrice;
+        $unitMultiplier = $unitMultipliers[(string) $quantity] ?? $unitMultipliers[$quantity] ?? null;
 
-        if ($quantity !== $startQuantity) {
+        if (is_numeric($unitMultiplier)) {
+            $unit = $basePrice * (float) $unitMultiplier;
+        } elseif ($quantity !== $startQuantity) {
             $unit -= $basePrice * ((float) ($paperRates[(string) $quantity] ?? $paperRates[$quantity] ?? 0) / 100);
         }
 
@@ -309,7 +543,19 @@ class PricingService
             }
         }
 
-        return (float) round($quantity * $unit);
+        $paperArea = 1.0;
+
+        if (($pricing['area_based'] ?? false) === true) {
+            $rawArea = $options['paper_area'] ?? null;
+
+            if (! is_numeric($rawArea) || ! is_finite((float) $rawArea) || (float) $rawArea <= 0) {
+                return null;
+            }
+
+            $paperArea = (float) $rawArea;
+        }
+
+        return (float) round($quantity * $unit * $paperArea);
     }
 
     /**
@@ -328,7 +574,6 @@ class PricingService
             'no_special_finish',
             'no_print_code',
             'no_print_code_or_magnetic_stripe',
-            'no_nfc',
             'no_magnetic_stripe',
             'no_signature_stripe',
         ];
@@ -388,13 +633,12 @@ class PricingService
         }
 
         if (
-            in_array($code, ['foil', 'nfc', 'special_finish'], true)
+            in_array($code, ['foil', 'special_finish'], true)
             || str_contains($rawName, 'foil')
             || str_contains($rawName, '烫金')
             || str_contains($rawName, '激光雕刻')
             || str_contains($rawName, '彩印')
             || str_contains($rawName, '镀色')
-            || $rawName === 'nfc'
         ) {
             foreach ($options as $key => $value) {
                 $values = is_array($value) ? $value : [$value];
@@ -404,7 +648,6 @@ class PricingService
 
                     if (
                         $normalized === $code
-                        || ($code === 'nfc' && $key === 'with_nfc' && $normalized === 'with_nfc')
                         || ($code === 'print_code_or_magnetic_stripe'
                             && $key === 'print_code_or_magnetic_stripe'
                             && ! in_array($normalized, $negativeValues, true))
@@ -498,7 +741,11 @@ class PricingService
             return $isUv ? 'uv' : 'rectangle';
         }
 
-        return $isUv ? 'square_uv' : 'square';
+        $preferred = $isUv ? 'square_uv' : 'square';
+
+        return isset($data[$preferred])
+            ? $preferred
+            : ($isUv ? 'uv' : 'rectangle');
     }
 
     /**
@@ -529,7 +776,6 @@ class PricingService
         $foilProcess = $this->findProcess($scenario['processes'] ?? [], [
             'special_finish',
             'foil',
-            'nfc',
             '烫金',
             '立体uv/冷烫/热烫单面',
             '鐑噾',

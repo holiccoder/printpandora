@@ -69,6 +69,8 @@ type NavCategory = {
     href: string;
     /** when present, the item shows a mega dropdown on hover */
     mega?: MegaMenu;
+    /** render the menu as a compact anchored dropdown instead */
+    compactDropdown?: boolean;
 };
 
 type GlobalCart = {
@@ -167,6 +169,25 @@ export function StorefrontHeader({
                         })),
                         promos: bc.promo_cards as PromoBlock[],
                     },
+                };
+            }
+
+            if (nav.label === 'Stickers & Labels') {
+                const stickers = h.stickers_labels_mega_menu;
+
+                return {
+                    label: nav.label,
+                    href: nav.href,
+                    mega: {
+                        groups: stickers.link_groups.map((g) => ({
+                            links: g.links.map((l) => ({
+                                ...l,
+                                children: l.children as MegaLink[] | undefined,
+                            })),
+                        })),
+                        promos: stickers.promo_cards as PromoBlock[],
+                    },
+                    compactDropdown: true,
                 };
             }
 
@@ -416,10 +437,26 @@ export function StorefrontHeader({
                                                 // Pinned to the viewport below the visible main header.
                                                 // The measured offset accounts for the announcement bar
                                                 // before it scrolls away and the sticky header afterward.
-                                                style={{ top: megaMenuTop }}
-                                                className="!fixed !inset-x-0 !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 !bg-white p-0 shadow-lg data-[state=closed]:hidden data-[state=open]:visible"
+                                                style={
+                                                    cat.compactDropdown
+                                                        ? undefined
+                                                        : { top: megaMenuTop }
+                                                }
+                                                className={
+                                                    cat.compactDropdown
+                                                        ? '!absolute !top-full !left-0 !z-50 !mt-1.5 !w-64 !max-w-none !bg-white !p-0 shadow-lg data-[state=closed]:hidden data-[state=open]:visible'
+                                                        : '!fixed !inset-x-0 !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 !bg-white p-0 shadow-lg data-[state=closed]:hidden data-[state=open]:visible'
+                                                }
                                             >
-                                                <MegaPanel mega={cat.mega} />
+                                                {cat.compactDropdown ? (
+                                                    <CompactDropdown
+                                                        mega={cat.mega}
+                                                    />
+                                                ) : (
+                                                    <MegaPanel
+                                                        mega={cat.mega}
+                                                    />
+                                                )}
                                             </NavigationMenuContent>
                                         </NavigationMenuItem>
                                     );
@@ -439,6 +476,52 @@ function ActiveUnderline() {
             aria-hidden
             className="pointer-events-none absolute inset-x-3 bottom-0 h-[3px] rounded-t-sm bg-[#800020]"
         />
+    );
+}
+
+function CompactDropdown({ mega }: { mega: MegaMenu }) {
+    return (
+        <div className="w-64 p-2">
+            {mega.groups.map((group, groupIndex) => (
+                <div
+                    key={groupIndex}
+                    className={cn(
+                        groupIndex > 0 &&
+                            'mt-2 border-t border-dotted border-neutral-200 pt-2',
+                    )}
+                >
+                    <ul className="space-y-0.5">
+                        {group.links.map((link) => (
+                            <li key={link.label}>
+                                <Link
+                                    href={link.href}
+                                    className="flex items-center justify-between rounded-sm px-3 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-[#800020]"
+                                >
+                                    <span>{link.label}</span>
+                                    {link.children?.length ? (
+                                        <ChevronRight className="size-4 text-neutral-400" />
+                                    ) : null}
+                                </Link>
+                                {link.children?.length ? (
+                                    <ul className="ml-3 border-l border-neutral-200 pl-2">
+                                        {link.children.map((child) => (
+                                            <li key={child.label}>
+                                                <Link
+                                                    href={child.href}
+                                                    className="block rounded-sm px-2 py-1.5 text-xs text-neutral-600 hover:text-[#800020]"
+                                                >
+                                                    {child.label}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : null}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ))}
+        </div>
     );
 }
 

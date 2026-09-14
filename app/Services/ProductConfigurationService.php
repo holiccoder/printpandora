@@ -32,8 +32,8 @@ class ProductConfigurationService
         'sizes' => 'Size',
         'corners' => 'Corners',
         'paper_finish' => 'Paper Finish',
+        'uv_finish' => 'UV Finish',
         'special_finish' => 'Special Finish',
-        'special_finish_on_sides' => 'Special Finish on Sides',
         'print_code' => 'Print Code',
         'drill' => 'Drilling',
     ];
@@ -51,7 +51,8 @@ class ProductConfigurationService
         'corner' => 2,
         'texture' => 3,
         'paper_finish' => 4,
-        'special_finish' => 5,
+        'uv_finish' => 5,
+        'special_finish' => 6,
     ];
 
     /**
@@ -400,11 +401,15 @@ class ProductConfigurationService
                 continue;
             }
 
+            $isMultiSelect = ($group['type'] ?? 'select') === 'multi_select'
+                || ((string) $key === 'special_finish'
+                    && $this->hasFoilOptionValues($group['values'] ?? []));
+
             $rows[] = [
                 'row_key' => (string) $key,
                 'key' => (string) $key,
                 'label' => (string) ($group['label'] ?? Str::headline((string) $key)),
-                'type' => ($group['type'] ?? 'select') === 'multi_select' ? 'multi_select' : 'select',
+                'type' => $isMultiSelect ? 'multi_select' : 'select',
             ];
         }
 
@@ -662,7 +667,17 @@ class ProductConfigurationService
                     'label' => $valueLabel,
                 ];
 
-                foreach (['description', 'swatch_image', 'width', 'height'] as $property) {
+                foreach ([
+                    'description',
+                    'swatch_image',
+                    'width',
+                    'height',
+                    'min_width',
+                    'max_width',
+                    'min_height',
+                    'max_height',
+                    'area_sq_m',
+                ] as $property) {
                     if (array_key_exists($property, $value) && $value[$property] !== '') {
                         $normalizedValue[$property] = $value[$property];
                     }
@@ -671,9 +686,12 @@ class ProductConfigurationService
                 $values[] = $normalizedValue;
             }
 
+            $isMultiSelect = ($row['type'] ?? 'select') === 'multi_select'
+                || ($key === 'special_finish' && $this->hasFoilOptionValues($values));
+
             $options[$key] = [
                 'label' => $label !== '' ? $label : Str::headline($key),
-                'type' => ($row['type'] ?? 'select') === 'multi_select' ? 'multi_select' : 'select',
+                'type' => $isMultiSelect ? 'multi_select' : 'select',
                 'required' => true,
                 'default' => $values[0]['code'] ?? null,
                 'values' => $values,
@@ -1065,6 +1083,25 @@ class ProductConfigurationService
             );
         }
 
+        if (BusinessCardOptionCatalog::supports((string) $product->slug)) {
+            $config['options'] = $this->normalizeProductSpecificOptions(
+                is_array($config['options'] ?? null) ? $config['options'] : [],
+                $product,
+            );
+        }
+
+        if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {
+            $media = is_array($config['media'] ?? null) ? $config['media'] : [];
+            $media['gallery_rules'] = BusinessCardOptionCatalog::normalizeCottonGalleryRules(
+                is_array($media['gallery_rules'] ?? null) ? $media['gallery_rules'] : [],
+            );
+            $config['media'] = $media;
+        }
+
+        if ($this->shouldRemoveBusinessCardNfc($product)) {
+            $config = $this->withoutBusinessCardNfc($config);
+        }
+
         $options = $this->toStorefrontOptions(
             $config,
             $product,
@@ -1274,7 +1311,6 @@ class ProductConfigurationService
             'thickness',
             'print_code_or_signature_stripe',
             'print_code_or_magnetic_stripe',
-            'with_nfc',
             'galleries',
         ];
 
@@ -1453,7 +1489,6 @@ class ProductConfigurationService
             'thickness' => 'Thickness',
             'print_code_or_signature_stripe' => 'Print Code or Signature Stripe',
             'print_code_or_magnetic_stripe' => 'Print Code or Magnetic Stripe',
-            'with_nfc' => 'With NFC',
         ] as $key => $label) {
             if (array_key_exists($key, $legacy)) {
                 $groupLabels[$key] = $label;
@@ -1473,7 +1508,7 @@ class ProductConfigurationService
 
             $options[$key] = [
                 'label' => $label,
-                'type' => 'select',
+                'type' => $this->legacyOptionGroupType($key, $items),
                 'required' => true,
                 'default' => $items[0]['code'] ?? null,
                 'values' => array_values(array_map(function (mixed $item): array {
@@ -1486,7 +1521,16 @@ class ProductConfigurationService
                         'label' => (string) ($item['name'] ?? ''),
                     ];
 
-                    foreach (['description', 'swatch_image', 'width', 'height'] as $property) {
+                    foreach ([
+                        'description',
+                        'swatch_image',
+                        'width',
+                        'height',
+                        'min_width',
+                        'max_width',
+                        'min_height',
+                        'max_height',
+                    ] as $property) {
                         if (array_key_exists($property, $item) && $item[$property] !== '') {
                             $value[$property] = $item[$property];
                         }
@@ -1498,6 +1542,46 @@ class ProductConfigurationService
         }
 
         return $options;
+    }
+
+    /**
+     * @param  array<int, mixed>  $items
+     */
+    private function hasFoilOptionValues(array $items): bool
+    {
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $text = strtolower(implode(' ', array_filter([
+                (string) ($item['code'] ?? ''),
+                (string) ($item['name'] ?? ''),
+                (string) ($item['label'] ?? ''),
+                (string) ($item['description'] ?? ''),
+            ])));
+
+            if (str_contains($text, 'foil') || str_contains($text, '烫')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Hot and cold foil values can be combined, while other special finishes
+     * retain their single-choice behavior.
+     *
+     * @param  array<int, mixed>  $items
+     */
+    private function legacyOptionGroupType(string $key, array $items): string
+    {
+        if ($key !== 'special_finish') {
+            return 'select';
+        }
+
+        return $this->hasFoilOptionValues($items) ? 'multi_select' : 'select';
     }
 
     /**
@@ -1582,7 +1666,17 @@ class ProductConfigurationService
                     'code' => (string) ($value['code'] ?? ''),
                 ];
 
-                foreach (['description', 'swatch_image', 'width', 'height'] as $property) {
+                foreach ([
+                    'description',
+                    'swatch_image',
+                    'width',
+                    'height',
+                    'min_width',
+                    'max_width',
+                    'min_height',
+                    'max_height',
+                    'area_sq_m',
+                ] as $property) {
                     if (array_key_exists($property, $value)) {
                         $legacy[$property] = $property === 'swatch_image'
                             ? $this->storefrontImageUrl($value[$property])
@@ -1594,14 +1688,26 @@ class ProductConfigurationService
             }, is_array($group['values'] ?? null) ? $group['values'] : []));
 
             $optionKey = (string) $key;
+            $isMultiSelect = ($group['type'] ?? 'select') === 'multi_select'
+                || ($optionKey === 'special_finish' && $this->hasFoilOptionValues($values));
+            $default = array_key_exists('default', $group)
+                ? $group['default']
+                : ($values[0]['code'] ?? '');
+
+            if ($default === null) {
+                $default = $values[0]['code'] ?? '';
+            }
+
             $optionGroups[] = [
                 'key' => $optionKey,
                 'label' => (string) ($group['label'] ?? Str::headline($optionKey)),
-                'type' => ($group['type'] ?? 'select') === 'multi_select'
+                'type' => $isMultiSelect
                     ? 'multi_select'
                     : 'select',
                 'required' => (bool) ($group['required'] ?? true),
-                'default' => (string) ($group['default'] ?? ($values[0]['code'] ?? '')),
+                'default' => is_array($default)
+                    ? array_values(array_map(static fn (mixed $code): string => (string) $code, $default))
+                    : (string) $default,
                 'values' => $values,
             ];
             $options[$optionKey] = $values;
@@ -1931,7 +2037,12 @@ class ProductConfigurationService
             'meta_description' => $product->meta_description,
         ], is_array($config['product'] ?? null) ? $config['product'] : []);
         $config['options'] = is_array($config['options'] ?? null) ? $config['options'] : [];
+        unset($config['options']['special_finish_on_sides']);
         $config['options'] = BusinessCardOptionCatalog::normalizeSharedSwatchImages($config['options']);
+        $config['options'] = $this->normalizeProductSpecificOptions(
+            $config['options'],
+            $product,
+        );
         $config['media'] = is_array($config['media'] ?? null) ? $config['media'] : [];
         $config['media']['gallery'] = is_array($config['media']['gallery'] ?? null)
             ? array_values($config['media']['gallery'])
@@ -1943,6 +2054,12 @@ class ProductConfigurationService
             $config['media']['gallery_rules'],
             $config['options'],
         );
+
+        if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {
+            $config['media']['gallery_rules'] = BusinessCardOptionCatalog::normalizeCottonGalleryRules(
+                $config['media']['gallery_rules'],
+            );
+        }
         $config['pricing'] = array_replace([
             'mode' => 'fixed_tiers',
             'currency' => 'USD',
@@ -1972,7 +2089,140 @@ class ProductConfigurationService
             ));
         }
 
+        if ($this->shouldRemoveBusinessCardNfc($product)) {
+            $config = $this->withoutBusinessCardNfc($config);
+        }
+
         return $config;
+    }
+
+    private function shouldRemoveBusinessCardNfc(Product $product): bool
+    {
+        return $product->slug !== 'design-service'
+            && (
+                $this->belongsToBusinessCardCategory($product)
+                || BusinessCardOptionCatalog::isBusinessCardProduct((string) $product->slug)
+            );
+    }
+
+    /**
+     * Remove retired NFC options, pricing processes, and gallery matches from
+     * a business-card configuration before it reaches an editor or storefront.
+     *
+     * @param  array<string, mixed>  $config
+     * @return array<string, mixed>
+     */
+    private function withoutBusinessCardNfc(array $config): array
+    {
+        if (is_array($config['options'] ?? null)) {
+            $config['options'] = BusinessCardOptionCatalog::withoutNfcOptions($config['options']);
+        }
+
+        if (is_array($config['pricing'] ?? null)) {
+            $config['pricing'] = $this->withoutNfcPricingProcesses($config['pricing']);
+        }
+
+        $media = is_array($config['media'] ?? null) ? $config['media'] : [];
+
+        if (is_array($media['gallery_rules'] ?? null)) {
+            $media['gallery_rules'] = array_values(array_filter(
+                $media['gallery_rules'],
+                fn (mixed $rule): bool => ! $this->galleryRuleUsesNfc($rule),
+            ));
+        }
+
+        if ($media !== []) {
+            $config['media'] = $media;
+        }
+
+        return $config;
+    }
+
+    /**
+     * @param  array<string, mixed>  $pricing
+     * @return array<string, mixed>
+     */
+    private function withoutNfcPricingProcesses(array $pricing): array
+    {
+        if (is_array($pricing['processes'] ?? null)) {
+            $pricing['processes'] = array_values(array_filter(
+                $pricing['processes'],
+                fn (mixed $process): bool => ! $this->isNfcProcess($process),
+            ));
+        }
+
+        foreach (['scenarios', 'rules', 'pricing_data'] as $key) {
+            if (! is_array($pricing[$key] ?? null)) {
+                continue;
+            }
+
+            foreach ($pricing[$key] as $entryKey => $entry) {
+                if (is_array($entry)) {
+                    $pricing[$key][$entryKey] = $this->withoutNfcPricingProcesses($entry);
+                }
+            }
+        }
+
+        if (is_array($pricing['pricing'] ?? null)) {
+            $pricing['pricing'] = $this->withoutNfcPricingProcesses($pricing['pricing']);
+        }
+
+        return $pricing;
+    }
+
+    private function galleryRuleUsesNfc(mixed $rule): bool
+    {
+        if (! is_array($rule) || ! is_array($rule['match'] ?? null)) {
+            return false;
+        }
+
+        foreach ($rule['match'] as $value) {
+            if (is_array($value)) {
+                foreach ($value as $nestedValue) {
+                    if ($this->isNfcToken($nestedValue)) {
+                        return true;
+                    }
+                }
+
+                continue;
+            }
+
+            if ($this->isNfcToken($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isNfcProcess(mixed $process): bool
+    {
+        if (is_scalar($process)) {
+            return $this->isNfcToken($process);
+        }
+
+        if (! is_array($process)) {
+            return false;
+        }
+
+        foreach (['code', 'name', 'label'] as $key) {
+            if ($this->isNfcToken($process[$key] ?? null)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isNfcToken(mixed $value): bool
+    {
+        if (! is_scalar($value) && $value !== null) {
+            return false;
+        }
+
+        $token = str_replace(['-', ' '], '_', strtolower(trim((string) $value)));
+
+        return in_array($token, ['nfc', 'with_nfc', 'no_nfc'], true);
     }
 
     /**
@@ -2114,33 +2364,6 @@ class ProductConfigurationService
             ],
         ];
 
-        $paperFinish = [
-            array_replace(
-                $this->existingOptionValue($options, 'paper_finish', 'matte', ['label' => 'Matte']),
-                [
-                    'label' => 'Matte',
-                    'description' => 'With a smooth feel. Shine-free so no glare.',
-                    'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
-                ],
-            ),
-            array_replace(
-                $this->existingOptionValue($options, 'paper_finish', 'gloss', ['label' => 'Gloss']),
-                [
-                    'label' => 'Gloss',
-                    'description' => 'Eye-catchingly shiny. Makes color photos pop.',
-                    'swatch_image' => '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
-                ],
-            ),
-            array_replace(
-                $this->existingOptionValue($options, 'paper_finish', 'uv', ['label' => '3D UV']),
-                [
-                    'label' => '3D UV',
-                    'description' => 'Raised gloss highlights with a dimensional feel.',
-                    'swatch_image' => '/images/product-options/uv-swatch.png',
-                ],
-            ),
-        ];
-
         $corners = [
             array_replace(
                 $this->existingOptionValue($options, 'corners', 'square', ['label' => 'Square']),
@@ -2178,7 +2401,7 @@ class ProductConfigurationService
             array_replace(
                 $this->existingOptionValue($options, 'special_finish', 'no_special_finish'),
                 [
-                    'label' => 'No special finish',
+                    'label' => 'No finish',
                     'description' => 'No special finish, thanks.',
                     'swatch_image' => '/images/product-options/no-foil.png',
                 ],
@@ -2196,25 +2419,6 @@ class ProductConfigurationService
             ),
         ];
 
-        $specialFinishOnSides = [
-            array_replace(
-                $this->existingOptionValue($options, 'special_finish_on_sides', 'one_side', ['label' => 'One side']),
-                [
-                    'label' => 'One side',
-                    'description' => 'Special finish applied to one side only.',
-                    'swatch_image' => '/images/product-options/business-cards/special-finishes/special-finish-one-side.png',
-                ],
-            ),
-            array_replace(
-                $this->existingOptionValue($options, 'special_finish_on_sides', 'both_sides', ['label' => 'Both sides']),
-                [
-                    'label' => 'Both sides',
-                    'description' => 'Special finish applied to both sides.',
-                    'swatch_image' => '/images/product-options/business-cards/special-finishes/special-finish-both-sides.png',
-                ],
-            ),
-        ];
-
         $textures = array_map(
             fn (array $texture): array => array_replace(
                 $this->existingOptionValue($options, 'texture', $texture['code']),
@@ -2226,9 +2430,9 @@ class ProductConfigurationService
             ),
             [
                 [
-                    'code' => 'pin_hole_paper',
-                    'label' => 'Pin-hole Paper',
-                    'swatch_image' => '/images/products/classic-special-business-cards/texture/pin-hole-paper.png',
+                    'code' => 'matte',
+                    'label' => 'Matte',
+                    'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
                 ],
                 [
                     'code' => 'water_ripple_paper',
@@ -2261,10 +2465,11 @@ class ProductConfigurationService
         return $this->orderedOptionGroups(BusinessCardOptionCatalog::normalizeSharedSizeSwatches([
             'sizes' => $group('Size', $sizes, 'standard'),
             'corners' => $group('Corners', $corners, 'square'),
-            'paper_finish' => $group('Paper Finish', $paperFinish, 'matte'),
-            'special_finish' => $group('Special Finish', $specialFinish, 'no_special_finish'),
-            'special_finish_on_sides' => $group('Special Finish on Sides', $specialFinishOnSides, 'one_side'),
-            'texture' => $group('Texture', $textures, 'pin_hole_paper'),
+            'special_finish' => [
+                ...$group('Special Finish', $specialFinish, 'no_special_finish'),
+                'type' => 'multi_select',
+            ],
+            'texture' => $group('Texture', $textures, 'matte'),
         ], (string) $product->slug));
     }
 
@@ -2399,10 +2604,6 @@ class ProductConfigurationService
 
         if (str_contains($name, '烫金')) {
             return 'foil';
-        }
-
-        if ($normalizedName === 'nfc') {
-            return 'nfc';
         }
 
         if (

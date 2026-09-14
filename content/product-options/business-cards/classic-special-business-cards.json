@@ -47,26 +47,6 @@
             "swatch_image": "/images/product-options/business-cards/swatches/custom-size.webp"
         }
     ],
-    "paper_finish": [
-        {
-            "name": "Matte",
-            "code": "matte",
-            "description": "With a smooth feel. Shine-free so no glare.",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg"
-        },
-        {
-            "name": "Gloss",
-            "code": "gloss",
-            "description": "Eye-catchingly shiny. Makes color photos pop.",
-            "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg"
-        },
-        {
-            "name": "3D UV",
-            "code": "uv",
-            "description": "Raised gloss highlights with a dimensional feel.",
-            "swatch_image": "/images/product-options/uv-swatch.png"
-        }
-    ],
     "corners": [
         {
             "name": "Square",
@@ -83,10 +63,10 @@
     ],
     "texture": [
         {
-            "name": "Pin-hole Paper",
-            "code": "pin_hole_paper",
+            "name": "Matte",
+            "code": "matte",
             "description": "",
-            "swatch_image": "/images/products/classic-special-business-cards/texture/pin-hole-paper.png"
+            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg"
         },
         {
             "name": "Water Ripple Paper",
@@ -121,7 +101,7 @@
     ],
     "special_finish": [
         {
-            "name": "No special finish",
+            "name": "No finish",
             "code": "no_special_finish",
             "description": "No special finish, thanks.",
             "swatch_image": "/images/product-options/no-foil.png"
@@ -558,19 +538,5 @@
                 }
             ]
         }
-    },
-    "special_finish_on_sides": [
-        {
-            "name": "One side",
-            "code": "one_side",
-            "description": "Special finish applied to one side only.",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-one-side.png"
-        },
-        {
-            "name": "Both sides",
-            "code": "both_sides",
-            "description": "Special finish applied to both sides.",
-            "swatch_image": "/images/product-options/business-cards/special-finishes/special-finish-both-sides.png"
-        }
-    ]
+    }
 }

@@ -21,16 +21,16 @@ import StorefrontLayout from '@/layouts/storefront-layout';
 /* -------------------------------------------------------------------------- */
 
 const paperHrefs = [
+    '/business-cards/luxe',
     '/business-cards/classic-standard',
     '/business-cards/super',
-    '/business-cards/luxe',
-    '/business-cards/classic-cotton',
+    '/business-cards/classic-metal',
 ];
 
 const sizeHrefs = [
     '/business-cards/classic-standard',
-    '/business-cards',
-    '/business-cards',
+    '/business-cards/classic-standard',
+    '/business-cards/classic-standard',
 ];
 
 const finishHref = '/business-cards';
@@ -325,9 +325,6 @@ export default function BusinessCardsLanding() {
                                             {finish.blurb}
                                         </p>
                                     )}
-                                    <ShopLink href={finishHref} accent={ACCENT}>
-                                        {finish.cta}
-                                    </ShopLink>
                                 </Link>
                             </li>
                         ))}
