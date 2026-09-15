@@ -3,7 +3,7 @@
 // Product fields, pricing, FAQs, and detail sections come from the database;
 // the product-option JSON is limited to option metadata and galleries.
 import { Link, router, useForm, usePage } from '@inertiajs/react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Lightbulb } from 'lucide-react';
 import { Fragment, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import DesignServiceFormModal from '@/components/design-service-form-modal';
@@ -19,11 +19,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
-import { computeDynamicTiers } from '@/lib/pricing';
+import { computeDynamicTiers, squareInchesToSquareMetres } from '@/lib/pricing';
 import type { DynamicPricingData } from '@/lib/pricing';
 import type { PricingRule } from '@/lib/pricing';
 import { isPvcProductSlug } from '@/lib/product-images';
-import { findMatchingGallery } from '@/lib/product-options';
+import {
+    findMatchingGallery,
+    getPreferredGalleryMatchKey,
+} from '@/lib/product-options';
 import type { ProductGallery } from '@/lib/product-options';
 import { cn } from '@/lib/utils';
 
@@ -101,10 +104,9 @@ const DEFAULT_SPECIAL_FINISH_SIDE: SpecialFinishSide = 'one_side';
 const SPECIAL_FINISH_SIDE_OPTIONS: Array<{
     value: SpecialFinishSide;
     label: string;
-    position: 'left' | 'right';
 }> = [
-    { value: 'one_side', label: 'single side', position: 'left' },
-    { value: 'both_sides', label: 'both sides', position: 'right' },
+    { value: 'one_side', label: 'single side' },
+    { value: 'both_sides', label: 'both sides' },
 ];
 
 const OPTION_GROUP_ORDER: Record<string, number> = {
@@ -150,7 +152,6 @@ interface ProductOptionValue {
     name: string;
     description?: string;
     swatch_image?: string;
-    area_sq_m?: string | number;
     width?: string;
     height?: string;
     min_width?: string;
@@ -179,7 +180,6 @@ interface ProductOptions {
         width?: string;
         height?: string;
         swatch_image?: string;
-        area_sq_m?: string | number;
         min_width?: string;
         max_width?: string;
         min_height?: string;
@@ -293,8 +293,8 @@ function isStickerProductSlug(slug: string): boolean {
     return (STICKER_PRODUCT_SLUGS as readonly string[]).includes(slug);
 }
 
-function stickerAreaForSize(
-    groups: ProductOptionGroup[],
+function stickerAreaForSizeValues(
+    values: ProductOptionValue[],
     selected?: string | string[],
 ): number {
     const code = Array.isArray(selected) ? selected[0] : selected;
@@ -303,20 +303,36 @@ function stickerAreaForSize(
         return 0;
     }
 
-    const value = groups
-        .find((group) => group.key === 'sizes')
-        ?.values.find((candidate) => optionValueCode(candidate) === code);
-    const area = Number(value?.area_sq_m ?? 0);
+    const value = values.find(
+        (candidate) => optionValueCode(candidate) === code,
+    );
 
-    return Number.isFinite(area) && area > 0 ? area : 0;
+    return squareInchesToSquareMetres(
+        Number(value?.width),
+        Number(value?.height),
+    );
+}
+
+function stickerAreaForSize(
+    groups: ProductOptionGroup[],
+    selected?: string | string[],
+): number {
+    return stickerAreaForSizeValues(
+        groups.find((group) => group.key === 'sizes')?.values ?? [],
+        selected,
+    );
 }
 
 function stickerAreaForCustomSize(width: number, height: number): number {
-    return width * height * 0.00064516;
+    return squareInchesToSquareMetres(width, height);
 }
 
 function formatStickerArea(area: number): string {
-    return area > 0 ? area.toFixed(6) : '';
+    return area > 0 ? area.toFixed(8) : '';
+}
+
+function stickerAreaOptionValue(area: number): string {
+    return area > 0 ? area.toFixed(8) : '';
 }
 
 interface Props {
@@ -865,6 +881,25 @@ export default function ShopShow({
     // quantity pricing table under the default option configuration.
     const startingPriceText = useMemo(() => {
         if (hasDynamicPricing && productOptions.pricing_data) {
+            const defaultPricingOptions: Record<string, string | string[]> = {};
+
+            for (const group of dynamicOptionGroups) {
+                const value = dynamicOptionDefaults[group.key];
+
+                if (value !== undefined) {
+                    defaultPricingOptions[group.key] = value;
+                }
+            }
+
+            if (isStickerProduct) {
+                defaultPricingOptions.paper_area = stickerAreaOptionValue(
+                    stickerAreaForSize(
+                        dynamicOptionGroups,
+                        dynamicOptionDefaults.sizes,
+                    ),
+                );
+            }
+
             const firstTier = computeDynamicTiers(
                 {
                     ...productOptions.pricing_data,
@@ -874,7 +909,7 @@ export default function ShopShow({
                 0, // default paper finish
                 0, // default corners
                 0, // default special finish
-                {},
+                defaultPricingOptions,
             )[0];
 
             if (firstTier) {
@@ -894,7 +929,7 @@ export default function ShopShow({
             }
 
             if (isStickerProduct) {
-                defaultPricingOptions.paper_area = formatStickerArea(
+                defaultPricingOptions.paper_area = stickerAreaOptionValue(
                     stickerAreaForSize(
                         dynamicOptionGroups,
                         dynamicOptionDefaults.sizes,
@@ -1023,14 +1058,6 @@ export default function ShopShow({
     const [selectedDynamicOptions, setSelectedDynamicOptions] = useState<
         Record<string, string | string[]>
     >(dynamicOptionDefaults);
-    const [stickerPaperArea, setStickerPaperArea] = useState<string>(() =>
-        formatStickerArea(
-            stickerAreaForSize(
-                dynamicOptionGroups,
-                dynamicOptionDefaults.sizes,
-            ),
-        ),
-    );
     const [selectedTexture, setSelectedTexture] = useState<string | null>(
         () => {
             return textures.length > 0 ? textures[0].id : 'none';
@@ -1110,6 +1137,8 @@ export default function ShopShow({
     const [selectedThumbnail, setSelectedThumbnail] = useState<string | null>(
         null,
     );
+    const [lastSelectedGalleryOptionKey, setLastSelectedGalleryOptionKey] =
+        useState<string | null>(null);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
     const [added, setAdded] = useState(false);
@@ -1133,6 +1162,43 @@ export default function ShopShow({
         string | null
     >(null);
     const [hasInteracted, setHasInteracted] = useState(false);
+
+    const stickerPaperArea = useMemo(() => {
+        if (!isStickerProduct) {
+            return 0;
+        }
+
+        const selected = usesDynamicOptions
+            ? selectedDynamicOptions.sizes
+            : selectedSize;
+
+        if (selected === 'custom') {
+            return confirmedCustomSize
+                ? stickerAreaForCustomSize(
+                      confirmedCustomSize.width,
+                      confirmedCustomSize.height,
+                  )
+                : 0;
+        }
+
+        const configuredSizeValues = usesDynamicOptions
+            ? (dynamicOptionGroups.find((group) => group.key === 'sizes')
+                  ?.values ?? [])
+            : (productOptions?.sizes ?? []);
+
+        return stickerAreaForSizeValues(
+            configuredSizeValues,
+            selected ?? undefined,
+        );
+    }, [
+        confirmedCustomSize,
+        dynamicOptionGroups,
+        isStickerProduct,
+        productOptions,
+        selectedDynamicOptions,
+        selectedSize,
+        usesDynamicOptions,
+    ]);
 
     const hasSubmittedDesign =
         Object.values(submittedDesignModes).some(Boolean);
@@ -1158,6 +1224,18 @@ export default function ShopShow({
         setSelectedThumbnail(null);
     };
 
+    const rememberGalleryOptionSelection = (groupKey: string) => {
+        if (
+            getPreferredGalleryMatchKey(
+                configuredGalleries,
+                isPvcProduct,
+                groupKey,
+            )
+        ) {
+            setLastSelectedGalleryOptionKey(groupKey);
+        }
+    };
+
     const hasSelection = usesDynamicOptions
         ? dynamicOptionGroups.every((group) => {
               const selected = selectedDynamicOptions[group.key];
@@ -1170,7 +1248,7 @@ export default function ShopShow({
                             selected !== 'custom' ||
                             confirmedCustomSize != null);
           }) &&
-          (!isStickerProduct || Number(stickerPaperArea) > 0)
+          (!isStickerProduct || stickerPaperArea > 0)
         : (sizes.length === 0 ||
               (selectedSize !== 'custom'
                   ? selectedSize != null
@@ -1200,7 +1278,7 @@ export default function ShopShow({
             }
 
             if (isStickerProduct) {
-                opts.paper_area = formatStickerArea(
+                opts.paper_area = stickerAreaOptionValue(
                     stickerAreaForSize(
                         dynamicOptionGroups,
                         dynamicOptionDefaults.sizes,
@@ -1269,7 +1347,7 @@ export default function ShopShow({
             }
 
             if (isStickerProduct) {
-                opts.paper_area = stickerPaperArea;
+                opts.paper_area = stickerAreaOptionValue(stickerPaperArea);
             }
 
             return opts;
@@ -1304,6 +1382,11 @@ export default function ShopShow({
         )
             opts['embossing_or_signature_panel'] =
                 selectedEmbossingOrSignaturePanel;
+
+        if (isStickerProduct) {
+            opts.paper_area = stickerAreaOptionValue(stickerPaperArea);
+        }
+
         return opts;
     }, [
         hasSelection,
@@ -1361,6 +1444,11 @@ export default function ShopShow({
             const matched = findMatchingGallery(
                 configuredGalleries,
                 selectedOptions,
+                getPreferredGalleryMatchKey(
+                    configuredGalleries,
+                    isPvcProduct,
+                    lastSelectedGalleryOptionKey,
+                ),
             );
 
             if (matched) {
@@ -1373,6 +1461,8 @@ export default function ShopShow({
         hasInteracted,
         configuredGalleries,
         selectedOptions,
+        isPvcProduct,
+        lastSelectedGalleryOptionKey,
         defaultGallery,
         fallbackGallery,
     ]);
@@ -1435,6 +1525,10 @@ export default function ShopShow({
                 Math.max(0, cornersIndex),
                 Math.max(0, specialIndex),
                 selectedOptions,
+                specialFinishSidesForSelection(
+                    selectedOptions.special_finish,
+                    selectedSpecialFinishSides,
+                ) ?? {},
             );
         }
 
@@ -1479,6 +1573,7 @@ export default function ShopShow({
         finishes,
         cornersList,
         specialFinishes,
+        selectedSpecialFinishSides,
         productOptions,
         product.price,
         c.configurator_options,
@@ -1513,20 +1608,14 @@ export default function ShopShow({
             return;
         }
 
+        rememberGalleryOptionSelection(groupKey);
+
         if (groupKey === 'paper_finish') {
             setSelectedThumbnail(null);
         }
 
         if (groupKey === 'sizes' && group.type !== 'multi_select') {
             setSelectedSize(value);
-
-            if (isStickerProduct) {
-                setStickerPaperArea(
-                    formatStickerArea(
-                        stickerAreaForSize(dynamicOptionGroups, value),
-                    ),
-                );
-            }
         }
 
         if (groupKey === 'special_finish') {
@@ -1673,12 +1762,6 @@ export default function ShopShow({
         });
         setSelectedSize('custom');
 
-        if (isStickerProduct) {
-            setStickerPaperArea(
-                formatStickerArea(stickerAreaForCustomSize(width, height)),
-            );
-        }
-
         markInteracted();
         if (usesDynamicOptions) {
             setSelectedDynamicOptions((current) => ({
@@ -1701,6 +1784,8 @@ export default function ShopShow({
             | 'embossing_or_signature_panel',
         value: string,
     ) {
+        rememberGalleryOptionSelection(group);
+
         switch (group) {
             case 'sizes':
                 setSelectedSize(value);
@@ -1994,6 +2079,22 @@ export default function ShopShow({
                                 </button>
                             ))}
                         </div>
+                        {isBusinessCardProduct && (
+                            <Link
+                                href="/blog/business-card-buying-ordering-guide"
+                                className="mt-4 flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-4 transition-colors hover:border-[#800020]/40 hover:bg-[#800020]/5 focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:outline-none"
+                            >
+                                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#800020]/10 text-[#800020]">
+                                    <Lightbulb
+                                        className="size-5"
+                                        aria-hidden="true"
+                                    />
+                                </span>
+                                <span className="text-sm font-semibold text-neutral-900">
+                                    Business Card Buying Guide
+                                </span>
+                            </Link>
+                        )}
                     </div>
 
                     {/* options */}
@@ -2090,16 +2191,6 @@ export default function ShopShow({
                                 onSpecialFinishSideChange={
                                     selectSpecialFinishSide
                                 }
-                            />
-                        )}
-
-                        {isStickerProduct && (
-                            <StickerPaperAreaInput
-                                value={stickerPaperArea}
-                                onChange={(value) => {
-                                    setStickerPaperArea(value);
-                                    markInteracted();
-                                }}
                             />
                         )}
 
@@ -2751,7 +2842,7 @@ export default function ShopShow({
                                                     </dt>
                                                     <dd className="text-right font-medium">
                                                         <LiveText
-                                                            text={`${stickerPaperArea} m²`}
+                                                            text={`${formatStickerArea(stickerPaperArea)} m²`}
                                                         />
                                                     </dd>
                                                 </>
@@ -3616,42 +3707,6 @@ function DynamicOptionGroups({
     );
 }
 
-function StickerPaperAreaInput({
-    value,
-    onChange,
-}: {
-    value: string;
-    onChange: (value: string) => void;
-}) {
-    return (
-        <fieldset className="mt-6">
-            <legend className="mb-3 text-base font-bold text-neutral-900">
-                Paper area
-            </legend>
-            <label className="block max-w-xs space-y-1.5 text-sm font-medium text-neutral-900">
-                Area (m²)
-                <Input
-                    type="number"
-                    inputMode="decimal"
-                    min="0.000001"
-                    step="0.000001"
-                    value={value}
-                    onChange={(event) => onChange(event.target.value)}
-                    aria-describedby="sticker-paper-area-help"
-                    required
-                />
-            </label>
-            <p
-                id="sticker-paper-area-help"
-                className="mt-2 max-w-xl text-xs leading-relaxed text-neutral-500"
-            >
-                This fills from the selected sticker size and can be adjusted
-                when you need to price a different paper area.
-            </p>
-        </fieldset>
-    );
-}
-
 function OptionGroup({
     label,
     children,
@@ -3753,7 +3808,12 @@ function SpecialFinishChoiceTile({
             <div className="pointer-events-none relative z-10 p-2">
                 <div className="relative">
                     {children}
-                    <div className="pointer-events-none absolute inset-0">
+                    {label && (
+                        <p className="mt-2 text-sm font-bold text-black">
+                            {label}
+                        </p>
+                    )}
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex overflow-hidden rounded-b-sm">
                         {SPECIAL_FINISH_SIDE_OPTIONS.map((option) => (
                             <button
                                 key={option.value}
@@ -3762,11 +3822,7 @@ function SpecialFinishChoiceTile({
                                 aria-pressed={finishSide === option.value}
                                 disabled={disabled}
                                 onClick={() => onFinishSideChange(option.value)}
-                                className={`pointer-events-auto absolute top-0 rounded-md border px-2 py-1 text-[10px] leading-tight font-semibold shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
-                                    option.position === 'left'
-                                        ? 'left-0'
-                                        : 'right-0'
-                                } ${
+                                className={`pointer-events-auto flex min-w-0 flex-1 items-center justify-center border px-2 py-1 text-center text-[10px] leading-tight font-semibold shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                                     finishSide === option.value
                                         ? 'border-primary bg-primary text-primary-foreground hover:bg-[#800020]'
                                         : 'border-white/80 bg-white/90 text-neutral-800 backdrop-blur-sm hover:bg-white'
@@ -3777,7 +3833,6 @@ function SpecialFinishChoiceTile({
                         ))}
                     </div>
                 </div>
-                {label && <p className="mt-2 text-sm font-semibold">{label}</p>}
             </div>
         </div>
     );

@@ -7,6 +7,7 @@ use App\Models\HelpArticle;
 use App\Models\HelpCategory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class HelpCenterSeeder extends Seeder
 {
@@ -44,6 +45,13 @@ class HelpCenterSeeder extends Seeder
                 'sort_order' => 4,
             ],
             [
+                'slug' => 'stickers-and-labels-faq',
+                'name' => 'stickers and labels faq',
+                'description' => 'frequently asked questions and answers about stickers and labels',
+                'icon' => 'tag',
+                'sort_order' => 6,
+            ],
+            [
                 'slug' => 'design-and-print-knowledge',
                 'name' => 'Design and Print knowledge',
                 'description' => 'File formats, bleed, templates, special finishes, and production-ready artwork guidelines.',
@@ -73,10 +81,24 @@ class HelpCenterSeeder extends Seeder
                     'category_id' => $category->id,
                     'title' => $data['title'],
                     'body' => $data['body'],
-                    'excerpt' => $data['excerpt'] ?? \Illuminate\Support\Str::limit(strip_tags($data['body']), 200),
+                    'excerpt' => $data['excerpt'] ?? Str::limit(strip_tags($data['body']), 200),
                     'is_published' => true,
                     'published_at' => now()->subDays($total - $index),
                     'sort_order' => $index,
+                ],
+            );
+        };
+
+        $upsertFaq = function (HelpCategory $category, array $data, int $index): void {
+            Faq::updateOrCreate(
+                [
+                    'category_id' => $category->id,
+                    'question' => $data['question'],
+                ],
+                [
+                    'answer' => $data['answer'],
+                    'sort_order' => 100 + $index,
+                    'is_published' => true,
                 ],
             );
         };
@@ -100,6 +122,13 @@ class HelpCenterSeeder extends Seeder
 
         foreach ($shippingArticles as $index => $data) {
             $upsertArticle($shippingCategory, $data, $index, count($shippingArticles));
+        }
+
+        $stickersCategory = HelpCategory::where('slug', 'stickers-and-labels-faq')->firstOrFail();
+        $stickerFaqs = require database_path('seeders/data/help_stickers_labels_faqs.php');
+
+        foreach ($stickerFaqs as $index => $faq) {
+            $upsertFaq($stickersCategory, $faq, $index);
         }
 
         $category = HelpCategory::where('slug', 'design-and-print-knowledge')->firstOrFail();

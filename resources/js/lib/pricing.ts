@@ -36,6 +36,24 @@ export interface QuantityTier {
     badge?: string;
 }
 
+const INCH_TO_METRE = 0.0254;
+
+export function squareInchesToSquareMetres(
+    widthInches: number,
+    heightInches: number,
+): number {
+    if (
+        !Number.isFinite(widthInches) ||
+        !Number.isFinite(heightInches) ||
+        widthInches <= 0 ||
+        heightInches <= 0
+    ) {
+        return 0;
+    }
+
+    return widthInches * INCH_TO_METRE * (heightInches * INCH_TO_METRE);
+}
+
 export function resolvePricingScenario(
     data: DynamicPricingData,
     sizeIndex: number,
@@ -89,6 +107,312 @@ function hasPrintCodeSelection(value: string | string[] | undefined): boolean {
     return values.some((item) => normalizeOptionValue(item) === 'print-code');
 }
 
+const HOT_FOIL_OPTION_CODES = new Set([
+    'black-gold',
+    'blue-gold',
+    'bright-gold',
+    'bright-silver',
+    'green-gold',
+    'matte-gold',
+    'matte-silver',
+    'red-gold',
+    'rose-gold',
+    'aged-gold',
+    'muted-purple-gold',
+]);
+
+function selectedFinishCodes(
+    selectedFinish: string | string[] | undefined,
+): string[] {
+    return (
+        Array.isArray(selectedFinish)
+            ? selectedFinish
+            : selectedFinish
+              ? [selectedFinish]
+              : []
+    ).map(normalizeOptionValue);
+}
+
+function isFoilOptionCode(code: string): boolean {
+    return (
+        code.includes('foil') ||
+        code.startsWith('cold-') ||
+        HOT_FOIL_OPTION_CODES.has(code)
+    );
+}
+
+function isFoilProcess(
+    process: PricingScenario['processes'][number],
+    selectedFinish: string | string[] | undefined,
+): boolean {
+    const code = pricingProcessCode(process);
+    const rawName = process.name.trim().toLowerCase();
+
+    if (code === 'foil' || code.includes('foil')) {
+        return true;
+    }
+
+    if (code === 'special-finish') {
+        return (
+            rawName.includes('foil') ||
+            rawName.includes('冷烫') ||
+            rawName.includes('热烫') ||
+            selectedFinishCodes(selectedFinish).some(isFoilOptionCode)
+        );
+    }
+
+    return isFoilOptionCode(code) || rawName.includes('foil');
+}
+
+function foilSideMultiplier(
+    selectedFinish: string | string[] | undefined,
+    sides: Record<string, 'one_side' | 'both_sides'>,
+    process?: PricingScenario['processes'][number],
+): number {
+    let selectedCodes = selectedFinishCodes(selectedFinish);
+
+    if (process) {
+        const processCode = pricingProcessCode(process);
+        const processName = process.name.trim().toLowerCase();
+        const hasGenericFoilName =
+            processName.includes('foil') || processName.includes('烫金');
+        const mentionsColdFoil =
+            processCode.includes('cold') ||
+            processName.includes('cold foil') ||
+            processName.includes('冷烫');
+        const mentionsHotFoil =
+            processCode.includes('hot') ||
+            processName.includes('hot foil') ||
+            processName.includes('热烫');
+        const isColdFoil = mentionsColdFoil && !mentionsHotFoil;
+        const isHotFoil = mentionsHotFoil && !mentionsColdFoil;
+        const isGenericFoil =
+            (['foil', 'special-finish'].includes(processCode) ||
+                hasGenericFoilName) &&
+            !isColdFoil &&
+            !isHotFoil;
+
+        if (!isGenericFoil) {
+            selectedCodes = selectedCodes.filter((code) => {
+                if (code === processCode) {
+                    return true;
+                }
+
+                if (isColdFoil) {
+                    return isFoilOptionCode(code) && code.startsWith('cold-');
+                }
+
+                if (isHotFoil) {
+                    return isFoilOptionCode(code) && !code.startsWith('cold-');
+                }
+
+                return false;
+            });
+        }
+    }
+
+    if (selectedCodes.length === 0) {
+        return 1;
+    }
+
+    const bothSidedCodes = new Set(
+        Object.entries(sides)
+            .filter(([, side]) => side === 'both_sides')
+            .map(([code]) => normalizeOptionValue(code)),
+    );
+
+    return selectedCodes.some((code) => bothSidedCodes.has(code)) ? 2 : 1;
+}
+
+function pricingProcessCode(
+    process: PricingScenario['processes'][number],
+): string {
+    const explicitCode = process.code?.trim();
+
+    if (explicitCode) {
+        return normalizeOptionValue(explicitCode);
+    }
+
+    const name = process.name.trim();
+    const normalizedName = normalizeOptionValue(name);
+
+    switch (name) {
+        case '圆角':
+            return 'rounded-corners';
+        case '激光':
+            return 'laser';
+        case '滚边':
+            return 'edge-coloring';
+        case '对裱':
+            return 'double-mounting';
+        case '异形模切':
+            return 'custom-die-cut';
+        default:
+            return ['rounded', 'rounded-corners', 'round'].includes(
+                normalizedName,
+            )
+                ? 'rounded-corners'
+                : normalizedName;
+    }
+}
+
+function foilProcessMatchesSelection(
+    processCode: string,
+    processName: string,
+    selectedCode: string,
+): boolean {
+    if (['foil', 'special-finish'].includes(processCode)) {
+        return true;
+    }
+
+    if (selectedCode === processCode) {
+        return true;
+    }
+
+    const hasGenericFoilName =
+        processName.includes('foil') || processName.includes('烫金');
+
+    const mentionsColdFoil =
+        processCode.includes('cold') ||
+        processName.includes('cold foil') ||
+        processName.includes('冷烫');
+    const mentionsHotFoil =
+        processCode.includes('hot') ||
+        processName.includes('hot foil') ||
+        processName.includes('热烫');
+
+    const isColdFoil = mentionsColdFoil && !mentionsHotFoil;
+    const isHotFoil = mentionsHotFoil && !mentionsColdFoil;
+
+    if (hasGenericFoilName && !isColdFoil && !isHotFoil) {
+        return true;
+    }
+
+    if (isColdFoil) {
+        return (
+            isFoilOptionCode(selectedCode) && selectedCode.startsWith('cold-')
+        );
+    }
+
+    if (isHotFoil) {
+        return (
+            isFoilOptionCode(selectedCode) && !selectedCode.startsWith('cold-')
+        );
+    }
+
+    return false;
+}
+
+function processIsSelected(
+    process: PricingScenario['processes'][number],
+    selectedOptions: Record<string, string | string[]>,
+    cornersIndex: number,
+    specialFinishIndex: number,
+): boolean {
+    const code = pricingProcessCode(process);
+    const rawName = process.name.trim().toLowerCase();
+
+    if (
+        code === 'print-code-or-magnetic-stripe' &&
+        selectedOptions.print_code_or_magnetic_stripe !== undefined
+    ) {
+        return hasPositiveSelection(
+            selectedOptions.print_code_or_magnetic_stripe,
+        );
+    }
+
+    if (
+        code === 'print-code' ||
+        code === 'print-code-or-magnetic-stripe' ||
+        rawName.includes('print code') ||
+        rawName.includes('打码')
+    ) {
+        return [
+            selectedOptions.print_code,
+            selectedOptions.print_code_or_signature_stripe,
+            selectedOptions.print_code_or_magnetic_stripe,
+        ].some((value) => hasPrintCodeSelection(value));
+    }
+
+    if (
+        code === 'rounded-corners' ||
+        rawName.includes('rounded') ||
+        rawName.includes('圆角')
+    ) {
+        const values =
+            selectedOptions.corners ??
+            (cornersIndex === 1 ? 'rounded' : 'square');
+
+        return (Array.isArray(values) ? values : [values]).some((value) =>
+            ['rounded', 'rounded-corners', 'round'].includes(
+                normalizeOptionValue(value),
+            ),
+        );
+    }
+
+    if (
+        [
+            'laser',
+            'edge-coloring',
+            'double-mounting',
+            'custom-die-cut',
+        ].includes(code)
+    ) {
+        const values =
+            selectedOptions.special_finish ??
+            (specialFinishIndex > 0 ? 'special_finish' : 'none');
+
+        return (Array.isArray(values) ? values : [values]).some(
+            (value) => normalizeOptionValue(value) === code,
+        );
+    }
+
+    if (
+        ['foil', 'special-finish'].includes(code) ||
+        rawName.includes('foil') ||
+        rawName.includes('烫金') ||
+        rawName.includes('激光雕刻') ||
+        rawName.includes('彩印') ||
+        rawName.includes('镀色')
+    ) {
+        const selectedFinish = selectedOptions.special_finish;
+
+        if (selectedFinish !== undefined) {
+            const values = Array.isArray(selectedFinish)
+                ? selectedFinish
+                : [selectedFinish];
+
+            if (
+                values.some(
+                    (value) =>
+                        hasPositiveSelection(value) &&
+                        foilProcessMatchesSelection(
+                            code,
+                            rawName,
+                            normalizeOptionValue(value),
+                        ),
+                )
+            ) {
+                return true;
+            }
+        }
+
+        return Object.entries(selectedOptions).some(([key, value]) => {
+            const values = Array.isArray(value) ? value : [value];
+
+            return values.some(
+                (item) =>
+                    normalizeOptionValue(item) === code &&
+                    (key !== 'special_finish' || hasPositiveSelection(item)),
+            );
+        });
+    }
+
+    const selected = selectedOptions[code];
+
+    return selected !== undefined && hasPositiveSelection(selected);
+}
+
 function normalizeSelectedOptions(
     selected: Record<string, string | string[]>,
 ): Record<string, string | string[]> {
@@ -140,6 +464,7 @@ export function computeDynamicTiers(
     cornersIndex: number,
     specialFinishIndex: number,
     selectedOptions: Record<string, string | string[]> = {},
+    selectedSpecialFinishSides: Record<string, 'one_side' | 'both_sides'> = {},
 ): QuantityTier[] {
     const scenario = data.rules?.length
         ? findMatchingPricingRule(data.rules, selectedOptions)
@@ -161,124 +486,42 @@ export function computeDynamicTiers(
         ]),
     ].sort((a, b) => a - b);
 
-    const roundedProcess = scenario.processes.find((p) => {
-        const code = normalizeOptionValue(p.code ?? '');
-        const name = p.name.toLowerCase();
-
-        return (
-            code === 'rounded-corners' ||
-            code === 'rounded' ||
-            name.includes('rounded') ||
-            name.includes('圆角')
-        );
-    });
-    const foilProcess = scenario.processes.find((p) => {
-        const code = normalizeOptionValue(p.code ?? '');
-        const name = p.name.toLowerCase();
-
-        return (
-            code === 'foil' ||
-            code === 'special-finish' ||
-            name.includes('foil') ||
-            name.includes('烫金') ||
-            name.includes('special finish') ||
-            name.includes('激光雕刻') ||
-            name.includes('彩印') ||
-            name.includes('镀色')
-        );
-    });
-    const printCodeProcess = scenario.processes.find((p) => {
-        const code = normalizeOptionValue(p.code ?? '');
-        const name = p.name.toLowerCase();
-
-        return (
-            code === 'print-code' ||
-            code === 'print-code-or-magnetic-stripe' ||
-            name.includes('print code') ||
-            name.includes('打码')
-        );
-    });
-
-    const selectedCorners = selectedOptions.corners;
-    const roundedSelected = selectedCorners
-        ? Array.isArray(selectedCorners)
-            ? selectedCorners.some((value) =>
-                  ['rounded', 'rounded-corners', 'round'].includes(
-                      normalizeOptionValue(value),
-                  ),
-              )
-            : ['rounded', 'rounded-corners', 'round'].includes(
-                  normalizeOptionValue(selectedCorners),
-              )
-        : cornersIndex === 1;
-    const selectedSpecialFinish = selectedOptions.special_finish;
-    const specialFinish = selectedSpecialFinish
-        ? Array.isArray(selectedSpecialFinish)
-            ? selectedSpecialFinish.map(normalizeOptionValue)
-            : normalizeOptionValue(selectedSpecialFinish)
-        : null;
-    const foiledSelected = specialFinish
-        ? Array.isArray(specialFinish)
-            ? specialFinish.some(
-                  (value) =>
-                      !['', 'none', 'no-foil', 'no-special-finish'].includes(
-                          value,
-                      ),
-              )
-            : !['', 'none', 'no-foil', 'no-special-finish'].includes(
-                  specialFinish,
-              )
-        : specialFinishIndex > 0;
-    const printCodeSelected = [
-        selectedOptions.print_code,
-        selectedOptions.print_code_or_signature_stripe,
-    ].some(hasPrintCodeSelection);
-    const printCodeOrMagneticStripeSelected =
-        selectedOptions.print_code_or_magnetic_stripe !== undefined &&
-        hasPositiveSelection(selectedOptions.print_code_or_magnetic_stripe);
-    const effectivePrintCodeSelected =
-        printCodeSelected || printCodeOrMagneticStripeSelected;
-    const rounded = roundedSelected && roundedProcess != null;
-    const foiled = foiledSelected && foilProcess != null;
+    const selectedProcesses = scenario.processes.filter((process) =>
+        processIsSelected(
+            process,
+            selectedOptions,
+            cornersIndex,
+            specialFinishIndex,
+        ),
+    );
 
     return quantities.map((qty) => {
-        const isStart = qty === scenario.startQuantity;
-
         let unit = scenario.basePrice;
         const unitMultiplier = scenario.unitMultipliers?.[String(qty)];
 
         if (unitMultiplier != null && Number.isFinite(unitMultiplier)) {
             unit = scenario.basePrice * unitMultiplier;
-        } else if (!isStart) {
+        } else {
             const paperRate = scenario.paperRates[String(qty)] ?? 0;
             unit -= scenario.basePrice * (paperRate / 100);
         }
 
-        if (rounded && roundedProcess) {
-            unit += roundedProcess.markup;
+        for (const process of selectedProcesses) {
+            const markup = isFoilProcess(
+                process,
+                selectedOptions.special_finish,
+            )
+                ? process.markup *
+                  foilSideMultiplier(
+                      selectedOptions.special_finish,
+                      selectedSpecialFinishSides,
+                      process,
+                  )
+                : process.markup;
 
-            if (!isStart) {
-                const rate = roundedProcess.rates[String(qty)] ?? 0;
-                unit -= roundedProcess.markup * (rate / 100);
-            }
-        }
-
-        if (effectivePrintCodeSelected && printCodeProcess) {
-            unit += printCodeProcess.markup;
-
-            if (!isStart) {
-                const rate = printCodeProcess.rates[String(qty)] ?? 0;
-                unit -= printCodeProcess.markup * (rate / 100);
-            }
-        }
-
-        if (foiled && foilProcess) {
-            unit += foilProcess.markup;
-
-            if (!isStart) {
-                const rate = foilProcess.rates[String(qty)] ?? 0;
-                unit -= foilProcess.markup * (rate / 100);
-            }
+            unit += markup;
+            const rate = process.rates[String(qty)] ?? 0;
+            unit -= markup * (rate / 100);
         }
 
         const paperArea = scenario.area_based
@@ -292,7 +535,7 @@ export function computeDynamicTiers(
             pricePerCard: adjustedUnit,
             currentPrice: Math.round(qty * adjustedUnit),
             originalPrice: null,
-            recommended: isStart,
+            recommended: qty === scenario.startQuantity,
         };
     });
 }

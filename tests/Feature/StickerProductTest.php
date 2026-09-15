@@ -100,7 +100,7 @@ class StickerProductTest extends TestCase
         $this->get('/super-stickers')->assertStatus(301)->assertRedirect('/stickers/super');
     }
 
-    public function test_workbook_area_formula_is_used_for_sticker_prices(): void
+    public function test_sticker_prices_are_derived_from_standard_and_custom_dimensions(): void
     {
         $pricing = app(PricingService::class);
         $premium = Product::where('slug', 'premium-stickers')->firstOrFail();
@@ -108,35 +108,79 @@ class StickerProductTest extends TestCase
 
         $premiumFifty = $pricing->calculate($premium->id, [
             'quantity' => '50',
-            'paper_area' => '0.012',
+            'sizes' => '2x2',
         ]);
-        $premiumHundred = $pricing->calculate($premium->id, [
-            'quantity' => '100',
-            'paper_area' => '0.012',
-        ]);
-        $superFifty = $pricing->calculate($super->id, [
+        $premiumThreeByThree = $pricing->calculate($premium->id, [
             'quantity' => '50',
+            'sizes' => '3x3',
+            'paper_area' => '0.012',
+        ]);
+        $superCustomFifty = $pricing->calculate($super->id, [
+            'quantity' => '50',
+            'sizes' => 'custom',
+            'custom_width' => '2',
+            'custom_height' => '3',
+        ]);
+        $superForgedCustomFifty = $pricing->calculate($super->id, [
+            'quantity' => '50',
+            'sizes' => 'custom',
+            'custom_width' => '2',
+            'custom_height' => '3',
             'paper_area' => '0.012',
         ]);
 
-        $this->assertSame(101.0, $premiumFifty);
-        $this->assertSame(118.0, $premiumHundred);
-        $this->assertSame(130.0, $superFifty);
+        $this->assertSame(22.0, $premiumFifty);
+        $this->assertSame(49.0, $premiumThreeByThree);
+        $this->assertSame(42.0, $superCustomFifty);
+        $this->assertSame($superCustomFifty, $superForgedCustomFifty);
     }
 
-    public function test_sticker_paper_area_is_required_and_normalized(): void
+    public function test_sticker_paper_area_is_derived_and_manual_values_are_ignored(): void
+    {
+        $pricing = app(PricingService::class);
+
+        foreach (['classic-stickers', 'premium-stickers', 'super-stickers'] as $slug) {
+            $product = Product::where('slug', $slug)->firstOrFail();
+            $normalized = $pricing->validateOptions($product, [
+                'sizes' => '2x2',
+                'paper_area' => '0.012',
+            ]);
+
+            $this->assertSame('0.00258064', $normalized['paper_area']);
+
+            $custom = $pricing->validateOptions($product, [
+                'sizes' => 'custom',
+                'custom_width' => '2',
+                'custom_height' => '3',
+                'paper_area' => '0.012',
+            ]);
+
+            $this->assertSame('0.00387096', $custom['paper_area']);
+        }
+    }
+
+    public function test_sticker_sizes_and_custom_dimensions_are_required(): void
     {
         $product = Product::where('slug', 'classic-stickers')->firstOrFail();
         $pricing = app(PricingService::class);
 
-        $normalized = $pricing->validateOptions($product, [
-            'sizes' => '2x2',
-            'paper_area' => '0.012',
-        ]);
+        foreach ([
+            [],
+            ['sizes' => 'unknown'],
+            ['sizes' => 'custom'],
+            ['sizes' => 'custom', 'custom_width' => '2', 'custom_height' => '12'],
+        ] as $options) {
+            try {
+                $pricing->validateOptions($product, $options);
+                $this->fail('An invalid sticker size selection was accepted.');
+            } catch (ValidationException) {
+                $this->addToAssertionCount(1);
+            }
+        }
 
-        $this->assertSame('0.012000', $normalized['paper_area']);
-
-        $this->expectException(ValidationException::class);
-        $pricing->validateOptions($product, ['sizes' => '2x2']);
+        $this->assertSame(
+            '0.00258064',
+            $pricing->validateOptions($product, ['sizes' => '2x2'])['paper_area'],
+        );
     }
 }

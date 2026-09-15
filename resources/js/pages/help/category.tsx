@@ -32,11 +32,15 @@ interface Props {
 }
 
 function excerpt(body: string | null, length = 160): string {
-    if (!body) return '';
+    if (!body) {
+        return '';
+    }
+
     const text = body
         .replace(/<[^\u003e]*>/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
+
     return text.length > length ? text.slice(0, length) + '...' : text;
 }
 
@@ -74,13 +78,13 @@ export default function HelpCategory({ category, articles, faqs }: Props) {
                 </div>
             </section>
 
-            <section className="bg-neutral-50">
-                <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
-                    <h2 className="mb-8 font-serif text-2xl font-bold text-[#800020]">
-                        Articles
-                    </h2>
+            {articles.length > 0 && (
+                <section className="bg-neutral-50">
+                    <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
+                        <h2 className="mb-8 font-serif text-2xl font-bold text-[#800020]">
+                            Articles
+                        </h2>
 
-                    {articles.length > 0 ? (
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                             {articles.map((article) => (
                                 <Link
@@ -111,13 +115,9 @@ export default function HelpCategory({ category, articles, faqs }: Props) {
                                 </Link>
                             ))}
                         </div>
-                    ) : (
-                        <p className="text-neutral-600">
-                            No articles in this category yet.
-                        </p>
-                    )}
-                </div>
-            </section>
+                    </div>
+                </section>
+            )}
 
             {faqs.length > 0 && (
                 <section className="bg-white">

@@ -50,10 +50,6 @@ class PricingService
     {
         $config = $this->configuration->canonicalConfig($product);
 
-        if (StickerProductCatalog::isStickerProduct((string) $product->slug)) {
-            $options = $this->validateStickerPaperArea($options);
-        }
-
         if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {
             $options = $this->validateCottonOptions($options, $config);
         }
@@ -73,76 +69,138 @@ class PricingService
         if ($normalizedSize !== 'custom') {
             unset($options['custom_width'], $options['custom_height']);
 
-            return $options;
-        }
-
-        if (! $hasCustomSize) {
-            throw ValidationException::withMessages([
-                'options.sizes' => 'This product does not support custom sizes.',
-            ]);
-        }
-
-        $bounds = $this->customSizeBounds(is_array($customSizeValue) ? $customSizeValue : []);
-        $errors = [];
-        $dimensions = [
-            'custom_width' => '',
-            'custom_height' => '',
-        ];
-
-        foreach (['width', 'height'] as $dimension) {
-            $key = "custom_{$dimension}";
-            $value = $options[$key] ?? null;
-            $minimum = $bounds[$dimension]['min'];
-            $maximum = $bounds[$dimension]['max'];
-            $range = number_format($minimum, 2, '.', '').' and '.number_format($maximum, 2, '.', '');
-
-            if (! is_numeric($value) || ! is_finite((float) $value)) {
-                $errors["options.{$key}"] = "Enter a {$dimension} between {$range} inches.";
-
-                continue;
+        } else {
+            if (! $hasCustomSize) {
+                throw ValidationException::withMessages([
+                    'options.sizes' => 'This product does not support custom sizes.',
+                ]);
             }
 
-            $numericValue = (float) $value;
+            $bounds = $this->customSizeBounds(is_array($customSizeValue) ? $customSizeValue : []);
+            $errors = [];
+            $dimensions = [
+                'custom_width' => '',
+                'custom_height' => '',
+            ];
 
-            if ($numericValue < $minimum || $numericValue > $maximum) {
-                $errors["options.{$key}"] = "The {$dimension} must be between {$range} inches.";
+            foreach (['width', 'height'] as $dimension) {
+                $key = "custom_{$dimension}";
+                $value = $options[$key] ?? null;
+                $minimum = $bounds[$dimension]['min'];
+                $maximum = $bounds[$dimension]['max'];
+                $range = number_format($minimum, 2, '.', '').' and '.number_format($maximum, 2, '.', '');
 
-                continue;
+                if (! is_numeric($value) || ! is_finite((float) $value)) {
+                    $errors["options.{$key}"] = "Enter a {$dimension} between {$range} inches.";
+
+                    continue;
+                }
+
+                $numericValue = (float) $value;
+
+                if ($numericValue < $minimum || $numericValue > $maximum) {
+                    $errors["options.{$key}"] = "The {$dimension} must be between {$range} inches.";
+
+                    continue;
+                }
+
+                $dimensions[$key] = number_format($numericValue, 2, '.', '');
             }
 
-            $dimensions[$key] = number_format($numericValue, 2, '.', '');
+            if ($errors !== []) {
+                throw ValidationException::withMessages($errors);
+            }
+
+            $options['sizes'] = 'custom';
+            $options['custom_width'] = $dimensions['custom_width'];
+            $options['custom_height'] = $dimensions['custom_height'];
         }
 
-        if ($errors !== []) {
-            throw ValidationException::withMessages($errors);
+        if (StickerProductCatalog::isStickerProduct((string) $product->slug)) {
+            $sizeGroup = data_get($config, 'options.sizes', []);
+            $options = $this->normalizeStickerPaperArea(
+                $options,
+                is_array($sizeGroup) ? $sizeGroup : [],
+            );
         }
-
-        $options['sizes'] = 'custom';
-        $options['custom_width'] = $dimensions['custom_width'];
-        $options['custom_height'] = $dimensions['custom_height'];
 
         return $options;
     }
 
     /**
-     * Sticker pricing uses the user-entered sheet area as a multiplier.
+     * Sticker pricing uses the selected dimensions as a square-metre multiplier.
      *
      * @param  array<string, mixed>  $options
+     * @param  array<string, mixed>  $sizeGroup
      * @return array<string, mixed>
      */
-    private function validateStickerPaperArea(array $options): array
+    private function normalizeStickerPaperArea(array $options, array $sizeGroup): array
     {
-        $area = $options['paper_area'] ?? null;
+        $area = $this->stickerPaperArea($sizeGroup, $options);
 
-        if (! is_numeric($area) || ! is_finite((float) $area) || (float) $area <= 0) {
+        if ($area === null || $area <= 0) {
             throw ValidationException::withMessages([
-                'options.paper_area' => 'Enter a paper area greater than 0 square metres.',
+                'options.sizes' => 'Select a valid sticker size.',
             ]);
         }
 
-        $options['paper_area'] = number_format((float) $area, 6, '.', '');
+        $options['paper_area'] = number_format($area, 8, '.', '');
 
         return $options;
+    }
+
+    /**
+     * Resolve a sticker's area from inches into square metres.
+     *
+     * @param  array<string, mixed>  $sizeGroup
+     * @param  array<string, mixed>  $options
+     */
+    private function stickerPaperArea(array $sizeGroup, array $options): ?float
+    {
+        $selectedSize = $options['sizes'] ?? null;
+        $selectedSize = is_array($selectedSize) ? ($selectedSize[0] ?? null) : $selectedSize;
+        $sizeCode = $this->normalizeOptionValue($selectedSize);
+
+        $readPositiveNumber = static function (mixed $value): ?float {
+            if (! is_numeric($value) || ! is_finite((float) $value) || (float) $value <= 0) {
+                return null;
+            }
+
+            return (float) $value;
+        };
+
+        if ($sizeCode === 'custom') {
+            $width = $readPositiveNumber($options['custom_width'] ?? null);
+            $height = $readPositiveNumber($options['custom_height'] ?? null);
+
+            return $width !== null && $height !== null
+                ? StickerProductCatalog::areaInSquareMetres($width, $height)
+                : null;
+        }
+
+        $values = is_array($sizeGroup['values'] ?? null) ? $sizeGroup['values'] : [];
+
+        foreach ($values as $value) {
+            if (! is_array($value)) {
+                continue;
+            }
+
+            $code = $this->normalizeOptionValue($value['code'] ?? '');
+            $label = $this->normalizeOptionValue($value['label'] ?? $value['name'] ?? '');
+
+            if ($sizeCode === '' || ($sizeCode !== $code && $sizeCode !== $label)) {
+                continue;
+            }
+
+            $width = $readPositiveNumber($value['width'] ?? null);
+            $height = $readPositiveNumber($value['height'] ?? null);
+
+            return $width !== null && $height !== null
+                ? StickerProductCatalog::areaInSquareMetres($width, $height)
+                : null;
+        }
+
+        return null;
     }
 
     /**
@@ -375,7 +433,25 @@ class PricingService
         // Custom sizes use the same base pricing as the standard rectangular
         // card. The dimensions are still preserved in the cart options and
         // validated above; only the pricing rule key is normalized here.
-        $pricingOptions = $this->optionsForPricing($options, $product);
+        $pricingOptions = $options;
+
+        if (StickerProductCatalog::isStickerProduct((string) $product->slug)) {
+            $optionGroups = is_array($productOptions['option_groups'] ?? null)
+                ? $productOptions['option_groups']
+                : [];
+            $sizeGroup = collect($optionGroups)->first(
+                fn (mixed $group): bool => is_array($group) && ($group['key'] ?? null) === 'sizes',
+            );
+            $area = $this->stickerPaperArea(is_array($sizeGroup) ? $sizeGroup : [], $options);
+
+            if ($area === null || $area <= 0) {
+                return null;
+            }
+
+            $pricingOptions['paper_area'] = $area;
+        }
+
+        $pricingOptions = $this->optionsForPricing($pricingOptions, $product);
 
         if ($pricingRules !== []) {
             $rule = $this->findMatchingPricingRule($pricingRules, $pricingOptions);
@@ -523,8 +599,9 @@ class PricingService
 
         if (is_numeric($unitMultiplier)) {
             $unit = $basePrice * (float) $unitMultiplier;
-        } elseif ($quantity !== $startQuantity) {
-            $unit -= $basePrice * ((float) ($paperRates[(string) $quantity] ?? $paperRates[$quantity] ?? 0) / 100);
+        } else {
+            $paperRate = (float) ($paperRates[(string) $quantity] ?? $paperRates[$quantity] ?? 0);
+            $unit -= $basePrice * ($paperRate / 100);
         }
 
         foreach ($processes as $process) {
@@ -533,14 +610,18 @@ class PricingService
             }
 
             $markup = (float) ($process['markup'] ?? $process['markup_per_card'] ?? 0);
+
+            if ($this->isFoilProcess($process, $options)) {
+                $markup *= $this->foilSideMultiplier($options, $process);
+            }
+
             $unit += $markup;
 
-            if ($quantity !== $startQuantity) {
-                $rates = is_array($process['rates'] ?? null)
-                    ? $process['rates']
-                    : (is_array($process['quantity_discounts_percent'] ?? null) ? $process['quantity_discounts_percent'] : []);
-                $unit -= $markup * ((float) ($rates[(string) $quantity] ?? $rates[$quantity] ?? 0) / 100);
-            }
+            $rates = is_array($process['rates'] ?? null)
+                ? $process['rates']
+                : (is_array($process['quantity_discounts_percent'] ?? null) ? $process['quantity_discounts_percent'] : []);
+            $rate = (float) ($rates[(string) $quantity] ?? $rates[$quantity] ?? 0);
+            $unit -= $markup * ($rate / 100);
         }
 
         $paperArea = 1.0;
@@ -565,7 +646,7 @@ class PricingService
     private function processIsSelected(array $process, array $options): bool
     {
         $rawName = strtolower(trim((string) ($process['name'] ?? '')));
-        $code = $this->normalizeOptionValue($process['code'] ?? $process['name'] ?? '');
+        $code = $this->pricingProcessCode($process);
         $negativeValues = [
             '',
             'none',
@@ -633,6 +714,22 @@ class PricingService
         }
 
         if (
+            in_array($code, ['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut'], true)
+        ) {
+            $values = is_array($options['special_finish'] ?? null)
+                ? $options['special_finish']
+                : [$options['special_finish'] ?? ''];
+
+            foreach ($values as $value) {
+                if ($this->normalizeOptionValue($value) === $code) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (
             in_array($code, ['foil', 'special_finish'], true)
             || str_contains($rawName, 'foil')
             || str_contains($rawName, '烫金')
@@ -640,6 +737,21 @@ class PricingService
             || str_contains($rawName, '彩印')
             || str_contains($rawName, '镀色')
         ) {
+            $specialFinishValues = is_array($options['special_finish'] ?? null)
+                ? $options['special_finish']
+                : [$options['special_finish'] ?? ''];
+
+            foreach ($specialFinishValues as $item) {
+                $normalized = $this->normalizeOptionValue($item);
+
+                if (
+                    ! in_array($normalized, $negativeValues, true)
+                    && $this->foilProcessMatchesSelection($code, $rawName, $normalized)
+                ) {
+                    return true;
+                }
+            }
+
             foreach ($options as $key => $value) {
                 $values = is_array($value) ? $value : [$value];
 
@@ -651,7 +763,6 @@ class PricingService
                         || ($code === 'print_code_or_magnetic_stripe'
                             && $key === 'print_code_or_magnetic_stripe'
                             && ! in_array($normalized, $negativeValues, true))
-                        || ($key === 'special_finish' && ! in_array($normalized, $negativeValues, true))
                     ) {
                         return true;
                     }
@@ -671,6 +782,81 @@ class PricingService
             if (! in_array($this->normalizeOptionValue($value), $negativeValues, true)) {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * Resolve the canonical option code for a pricing process.
+     *
+     * Cotton-card pricing has several independent special finishes. Older
+     * pricing payloads used only display names, so keep the name aliases here
+     * as a compatibility path while preferring an explicit process code.
+     *
+     * @param  array<string, mixed>  $process
+     */
+    private function pricingProcessCode(array $process): string
+    {
+        $explicitCode = trim((string) ($process['code'] ?? ''));
+
+        if ($explicitCode !== '') {
+            return $this->normalizeOptionValue($explicitCode);
+        }
+
+        $name = trim((string) ($process['name'] ?? ''));
+        $normalizedName = $this->normalizeOptionValue($name);
+
+        return match ($name) {
+            '圆角' => 'rounded_corners',
+            '激光' => 'laser',
+            '滚边' => 'edge_coloring',
+            '对裱' => 'double_mounting',
+            '异形模切' => 'custom_die_cut',
+            default => match ($normalizedName) {
+                'rounded', 'rounded-corners', 'round' => 'rounded_corners',
+                default => $normalizedName,
+            },
+        };
+    }
+
+    private function foilProcessMatchesSelection(
+        string $processCode,
+        string $processName,
+        string $selectedCode,
+    ): bool {
+        if (in_array($processCode, ['foil', 'special_finish'], true)) {
+            return true;
+        }
+
+        if ($selectedCode === $processCode) {
+            return true;
+        }
+
+        $hasGenericFoilName = str_contains($processName, 'foil')
+            || str_contains($processName, '烫金');
+        $mentionsColdFoil = str_contains($processCode, 'cold')
+            || str_contains($processName, 'cold foil')
+            || str_contains($processName, '冷烫');
+        $mentionsHotFoil = str_contains($processCode, 'hot')
+            || str_contains($processName, 'hot foil')
+            || str_contains($processName, '热烫');
+
+        $isColdFoil = $mentionsColdFoil && ! $mentionsHotFoil;
+        $isHotFoil = $mentionsHotFoil && ! $mentionsColdFoil;
+
+        if ($hasGenericFoilName && ! $isColdFoil && ! $isHotFoil) {
+            return true;
+        }
+
+        if ($isColdFoil) {
+            return $this->isFoilOptionCode($selectedCode)
+                && str_starts_with($selectedCode, 'cold_');
+        }
+
+        if ($isHotFoil) {
+            return $this->isFoilOptionCode($selectedCode)
+                && ! str_starts_with($selectedCode, 'cold_');
         }
 
         return false;
@@ -764,68 +950,61 @@ class PricingService
                 array_map('intval', array_keys($scenario['paperRates'] ?? [])),
                 fn ($q) => $q >= $scenario['startQuantity']
             ),
+            array_filter(
+                array_map('intval', array_keys($scenario['unitMultipliers'] ?? [])),
+                fn ($q) => $q >= $scenario['startQuantity']
+            ),
         )));
         sort($quantities);
 
-        $roundedProcess = $this->findProcess($scenario['processes'] ?? [], [
-            'rounded_corners',
-            'rounded',
-            '圆角',
-            '鍦嗚',
-        ]);
-        $foilProcess = $this->findProcess($scenario['processes'] ?? [], [
-            'special_finish',
-            'foil',
-            '烫金',
-            '立体uv/冷烫/热烫单面',
-            '鐑噾',
-        ]);
+        $pricingOptions = $options;
 
-        $printCodeProcess = $this->findProcess($scenario['processes'] ?? [], [
-            'print_code',
-            'print_code_or_magnetic_stripe',
-            '打码',
-            '鎵撶爜',
-        ]);
+        if (! array_key_exists('corners', $pricingOptions)) {
+            $pricingOptions['corners'] = $cornersIndex === 1 ? 'rounded' : 'square';
+        }
 
-        $rounded = $roundedProcess !== null && $this->processIsSelected($roundedProcess, $options);
-        $foiled = $foilProcess !== null && $this->processIsSelected($foilProcess, $options);
-        $printCodeSelected = $printCodeProcess !== null && $this->processIsSelected($printCodeProcess, $options);
+        if (! array_key_exists('special_finish', $pricingOptions)) {
+            $pricingOptions['special_finish'] = $specialFinishIndex > 0 ? 'special_finish' : 'none';
+        }
 
-        return array_map(function ($qty) use ($scenario, $rounded, $foiled, $printCodeSelected, $roundedProcess, $foilProcess, $printCodeProcess) {
-            $isStart = $qty === $scenario['startQuantity'];
+        $selectedProcesses = array_values(array_filter(
+            is_array($scenario['processes'] ?? null) ? $scenario['processes'] : [],
+            fn (mixed $process): bool => is_array($process)
+                && $this->processIsSelected($process, $pricingOptions),
+        ));
+        return array_map(function (int $qty) use ($scenario, $selectedProcesses, $pricingOptions) {
+            $isStart = $qty === (int) $scenario['startQuantity'];
             $unit = (float) $scenario['basePrice'];
+            $unitMultipliers = is_array($scenario['unitMultipliers'] ?? null)
+                ? $scenario['unitMultipliers']
+                : [];
+            $unitMultiplier = $unitMultipliers[$qty]
+                ?? $unitMultipliers[(string) $qty]
+                ?? null;
 
-            if (! $isStart) {
+            if (is_numeric($unitMultiplier)) {
+                $unit = (float) $scenario['basePrice'] * (float) $unitMultiplier;
+            } else {
                 $paperRate = (float) ($scenario['paperRates'][$qty] ?? 0);
                 $unit -= $unit * ($paperRate / 100);
             }
 
-            if ($rounded) {
-                $unit += (float) $roundedProcess['markup'];
+            foreach ($selectedProcesses as $process) {
+                $markup = (float) ($process['markup'] ?? $process['markup_per_card'] ?? 0);
 
-                if (! $isStart) {
-                    $rate = (float) ($roundedProcess['rates'][$qty] ?? 0);
-                    $unit -= (float) $roundedProcess['markup'] * ($rate / 100);
+                if ($this->isFoilProcess($process, $pricingOptions)) {
+                    $markup *= $this->foilSideMultiplier($pricingOptions, $process);
                 }
-            }
 
-            if ($foiled) {
-                $unit += (float) $foilProcess['markup'];
+                $unit += $markup;
 
-                if (! $isStart) {
-                    $rate = (float) ($foilProcess['rates'][$qty] ?? 0);
-                    $unit -= (float) $foilProcess['markup'] * ($rate / 100);
-                }
-            }
-
-            if ($printCodeSelected) {
-                $unit += (float) $printCodeProcess['markup'];
-
-                if (! $isStart) {
-                    $rate = (float) ($printCodeProcess['rates'][$qty] ?? 0);
-                    $unit -= (float) $printCodeProcess['markup'] * ($rate / 100);
-                }
+                $rates = is_array($process['rates'] ?? null)
+                    ? $process['rates']
+                    : (is_array($process['quantity_discounts_percent'] ?? null)
+                        ? $process['quantity_discounts_percent']
+                        : []);
+                $rate = (float) ($rates[$qty] ?? $rates[(string) $qty] ?? 0);
+                $unit -= $markup * ($rate / 100);
             }
 
             return [
@@ -839,25 +1018,155 @@ class PricingService
     }
 
     /**
-     * Find a process by name, or by one of several names.
+     * Two-sided foil uses the foil markup twice. The side map is keyed by the
+     * selected special-finish code so multiple finishes can keep independent
+     * side selections without changing the base pricing contract.
      *
-     * @param  array<int, array<string, mixed>>  $processes
-     * @param  string|array<int, string>  $name
-     * @return array<string, mixed>|null
+     * @param  array<string, mixed>  $options
      */
-    private function findProcess(array $processes, string|array $name): ?array
+    private function foilSideMultiplier(array $options, ?array $process = null): int
     {
-        $names = is_array($name) ? $name : [$name];
+        $selectedFinish = $options['special_finish'] ?? null;
+        $selectedValues = is_array($selectedFinish) ? $selectedFinish : [$selectedFinish];
+        $selectedCodes = [];
 
-        foreach ($processes as $process) {
-            if (
-                in_array($process['name'] ?? '', $names, true) ||
-                in_array($process['code'] ?? '', $names, true)
-            ) {
-                return $process;
+        foreach ($selectedValues as $value) {
+            if (is_scalar($value)) {
+                $normalized = $this->normalizeOptionValue($value);
+
+                if ($normalized !== '') {
+                    $selectedCodes[] = $normalized;
+                }
             }
         }
 
-        return null;
+        if ($selectedCodes === []) {
+            return 1;
+        }
+
+        if ($process !== null) {
+            $processCode = $this->pricingProcessCode($process);
+            $processName = strtolower(trim((string) ($process['name'] ?? $process['label'] ?? '')));
+            $hasGenericFoilName = str_contains($processName, 'foil')
+                || str_contains($processName, '烫金');
+            $mentionsColdFoil = str_contains($processCode, 'cold')
+                || str_contains($processName, 'cold foil')
+                || str_contains($processName, '冷烫');
+            $mentionsHotFoil = str_contains($processCode, 'hot')
+                || str_contains($processName, 'hot foil')
+                || str_contains($processName, '热烫');
+            $isColdFoil = $mentionsColdFoil && ! $mentionsHotFoil;
+            $isHotFoil = $mentionsHotFoil && ! $mentionsColdFoil;
+            $isGenericFoil = (in_array($processCode, ['foil', 'special_finish'], true)
+                || $hasGenericFoilName)
+                && ! $isColdFoil
+                && ! $isHotFoil;
+
+            if (! $isGenericFoil) {
+                $selectedCodes = array_values(array_filter(
+                    $selectedCodes,
+                    function (string $code) use ($processCode, $isColdFoil, $isHotFoil): bool {
+                        if ($code === $processCode) {
+                            return true;
+                        }
+
+                        if ($isColdFoil) {
+                            return $this->isFoilOptionCode($code) && str_starts_with($code, 'cold_');
+                        }
+
+                        if ($isHotFoil) {
+                            return $this->isFoilOptionCode($code) && ! str_starts_with($code, 'cold_');
+                        }
+
+                        return false;
+                    },
+                ));
+            }
+        }
+
+        if ($selectedCodes === []) {
+            return 1;
+        }
+
+        $sides = $options['special_finish_on_sides'] ?? null;
+
+        if (is_scalar($sides)) {
+            return $this->normalizeOptionValue($sides) === 'both_sides' ? 2 : 1;
+        }
+
+        if (! is_array($sides)) {
+            return 1;
+        }
+
+        foreach ($sides as $code => $side) {
+            if (
+                is_scalar($side)
+                && $this->normalizeOptionValue($side) === 'both_sides'
+                && in_array($this->normalizeOptionValue($code), $selectedCodes, true)
+            ) {
+                return 2;
+            }
+        }
+
+        return 1;
+    }
+
+    /**
+     * Identify a hot/cold foil pricing process without applying the side
+     * multiplier to unrelated processes in condition-based pricing.
+     *
+     * @param  array<string, mixed>  $process
+     */
+    private function isFoilProcess(array $process, array $options = []): bool
+    {
+        $rawName = strtolower(trim((string) ($process['name'] ?? $process['label'] ?? '')));
+        $code = $this->pricingProcessCode($process);
+
+        if ($code === 'foil' || str_contains($code, 'foil')) {
+            return true;
+        }
+
+        if ($code === 'special_finish') {
+            return str_contains($rawName, 'foil')
+                || str_contains($rawName, '冷烫')
+                || str_contains($rawName, '热烫')
+                || $this->hasFoilSelection($options['special_finish'] ?? null);
+        }
+
+        return $this->isFoilOptionCode($code)
+            || str_contains($rawName, 'foil')
+            || str_contains($rawName, '烫金');
+    }
+
+    private function hasFoilSelection(mixed $selectedFinish): bool
+    {
+        $values = is_array($selectedFinish) ? $selectedFinish : [$selectedFinish];
+
+        foreach ($values as $value) {
+            if (is_scalar($value) && $this->isFoilOptionCode($this->normalizeOptionValue($value))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isFoilOptionCode(string $code): bool
+    {
+        return str_contains($code, 'foil')
+            || str_starts_with($code, 'cold_')
+            || in_array($code, [
+                'black_gold',
+                'blue_gold',
+                'bright_gold',
+                'bright_silver',
+                'green_gold',
+                'matte_gold',
+                'matte_silver',
+                'red_gold',
+                'rose_gold',
+                'aged_gold',
+                'muted_purple_gold',
+            ], true);
     }
 }

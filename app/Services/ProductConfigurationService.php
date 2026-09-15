@@ -740,7 +740,9 @@ class ProductConfigurationService
         if (is_array($rules) && $rules !== []) {
             return array_map(function (mixed $rule, int|string $index) use ($config): array {
                 $rule = is_array($rule) ? $rule : [];
-                $pricing = is_array($rule['pricing'] ?? null) ? $rule['pricing'] : [];
+                $pricing = is_array($rule['pricing'] ?? null)
+                    ? $this->normalizePricingPayload($rule['pricing'])
+                    : [];
 
                 return [
                     'id' => (string) ($rule['id'] ?? "pricing-rule-{$index}"),
@@ -824,6 +826,8 @@ class ProductConfigurationService
                     "product_config.pricing.rules.{$index}.pricing_json" => '价格 JSON 必须是有效的 JSON 对象。',
                 ]);
             }
+
+            $pricing = $this->normalizePricingPayload($pricing);
 
             $rules[] = [
                 'id' => (string) ($row['id'] ?? "pricing-rule-{$index}"),
@@ -943,9 +947,12 @@ class ProductConfigurationService
                     return [];
                 }
 
+                $label = (string) ($process['label'] ?? $process['name'] ?? '');
+                $code = trim((string) ($process['code'] ?? ''));
+
                 return [
-                    'name' => (string) ($process['label'] ?? $process['name'] ?? ''),
-                    'code' => (string) ($process['code'] ?? ''),
+                    'name' => $label,
+                    'code' => $code !== '' ? $code : $this->processCode($label),
                     'markup' => (float) ($process['markup_per_card'] ?? $process['markup'] ?? 0),
                     'rates' => $this->mapToNumericValues($process['quantity_discounts_percent'] ?? $process['rates'] ?? []),
                 ];
@@ -1019,6 +1026,38 @@ class ProductConfigurationService
             $pricing,
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
         ) ?: '{}';
+    }
+
+    /**
+     * Add stable option codes to pricing processes that were entered with
+     * display names only. The original names and all other pricing fields
+     * remain unchanged.
+     *
+     * @param  array<string, mixed>  $pricing
+     * @return array<string, mixed>
+     */
+    private function normalizePricingPayload(array $pricing): array
+    {
+        if (! is_array($pricing['processes'] ?? null)) {
+            return $pricing;
+        }
+
+        $pricing['processes'] = array_values(array_map(function (mixed $process): mixed {
+            if (! is_array($process)) {
+                return $process;
+            }
+
+            $name = trim((string) ($process['name'] ?? $process['label'] ?? ''));
+            $code = trim((string) ($process['code'] ?? ''));
+
+            if ($code === '' && $name !== '') {
+                $process['code'] = $this->processCode($name);
+            }
+
+            return $process;
+        }, $pricing['processes']));
+
+        return $pricing;
     }
 
     private function normalizedRuleValue(mixed $value): string
@@ -1819,7 +1858,7 @@ class ProductConfigurationService
             return [
                 'id' => (string) ($rule['id'] ?? "pricing-rule-{$index}"),
                 'match' => is_array($rule['match'] ?? null) ? $rule['match'] : [],
-                'pricing' => $rule['pricing'],
+                'pricing' => $this->normalizePricingPayload($rule['pricing']),
             ];
         }, $rules, array_keys($rules))));
     }
@@ -2601,6 +2640,18 @@ class ProductConfigurationService
         if (str_contains($name, '圆角')) {
             return 'rounded_corners';
         }
+
+        return match (trim($name)) {
+            '激光' => 'laser',
+            '滚边' => 'edge_coloring',
+            '对裱' => 'double_mounting',
+            '异形模切' => 'custom_die_cut',
+            default => $this->legacyProcessCode($name, $normalizedName),
+        };
+    }
+
+    private function legacyProcessCode(string $name, string $normalizedName): string
+    {
 
         if (str_contains($name, '烫金')) {
             return 'foil';

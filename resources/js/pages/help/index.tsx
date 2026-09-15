@@ -97,6 +97,13 @@ function CategoryIcon({ name }: { name: string | null }) {
                     <line x1="2" y1="10" x2="22" y2="10" />
                 </svg>
             );
+        case 'tag':
+            return (
+                <svg {...common}>
+                    <path d="M20.59 13.41 13.4 20.6a2 2 0 0 1-2.83 0L3.4 13.43A2 2 0 0 1 2.81 12V4a2 2 0 0 1 2-2h8a2 2 0 0 1 1.42.59l6.36 6.36a3 3 0 0 1 0 4.46Z" />
+                    <circle cx="7.5" cy="7.5" r="1" />
+                </svg>
+            );
         default:
             return (
                 <svg {...common}>
@@ -121,7 +128,10 @@ export default function HelpIndex({ categories, faqs }: Props) {
     const q = query.trim().toLowerCase();
 
     const filteredCategories = useMemo(() => {
-        if (!q) return categories;
+        if (!q) {
+            return categories;
+        }
+
         return categories.filter(
             (cat) =>
                 cat.name.toLowerCase().includes(q) ||
@@ -130,7 +140,10 @@ export default function HelpIndex({ categories, faqs }: Props) {
     }, [categories, q]);
 
     const filteredFaqs = useMemo(() => {
-        if (!q) return faqs;
+        if (!q) {
+            return faqs;
+        }
+
         return faqs.filter(
             (item) =>
                 item.question.toLowerCase().includes(q) ||

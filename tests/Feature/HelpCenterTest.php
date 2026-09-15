@@ -23,6 +23,7 @@ class HelpCenterTest extends TestCase
                 'account-and-orders',
                 'your-designs',
                 'shipping-and-delivery',
+                'stickers-and-labels-faq',
             ],
             HelpCategory::query()
                 ->where('is_active', true)
@@ -56,6 +57,15 @@ class HelpCenterTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('help_categories', [
+            'slug' => 'stickers-and-labels-faq',
+            'name' => 'stickers and labels faq',
+            'description' => 'frequently asked questions and answers about stickers and labels',
+            'sort_order' => 6,
+            'icon' => 'tag',
+            'is_active' => true,
+        ]);
+
+        $this->assertDatabaseHas('help_categories', [
             'slug' => 'design-and-print-knowledge',
             'is_active' => false,
         ]);
@@ -70,11 +80,12 @@ class HelpCenterTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->component('help/index')
-            ->has('categories', 4)
+            ->has('categories', 5)
             ->where('categories.0.slug', 'getting-started-with-inkpavo')
             ->where('categories.1.slug', 'account-and-orders')
             ->where('categories.2.slug', 'your-designs')
             ->where('categories.3.slug', 'shipping-and-delivery')
+            ->where('categories.4.slug', 'stickers-and-labels-faq')
         );
     }
 
@@ -87,13 +98,14 @@ class HelpCenterTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->component('help/index')
-            ->has('faqs', 6)
+            ->has('faqs', 12)
             ->where('faqs.0.question', 'How quickly can my business cards be delivered?')
-            ->where('faqs.1.question', 'Which business card sizes do you offer?')
-            ->where('faqs.2.question', 'Why choose InkPavo business cards?')
+            ->where('faqs.1.question', 'Why choose InkPavo business cards?')
+            ->where('faqs.2.question', 'Which business card sizes do you offer?')
             ->where('faqs.3.question', 'About design files')
-            ->where('faqs.4.question', 'What is the difference between matte, gloss, and soft-touch business cards?')
-            ->where('faqs.5.question', 'What is the after-sales policy for printing quality issues?')
+            ->where('faqs.4.question', 'What is the after-sales policy for printing quality issues?')
+            ->where('faqs.5.question', 'What is the difference between matte, gloss, and soft-touch business cards?')
+            ->where('faqs.6.question', 'How long will it take to receive my custom stickers?')
         );
 
         $qualityFaq = Faq::query()
@@ -153,6 +165,116 @@ class HelpCenterTest extends TestCase
         $this->assertDatabaseMissing('faqs', [
             'question' => 'What should I do if my printed order has a quality issue?',
         ]);
+    }
+
+    public function test_stickers_category_contains_the_translated_faqs_in_order(): void
+    {
+        $this->seed(HelpCenterSeeder::class);
+
+        $category = HelpCategory::query()
+            ->where('slug', 'stickers-and-labels-faq')
+            ->firstOrFail();
+
+        $this->assertSame('stickers and labels faq', $category->name);
+        $this->assertSame(
+            'frequently asked questions and answers about stickers and labels',
+            $category->description,
+        );
+        $this->assertTrue($category->is_active);
+        $this->assertSame('tag', $category->icon);
+
+        $faqs = $category->faqs()
+            ->where('is_published', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        $this->assertCount(30, $faqs);
+        $this->assertSame(range(100, 129), $faqs->pluck('sort_order')->all());
+        $this->assertSame(
+            [
+                'How long will it take to receive my custom stickers?',
+                'What sticker shapes can you make?',
+                'Can I customize the sticker size?',
+                'What material are round stickers made from?',
+                'What are the features of vinyl stickers?',
+                'What is the difference between paper stickers and vinyl stickers?',
+                'Can stickers be waterproof?',
+                'Can stickers be used outdoors?',
+                'Can stickers be laminated?',
+                'Can you make transparent stickers?',
+                'Can you print with white ink?',
+                'Can you make custom die-cut stickers in any shape?',
+                'What are Die-Cut and Kiss-Cut stickers?',
+                'Can multiple stickers be placed on one sheet?',
+                'Can you make roll labels?',
+                'Is the sticker adhesive permanent?',
+                'Will stickers leave adhesive residue when removed?',
+                'What surfaces can stickers be applied to?',
+                'How do I create my own custom stickers?',
+                'What files should I provide for sticker production?',
+                'Should my file use RGB or CMYK?',
+                'Does my file need bleed?',
+                'Can the logo and text be placed very close to the edge?',
+                'Can you print QR codes and barcodes?',
+                'Can each sticker have different content?',
+                'What is the minimum order quantity?',
+                'Is the price lower when I order more?',
+                'Will the printed colors be exactly the same as they appear on my computer screen?',
+                'Can I order a proof before mass production?',
+                'Which sticker is best for product packaging?',
+            ],
+            $faqs->pluck('question')->all(),
+        );
+
+        foreach ($faqs as $faq) {
+            $this->assertDoesNotMatchRegularExpression(
+                '/\p{Han}/u',
+                $faq->question.$faq->answer,
+            );
+        }
+
+        $firstFaq = $faqs->firstOrFail();
+        $lastFaq = Faq::query()
+            ->where('category_id', $category->id)
+            ->orderByDesc('sort_order')
+            ->firstOrFail();
+
+        $this->assertStringContainsString(
+            'Whether you need brand labels, product packaging stickers',
+            $firstFaq->answer,
+        );
+        $this->assertStringContainsString(
+            'Still not sure which sticker is right?',
+            $lastFaq->answer,
+        );
+        $this->assertStringContainsString(
+            'Material + Adhesive + Finish + Printing Process',
+            $lastFaq->answer,
+        );
+
+        $response = $this->get('/faq-and-help-center/categories/stickers-and-labels-faq');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('help/category')
+            ->where('category.slug', 'stickers-and-labels-faq')
+            ->where('category.description', 'frequently asked questions and answers about stickers and labels')
+            ->has('articles', 0)
+            ->has('faqs', 30)
+            ->where('faqs.0.question', 'How long will it take to receive my custom stickers?')
+            ->where('faqs.29.question', 'Which sticker is best for product packaging?')
+        );
+
+        $this->seed(HelpCenterSeeder::class);
+
+        $this->assertSame(
+            30,
+            HelpCategory::query()
+                ->where('slug', 'stickers-and-labels-faq')
+                ->firstOrFail()
+                ->faqs()
+                ->count(),
+        );
     }
 
     public function test_shipping_category_contains_the_delivery_article(): void

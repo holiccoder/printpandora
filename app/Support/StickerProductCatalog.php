@@ -27,7 +27,7 @@ final class StickerProductCatalog
         'super-stickers' => 'super',
     ];
 
-    private const SQUARE_INCH_TO_SQUARE_METRE = 0.00064516;
+    private const INCH_TO_METRE = 0.0254;
 
     /**
      * Quantity multipliers from the sticker pricing workbook.
@@ -44,6 +44,34 @@ final class StickerProductCatalog
         '3000' => 3.4,
         '4000' => 3.2,
         '5000' => 3.0,
+    ];
+
+    /**
+     * Product-detail FAQ content shared by every sticker product.
+     *
+     * @var list<array{question: string, answer: string}>
+     */
+    private const FAQ_ITEMS = [
+        [
+            'question' => 'How long will it take to receive my custom round stickers?',
+            'answer' => 'Production takes at least five business days.',
+        ],
+        [
+            'question' => 'What other sticker formats do you offer?',
+            'answer' => 'We also offer labels and stickers in other formats, including rectangular stickers. Rectangular stickers can be customized to 22 × 22 mm.',
+        ],
+        [
+            'question' => 'What are round stickers made from?',
+            'answer' => 'Round stickers are made from thick, durable vinyl with a smooth surface that enhances color and adds depth, making images more vibrant.',
+        ],
+        [
+            'question' => 'How do I create custom round stickers?',
+            'answer' => 'You can create your design online with Canva, ask our design team for help, or upload a completed design. We can make custom round stickers in any size.',
+        ],
+        [
+            'question' => 'Can I customize stickers in any shape?',
+            'answer' => 'Yes. Our stickers can be customized for many applications, including temporary promotions, fun labels, price tags, seals, logos, signage, packaging, and art stickers.',
+        ],
     ];
 
     /**
@@ -77,6 +105,19 @@ final class StickerProductCatalog
     {
         return self::pathForProductSlug($productSlug)
             ?? '/'.ltrim($productSlug, '/');
+    }
+
+    /**
+     * @return list<array{question: string, answer: string}>
+     */
+    public static function faq(): array
+    {
+        return self::FAQ_ITEMS;
+    }
+
+    public static function areaInSquareMetres(float $widthInches, float $heightInches): float
+    {
+        return ($widthInches * self::INCH_TO_METRE) * ($heightInches * self::INCH_TO_METRE);
     }
 
     /**
@@ -303,11 +344,15 @@ final class StickerProductCatalog
                     ],
                 ],
             ],
-            'faq' => [],
+            'faq' => self::FAQ_ITEMS,
             'detail_sections' => [],
         ];
 
-        $defaultArea = self::sizeValues()[0]['area_sq_m'];
+        $defaultSize = self::sizeValues()[0];
+        $defaultArea = self::areaInSquareMetres(
+            (float) $defaultSize['width'],
+            (float) $defaultSize['height'],
+        );
         $startingTotal = (int) round(50 * $basePrice * self::UNIT_MULTIPLIERS['50'] * $defaultArea);
 
         return [
@@ -331,14 +376,13 @@ final class StickerProductCatalog
      */
     private static function sizeValues(): array
     {
-        return [
+        $sizes = [
             [
                 'code' => '2x2',
                 'label' => '2 x 2 in',
                 'description' => '2 x 2 inches',
                 'width' => '2.00',
                 'height' => '2.00',
-                'area_sq_m' => 0.00258064,
                 'swatch_image' => self::SIZE_SWATCH_IMAGE,
             ],
             [
@@ -347,7 +391,6 @@ final class StickerProductCatalog
                 'description' => '3 x 3 inches',
                 'width' => '3.00',
                 'height' => '3.00',
-                'area_sq_m' => 0.00580644,
                 'swatch_image' => self::SIZE_SWATCH_IMAGE,
             ],
             [
@@ -356,7 +399,6 @@ final class StickerProductCatalog
                 'description' => '4 x 4 inches',
                 'width' => '4.00',
                 'height' => '4.00',
-                'area_sq_m' => 0.01032256,
                 'swatch_image' => self::SIZE_SWATCH_IMAGE,
             ],
             [
@@ -365,7 +407,6 @@ final class StickerProductCatalog
                 'description' => '5 x 5 inches',
                 'width' => '5.00',
                 'height' => '5.00',
-                'area_sq_m' => 0.016129,
                 'swatch_image' => self::SIZE_SWATCH_IMAGE,
             ],
             [
@@ -379,5 +420,16 @@ final class StickerProductCatalog
                 'swatch_image' => self::SIZE_SWATCH_IMAGE,
             ],
         ];
+
+        return array_map(static function (array $size): array {
+            if (isset($size['width'], $size['height'])) {
+                $size['area_sq_m'] = self::areaInSquareMetres(
+                    (float) $size['width'],
+                    (float) $size['height'],
+                );
+            }
+
+            return $size;
+        }, $sizes);
     }
 }

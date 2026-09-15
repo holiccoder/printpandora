@@ -41,9 +41,38 @@ function matches(
 }
 
 /**
+ * Return the gallery match key that should win when a product has multiple
+ * independent option galleries matching the same selection.
+ *
+ * PVC cards default to their paper-finish gallery, then follow the last
+ * selected option group when that group has a gallery rule of its own.
+ */
+export function getPreferredGalleryMatchKey(
+    galleries: ProductGallery[],
+    isPvcProduct: boolean,
+    lastSelectedOptionKey: string | null = null,
+): string | undefined {
+    if (!isPvcProduct) {
+        return undefined;
+    }
+
+    const preferredKey = lastSelectedOptionKey ?? 'paper_finish';
+
+    return galleries.some(
+        (gallery) =>
+            !gallery.is_default &&
+            Object.prototype.hasOwnProperty.call(gallery.match, preferredKey),
+    )
+        ? preferredKey
+        : undefined;
+}
+
+/**
  * Find the best gallery for the current option selection.
  *
- * Returns the first non-default gallery whose `match` is satisfied.
+ * Returns the first non-default gallery whose `match` is satisfied, unless a
+ * preferred match key is provided and one of the matching galleries includes
+ * that key.
  * Only keys explicitly present in a gallery's `match` are checked;
  * unspecified keys (e.g. `sizes`, `quantity`) are ignored, so
  * e.g. size changes never affect gallery selection.
@@ -52,13 +81,27 @@ function matches(
 export function findMatchingGallery(
     galleries: ProductGallery[],
     selected: Record<string, string | string[]>,
+    preferredMatchKey?: string,
 ): ProductGallery | undefined {
-    const specific = galleries.find(
+    const matchingSpecific = galleries.filter(
         (gallery) => !gallery.is_default && matches(gallery.match, selected),
     );
 
-    if (specific) {
-        return specific;
+    const preferred = preferredMatchKey
+        ? matchingSpecific.find((gallery) =>
+              Object.prototype.hasOwnProperty.call(
+                  gallery.match,
+                  preferredMatchKey,
+              ),
+          )
+        : undefined;
+
+    if (preferred) {
+        return preferred;
+    }
+
+    if (matchingSpecific[0]) {
+        return matchingSpecific[0];
     }
 
     return galleries.find((gallery) => gallery.is_default);
