@@ -123,4 +123,73 @@ class BusinessCardRoutesTest extends TestCase
             ->assertStatus(301)
             ->assertRedirect('/business-cards/basic-cotton');
     }
+
+    public function test_renamed_business_cards_use_new_paths_and_old_paths_are_not_available(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        $products = [
+            ['name' => 'Super Standard Business Cards', 'slug' => 'super-standard-business-cards', 'path' => '/business-cards/super-standard'],
+            ['name' => 'Super Luxe Business Cards', 'slug' => 'super-luxe-business-cards', 'path' => '/business-cards/super-luxe'],
+            ['name' => 'Standard Quality Business Cards', 'slug' => 'standard-quality-business-cards', 'path' => '/business-cards/standard-quality'],
+            ['name' => 'Solid Quality Business Cards', 'slug' => 'solid-quality-business-cards', 'path' => '/business-cards/solid-quality'],
+        ];
+
+        foreach ($products as $product) {
+            Product::create([
+                'name' => $product['name'],
+                'slug' => $product['slug'],
+                'description' => 'Business card',
+                'price' => 0,
+                'product_category_id' => $category->id,
+                'is_active' => true,
+                'product_config' => [],
+            ]);
+
+            $this->get($product['path'])
+                ->assertOk()
+                ->assertInertia(fn (Assert $page): Assert => $page
+                    ->component('shop/show')
+                    ->where('product.slug', $product['slug'])
+                    ->where('product.name', $product['name']));
+        }
+
+        foreach ([
+            '/business-cards/super',
+            '/business-cards/luxe',
+            '/business-cards/classic-quality',
+            '/business-cards/classic-solid',
+            '/super-business-cards',
+            '/luxe-business-cards',
+            '/classic-quality-business-cards',
+            '/classic-solid-business-cards',
+        ] as $oldPath) {
+            $this->get($oldPath)->assertNotFound();
+        }
+    }
+
+    public function test_business_card_navigation_uses_the_requested_group_order_and_children(): void
+    {
+        $this->get('/business-cards')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->has('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links', 6)
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.0.label', 'Cotton Business Cards')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.1.label', 'Super Business Cards')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.2.label', 'Quality Business Cards')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.3.label', 'Metal Business Cards')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.4.label', 'PVC Business Cards')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.5.label', 'Classic Business Cards')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.1.children.0.label', 'Super Standard Business Cards')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.1.children.0.href', '/business-cards/super-standard')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.1.children.1.label', 'Super Luxe Business Cards')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.1.children.1.href', '/business-cards/super-luxe')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.2.children.0.label', 'Standard Quality Business Cards')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.2.children.0.href', '/business-cards/standard-quality')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.2.children.1.label', 'Solid Quality Business Cards')
+                ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.2.children.1.href', '/business-cards/solid-quality'));
+    }
 }

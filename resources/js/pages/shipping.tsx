@@ -27,12 +27,13 @@ export default function Shipping() {
                     days
                 </li>
                 <li>
-                    <strong>Super Business Cards</strong> — 2 to 3 business
-                    days; hot foil or cold foil finishes take 4 to 5 business
-                    days
+                    <strong>Super Standard Business Cards</strong> — 2 to 3
+                    business days; hot foil or cold foil finishes take 4 to 5
+                    business days
                 </li>
                 <li>
-                    <strong>Luxe Business Cards</strong> — 3 to 4 business days
+                    <strong>Super Luxe Business Cards</strong> — 3 to 4 business
+                    days
                 </li>
                 <li>
                     <strong>PVC Business Cards</strong> — Basic: 2 to 3;

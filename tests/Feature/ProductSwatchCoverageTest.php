@@ -87,11 +87,11 @@ class ProductSwatchCoverageTest extends TestCase
         $this->assertArrayNotHasKey('print_code', $canonicalOptions['classic-special-business-cards']);
         $this->assertArrayNotHasKey('drill', $canonicalOptions['classic-special-business-cards']);
         $this->assertArrayNotHasKey('paper_finish', $canonicalOptions['classic-special-business-cards']);
-        $this->assertArrayNotHasKey('paper_finish', $canonicalOptions['classic-quality-business-cards']);
+        $this->assertArrayNotHasKey('paper_finish', $canonicalOptions['standard-quality-business-cards']);
         $this->assertArrayNotHasKey('print_code', $legacyOptions['classic-special-business-cards']);
         $this->assertArrayNotHasKey('drill', $legacyOptions['classic-special-business-cards']);
         $this->assertArrayNotHasKey('paper_finish', $legacyOptions['classic-special-business-cards']);
-        $this->assertArrayNotHasKey('paper_finish', $legacyOptions['classic-quality-business-cards']);
+        $this->assertArrayNotHasKey('paper_finish', $legacyOptions['standard-quality-business-cards']);
         $this->assertArrayNotHasKey('print_code', $canonicalOptions['classic-standard-business-cards']);
         $this->assertArrayNotHasKey('drill', $canonicalOptions['classic-standard-business-cards']);
         $this->assertArrayNotHasKey('print_code', $legacyOptions['classic-standard-business-cards']);
@@ -124,7 +124,7 @@ class ProductSwatchCoverageTest extends TestCase
                     'needs_drilling' => '/images/product-options/business-cards/swatches/drilling/needs-drilling.png',
                 ],
             ],
-            'business-cards/classic-quality-business-cards.json' => [
+            'business-cards/standard-quality-business-cards.json' => [
                 'texture' => [
                     'shattered_glass_film' => '/images/product-options/business-cards/swatches/quality/shattered-glass-film.png',
                     'holographic_film' => '/images/product-options/business-cards/swatches/quality/holographic-film.png',
@@ -135,7 +135,7 @@ class ProductSwatchCoverageTest extends TestCase
                     'gloss' => '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
                 ],
             ],
-            'business-cards/classic-solid-business-cards.json' => [
+            'business-cards/solid-quality-business-cards.json' => [
                 'print_code' => [
                     'no_print_code' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
                     'need_print_code' => '/images/product-options/business-cards/swatches/pvc-print-code.png',

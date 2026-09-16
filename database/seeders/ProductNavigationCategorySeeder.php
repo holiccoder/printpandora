@@ -18,6 +18,8 @@ class ProductNavigationCategorySeeder extends Seeder
                 ['name' => 'Stickers & Labels', 'slug' => 'stickers-and-labels', 'parent_slug' => null],
                 ['name' => 'Flyers & Brochures', 'slug' => 'flyers-brochures', 'parent_slug' => null],
                 ['name' => 'Cotton Business Cards', 'slug' => 'cotton-business-cards', 'parent_slug' => 'business-cards'],
+                ['name' => 'Super Business Cards', 'slug' => 'super-business-cards', 'parent_slug' => 'business-cards'],
+                ['name' => 'Quality Business Cards', 'slug' => 'quality-business-cards', 'parent_slug' => 'business-cards'],
                 ['name' => 'PVC Business Cards', 'slug' => 'pvc-business-cards', 'parent_slug' => 'business-cards'],
                 ['name' => 'Metal Business Cards', 'slug' => 'metal-business-cards', 'parent_slug' => 'business-cards'],
                 ['name' => 'Classic Business Cards', 'slug' => 'classic-business-cards', 'parent_slug' => 'business-cards'],
@@ -58,10 +60,22 @@ class ProductNavigationCategorySeeder extends Seeder
                     'classic-business-cards',
                     'classic-standard-business-cards',
                     'classic-special-business-cards',
-                    'classic-quality-business-cards',
-                    'classic-solid-business-cards',
                 ])
                 ->update(['product_category_id' => $categoryIds['classic-business-cards']]);
+
+            Product::query()
+                ->whereIn('slug', [
+                    'super-standard-business-cards',
+                    'super-luxe-business-cards',
+                ])
+                ->update(['product_category_id' => $categoryIds['super-business-cards']]);
+
+            Product::query()
+                ->whereIn('slug', [
+                    'standard-quality-business-cards',
+                    'solid-quality-business-cards',
+                ])
+                ->update(['product_category_id' => $categoryIds['quality-business-cards']]);
 
             // Remove categories that are no longer part of the header
             // navigation only after every product has been reassigned.

@@ -620,18 +620,20 @@ function getProductTurnaround(
     ) {
         workdays = '5 - 7 Workdays';
     } else if (
-        slug === 'luxe-business-cards' ||
-        name === 'luxe business cards'
+        slug === 'super-luxe-business-cards' ||
+        name === 'super luxe business cards'
     ) {
         workdays = '3 - 4 Workdays';
     } else if (
-        slug === 'super-business-cards' ||
-        name.includes('super business card')
+        slug === 'super-standard-business-cards' ||
+        name.includes('super standard business card')
     ) {
         workdays = '2 - 3 Workdays';
     } else if (category === 'stickers-and-labels' || slug.includes('sticker')) {
         workdays = '3 - 4 Workdays';
     } else if (
+        category === 'quality-business-cards' ||
+        slug.includes('quality') ||
         slug.includes('classic') ||
         name.includes('classic business card')
     ) {

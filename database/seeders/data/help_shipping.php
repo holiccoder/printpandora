@@ -10,8 +10,8 @@ return [
 <h2>Production times</h2>
 <ul>
     <li><strong>Cotton Business Cards:</strong> 5 to 7 business days.</li>
-    <li><strong>Super Business Cards:</strong> 2 to 3 business days; hot foil or cold foil finishes take 4 to 5 business days.</li>
-    <li><strong>Luxe Business Cards:</strong> 3 to 4 business days.</li>
+    <li><strong>Super Standard Business Cards:</strong> 2 to 3 business days; hot foil or cold foil finishes take 4 to 5 business days.</li>
+    <li><strong>Super Luxe Business Cards:</strong> 3 to 4 business days.</li>
     <li><strong>PVC Business Cards:</strong> Basic 2 to 3, Standard 3 to 5, and Premium 5 to 7 business days.</li>
     <li><strong>Classic Business Cards:</strong> 2 to 3 business days; hot foil or cold foil finishes take 4 to 5 business days.</li>
     <li><strong>Metal Business Cards:</strong> 15 to 20 business days.</li>

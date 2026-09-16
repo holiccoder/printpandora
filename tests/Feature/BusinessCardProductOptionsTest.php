@@ -99,8 +99,8 @@ class BusinessCardProductOptionsTest extends TestCase
         ]);
 
         $quality = Product::create([
-            'name' => 'Classic Quality Business Cards',
-            'slug' => 'classic-quality-business-cards',
+            'name' => 'Standard Quality Business Cards',
+            'slug' => 'standard-quality-business-cards',
             'product_category_id' => $businessCards->id,
             'product_config' => [
                 'options' => [
@@ -426,7 +426,7 @@ class BusinessCardProductOptionsTest extends TestCase
 
     }
 
-    public function test_classic_solid_keeps_database_pricing_and_imports_option_gallery_data(): void
+    public function test_solid_quality_keeps_database_pricing_and_imports_option_gallery_data(): void
     {
         $businessCards = ProductCategory::create([
             'name' => 'Business Cards',
@@ -434,8 +434,8 @@ class BusinessCardProductOptionsTest extends TestCase
         ]);
 
         Product::create([
-            'name' => 'Classic Solid Business Cards',
-            'slug' => 'classic-solid-business-cards',
+            'name' => 'Solid Quality Business Cards',
+            'slug' => 'solid-quality-business-cards',
             'product_category_id' => $businessCards->id,
             'product_config' => [
                 'pricing' => [
@@ -456,7 +456,7 @@ class BusinessCardProductOptionsTest extends TestCase
 
         (new BusinessCardProductOptionsSeeder)->run();
 
-        $product = Product::where('slug', 'classic-solid-business-cards')->firstOrFail();
+        $product = Product::where('slug', 'solid-quality-business-cards')->firstOrFail();
         $config = $product->product_config;
 
         $this->assertSame('rule_based', data_get($config, 'pricing.mode'));
@@ -793,15 +793,15 @@ class BusinessCardProductOptionsTest extends TestCase
         );
     }
 
-    public function test_luxe_business_cards_receive_texture_options_and_standard_texture_galleries(): void
+    public function test_super_luxe_business_cards_receive_texture_options_and_standard_texture_galleries(): void
     {
         $businessCards = ProductCategory::create([
             'name' => 'Business Cards',
             'slug' => 'business-cards',
         ]);
         $product = Product::create([
-            'name' => 'Luxe Business Cards',
-            'slug' => 'luxe-business-cards',
+            'name' => 'Super Luxe Business Cards',
+            'slug' => 'super-luxe-business-cards',
             'product_category_id' => $businessCards->id,
             'product_config' => [
                 'options' => [
@@ -890,15 +890,15 @@ class BusinessCardProductOptionsTest extends TestCase
             'name' => 'Business Cards',
             'slug' => 'business-cards',
         ]);
-        $contents = file_get_contents(base_path('content/product-options/business-cards/luxe-business-cards.json'));
+        $contents = file_get_contents(base_path('content/product-options/business-cards/super-luxe-business-cards.json'));
 
         if ($contents === false) {
-            $this->fail('The Luxe Business Cards legacy options file could not be read.');
+            $this->fail('The Super Luxe Business Cards legacy options file could not be read.');
         }
 
         $product = new Product([
-            'name' => 'Luxe Business Cards',
-            'slug' => 'luxe-business-cards',
+            'name' => 'Super Luxe Business Cards',
+            'slug' => 'super-luxe-business-cards',
             'product_options' => json_decode(
                 $contents,
                 true,
@@ -929,15 +929,15 @@ class BusinessCardProductOptionsTest extends TestCase
         );
     }
 
-    public function test_super_business_cards_receive_texture_options_and_corner_specific_galleries(): void
+    public function test_super_standard_business_cards_receive_texture_options_and_corner_specific_galleries(): void
     {
         $businessCards = ProductCategory::create([
             'name' => 'Business Cards',
             'slug' => 'business-cards',
         ]);
         $product = Product::create([
-            'name' => 'Super Business Cards',
-            'slug' => 'super-business-cards',
+            'name' => 'Super Standard Business Cards',
+            'slug' => 'super-standard-business-cards',
             'product_category_id' => $businessCards->id,
             'product_config' => [
                 'options' => [
@@ -1044,15 +1044,15 @@ class BusinessCardProductOptionsTest extends TestCase
             'name' => 'Business Cards',
             'slug' => 'business-cards',
         ]);
-        $contents = file_get_contents(base_path('content/product-options/business-cards/super-business-cards.json'));
+        $contents = file_get_contents(base_path('content/product-options/business-cards/super-standard-business-cards.json'));
 
         if ($contents === false) {
-            $this->fail('The Super Business Cards legacy options file could not be read.');
+            $this->fail('The Super Standard Business Cards legacy options file could not be read.');
         }
 
         $product = new Product([
-            'name' => 'Super Business Cards',
-            'slug' => 'super-business-cards',
+            'name' => 'Super Standard Business Cards',
+            'slug' => 'super-standard-business-cards',
             'product_options' => json_decode(
                 $contents,
                 true,

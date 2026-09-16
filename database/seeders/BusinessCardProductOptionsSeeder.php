@@ -352,8 +352,8 @@ class BusinessCardProductOptionsSeeder extends Seeder
             foreach ([
                 'classic-standard-business-cards',
                 'classic-special-business-cards',
-                'classic-quality-business-cards',
-                'classic-solid-business-cards',
+                'standard-quality-business-cards',
+                'solid-quality-business-cards',
                 'basic-pvc-card',
                 'standard-pvc-card',
                 'premium-pvc-card',
@@ -459,7 +459,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 $configuration->syncProductProjection($product->fresh());
             }
 
-            $product = Product::query()->where('slug', 'luxe-business-cards')->first();
+            $product = Product::query()->where('slug', 'super-luxe-business-cards')->first();
 
             if ($product) {
                 $config = $this->databaseConfigForProduct($product);
@@ -494,7 +494,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 $configuration->syncProductProjection($product->fresh());
             }
 
-            $product = Product::query()->where('slug', 'super-business-cards')->first();
+            $product = Product::query()->where('slug', 'super-standard-business-cards')->first();
 
             if ($product) {
                 $config = $this->databaseConfigForProduct($product);
@@ -560,11 +560,11 @@ class BusinessCardProductOptionsSeeder extends Seeder
     ): array {
         $current = $this->databaseConfigForProduct($product);
 
-        if ($product->slug !== 'classic-solid-business-cards') {
+        if ($product->slug !== 'solid-quality-business-cards') {
             return $current;
         }
 
-        $path = base_path('content/product-options/business-cards/classic-solid-business-cards.json');
+        $path = base_path('content/product-options/business-cards/solid-quality-business-cards.json');
         $contents = file_get_contents($path);
 
         if ($contents === false) {

@@ -177,11 +177,11 @@
                 },
                 {
                     "id": "super",
-                    "name": "Super Business Cards",
+                    "name": "Super Standard Business Cards",
                     "price": "50 cards from $33.00",
                     "image_url": "/images/product-detail/paper-stocks/super-business-cards.png",
-                    "href": "/business-cards/super",
-                    "cta": "Shop Super Business Cards ›",
+                    "href": "/business-cards/super-standard",
+                    "cta": "Shop Super Standard Business Cards ›",
                     "features": [
                         "18pt thickness",
                         "Silky smooth",
@@ -192,11 +192,11 @@
                 },
                 {
                     "id": "luxe",
-                    "name": "Luxe Business Cards",
+                    "name": "Super Luxe Business Cards",
                     "price": "50 cards from $43.00",
                     "image_url": "/images/product-detail/paper-stocks/luxe-business-cards.png",
-                    "href": "/business-cards/luxe",
-                    "cta": "Shop Luxe Business Cards ›",
+                    "href": "/business-cards/super-luxe",
+                    "cta": "Shop Super Luxe Business Cards ›",
                     "features": [
                         "32pt thickness",
                         "4-Layer Mohawk Superfine®",

@@ -200,7 +200,7 @@ function MemberOfferCopy({
 
             <h2
                 className={cn(
-                    'mt-3 font-sans text-2xl leading-[1.15] font-semibold tracking-[0.08em] text-white drop-shadow-sm sm:text-5xl sm:leading-tight',
+                    'mt-3 font-sans text-2xl leading-[1.15] font-semibold tracking-[0.08em] text-primary drop-shadow-sm sm:text-5xl sm:leading-tight',
                     enterClass(active),
                 )}
                 style={{ transitionDelay: active ? '160ms' : '0ms' }}
@@ -210,7 +210,7 @@ function MemberOfferCopy({
 
             <div
                 className={cn(
-                    'mt-3 flex items-baseline gap-3 text-white',
+                    'mt-3 flex items-baseline gap-3 text-primary',
                     enterClass(active),
                 )}
                 style={{ transitionDelay: active ? '240ms' : '0ms' }}
@@ -233,7 +233,7 @@ function MemberOfferCopy({
                             <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[#C9A96A]/80 text-[#C9A96A]">
                                 <MemberOfferIcon icon={step.icon} />
                             </span>
-                            <p className="text-xs leading-snug text-white sm:text-base sm:leading-relaxed">
+                            <p className="text-xs leading-snug text-primary sm:text-base sm:leading-relaxed">
                                 <span className="mr-3 text-xs font-semibold tracking-[0.12em] text-[#C9A96A]">
                                     {step.number}
                                 </span>
@@ -251,7 +251,7 @@ function MemberOfferCopy({
             </div>
 
             <p
-                className={cn('mt-4 text-xs text-white/75', enterClass(active))}
+                className={cn('mt-4 text-xs text-primary/75', enterClass(active))}
                 style={{ transitionDelay: active ? '520ms' : '0ms' }}
             >
                 {offer.terms}

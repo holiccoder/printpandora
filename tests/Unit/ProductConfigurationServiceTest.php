@@ -199,6 +199,32 @@ class ProductConfigurationServiceTest extends TestCase
         );
     }
 
+    public function test_classic_standard_special_finish_is_multi_select_in_storefront_options(): void
+    {
+        $product = new Product([
+            'name' => 'Classic Standard Business Cards',
+            'slug' => 'classic-standard-business-cards',
+            'product_config' => [
+                'options' => [
+                    'special_finish' => [
+                        'type' => 'multi_select',
+                        'values' => [
+                            ['code' => 'no_special_finish', 'label' => 'No finish'],
+                            ['code' => 'bright_gold', 'label' => 'Bright Gold'],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $product->setRelation('category', new ProductCategory(['slug' => 'business-cards']));
+
+        $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+        $specialFinishGroup = collect($options['option_groups'] ?? [])
+            ->firstWhere('key', 'special_finish');
+
+        $this->assertSame('multi_select', data_get($specialFinishGroup, 'type'));
+    }
+
     public function test_database_detail_sections_keep_product_specific_data_except_shared_cross_sell_sections(): void
     {
         $product = new Product([
@@ -249,18 +275,18 @@ class ProductConfigurationServiceTest extends TestCase
         $this->assertSame(
             [
                 'Classic Special Business Cards',
-                'Super Business Cards',
+                'Super Standard Business Cards',
                 'Basic PVC Card',
-                'Classic Solid Business Cards',
+                'Solid Quality Business Cards',
             ],
             data_get($options, 'detail_sections.paper_stocks.items.*.name'),
         );
         $this->assertSame(
             [
                 'Shop Classic Special Business Cards →',
-                'Shop Super Business Cards →',
+                'Shop Super Standard Business Cards →',
                 'Shop Basic PVC Card →',
-                'Shop Classic Solid Business Cards →',
+                'Shop Solid Quality Business Cards →',
             ],
             data_get($options, 'detail_sections.paper_stocks.items.*.cta'),
         );
@@ -481,9 +507,9 @@ class ProductConfigurationServiceTest extends TestCase
             'premium-pvc-card' => [$pvcCards, true],
             'custom-pvc-card' => [$pvcCards, true],
             'basic-cotton-business-card' => [$businessCards, false],
-            'classic-quality-business-cards' => [$businessCards, false],
-            'classic-solid-business-cards' => [$businessCards, false],
-            'super-business-cards' => [$businessCards, false],
+            'standard-quality-business-cards' => [$businessCards, false],
+            'solid-quality-business-cards' => [$businessCards, false],
+            'super-standard-business-cards' => [$businessCards, false],
             'classic-metal-business-cards' => [$businessCards, false],
         ];
 

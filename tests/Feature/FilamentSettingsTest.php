@@ -53,7 +53,7 @@ class FilamentSettingsTest extends TestCase
             data_get($slides, array_key_first($slides).'.offer.pretitle'),
         );
         $this->assertStringContainsString(
-            '/images/home/homepage-carousel-01.png',
+            '/images/home/homepage-carousel-03.webp',
             (string) json_encode(
                 data_get($slides, array_key_first($slides).'.image_url'),
                 JSON_UNESCAPED_SLASHES,

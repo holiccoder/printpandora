@@ -5,7 +5,7 @@ namespace App\Support;
 final class BusinessCardRoutes
 {
     /**
-     * Public route segments keyed by the existing internal product slugs.
+     * Public route segments keyed by the canonical internal product slugs.
      *
      * @var array<string, string>
      */
@@ -15,8 +15,8 @@ final class BusinessCardRoutes
         'premium-cotton-business-card' => 'premium-cotton',
         'luxe-cotton-business-card' => 'luxe-cotton',
         'grand-cotton-business-card' => 'grand-cotton',
-        'super-business-cards' => 'super',
-        'luxe-business-cards' => 'luxe',
+        'super-standard-business-cards' => 'super-standard',
+        'super-luxe-business-cards' => 'super-luxe',
         'basic-pvc-card' => 'basic-pvc',
         'standard-pvc-card' => 'standard-pvc',
         'premium-pvc-card' => 'premium-pvc',
@@ -25,8 +25,8 @@ final class BusinessCardRoutes
         'luxe-metal-business-cards' => 'luxe-metal',
         'classic-standard-business-cards' => 'classic-standard',
         'classic-special-business-cards' => 'classic-special',
-        'classic-quality-business-cards' => 'classic-quality',
-        'classic-solid-business-cards' => 'classic-solid',
+        'standard-quality-business-cards' => 'standard-quality',
+        'solid-quality-business-cards' => 'solid-quality',
         'design-service' => 'business-card-design-service',
     ];
 

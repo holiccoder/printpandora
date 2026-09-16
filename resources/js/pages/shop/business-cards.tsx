@@ -21,9 +21,9 @@ import StorefrontLayout from '@/layouts/storefront-layout';
 /* -------------------------------------------------------------------------- */
 
 const paperHrefs = [
-    '/business-cards/luxe',
+    '/business-cards/super-luxe',
     '/business-cards/classic-standard',
-    '/business-cards/super',
+    '/business-cards/super-standard',
     '/business-cards/classic-metal',
 ];
 

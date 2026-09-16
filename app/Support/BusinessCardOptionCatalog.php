@@ -94,7 +94,7 @@ final class BusinessCardOptionCatalog
      * @var array<int, string>
      */
     private const CONTRACT_SLUGS = [
-        'classic-quality-business-cards',
+        'standard-quality-business-cards',
         'basic-pvc-card',
         'standard-pvc-card',
         'premium-pvc-card',
@@ -106,8 +106,8 @@ final class BusinessCardOptionCatalog
         'premium-cotton-business-card',
         'luxe-cotton-business-card',
         'grand-cotton-business-card',
-        'luxe-business-cards',
-        'super-business-cards',
+        'super-luxe-business-cards',
+        'super-standard-business-cards',
     ];
 
     /**
@@ -122,8 +122,8 @@ final class BusinessCardOptionCatalog
         'premium-cotton-business-card',
         'luxe-cotton-business-card',
         'grand-cotton-business-card',
-        'super-business-cards',
-        'luxe-business-cards',
+        'super-standard-business-cards',
+        'super-luxe-business-cards',
         'basic-pvc-card',
         'standard-pvc-card',
         'premium-pvc-card',
@@ -132,8 +132,8 @@ final class BusinessCardOptionCatalog
         'luxe-metal-business-cards',
         'classic-standard-business-cards',
         'classic-special-business-cards',
-        'classic-quality-business-cards',
-        'classic-solid-business-cards',
+        'standard-quality-business-cards',
+        'solid-quality-business-cards',
     ];
 
     /**
@@ -414,7 +414,7 @@ final class BusinessCardOptionCatalog
     public static function normalize(string $slug, array $options): ?array
     {
         $normalized = match ($slug) {
-            'classic-quality-business-cards' => self::classicQuality($options),
+            'standard-quality-business-cards' => self::classicQuality($options),
             'basic-pvc-card' => self::basicPvc($options),
             'standard-pvc-card' => self::standardPvc($options),
             'premium-pvc-card' => self::premiumPvc($options),
@@ -425,8 +425,8 @@ final class BusinessCardOptionCatalog
             'premium-cotton-business-card',
             'luxe-cotton-business-card',
             'grand-cotton-business-card' => self::cotton($options),
-            'luxe-business-cards' => self::luxeBusinessCards($options),
-            'super-business-cards' => self::superBusinessCards($options),
+            'super-luxe-business-cards' => self::luxeBusinessCards($options),
+            'super-standard-business-cards' => self::superBusinessCards($options),
             default => null,
         };
 

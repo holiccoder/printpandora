@@ -21,10 +21,10 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
         return [
             'classic-standard-business-cards' => 'classic-standard-business-cards.json',
             'classic-special-business-cards' => 'classic-special-business-cards.json',
-            'classic-quality-business-cards' => 'classic-quality-business-cards.json',
-            'classic-solid-business-cards' => 'classic-solid-business-cards.json',
-            'luxe-business-cards' => 'luxe-business-cards.json',
-            'super-business-cards' => 'super-business-cards.json',
+            'standard-quality-business-cards' => 'standard-quality-business-cards.json',
+            'solid-quality-business-cards' => 'solid-quality-business-cards.json',
+            'super-luxe-business-cards' => 'super-luxe-business-cards.json',
+            'super-standard-business-cards' => 'super-standard-business-cards.json',
         ];
     }
 
@@ -50,7 +50,7 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                             'values' => [
                                 ['code' => 'standard', 'swatch_image' => '/old-standard.png'],
                                 ['code' => 'square', 'swatch_image' => '/old-square.png'],
-                                ...($slug === 'classic-solid-business-cards'
+                                ...($slug === 'solid-quality-business-cards'
                                     ? []
                                     : [['code' => 'custom', 'description' => 'old custom description']]),
                             ],
@@ -78,7 +78,7 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                     data_get($values, 'custom.description'),
                     $slug,
                 );
-            } elseif ($slug !== 'classic-solid-business-cards') {
+            } elseif ($slug !== 'solid-quality-business-cards') {
                 $this->assertSame(
                     'max range: 2.1 - 3.5 inches',
                     data_get($values, 'custom.description'),
@@ -168,7 +168,7 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                     data_get($storefront, 'sizes.2.description'),
                     $slug,
                 );
-            } elseif ($slug !== 'classic-solid-business-cards') {
+            } elseif ($slug !== 'solid-quality-business-cards') {
                 $this->assertSame(
                     'max range: 2.1 - 3.5 inches',
                     data_get($values, 'custom.description'),
@@ -223,7 +223,7 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                             'values' => [
                                 ['code' => 'standard', 'swatch_image' => '/old-standard.png'],
                                 ['code' => 'square', 'swatch_image' => '/old-square.png'],
-                                ...($slug === 'classic-solid-business-cards'
+                                ...($slug === 'solid-quality-business-cards'
                                     ? []
                                     : [['code' => 'custom', 'description' => 'old custom description']]),
                             ],
@@ -260,7 +260,7 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                     data_get($config, 'options.sizes.values.2.description'),
                     $slug,
                 );
-            } elseif ($slug !== 'classic-solid-business-cards') {
+            } elseif ($slug !== 'solid-quality-business-cards') {
                 $this->assertSame(
                     'max range: 2.1 - 3.5 inches',
                     data_get($config, 'options.sizes.values.2.description'),

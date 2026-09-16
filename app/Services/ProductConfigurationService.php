@@ -1368,7 +1368,7 @@ class ProductConfigurationService
      */
     private function applyLegacyOptionAndGalleryData(array $config, array $legacy, ?string $slug = null): array
     {
-        $options = $this->optionsFromLegacy($legacy);
+        $options = $this->optionsFromLegacy($legacy, $slug);
 
         if ($options !== []) {
             $config['options'] = $this->orderedOptionGroups(
@@ -1477,7 +1477,7 @@ class ProductConfigurationService
                 'meta_description' => $product->meta_description,
             ],
             'options' => $this->normalizeProductSpecificOptions(
-                $this->optionsFromLegacy($legacy),
+                $this->optionsFromLegacy($legacy, (string) $product->slug),
                 $product,
             ),
             'media' => [
@@ -1515,7 +1515,7 @@ class ProductConfigurationService
      * @param  array<string, mixed>  $legacy
      * @return array<string, array<string, mixed>>
      */
-    private function optionsFromLegacy(array $legacy): array
+    private function optionsFromLegacy(array $legacy, ?string $productSlug = null): array
     {
         $options = [];
         $groupLabels = self::OPTION_GROUP_LABELS;
@@ -1547,7 +1547,7 @@ class ProductConfigurationService
 
             $options[$key] = [
                 'label' => $label,
-                'type' => $this->legacyOptionGroupType($key, $items),
+                'type' => $this->legacyOptionGroupType($key, $items, $productSlug),
                 'required' => true,
                 'default' => $items[0]['code'] ?? null,
                 'values' => array_values(array_map(function (mixed $item): array {
@@ -1610,17 +1610,26 @@ class ProductConfigurationService
 
     /**
      * Hot and cold foil values can be combined, while other special finishes
-     * retain their single-choice behavior.
+     * retain their single-choice behavior. Classic standard business cards
+     * expose only combinable hot-foil choices, even though their legacy
+     * option file does not include the word "foil" in each value.
      *
      * @param  array<int, mixed>  $items
      */
-    private function legacyOptionGroupType(string $key, array $items): string
+    private function legacyOptionGroupType(
+        string $key,
+        array $items,
+        ?string $productSlug = null,
+    ): string
     {
         if ($key !== 'special_finish') {
             return 'select';
         }
 
-        return $this->hasFoilOptionValues($items) ? 'multi_select' : 'select';
+        return $productSlug === 'classic-standard-business-cards'
+            || $this->hasFoilOptionValues($items)
+            ? 'multi_select'
+            : 'select';
     }
 
     /**
