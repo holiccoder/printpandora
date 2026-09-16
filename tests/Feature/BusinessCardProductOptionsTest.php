@@ -403,8 +403,8 @@ class BusinessCardProductOptionsTest extends TestCase
                 '/images/products/metal/classic-metal-business-cards-01.png',
             ],
             'premium-metal-business-cards' => [
-                '/images/products/metal/premium-metal-business-cards-02.png',
                 '/images/products/metal/premium-metal-business-cards-01.png',
+                '/images/products/metal/premium-metal-business-cards-02.png',
                 '/images/products/metal/premium-metal-business-cards-03.png',
                 '/images/products/metal/premium-metal-business-cards-04.png',
             ],
