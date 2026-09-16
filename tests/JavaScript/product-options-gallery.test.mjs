@@ -4,6 +4,7 @@ import test from 'node:test';
 
 import {
     findMatchingGallery,
+    getProductThumbnailImages,
     getPreferredGalleryMatchKey,
 } from '../../resources/js/lib/product-options.ts';
 
@@ -11,16 +12,31 @@ const pvcProducts = [
     {
         file: 'basic-pvc-card.json',
         otherSelection: { print_code: 'no_print_code' },
+        finishImages: {
+            matte: '/images/products/pvc/basic-pvc-card-matte.png',
+            gloss: '/images/products/pvc/basic-pvc-card-gloss.png',
+            frosted: '/images/products/pvc/basic-pvc-card-frosted.png',
+        },
     },
     {
         file: 'standard-pvc-card.json',
         otherSelection: {
             print_code_or_signature_stripe: 'no_print_code_or_signature_stripe',
         },
+        finishImages: {
+            matte: '/images/products/pvc/standard-pvc-card-matte.png',
+            gloss: '/images/products/pvc/standard-pvc-card-gloss.png',
+            frosted: '/images/products/pvc/standard-pvc-card-frosted.png',
+        },
     },
     {
         file: 'premium-pvc-card.json',
         otherSelection: { print_code: 'no_print_code' },
+        finishImages: {
+            matte: '/images/products/pvc/premium-pvc-card-matte.png',
+            gloss: '/images/products/pvc/premium-pvc-card-gloss.png',
+            frosted: '/images/products/pvc/premium-pvc-card-frosted.png',
+        },
     },
 ];
 
@@ -49,6 +65,46 @@ test('PVC paper finish galleries take precedence over other matching galleries',
                     (candidate) => candidate.id === `${finish}_gallery`,
                 )?.images[0],
             );
+            assert.equal(gallery?.images[0], product.finishImages[finish]);
+        }
+    }
+});
+
+test('selected PVC finish changes the primary without appending thumbnails', () => {
+    for (const product of pvcProducts) {
+        const config = JSON.parse(
+            readFileSync(
+                new URL(
+                    `../../content/product-options/pvc-business-cards/${product.file}`,
+                    import.meta.url,
+                ),
+                'utf8',
+            ),
+        );
+        const defaultGallery = config.galleries.find(
+            (candidate) => candidate.id === 'default',
+        );
+        const thumbnails = getProductThumbnailImages(defaultGallery);
+
+        assert.deepEqual(thumbnails, defaultGallery.images.slice(0, 4));
+        assert.equal(thumbnails.length, 4);
+        assert.deepEqual(defaultGallery.images.slice(1, 4), [
+            product.finishImages.matte,
+            product.finishImages.gloss,
+            product.finishImages.frosted,
+        ]);
+
+        for (const finish of ['gloss', 'frosted']) {
+            const finishGallery = config.galleries.find(
+                (candidate) => candidate.id === `${finish}_gallery`,
+            );
+
+            assert.equal(finishGallery.images[0], product.finishImages[finish]);
+            assert.deepEqual(
+                getProductThumbnailImages(defaultGallery),
+                thumbnails,
+            );
+            assert.equal(thumbnails.includes(finishGallery.images[0]), true);
         }
     }
 });

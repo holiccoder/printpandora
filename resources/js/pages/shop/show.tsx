@@ -25,6 +25,7 @@ import type { PricingRule } from '@/lib/pricing';
 import { isPvcProductSlug } from '@/lib/product-images';
 import {
     findMatchingGallery,
+    getProductThumbnailImages,
     getPreferredGalleryMatchKey,
 } from '@/lib/product-options';
 import type { ProductGallery } from '@/lib/product-options';
@@ -1470,15 +1471,11 @@ export default function ShopShow({
     ]);
 
     const displayImages = useMemo(() => {
-        if (isStickerProduct) {
-            return Array.from(new Set(defaultGallery.images));
-        }
-
-        const hero = activeGallery.images[0] ?? defaultGallery.images[0];
-        const persistent = (defaultGallery.images ?? []).slice(1);
-
-        return hero ? [hero, ...persistent] : persistent;
-    }, [activeGallery, defaultGallery, isStickerProduct]);
+        return getProductThumbnailImages(
+            defaultGallery,
+            isStickerProduct,
+        );
+    }, [defaultGallery, isStickerProduct]);
 
     const activeImage = useMemo(() => {
         if (selectedThumbnail && displayImages.includes(selectedThumbnail)) {
@@ -1489,7 +1486,12 @@ export default function ShopShow({
             return activeGallery.images[0];
         }
 
-        return displayImages[0] ?? product.featured_image ?? galleryThumbs[0];
+        return (
+            activeGallery.images[0] ??
+            displayImages[0] ??
+            product.featured_image ??
+            galleryThumbs[0]
+        );
     }, [
         selectedThumbnail,
         displayImages,
@@ -1499,6 +1501,17 @@ export default function ShopShow({
         product.featured_image,
         galleryThumbs,
     ]);
+
+    const lightboxImages = useMemo(() => {
+        if (!activeImage) {
+            return displayImages;
+        }
+
+        return [
+            activeImage,
+            ...displayImages.filter((src) => src !== activeImage),
+        ];
+    }, [activeImage, displayImages]);
 
     const quantityTiers = useMemo(() => {
         if (hasDynamicPricing) {
@@ -2048,8 +2061,7 @@ export default function ShopShow({
                         <div
                             className="aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-lg bg-neutral-100 transition-all duration-300 hover:opacity-95"
                             onClick={() => {
-                                const index =
-                                    displayImages.indexOf(activeImage);
+                                const index = lightboxImages.indexOf(activeImage);
                                 setLightboxIndex(index !== -1 ? index : 0);
                                 setLightboxOpen(true);
                             }}
@@ -3418,7 +3430,7 @@ export default function ShopShow({
                 <LightboxGallery
                     open={lightboxOpen}
                     onClose={() => setLightboxOpen(false)}
-                    images={displayImages}
+                    images={lightboxImages}
                     initialIndex={lightboxIndex}
                 />
             )}

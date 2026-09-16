@@ -5,6 +5,23 @@ export interface ProductGallery {
     images: string[];
 }
 
+export const PRODUCT_THUMBNAIL_LIMIT = 4;
+
+/**
+ * Return the stable thumbnail strip for a product. Option-switched primary
+ * images are intentionally not included so swatches cannot append thumbnails.
+ */
+export function getProductThumbnailImages(
+    defaultGallery: ProductGallery,
+    isStickerProduct = false,
+): string[] {
+    const images = isStickerProduct
+        ? Array.from(new Set(defaultGallery.images))
+        : defaultGallery.images;
+
+    return images.slice(0, PRODUCT_THUMBNAIL_LIMIT);
+}
+
 /**
  * Normalize an option value the same way the product detail page converts
  * raw option names into selected-state ids.

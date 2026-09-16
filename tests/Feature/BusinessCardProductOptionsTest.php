@@ -175,19 +175,19 @@ class BusinessCardProductOptionsTest extends TestCase
         );
         $expectedPvcSwatches = [
             'basic-pvc-card' => [
-                '/images/products/pvc/standard-pvc-matte.png',
-                '/images/products/pvc/standard-pvc-gloss.png',
-                '/images/products/pvc/standard-pvc-frosted.png',
+                '/images/products/pvc/basic-pvc-card-matte.png',
+                '/images/products/pvc/basic-pvc-card-gloss.png',
+                '/images/products/pvc/basic-pvc-card-frosted.png',
             ],
             'standard-pvc-card' => [
-                '/images/products/pvc/standard-pvc-matte.png',
-                '/images/products/pvc/standard-pvc-gloss.png',
-                '/images/products/pvc/standard-pvc-frosted.png',
+                '/images/products/pvc/standard-pvc-card-matte.png',
+                '/images/products/pvc/standard-pvc-card-gloss.png',
+                '/images/products/pvc/standard-pvc-card-frosted.png',
             ],
             'premium-pvc-card' => [
-                '/images/products/pvc/standard-pvc-matte.png',
-                '/images/products/pvc/standard-pvc-gloss.png',
-                '/images/products/pvc/standard-pvc-frosted.png',
+                '/images/products/pvc/premium-pvc-card-matte.png',
+                '/images/products/pvc/premium-pvc-card-gloss.png',
+                '/images/products/pvc/premium-pvc-card-frosted.png',
             ],
         ];
 
@@ -201,6 +201,20 @@ class BusinessCardProductOptionsTest extends TestCase
             $this->assertSame(
                 $expectedPvcSwatches[$slug],
                 data_get($config, 'options.paper_finish.values.*.swatch_image'),
+            );
+
+            $this->assertSame(
+                [
+                    '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
+                    $expectedPvcSwatches[$slug][0],
+                    $expectedPvcSwatches[$slug][1],
+                    $expectedPvcSwatches[$slug][2],
+                    '/images/products/pvc/pvc-01.jpg',
+                    '/images/products/pvc/pvc-02.jpg',
+                    '/images/products/pvc/pvc-03.jpg',
+                    '/images/products/pvc/pvc-04.jpg',
+                ],
+                data_get($config, 'media.gallery'),
             );
         }
         $this->assertSame(
@@ -246,28 +260,21 @@ class BusinessCardProductOptionsTest extends TestCase
             $storefront = app(ProductConfigurationService::class)->storefrontOptions($product);
             $paperFinishGroup = collect($storefront['option_groups'] ?? [])->firstWhere('key', 'paper_finish');
 
-            $expectedFinishImages = [
-                '/images/products/pvc/standard-pvc-matte.webp',
-                '/images/products/pvc/standard-pvc-gloss.webp',
-                '/images/products/pvc/standard-pvc-frosted.webp',
-            ];
+            $expectedFinishImages = array_map(
+                static fn (string $image): string => str_replace('.png', '.webp', $image),
+                $expectedPvcSwatches[$slug],
+            );
 
             $this->assertSame(
                 $expectedFinishImages,
                 data_get($paperFinishGroup, 'values.*.swatch_image'),
             );
 
-            $expectedGalleryPrimaries = $slug === 'standard-pvc-card'
-                ? [
-                    'matte_gallery' => '/images/products/pvc/standard-pvc-matte.webp',
-                    'gloss_gallery' => '/images/products/pvc/standard-pvc-gloss.webp',
-                    'frosted_gallery' => '/images/products/pvc/standard-pvc-frosted.webp',
-                ]
-                : [
-                    'matte_gallery' => '/images/products/pvc/matte-pvc-main.webp',
-                    'gloss_gallery' => '/images/products/pvc/gloss-pvc-main.webp',
-                    'frosted_gallery' => '/images/products/pvc/frosted-pvc-main.webp',
-                ];
+            $expectedGalleryPrimaries = [
+                'matte_gallery' => $expectedFinishImages[0],
+                'gloss_gallery' => $expectedFinishImages[1],
+                'frosted_gallery' => $expectedFinishImages[2],
+            ];
 
             foreach ([
                 'matte_gallery',

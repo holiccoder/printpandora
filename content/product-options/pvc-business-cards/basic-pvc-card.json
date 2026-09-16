@@ -6,7 +6,7 @@
             "name": "Matte",
             "code": "matte",
             "description": "Smooth, non-reflective matte finish.",
-            "swatch_image": "/images/products/pvc/standard-pvc-matte.png",
+            "swatch_image": "/images/products/pvc/basic-pvc-card-matte.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -54,7 +54,7 @@
             "name": "Gloss",
             "code": "gloss",
             "description": "Shiny and highly reflective gloss finish.",
-            "swatch_image": "/images/products/pvc/standard-pvc-gloss.png",
+            "swatch_image": "/images/products/pvc/basic-pvc-card-gloss.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -102,7 +102,7 @@
             "name": "Frosted Glass",
             "code": "frosted",
             "description": "A translucent frosted-glass finish with a soft, elegant look.",
-            "swatch_image": "/images/products/pvc/standard-pvc-frosted.png",
+            "swatch_image": "/images/products/pvc/basic-pvc-card-frosted.png",
             "added_price": [
                 {
                     "pack_size": 50,
@@ -162,6 +162,10 @@
             "is_default": true,
             "match": {},
             "images": [
+                "/images/product-options/business-cards/swatches/pvc-no-print-code.png",
+                "/images/products/pvc/basic-pvc-card-matte.png",
+                "/images/products/pvc/basic-pvc-card-gloss.png",
+                "/images/products/pvc/basic-pvc-card-frosted.png",
                 "/images/products/pvc/pvc-01.jpg",
                 "/images/products/pvc/pvc-02.jpg",
                 "/images/products/pvc/pvc-03.jpg",
@@ -192,7 +196,7 @@
                 "paper_finish": "matte"
             },
             "images": [
-                "/images/products/pvc/matte-pvc-main.png",
+                "/images/products/pvc/basic-pvc-card-matte.png",
                 "/images/products/pvc/pvc-02.jpg",
                 "/images/products/pvc/pvc-03.jpg",
                 "/images/products/pvc/pvc-04.jpg"
@@ -204,7 +208,7 @@
                 "paper_finish": "gloss"
             },
             "images": [
-                "/images/products/pvc/gloss-pvc-main.png",
+                "/images/products/pvc/basic-pvc-card-gloss.png",
                 "/images/products/pvc/pvc-02.jpg",
                 "/images/products/pvc/pvc-03.jpg",
                 "/images/products/pvc/pvc-04.jpg"
@@ -216,7 +220,7 @@
                 "paper_finish": "frosted"
             },
             "images": [
-                "/images/products/pvc/frosted-pvc-main.png",
+                "/images/products/pvc/basic-pvc-card-frosted.png",
                 "/images/products/pvc/pvc-02.jpg",
                 "/images/products/pvc/pvc-03.jpg",
                 "/images/products/pvc/pvc-04.jpg"

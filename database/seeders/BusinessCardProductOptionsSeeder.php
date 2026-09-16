@@ -59,85 +59,18 @@ class BusinessCardProductOptionsSeeder extends Seeder
         ],
     ];
 
-    /**
-     * @var array<string, array{id: string, match: array<string, string>, images: array<int, string>, primary: string}>
-     */
-    private const PVC_FINISH_GALLERY_RULES = [
-        'matte' => [
-            'id' => 'matte_gallery',
-            'match' => ['paper_finish' => 'matte'],
-            'images' => [
-                '/images/products/pvc/matte-pvc-main.png',
-                '/images/products/pvc/pvc-02.jpg',
-                '/images/products/pvc/pvc-03.jpg',
-                '/images/products/pvc/pvc-04.jpg',
-            ],
-            'primary' => '/images/products/pvc/matte-pvc-main.png',
-        ],
-        'gloss' => [
-            'id' => 'gloss_gallery',
-            'match' => ['paper_finish' => 'gloss'],
-            'images' => [
-                '/images/products/pvc/gloss-pvc-main.png',
-                '/images/products/pvc/pvc-02.jpg',
-                '/images/products/pvc/pvc-03.jpg',
-                '/images/products/pvc/pvc-04.jpg',
-            ],
-            'primary' => '/images/products/pvc/gloss-pvc-main.png',
-        ],
-        'frosted' => [
-            'id' => 'frosted_gallery',
-            'match' => ['paper_finish' => 'frosted'],
-            'images' => [
-                '/images/products/pvc/frosted-pvc-main.png',
-                '/images/products/pvc/pvc-02.jpg',
-                '/images/products/pvc/pvc-03.jpg',
-                '/images/products/pvc/pvc-04.jpg',
-            ],
-            'primary' => '/images/products/pvc/frosted-pvc-main.png',
-        ],
-    ];
+    private const PVC_FINISH_ORDER = ['matte', 'gloss', 'frosted'];
+
+    private const PVC_DEFAULT_FINISH_ORDER = ['matte', 'gloss', 'frosted'];
 
     /**
-     * Standard PVC uses the supplied finish images for both the option
-     * swatches and the first image in each finish-specific gallery.
-     *
-     * @var array<string, array{id: string, match: array<string, string>, images: array<int, string>, primary: string}>
+     * @var array<int, string>
      */
-    private const STANDARD_PVC_FINISH_GALLERY_RULES = [
-        'matte' => [
-            'id' => 'matte_gallery',
-            'match' => ['paper_finish' => 'matte'],
-            'images' => [
-                '/images/products/pvc/standard-pvc-matte.png',
-                '/images/products/pvc/pvc-02.jpg',
-                '/images/products/pvc/pvc-03.jpg',
-                '/images/products/pvc/pvc-04.jpg',
-            ],
-            'primary' => '/images/products/pvc/standard-pvc-matte.png',
-        ],
-        'gloss' => [
-            'id' => 'gloss_gallery',
-            'match' => ['paper_finish' => 'gloss'],
-            'images' => [
-                '/images/products/pvc/standard-pvc-gloss.png',
-                '/images/products/pvc/pvc-02.jpg',
-                '/images/products/pvc/pvc-03.jpg',
-                '/images/products/pvc/pvc-04.jpg',
-            ],
-            'primary' => '/images/products/pvc/standard-pvc-gloss.png',
-        ],
-        'frosted' => [
-            'id' => 'frosted_gallery',
-            'match' => ['paper_finish' => 'frosted'],
-            'images' => [
-                '/images/products/pvc/standard-pvc-frosted.png',
-                '/images/products/pvc/pvc-02.jpg',
-                '/images/products/pvc/pvc-03.jpg',
-                '/images/products/pvc/pvc-04.jpg',
-            ],
-            'primary' => '/images/products/pvc/standard-pvc-frosted.png',
-        ],
+    private const PVC_BASE_GALLERY = [
+        '/images/products/pvc/pvc-01.jpg',
+        '/images/products/pvc/pvc-02.jpg',
+        '/images/products/pvc/pvc-03.jpg',
+        '/images/products/pvc/pvc-04.jpg',
     ];
 
     /**
@@ -606,9 +539,51 @@ class BusinessCardProductOptionsSeeder extends Seeder
     {
         $media = is_array($config['media'] ?? null) ? $config['media'] : [];
         $rules = is_array($media['gallery_rules'] ?? null) ? $media['gallery_rules'] : [];
-        $finishGalleryRules = $slug === 'standard-pvc-card'
-            ? self::STANDARD_PVC_FINISH_GALLERY_RULES
-            : self::PVC_FINISH_GALLERY_RULES;
+        $defaultImage = BusinessCardOptionCatalog::NO_PRINT_CODE_SWATCH_IMAGE;
+        $defaultGallery = is_array($media['gallery'] ?? null)
+            ? array_values($media['gallery'])
+            : [];
+        $finishImages = BusinessCardOptionCatalog::pvcFinishImages($slug);
+
+        if ($defaultGallery === []) {
+            foreach ($rules as $rule) {
+                if (! is_array($rule)) {
+                    continue;
+                }
+
+                $match = is_array($rule['match'] ?? null) ? $rule['match'] : [];
+
+                if (($rule['id'] ?? null) === 'default' || $match === []) {
+                    $defaultGallery = is_array($rule['images'] ?? null)
+                        ? array_values($rule['images'])
+                        : [];
+
+                    break;
+                }
+            }
+        }
+
+        if ($defaultGallery === []) {
+            $defaultGallery = self::PVC_BASE_GALLERY;
+        }
+
+        $finishImagesToRemove = array_values($finishImages);
+        $defaultGallery = array_values(array_filter(
+            $defaultGallery,
+            static fn (mixed $image): bool => is_string($image)
+                && $image !== $defaultImage
+                && ! in_array($image, $finishImagesToRemove, true),
+        ));
+        $defaultGallery = [
+            $defaultImage,
+            ...array_values(array_map(
+                static fn (string $finish): string => $finishImages[$finish],
+                self::PVC_DEFAULT_FINISH_ORDER,
+            )),
+            ...$defaultGallery,
+        ];
+        $media['gallery'] = $defaultGallery;
+        $finishGalleryRules = $this->pvcFinishGalleryRules($slug);
         $optionGalleryRules = [
             'no_print_code' => array_replace(
                 self::PVC_OPTION_GALLERY_RULES['no_print_code'],
@@ -633,18 +608,29 @@ class BusinessCardProductOptionsSeeder extends Seeder
         }
 
         $finishCodes = array_keys($finishGalleryRules);
+        $finishRuleIds = array_map(
+            static fn (string $finish): string => "{$finish}_gallery",
+            self::PVC_FINISH_ORDER,
+        );
 
         $rules = array_values(array_filter(
             $rules,
-            static function (mixed $rule) use ($finishCodes): bool {
+            static function (mixed $rule) use ($finishCodes, $finishRuleIds): bool {
                 if (! is_array($rule)) {
+                    return false;
+                }
+
+                if (in_array((string) ($rule['id'] ?? ''), $finishRuleIds, true)) {
                     return false;
                 }
 
                 $match = is_array($rule['match'] ?? null) ? $rule['match'] : [];
                 $option = (string) ($match['print_code'] ?? $match['print_code_or_signature_stripe'] ?? '');
+                $isUnqualifiedFinishRule = count($match) === 1
+                    && array_key_exists('paper_finish', $match)
+                    && in_array((string) $match['paper_finish'], $finishCodes, true);
 
-                return ! in_array((string) ($match['paper_finish'] ?? ''), $finishCodes, true)
+                return ! $isUnqualifiedFinishRule
                     && ! in_array($option, [
                         'no_print_code',
                         'no_print_code_or_signature_stripe',
@@ -662,6 +648,30 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 return $match === [] || ($rule['id'] ?? null) === 'default';
             },
         ));
+        $hasDefaultRule = false;
+
+        foreach ($defaultRules as &$rule) {
+            $match = is_array($rule['match'] ?? null) ? $rule['match'] : [];
+
+            if ($match !== [] && ($rule['id'] ?? null) !== 'default') {
+                continue;
+            }
+
+            $hasDefaultRule = true;
+            $rule['images'] = $defaultGallery;
+            $rule['primary'] = $defaultImage;
+        }
+        unset($rule);
+
+        if (! $hasDefaultRule) {
+            array_unshift($defaultRules, [
+                'id' => 'default',
+                'match' => [],
+                'images' => $defaultGallery,
+                'primary' => $defaultImage,
+            ]);
+        }
+
         $otherRules = array_values(array_filter(
             $rules,
             static function (array $rule): bool {
@@ -680,6 +690,32 @@ class BusinessCardProductOptionsSeeder extends Seeder
         $config['media'] = $media;
 
         return $config;
+    }
+
+    /**
+     * @return array<string, array{id: string, match: array<string, string>, images: array<int, string>, primary: string}>
+     */
+    private function pvcFinishGalleryRules(string $slug): array
+    {
+        $finishImages = BusinessCardOptionCatalog::pvcFinishImages($slug);
+        $rules = [];
+
+        foreach (self::PVC_FINISH_ORDER as $finish) {
+            $primary = $finishImages[$finish];
+            $rules[$finish] = [
+                'id' => "{$finish}_gallery",
+                'match' => ['paper_finish' => $finish],
+                'images' => [
+                    $primary,
+                    '/images/products/pvc/pvc-02.jpg',
+                    '/images/products/pvc/pvc-03.jpg',
+                    '/images/products/pvc/pvc-04.jpg',
+                ],
+                'primary' => $primary,
+            ];
+        }
+
+        return $rules;
     }
 
     /**

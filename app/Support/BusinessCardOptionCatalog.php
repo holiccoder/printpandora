@@ -33,12 +33,24 @@ final class BusinessCardOptionCatalog
     public const PVC_SIGNATURE_STRIPE_SWATCH_IMAGE = '/images/products/pvc/pvc-signature-stripe.png';
 
     /**
-     * @var array<string, string>
+     * @var array<string, array<string, string>>
      */
-    private const PVC_FINISH_SWATCH_IMAGES = [
-        'matte' => '/images/products/pvc/standard-pvc-matte.png',
-        'gloss' => '/images/products/pvc/standard-pvc-gloss.png',
-        'frosted' => '/images/products/pvc/standard-pvc-frosted.png',
+    private const PVC_FINISH_IMAGES = [
+        'basic-pvc-card' => [
+            'matte' => '/images/products/pvc/basic-pvc-card-matte.png',
+            'gloss' => '/images/products/pvc/basic-pvc-card-gloss.png',
+            'frosted' => '/images/products/pvc/basic-pvc-card-frosted.png',
+        ],
+        'standard-pvc-card' => [
+            'matte' => '/images/products/pvc/standard-pvc-card-matte.png',
+            'gloss' => '/images/products/pvc/standard-pvc-card-gloss.png',
+            'frosted' => '/images/products/pvc/standard-pvc-card-frosted.png',
+        ],
+        'premium-pvc-card' => [
+            'matte' => '/images/products/pvc/premium-pvc-card-matte.png',
+            'gloss' => '/images/products/pvc/premium-pvc-card-gloss.png',
+            'frosted' => '/images/products/pvc/premium-pvc-card-frosted.png',
+        ],
     ];
 
     /**
@@ -448,6 +460,18 @@ final class BusinessCardOptionCatalog
     }
 
     /**
+     * Return the canonical finish image paths for a PVC product. The same
+     * image is used for the finish swatch and the selected finish gallery's
+     * primary image.
+     *
+     * @return array<string, string>
+     */
+    public static function pvcFinishImages(string $slug): array
+    {
+        return self::PVC_FINISH_IMAGES[$slug] ?? [];
+    }
+
+    /**
      * @param  array<string, mixed>  $options
      * @return array<string, mixed>
      */
@@ -475,7 +499,7 @@ final class BusinessCardOptionCatalog
         return [
             'paper_finish' => self::group(
                 'Paper Finish',
-                self::pvcPaperFinishValues($options, self::PVC_FINISH_SWATCH_IMAGES),
+                self::pvcPaperFinishValues($options, self::pvcFinishImages('basic-pvc-card')),
                 'matte',
             ),
             'print_code' => self::group(
@@ -495,7 +519,7 @@ final class BusinessCardOptionCatalog
         return [
             'paper_finish' => self::group(
                 'Paper Finish',
-                self::pvcPaperFinishValues($options, self::PVC_FINISH_SWATCH_IMAGES),
+                self::pvcPaperFinishValues($options, self::pvcFinishImages('standard-pvc-card')),
                 'matte',
             ),
             'print_code_or_signature_stripe' => self::group(
@@ -525,7 +549,7 @@ final class BusinessCardOptionCatalog
         return [
             'paper_finish' => self::group(
                 'Paper Finish',
-                self::pvcPaperFinishValues($options, self::PVC_FINISH_SWATCH_IMAGES),
+                self::pvcPaperFinishValues($options, self::pvcFinishImages('premium-pvc-card')),
                 'matte',
             ),
             'print_code' => self::group(
