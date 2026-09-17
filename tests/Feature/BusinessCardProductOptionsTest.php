@@ -404,10 +404,10 @@ class BusinessCardProductOptionsTest extends TestCase
 
         $expectedGalleries = [
             'classic-metal-business-cards' => [
-                '/images/products/metal/classic-metal-business-cards-04.png',
+                '/images/products/metal/classic-metal-business-cards-01.png',
                 '/images/products/metal/classic-metal-business-cards-02.png',
                 '/images/products/metal/classic-metal-business-cards-03.png',
-                '/images/products/metal/classic-metal-business-cards-01.png',
+                '/images/products/metal/classic-metal-business-cards-04.png',
             ],
             'premium-metal-business-cards' => [
                 '/images/products/metal/premium-metal-business-cards-01.png',
@@ -831,10 +831,10 @@ class BusinessCardProductOptionsTest extends TestCase
             range(1, 8),
         );
         $defaultGallery = [
-            '/images/products/luxe-business-cards/luxe-business-cards-standard-01.png',
-            '/images/products/luxe-business-cards/luxe-business-cards-standard-02.png',
-            '/images/products/luxe-business-cards/luxe-business-cards-standard-03.png',
-            '/images/products/luxe-business-cards/luxe-business-cards-standard-04.png',
+            '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-01.png',
+            '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-02.png',
+            '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-03.png',
+            '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-04.png',
         ];
 
         $this->assertSame(
@@ -918,6 +918,15 @@ class BusinessCardProductOptionsTest extends TestCase
         $options = app(ProductConfigurationService::class)->storefrontOptions($product);
 
         $this->assertTrue((bool) data_get($options, 'dynamic_options'));
+        $this->assertSame(
+            [
+                '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-01.webp',
+                '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-02.webp',
+                '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-03.webp',
+                '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-04.webp',
+            ],
+            data_get($options, 'galleries.0.images'),
+        );
         $this->assertSame(
             ['sizes', 'corners', 'texture', 'special_finish'],
             array_column(data_get($options, 'option_groups', []), 'key'),
@@ -1034,7 +1043,7 @@ class BusinessCardProductOptionsTest extends TestCase
             ],
             data_get($config, 'options.texture.values.*.swatch_image'),
         );
-        $this->assertCount(26, $rules);
+        $this->assertCount(42, $rules);
         $this->assertSame(
             ['sizes' => 'standard', 'corners' => 'rounded', 'texture' => 'j5_pearlescent_paper'],
             data_get($rules, '10.match'),
@@ -1042,6 +1051,35 @@ class BusinessCardProductOptionsTest extends TestCase
         $this->assertSame(
             '/images/products/super-business-cards/super-business-cards-rounded-j5-pearlescent-paper.png',
             data_get($rules, '10.primary'),
+        );
+
+        $squareSizeRules = collect($rules)->filter(
+            static fn (array $rule): bool => data_get($rule, 'match.sizes') === 'square',
+        );
+
+        $this->assertCount(16, $squareSizeRules);
+        $this->assertSame(
+            [
+                'j1_water_ripple_paper_square_size_square' => '/images/products/super-business-cards/super-business-cards-square-j1-water-ripple-paper.png',
+                'j1_water_ripple_paper_square_size_rounded' => '/images/products/super-business-cards/super-business-cards-square-rounded-j1-water-ripple-paper.png',
+                'j2_cloth_texture_paper_square_size_square' => '/images/products/super-business-cards/super-business-cards-square-j2-cloth-texture-paper.png',
+                'j2_cloth_texture_paper_square_size_rounded' => '/images/products/super-business-cards/super-business-cards-square-rounded-j2-cloth-texture-paper.png',
+                'j3_eggshell_texture_square_size_square' => '/images/products/super-business-cards/super-business-cards-square-j3-eggshell-texture.png',
+                'j3_eggshell_texture_square_size_rounded' => '/images/products/super-business-cards/super-business-cards-square-rounded-j3-eggshell-texture.png',
+                'j4_high_grade_paper_square_size_square' => '/images/products/super-business-cards/super-business-cards-square-j4-high-grade-paper.png',
+                'j4_high_grade_paper_square_size_rounded' => '/images/products/super-business-cards/super-business-cards-square-rounded-j4-high-grade-paper.png',
+                'j5_pearlescent_paper_square_size_square' => '/images/products/super-business-cards/super-business-cards-square-j5-pearlescent-paper.png',
+                'j5_pearlescent_paper_square_size_rounded' => '/images/products/super-business-cards/super-business-cards-square-rounded-j5-pearlescent-paper.png',
+                'j6_kraft_paper_square_size_square' => '/images/products/super-business-cards/super-business-cards-square-j6-kraft-paper.png',
+                'j6_kraft_paper_square_size_rounded' => '/images/products/super-business-cards/super-business-cards-square-rounded-j6-kraft-paper.png',
+                'j7_absorbent_cotton_paper_square_size_square' => '/images/products/super-business-cards/super-business-cards-square-j7-absorbent-cotton-paper.png',
+                'j7_absorbent_cotton_paper_square_size_rounded' => '/images/products/super-business-cards/super-business-cards-square-rounded-j7-absorbent-cotton-paper.png',
+                'j8_pinhole_paper_square_size_square' => '/images/products/super-business-cards/super-business-cards-square-j8-pinhole-paper.png',
+                'j8_pinhole_paper_square_size_rounded' => '/images/products/super-business-cards/super-business-cards-square-rounded-j8-pinhole-paper.png',
+            ],
+            $squareSizeRules->mapWithKeys(
+                static fn (array $rule): array => [$rule['id'] => $rule['primary']],
+            )->all(),
         );
     }
 

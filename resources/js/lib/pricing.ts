@@ -177,10 +177,18 @@ function isFoilProcess(
 
 function foilSideMultiplier(
     selectedFinish: string | string[] | undefined,
-    sides: Record<string, 'one_side' | 'both_sides'>,
+    sides:
+        | Record<string, 'one_side' | 'both_sides'>
+        | 'one_side'
+        | 'both_sides'
+        | undefined,
     process?: PricingScenario['processes'][number],
 ): number {
-    let selectedCodes = selectedFinishCodes(selectedFinish);
+    let selectedCodes = [
+        ...new Set(
+            selectedFinishCodes(selectedFinish).filter(isFoilOptionCode),
+        ),
+    ];
 
     if (process) {
         const processCode = pricingProcessCode(process);
@@ -198,10 +206,8 @@ function foilSideMultiplier(
         const isColdFoil = mentionsColdFoil && !mentionsHotFoil;
         const isHotFoil = mentionsHotFoil && !mentionsColdFoil;
         const isGenericFoil =
-            (['foil', 'special-finish'].includes(processCode) ||
-                hasGenericFoilName) &&
-            !isColdFoil &&
-            !isHotFoil;
+            ['foil', 'special-finish'].includes(processCode) ||
+            (hasGenericFoilName && !isColdFoil && !isHotFoil);
 
         if (!isGenericFoil) {
             selectedCodes = selectedCodes.filter((code) => {
@@ -226,13 +232,27 @@ function foilSideMultiplier(
         return 1;
     }
 
+    if (typeof sides === 'string') {
+        const sideMultiplier =
+            normalizeOptionValue(sides) === 'both-sides' ? 2 : 1;
+
+        return selectedCodes.length * sideMultiplier;
+    }
+
+    if (!sides || typeof sides !== 'object') {
+        return selectedCodes.length;
+    }
+
     const bothSidedCodes = new Set(
         Object.entries(sides)
             .filter(([, side]) => side === 'both_sides')
             .map(([code]) => normalizeOptionValue(code)),
     );
 
-    return selectedCodes.some((code) => bothSidedCodes.has(code)) ? 2 : 1;
+    return selectedCodes.reduce(
+        (multiplier, code) => multiplier + (bothSidedCodes.has(code) ? 2 : 1),
+        0,
+    );
 }
 
 function pricingProcessCode(

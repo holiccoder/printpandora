@@ -132,6 +132,50 @@ class BusinessCardFoilPricingTest extends TestCase
         );
     }
 
+    public function test_multiple_selected_hot_and_cold_foils_scale_the_markup_by_selection_count(): void
+    {
+        $product = $this->makeProduct();
+        $pricing = app(PricingService::class);
+        $baseOptions = [
+            'sizes' => 'standard',
+            'paper_finish' => 'matte',
+            'corners' => 'square',
+            'quantity' => '100',
+        ];
+
+        $this->assertSame(
+            50.0,
+            $pricing->calculate($product->id, $baseOptions + [
+                'special_finish' => ['gold_foil', 'silver_foil'],
+                'special_finish_on_sides' => [
+                    'gold_foil' => 'one_side',
+                    'silver_foil' => 'one_side',
+                ],
+            ]),
+        );
+        $this->assertSame(
+            70.0,
+            $pricing->calculate($product->id, $baseOptions + [
+                'special_finish' => ['gold_foil', 'silver_foil', 'cold_red_gold'],
+                'special_finish_on_sides' => [
+                    'gold_foil' => 'one_side',
+                    'silver_foil' => 'one_side',
+                    'cold_red_gold' => 'one_side',
+                ],
+            ]),
+        );
+        $this->assertSame(
+            70.0,
+            $pricing->calculate($product->id, $baseOptions + [
+                'special_finish' => ['gold_foil', 'silver_foil'],
+                'special_finish_on_sides' => [
+                    'gold_foil' => 'both_sides',
+                    'silver_foil' => 'one_side',
+                ],
+            ]),
+        );
+    }
+
     private function makeProduct(): Product
     {
         $category = ProductCategory::create([
@@ -159,6 +203,8 @@ class BusinessCardFoilPricingTest extends TestCase
                         'values' => [
                             ['code' => 'no_special_finish'],
                             ['code' => 'gold_foil'],
+                            ['code' => 'silver_foil'],
+                            ['code' => 'cold_red_gold'],
                         ],
                     ],
                 ],

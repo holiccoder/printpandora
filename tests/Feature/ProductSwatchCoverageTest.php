@@ -70,6 +70,11 @@ class ProductSwatchCoverageTest extends TestCase
 
         foreach ($canonicalProducts as $product) {
             $slug = (string) ($product['slug'] ?? 'unknown-product');
+
+            if (! is_string($product['product_config'] ?? null) || trim($product['product_config']) === '') {
+                continue;
+            }
+
             $config = json_decode(
                 (string) ($product['product_config'] ?? ''),
                 true,

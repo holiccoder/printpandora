@@ -1309,6 +1309,182 @@
       "images": [
         "/images/products/super-business-cards/super-business-cards-rounded-j8-pinhole-paper.png"
       ]
+    },
+    {
+      "id": "j1_water_ripple_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j1_water_ripple_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j1-water-ripple-paper.png"
+      ]
+    },
+    {
+      "id": "j1_water_ripple_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j1_water_ripple_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j1-water-ripple-paper.png"
+      ]
+    },
+    {
+      "id": "j2_cloth_texture_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j2_cloth_texture_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j2-cloth-texture-paper.png"
+      ]
+    },
+    {
+      "id": "j2_cloth_texture_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j2_cloth_texture_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j2-cloth-texture-paper.png"
+      ]
+    },
+    {
+      "id": "j3_eggshell_texture_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j3_eggshell_texture"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j3-eggshell-texture.png"
+      ]
+    },
+    {
+      "id": "j3_eggshell_texture_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j3_eggshell_texture"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j3-eggshell-texture.png"
+      ]
+    },
+    {
+      "id": "j4_high_grade_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j4_high_grade_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j4-high-grade-paper.png"
+      ]
+    },
+    {
+      "id": "j4_high_grade_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j4_high_grade_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j4-high-grade-paper.png"
+      ]
+    },
+    {
+      "id": "j5_pearlescent_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j5_pearlescent_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j5-pearlescent-paper.png"
+      ]
+    },
+    {
+      "id": "j5_pearlescent_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j5_pearlescent_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j5-pearlescent-paper.png"
+      ]
+    },
+    {
+      "id": "j6_kraft_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j6_kraft_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j6-kraft-paper.png"
+      ]
+    },
+    {
+      "id": "j6_kraft_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j6_kraft_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j6-kraft-paper.png"
+      ]
+    },
+    {
+      "id": "j7_absorbent_cotton_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j7_absorbent_cotton_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j7-absorbent-cotton-paper.png"
+      ]
+    },
+    {
+      "id": "j7_absorbent_cotton_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j7_absorbent_cotton_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j7-absorbent-cotton-paper.png"
+      ]
+    },
+    {
+      "id": "j8_pinhole_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j8_pinhole_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j8-pinhole-paper.png"
+      ]
+    },
+    {
+      "id": "j8_pinhole_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j8_pinhole_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j8-pinhole-paper.png"
+      ]
     }
   ],
   "detail_sections": {

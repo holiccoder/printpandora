@@ -179,3 +179,61 @@ test('hot and cold foil sides multiply only their own markup', () => {
         80,
     );
 });
+
+const multiFoilRuleScenario = {
+    packageName: 'Multiple foil test',
+    basePrice: 0.1,
+    startQuantity: 100,
+    paperRates: { 100: 0 },
+    processes: [
+        { code: 'foil', name: 'Foil', markup: 0.2, rates: {} },
+    ],
+};
+
+function multiFoilTiersFor(selectedOptions, sides) {
+    return computeDynamicTiers(
+        {
+            rules: [{ id: 'foil', match: [], pricing: multiFoilRuleScenario }],
+        },
+        0,
+        0,
+        0,
+        0,
+        selectedOptions,
+        sides,
+    );
+}
+
+test('multiple selected hot and cold foils scale the markup by selection count', () => {
+    assert.equal(
+        multiFoilTiersFor(
+            { special_finish: ['black_gold', 'cold_red_gold'] },
+            {
+                black_gold: 'one_side',
+                cold_red_gold: 'one_side',
+            },
+        )[0].currentPrice,
+        50,
+    );
+    assert.equal(
+        multiFoilTiersFor(
+            { special_finish: ['black_gold', 'cold_red_gold', 'bright_gold'] },
+            {
+                black_gold: 'one_side',
+                cold_red_gold: 'one_side',
+                bright_gold: 'one_side',
+            },
+        )[0].currentPrice,
+        70,
+    );
+    assert.equal(
+        multiFoilTiersFor(
+            { special_finish: ['black_gold', 'cold_red_gold'] },
+            {
+                black_gold: 'both_sides',
+                cold_red_gold: 'one_side',
+            },
+        )[0].currentPrice,
+        70,
+    );
+});

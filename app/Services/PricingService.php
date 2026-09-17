@@ -1035,9 +1035,9 @@ class PricingService
     }
 
     /**
-     * Two-sided foil uses the foil markup twice. The side map is keyed by the
-     * selected special-finish code so multiple finishes can keep independent
-     * side selections without changing the base pricing contract.
+     * Each selected hot/cold foil adds one foil markup. A foil selected for
+     * both sides adds one additional markup, with the side map keyed by the
+     * selected special-finish code so multiple finishes stay independent.
      *
      * @param  array<string, mixed>  $options
      */
@@ -1051,7 +1051,10 @@ class PricingService
             if (is_scalar($value)) {
                 $normalized = $this->normalizeOptionValue($value);
 
-                if ($normalized !== '') {
+                if ($normalized !== ''
+                    && $this->isFoilOptionCode($normalized)
+                    && ! in_array($normalized, $selectedCodes, true)
+                ) {
                     $selectedCodes[] = $normalized;
                 }
             }
@@ -1074,10 +1077,8 @@ class PricingService
                 || str_contains($processName, '热烫');
             $isColdFoil = $mentionsColdFoil && ! $mentionsHotFoil;
             $isHotFoil = $mentionsHotFoil && ! $mentionsColdFoil;
-            $isGenericFoil = (in_array($processCode, ['foil', 'special_finish'], true)
-                || $hasGenericFoilName)
-                && ! $isColdFoil
-                && ! $isHotFoil;
+            $isGenericFoil = in_array($processCode, ['foil', 'special_finish'], true)
+                || ($hasGenericFoilName && ! $isColdFoil && ! $isHotFoil);
 
             if (! $isGenericFoil) {
                 $selectedCodes = array_values(array_filter(
@@ -1108,24 +1109,30 @@ class PricingService
         $sides = $options['special_finish_on_sides'] ?? null;
 
         if (is_scalar($sides)) {
-            return $this->normalizeOptionValue($sides) === 'both_sides' ? 2 : 1;
+            $sideMultiplier = $this->normalizeOptionValue($sides) === 'both_sides' ? 2 : 1;
+
+            return count($selectedCodes) * $sideMultiplier;
         }
 
         if (! is_array($sides)) {
-            return 1;
+            return count($selectedCodes);
         }
+
+        $bothSidedCodes = [];
 
         foreach ($sides as $code => $side) {
             if (
                 is_scalar($side)
                 && $this->normalizeOptionValue($side) === 'both_sides'
-                && in_array($this->normalizeOptionValue($code), $selectedCodes, true)
             ) {
-                return 2;
+                $bothSidedCodes[] = $this->normalizeOptionValue($code);
             }
         }
 
-        return 1;
+        return array_sum(array_map(
+            static fn (string $code): int => in_array($code, $bothSidedCodes, true) ? 2 : 1,
+            $selectedCodes,
+        ));
     }
 
     /**

@@ -91,8 +91,8 @@ export function getPreferredGalleryMatchKey(
  * preferred match key is provided and one of the matching galleries includes
  * that key.
  * Only keys explicitly present in a gallery's `match` are checked;
- * unspecified keys (e.g. `sizes`, `quantity`) are ignored, so
- * e.g. size changes never affect gallery selection.
+ * unspecified keys (e.g. `quantity`) are ignored, so galleries without a
+ * size-specific match continue to apply across size changes.
  * Falls back to the gallery marked `is_default`.
  */
 export function findMatchingGallery(
