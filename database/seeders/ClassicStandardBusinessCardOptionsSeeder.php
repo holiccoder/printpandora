@@ -70,8 +70,8 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                 ...$this->copyGroup($existing, 'paper_finish', 'Paper Finish', [
                     'matte',
                     'gloss',
-                    'uv',
                 ]),
+                'required' => false,
                 'values' => [
                     array_replace(
                         $this->withSwatch(
@@ -91,11 +91,33 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                         ),
                         ['description' => 'Eye-catchingly shiny. Makes color photos pop.'],
                     ),
+                ],
+            ],
+            'uv_finish' => [
+                'label' => 'UV',
+                'type' => 'select',
+                'required' => false,
+                'default' => null,
+                'values' => [
                     array_replace(
-                        $this->existingValue($existing, 'paper_finish', 'uv', [
-                            'label' => 'UV',
+                        $this->existingValue($existing, 'uv_finish', 'single_side_uv', [
+                            'label' => 'single side UV',
+                            'swatch_image' => '/images/product-options/uv-swatch.png',
                         ]),
-                        ['description' => 'UV effect business card'],
+                        [
+                            'label' => 'single side UV',
+                            'swatch_image' => '/images/product-options/uv-swatch.png',
+                        ],
+                    ),
+                    array_replace(
+                        $this->existingValue($existing, 'uv_finish', 'both_sides_uv', [
+                            'label' => 'both sides UV',
+                            'swatch_image' => '/images/product-options/uv-swatch.png',
+                        ]),
+                        [
+                            'label' => 'both sides UV',
+                            'swatch_image' => '/images/product-options/uv-swatch.png',
+                        ],
                     ),
                 ],
             ],

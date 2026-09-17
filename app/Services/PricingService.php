@@ -475,7 +475,12 @@ class PricingService
             return null;
         }
 
-        $scenarioKey = $this->resolveScenario($pricingData, $sizeIndex, $finishIndex);
+        $scenarioKey = $this->resolveScenario(
+            $pricingData,
+            $sizeIndex,
+            $finishIndex,
+            $pricingOptions,
+        );
         $scenario = $pricingData[$scenarioKey] ?? null;
 
         if (! $scenario) {
@@ -918,10 +923,22 @@ class PricingService
      *
      * @param  array<string, array<string, mixed>>  $data
      */
-    private function resolveScenario(array $data, int $sizeIndex, int $finishIndex): string
+    private function resolveScenario(
+        array $data,
+        int $sizeIndex,
+        int $finishIndex,
+        array $options = [],
+    ): string
     {
         $hasUv = isset($data['uv']);
-        $isUv = $hasUv && $finishIndex === 2;
+        $selectedUv = $options['uv_finish'] ?? null;
+        $hasSelectedUv = is_array($selectedUv)
+            ? $selectedUv !== []
+            : is_string($selectedUv) && $selectedUv !== '';
+        $isUv = $hasUv && (
+            $hasSelectedUv
+            || (! array_key_exists('uv_finish', $options) && $finishIndex === 2)
+        );
 
         if ($sizeIndex === 0) {
             return $isUv ? 'uv' : 'rectangle';

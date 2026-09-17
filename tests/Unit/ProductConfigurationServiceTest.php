@@ -74,8 +74,8 @@ class ProductConfigurationServiceTest extends TestCase
         $this->assertSame([], data_get($state, 'pricing.scenarios'));
         $this->assertSame([], data_get($state, 'pricing.quantity_price_table'));
         $this->assertSame([], data_get($state, 'pricing.rules'));
-        $this->assertCount(4, $state['options']);
-        $this->assertCount(24, $state['media']['gallery_rules']);
+        $this->assertCount(5, $state['options']);
+        $this->assertCount(28, $state['media']['gallery_rules']);
         $this->assertSame([], $state['faq']);
         $this->assertArrayNotHasKey('detail_sections', $state);
     }
@@ -223,6 +223,47 @@ class ProductConfigurationServiceTest extends TestCase
             ->firstWhere('key', 'special_finish');
 
         $this->assertSame('multi_select', data_get($specialFinishGroup, 'type'));
+    }
+
+    public function test_classic_standard_uv_is_an_optional_group_after_paper_finish(): void
+    {
+        $product = new Product([
+            'name' => 'Classic Standard Business Cards',
+            'slug' => 'classic-standard-business-cards',
+            'product_config' => [
+                'options' => [
+                    'paper_finish' => [
+                        'values' => [
+                            ['code' => 'matte', 'label' => 'Matte'],
+                            ['code' => 'gloss', 'label' => 'Gloss'],
+                            ['code' => 'uv', 'label' => 'UV'],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $product->setRelation('category', new ProductCategory(['slug' => 'business-cards']));
+
+        $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+        $groups = collect($options['option_groups'] ?? []);
+        $paperFinish = $groups->firstWhere('key', 'paper_finish');
+        $uv = $groups->firstWhere('key', 'uv_finish');
+
+        $this->assertSame(
+            ['sizes', 'corners', 'paper_finish', 'uv_finish', 'special_finish'],
+            $groups->pluck('key')->all(),
+        );
+        $this->assertSame(['matte', 'gloss'], array_column($paperFinish['values'], 'code'));
+        $this->assertFalse(data_get($paperFinish, 'required'));
+        $this->assertSame('matte', data_get($paperFinish, 'default'));
+        $this->assertSame('UV', data_get($uv, 'label'));
+        $this->assertSame('select', data_get($uv, 'type'));
+        $this->assertFalse(data_get($uv, 'required'));
+        $this->assertNull(data_get($uv, 'default'));
+        $this->assertSame(
+            ['single_side_uv', 'both_sides_uv'],
+            array_column($uv['values'], 'code'),
+        );
     }
 
     public function test_database_detail_sections_keep_product_specific_data_except_shared_cross_sell_sections(): void

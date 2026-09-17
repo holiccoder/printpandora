@@ -58,9 +58,20 @@ export function resolvePricingScenario(
     data: DynamicPricingData,
     sizeIndex: number,
     finishIndex: number,
+    selectedOptions: Record<string, string | string[]> = {},
 ): 'rectangle' | 'uv' | 'square' | 'square_uv' {
     const hasUv = data.uv != null;
-    const isUv = hasUv && finishIndex === 2;
+    const selectedUv = selectedOptions.uv_finish;
+    const hasSelectedUv =
+        (Array.isArray(selectedUv) && selectedUv.length > 0) ||
+        (typeof selectedUv === 'string' && selectedUv !== '');
+    const isUv =
+        hasUv &&
+        (hasSelectedUv ||
+            (!Object.prototype.hasOwnProperty.call(
+                selectedOptions,
+                'uv_finish',
+            ) && finishIndex === 2));
 
     if (sizeIndex === 0) {
         return isUv ? 'uv' : 'rectangle';
@@ -468,7 +479,14 @@ export function computeDynamicTiers(
 ): QuantityTier[] {
     const scenario = data.rules?.length
         ? findMatchingPricingRule(data.rules, selectedOptions)
-        : data[resolvePricingScenario(data, sizeIndex, finishIndex)];
+        : data[
+              resolvePricingScenario(
+                  data,
+                  sizeIndex,
+                  finishIndex,
+                  selectedOptions,
+              )
+          ];
 
     if (!scenario) {
         return [];

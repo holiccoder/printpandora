@@ -35,7 +35,7 @@
     "paper_finish": {
       "label": "Paper Finish",
       "type": "select",
-      "required": true,
+      "required": false,
       "default": "matte",
       "values": [
         {
@@ -49,11 +49,23 @@
           "label": "Gloss",
           "description": "Eye-catchingly shiny. Makes color photos pop.",
           "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg"
+        }
+      ]
+    },
+    "uv_finish": {
+      "label": "UV",
+      "type": "select",
+      "required": false,
+      "default": null,
+      "values": [
+        {
+          "code": "single_side_uv",
+          "label": "single side UV",
+          "swatch_image": "/images/product-options/uv-swatch.png"
         },
         {
-          "code": "uv",
-          "label": "UV",
-          "description": "UV effect business card",
+          "code": "both_sides_uv",
+          "label": "both sides UV",
           "swatch_image": "/images/product-options/uv-swatch.png"
         }
       ]
@@ -222,7 +234,20 @@
         "id": "square-uv-scorner",
         "match": {
           "sizes": "Square",
-          "paper_finish": "UV",
+          "uv_finish": "single_side_uv",
+          "corners": "Square",
+          "special_finish": "no special finish"
+        },
+        "images": [
+          "/images/square-classic/square-scorner-uv-no-foil.png"
+        ],
+        "primary": "/images/square-classic/square-scorner-uv-no-foil.png"
+      },
+      {
+        "id": "square-uv-scorner-both-sides",
+        "match": {
+          "sizes": "Square",
+          "uv_finish": "both_sides_uv",
           "corners": "Square",
           "special_finish": "no special finish"
         },
@@ -235,7 +260,20 @@
         "id": "square-uv-rcorner",
         "match": {
           "sizes": "Square",
-          "paper_finish": "UV",
+          "uv_finish": "single_side_uv",
+          "corners": "Rounded",
+          "special_finish": "no special finish"
+        },
+        "images": [
+          "/images/square-classic/rcorner-square-uv-no-foil.png"
+        ],
+        "primary": "/images/square-classic/rcorner-square-uv-no-foil.png"
+      },
+      {
+        "id": "square-uv-rcorner-both-sides",
+        "match": {
+          "sizes": "Square",
+          "uv_finish": "both_sides_uv",
           "corners": "Rounded",
           "special_finish": "no special finish"
         },
@@ -307,7 +345,22 @@
       {
         "id": "matte-uv",
         "match": {
-          "paper_finish": "UV",
+          "uv_finish": "single_side_uv",
+          "corners": "Square",
+          "special_finish": "no special finish"
+        },
+        "images": [
+          "/images/product-options/business-cards/galleries/standard-classic/matte-uv/01.webp",
+          "/images/product-options/business-cards/galleries/standard-classic/matte-uv/02.webp",
+          "/images/product-options/business-cards/galleries/standard-classic/matte-uv/03.webp",
+          "/images/product-options/business-cards/galleries/standard-classic/matte-uv/04.webp"
+        ],
+        "primary": "/images/product-options/business-cards/galleries/standard-classic/matte-uv/01.webp"
+      },
+      {
+        "id": "matte-uv-both-sides",
+        "match": {
+          "uv_finish": "both_sides_uv",
           "corners": "Square",
           "special_finish": "no special finish"
         },
@@ -322,7 +375,22 @@
       {
         "id": "matte-rounded-uv",
         "match": {
-          "paper_finish": "UV",
+          "uv_finish": "single_side_uv",
+          "corners": "Rounded",
+          "special_finish": "no special finish"
+        },
+        "images": [
+          "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/01.webp",
+          "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/02.webp",
+          "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/03.webp",
+          "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/04.webp"
+        ],
+        "primary": "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/01.webp"
+      },
+      {
+        "id": "matte-rounded-uv-both-sides",
+        "match": {
+          "uv_finish": "both_sides_uv",
           "corners": "Rounded",
           "special_finish": "no special finish"
         },

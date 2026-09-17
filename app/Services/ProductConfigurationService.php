@@ -32,7 +32,7 @@ class ProductConfigurationService
         'sizes' => 'Size',
         'corners' => 'Corners',
         'paper_finish' => 'Paper Finish',
-        'uv_finish' => 'UV Finish',
+        'uv_finish' => 'UV',
         'special_finish' => 'Special Finish',
         'print_code' => 'Print Code',
         'drill' => 'Drilling',
@@ -54,6 +54,8 @@ class ProductConfigurationService
         'uv_finish' => 5,
         'special_finish' => 6,
     ];
+
+    private const UV_FINISH_SWATCH_IMAGE = '/images/product-options/uv-swatch.png';
 
     /**
      * @var array<int, string>
@@ -768,13 +770,26 @@ class ProductConfigurationService
                 continue;
             }
 
+            $match = $this->scenarioMatchConditions((string) $scenarioKey, $config['options'] ?? []);
+            $pricingJson = $this->encodePricingJson($this->scenarioToPricingJson($scenario));
+
             $rows[] = [
                 'id' => "pricing-{$scenarioKey}",
-                'match_conditions' => $this->conditionsToRows(
-                    $this->scenarioMatchConditions((string) $scenarioKey, $config['options'] ?? []),
-                ),
-                'pricing_json' => $this->encodePricingJson($this->scenarioToPricingJson($scenario)),
+                'match_conditions' => $this->conditionsToRows($match),
+                'pricing_json' => $pricingJson,
             ];
+
+            if (
+                in_array((string) $scenarioKey, ['uv', 'square_uv'], true)
+                && array_key_exists('uv_finish', $match)
+            ) {
+                $match['uv_finish'] = 'both_sides_uv';
+                $rows[] = [
+                    'id' => "pricing-{$scenarioKey}-both-sides",
+                    'match_conditions' => $this->conditionsToRows($match),
+                    'pricing_json' => $pricingJson,
+                ];
+            }
         }
 
         return $rows;
@@ -969,8 +984,10 @@ class ProductConfigurationService
         $match = [];
         $sizeGroup = is_array($options['sizes'] ?? null) ? $options['sizes'] : [];
         $finishGroup = is_array($options['paper_finish'] ?? null) ? $options['paper_finish'] : [];
+        $uvFinishGroup = is_array($options['uv_finish'] ?? null) ? $options['uv_finish'] : [];
         $sizes = is_array($sizeGroup['values'] ?? null) ? $sizeGroup['values'] : [];
         $finishes = is_array($finishGroup['values'] ?? null) ? $finishGroup['values'] : [];
+        $uvFinishes = is_array($uvFinishGroup['values'] ?? null) ? $uvFinishGroup['values'] : [];
 
         $standard = $sizes[0]['code'] ?? null;
         $square = collect($sizes)->first(function (mixed $value): bool {
@@ -982,14 +999,30 @@ class ProductConfigurationService
                 || $this->normalizedRuleValue($value['label'] ?? '') === 'square';
         });
         $square = is_array($square) ? ($square['code'] ?? null) : ($sizes[1]['code'] ?? null);
-        $uv = collect($finishes)->first(function (mixed $value): bool {
+        $uv = collect($uvFinishes)->first(function (mixed $value): bool {
             if (! is_array($value)) {
                 return false;
             }
 
-            return $this->normalizedRuleValue($value['code'] ?? '') === 'uv'
-                || $this->normalizedRuleValue($value['label'] ?? '') === 'uv';
+            return in_array($this->normalizedRuleValue($value['code'] ?? ''), [
+                'single_side_uv',
+                'both_sides_uv',
+            ], true);
         });
+        $uvMatchKey = 'uv_finish';
+
+        if (! is_array($uv)) {
+            $uv = collect($finishes)->first(function (mixed $value): bool {
+                if (! is_array($value)) {
+                    return false;
+                }
+
+                return $this->normalizedRuleValue($value['code'] ?? '') === 'uv'
+                    || $this->normalizedRuleValue($value['label'] ?? '') === 'uv';
+            });
+            $uvMatchKey = 'paper_finish';
+        }
+
         $uv = is_array($uv) ? ($uv['code'] ?? null) : null;
 
         if ($scenario === 'rectangle' && $standard) {
@@ -999,7 +1032,7 @@ class ProductConfigurationService
         if ($scenario === 'uv' && $standard) {
             $match['sizes'] = (string) $standard;
             if ($uv) {
-                $match['paper_finish'] = (string) $uv;
+                $match[$uvMatchKey] = (string) $uv;
             }
         }
 
@@ -1010,7 +1043,7 @@ class ProductConfigurationService
         if ($scenario === 'square_uv' && $square) {
             $match['sizes'] = (string) $square;
             if ($uv) {
-                $match['paper_finish'] = (string) $uv;
+                $match[$uvMatchKey] = (string) $uv;
             }
         }
 
@@ -1396,7 +1429,9 @@ class ProductConfigurationService
         $media['gallery'] = is_array($defaultGallery['images'] ?? null)
             ? array_values($defaultGallery['images'])
             : [];
-        $media['gallery_rules'] = $this->galleryRulesFromLegacy($galleries);
+        $media['gallery_rules'] = $this->normalizeUvOptionRules(
+            $this->galleryRulesFromLegacy($galleries),
+        );
         $config['media'] = $media;
 
         return $config;
@@ -1544,12 +1579,14 @@ class ProductConfigurationService
             }
 
             $items = is_array($legacy[$key] ?? null) ? $legacy[$key] : [];
+            $isOptionalUvGroup = $key === 'uv_finish'
+                && $productSlug === 'classic-standard-business-cards';
 
             $options[$key] = [
                 'label' => $label,
                 'type' => $this->legacyOptionGroupType($key, $items, $productSlug),
-                'required' => true,
-                'default' => $items[0]['code'] ?? null,
+                'required' => ! $isOptionalUvGroup,
+                'default' => $isOptionalUvGroup ? null : ($items[0]['code'] ?? null),
                 'values' => array_values(array_map(function (mixed $item): array {
                     if (! is_array($item)) {
                         return [];
@@ -1580,7 +1617,7 @@ class ProductConfigurationService
             ];
         }
 
-        return $options;
+        return $this->splitUvPaperFinishOptionGroup($options);
     }
 
     /**
@@ -1738,11 +1775,12 @@ class ProductConfigurationService
             $optionKey = (string) $key;
             $isMultiSelect = ($group['type'] ?? 'select') === 'multi_select'
                 || ($optionKey === 'special_finish' && $this->hasFoilOptionValues($values));
+            $required = (bool) ($group['required'] ?? true);
             $default = array_key_exists('default', $group)
                 ? $group['default']
-                : ($values[0]['code'] ?? '');
+                : ($required ? ($values[0]['code'] ?? '') : null);
 
-            if ($default === null) {
+            if ($default === null && $required) {
                 $default = $values[0]['code'] ?? '';
             }
 
@@ -1752,10 +1790,10 @@ class ProductConfigurationService
                 'type' => $isMultiSelect
                     ? 'multi_select'
                     : 'select',
-                'required' => (bool) ($group['required'] ?? true),
+                'required' => $required,
                 'default' => is_array($default)
                     ? array_values(array_map(static fn (mixed $code): string => (string) $code, $default))
-                    : (string) $default,
+                    : ($default === null ? null : (string) $default),
                 'values' => $values,
             ];
             $options[$optionKey] = $values;
@@ -2116,6 +2154,12 @@ class ProductConfigurationService
             'quantity_price_table' => [],
             'rules' => [],
         ], is_array($config['pricing'] ?? null) ? $config['pricing'] : []);
+        $config['media']['gallery_rules'] = $this->normalizeUvOptionRules(
+            $config['media']['gallery_rules'],
+        );
+        $config['pricing']['rules'] = $this->normalizeUvOptionRules(
+            is_array($config['pricing']['rules'] ?? null) ? $config['pricing']['rules'] : [],
+        );
         $config['faq'] = is_array($config['faq'] ?? null) ? array_values($config['faq']) : [];
         $config['detail_sections'] = is_array($config['detail_sections'] ?? null)
             ? $config['detail_sections']
@@ -2347,6 +2391,7 @@ class ProductConfigurationService
      */
     private function normalizeProductSpecificOptions(array $options, Product $product): array
     {
+        $options = $this->splitUvPaperFinishOptionGroup($options);
         $catalogOptions = BusinessCardOptionCatalog::normalize((string) $product->slug, $options);
 
         if ($catalogOptions !== null) {
@@ -2519,6 +2564,197 @@ class ProductConfigurationService
             ],
             'texture' => $group('Texture', $textures, 'matte'),
         ], (string) $product->slug));
+    }
+
+    /**
+     * Move the legacy UV value out of Paper Finish when a card exposes the
+     * matte/gloss/UV combination. Paper Finish and UV are mutually exclusive
+     * optional alternatives, so neither selection is active by default.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private function splitUvPaperFinishOptionGroup(array $options): array
+    {
+        $paperFinish = is_array($options['paper_finish'] ?? null)
+            ? $options['paper_finish']
+            : [];
+        $values = is_array($paperFinish['values'] ?? null)
+            ? $paperFinish['values']
+            : [];
+
+        $hasMatte = false;
+        $hasGloss = false;
+        $hasUv = false;
+        $remainingValues = [];
+
+        foreach ($values as $value) {
+            if (! is_array($value)) {
+                $remainingValues[] = $value;
+
+                continue;
+            }
+
+            $code = $this->normalizedRuleValue($value['code'] ?? '');
+            $label = $this->normalizedRuleValue($value['label'] ?? $value['name'] ?? '');
+
+            if ($this->isUvOptionValue($code) || $this->isUvOptionValue($label)) {
+                $hasUv = true;
+
+                continue;
+            }
+
+            $hasMatte = $hasMatte || $code === 'matte' || $label === 'matte';
+            $hasGloss = $hasGloss || $code === 'gloss' || $label === 'gloss';
+            $remainingValues[] = $value;
+        }
+
+        $existingUvGroup = is_array($options['uv_finish'] ?? null)
+            ? $options['uv_finish']
+            : [];
+        $existingUvValues = is_array($existingUvGroup['values'] ?? null)
+            ? $existingUvGroup['values']
+            : [];
+        $hasSeparateUv = $this->hasUvSideValues($existingUvValues);
+
+        if (! $hasMatte || ! $hasGloss || (! $hasUv && ! $hasSeparateUv)) {
+            return $options;
+        }
+
+        $paperFinish['values'] = array_values($remainingValues);
+
+        $paperFinish['required'] = false;
+
+        if (
+            $this->isUvOptionValue($paperFinish['default'] ?? '')
+            || blank($paperFinish['default'] ?? null)
+        ) {
+            $paperFinish['default'] = 'matte';
+        }
+
+        $options['paper_finish'] = $paperFinish;
+
+        $existingByCode = [];
+
+        foreach ($existingUvValues as $value) {
+            if (is_array($value) && isset($value['code'])) {
+                $existingByCode[(string) $value['code']] = $value;
+            }
+        }
+
+        $uvValues = [];
+
+        foreach ([
+            'single_side_uv' => 'single side UV',
+            'both_sides_uv' => 'both sides UV',
+        ] as $code => $label) {
+            $uvValues[] = array_replace(
+                [
+                    'code' => $code,
+                    'label' => $label,
+                    'swatch_image' => self::UV_FINISH_SWATCH_IMAGE,
+                ],
+                $existingByCode[$code] ?? [],
+                [
+                    'code' => $code,
+                    'label' => $label,
+                    'swatch_image' => self::UV_FINISH_SWATCH_IMAGE,
+                ],
+            );
+        }
+
+        $options['uv_finish'] = array_replace(
+            [
+                'label' => 'UV',
+                'type' => 'select',
+                'required' => false,
+                'default' => null,
+            ],
+            $existingUvGroup,
+            [
+                'label' => 'UV',
+                'type' => 'select',
+                'required' => false,
+                'default' => null,
+                'values' => $uvValues,
+            ],
+        );
+
+        return $options;
+    }
+
+    /**
+     * @param  array<int, mixed>  $values
+     */
+    private function hasUvSideValues(array $values): bool
+    {
+        $codes = [];
+
+        foreach ($values as $value) {
+            if (! is_array($value)) {
+                continue;
+            }
+
+            $codes[] = $this->normalizedRuleValue($value['code'] ?? $value['name'] ?? $value['label'] ?? '');
+        }
+
+        return in_array('single_side_uv', $codes, true)
+            && in_array('both_sides_uv', $codes, true);
+    }
+
+    /**
+     * Convert pricing and gallery rules that still match the retired
+     * Paper Finish=UV value into rules for both new UV side selections.
+     *
+     * @param  array<int, mixed>  $rules
+     * @return array<int, mixed>
+     */
+    private function normalizeUvOptionRules(array $rules): array
+    {
+        $uvRules = [];
+        $otherRules = [];
+
+        foreach ($rules as $rule) {
+            if (! is_array($rule)) {
+                $otherRules[] = $rule;
+
+                continue;
+            }
+
+            $match = is_array($rule['match'] ?? null) ? $rule['match'] : [];
+
+            if (! array_key_exists('paper_finish', $match) || ! $this->isUvOptionValue($match['paper_finish'])) {
+                if (array_key_exists('uv_finish', $match)) {
+                    $uvRules[] = $rule;
+                } else {
+                    $otherRules[] = $rule;
+                }
+
+                continue;
+            }
+
+            unset($match['paper_finish']);
+
+            foreach (['single_side_uv', 'both_sides_uv'] as $index => $uvCode) {
+                $migratedRule = $rule;
+                $migratedRule['match'] = [...$match, 'uv_finish' => $uvCode];
+
+                if ($index === 1 && isset($rule['id'])) {
+                    $migratedRule['id'] = (string) $rule['id'].'-both-sides';
+                }
+
+                $uvRules[] = $migratedRule;
+            }
+        }
+
+        return array_values([...$uvRules, ...$otherRules]);
+    }
+
+    private function isUvOptionValue(mixed $value): bool
+    {
+        $normalized = $this->normalizedRuleValue($value);
+
+        return in_array($normalized, ['uv', '3d_uv'], true);
     }
 
     /**

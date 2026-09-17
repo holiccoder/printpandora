@@ -166,7 +166,7 @@ interface ProductOptionGroup {
     label: string;
     type: 'select' | 'multi_select';
     required?: boolean;
-    default?: string | string[];
+    default?: string | string[] | null;
     values: ProductOptionValue[];
 }
 
@@ -364,6 +364,14 @@ const generatedSizeSwatches: Record<string, string> = {
     custom: `${reusableSwatchBase}/custom-size.webp`,
 };
 
+const captionedSizeSwatchCodes = new Set(['standard', 'square', 'custom']);
+
+function shouldShowSwatchCaption(groupKey: string, code: string): boolean {
+    return (
+        groupKey === 'sizes' && captionedSizeSwatchCodes.has(code.toLowerCase())
+    );
+}
+
 function sizeSwatchFor(code: string, fallback?: string): string | undefined {
     return generatedSizeSwatches[code.toLowerCase()] ?? fallback;
 }
@@ -544,11 +552,13 @@ function selectedDynamicOptionDetails(
 ): SelectedOptionDetails[] {
     return groups.flatMap((group) => {
         const selectedValues = selected[group.key];
-        const selectedCodes = Array.isArray(selectedValues)
-            ? selectedValues
-            : selectedValues != null
-              ? [selectedValues]
-              : [];
+        const selectedCodes = (
+            Array.isArray(selectedValues)
+                ? selectedValues
+                : selectedValues != null
+                  ? [selectedValues]
+                  : []
+        ).filter((code) => code !== '');
 
         return selectedCodes.map((code) => {
             const value = group.values.find(
@@ -726,6 +736,12 @@ export default function ShopShow({
                       ? [group.default]
                       : null;
 
+                if (!group.required && configuredDefaults === null) {
+                    defaults[group.key] = [];
+
+                    continue;
+                }
+
                 defaults[group.key] =
                     configuredDefaults !== null
                         ? configuredDefaults.filter((code) =>
@@ -740,6 +756,12 @@ export default function ShopShow({
 
             const configuredDefault =
                 typeof group.default === 'string' ? group.default.trim() : '';
+
+            if (!group.required && configuredDefault === '') {
+                defaults[group.key] = '';
+
+                continue;
+            }
 
             defaults[group.key] = valueCodes.includes(configuredDefault)
                 ? configuredDefault
@@ -1243,15 +1265,22 @@ export default function ShopShow({
         ? dynamicOptionGroups.every((group) => {
               const selected = selectedDynamicOptions[group.key];
 
-              return group.type === 'multi_select'
-                  ? Array.isArray(selected) && selected.length > 0
-                  : typeof selected === 'string' &&
-                        selected !== '' &&
-                        (group.key !== 'sizes' ||
-                            selected !== 'custom' ||
-                            confirmedCustomSize != null);
-          }) &&
-          (!isStickerProduct || stickerPaperArea > 0)
+              if (group.type === 'multi_select') {
+                  return Array.isArray(selected) && selected.length > 0;
+              }
+
+              if (!group.required && (selected == null || selected === '')) {
+                  return true;
+              }
+
+              return (
+                  typeof selected === 'string' &&
+                  selected !== '' &&
+                  (group.key !== 'sizes' ||
+                      selected !== 'custom' ||
+                      confirmedCustomSize != null)
+              );
+          }) && (!isStickerProduct || stickerPaperArea > 0)
         : (sizes.length === 0 ||
               (selectedSize !== 'custom'
                   ? selectedSize != null
@@ -1333,7 +1362,7 @@ export default function ShopShow({
                     opts[group.key] = Array.isArray(selected) ? selected : [];
                 } else {
                     opts[group.key] =
-                        typeof selected === 'string' && selected !== ''
+                        typeof selected === 'string'
                             ? selected
                             : (dynamicOptionDefaults[group.key] ?? '');
                 }
@@ -1664,7 +1693,23 @@ export default function ShopShow({
 
         setSelectedDynamicOptions((current) => {
             if (group.type !== 'multi_select') {
-                return { ...current, [groupKey]: value };
+                const next = { ...current, [groupKey]: value };
+                const paperFinishGroup = dynamicOptionGroups.find(
+                    (item) => item.key === 'paper_finish',
+                );
+                const uvGroup = dynamicOptionGroups.find(
+                    (item) => item.key === 'uv_finish',
+                );
+
+                if (groupKey === 'paper_finish' && uvGroup?.required === false) {
+                    next.uv_finish = '';
+                }
+
+                if (groupKey === 'uv_finish' && paperFinishGroup?.required === false) {
+                    next.paper_finish = '';
+                }
+
+                return next;
             }
 
             const selected = Array.isArray(current[groupKey])
@@ -2254,12 +2299,17 @@ export default function ShopShow({
                                                             />
                                                         )}
                                                     </div>
-                                                    <p className="text-xs text-neutral-500">
-                                                        {s.id === 'custom' &&
-                                                        confirmedCustomSize
-                                                            ? `${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}"`
-                                                            : s.dims}
-                                                    </p>
+                                                    {shouldShowSwatchCaption(
+                                                        'sizes',
+                                                        s.id,
+                                                    ) && (
+                                                        <p className="text-xs text-neutral-500">
+                                                            {s.id === 'custom' &&
+                                                            confirmedCustomSize
+                                                                ? `${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}"`
+                                                                : s.dims}
+                                                        </p>
+                                                    )}
                                                 </ChoiceTile>
                                             );
                                         })}
@@ -2316,11 +2366,6 @@ export default function ShopShow({
                                                     </span>
                                                 </div>
                                             )}
-                                            {t.description && (
-                                                <p className="text-xs text-neutral-500">
-                                                    {t.description}
-                                                </p>
-                                            )}
                                         </ChoiceTile>
                                     ))}
                                 </div>
@@ -2352,11 +2397,6 @@ export default function ShopShow({
                                                 alt=""
                                                 className="aspect-[3/2] w-full rounded-sm object-cover"
                                             />
-                                            {f.description && (
-                                                <p className="text-xs text-neutral-500">
-                                                    {f.description}
-                                                </p>
-                                            )}
                                         </ChoiceTile>
                                     ))}
                                 </div>
@@ -2432,13 +2472,6 @@ export default function ShopShow({
                                                                     alt=""
                                                                     className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
                                                                 />
-                                                                {f.description && (
-                                                                    <p className="text-xs text-neutral-500">
-                                                                        {
-                                                                            f.description
-                                                                        }
-                                                                    </p>
-                                                                )}
                                                             </>
                                                         );
 
@@ -2550,13 +2583,6 @@ export default function ShopShow({
                                                                     alt=""
                                                                     className="aspect-square w-full rounded-sm bg-neutral-50 object-contain"
                                                                 />
-                                                                {f.description && (
-                                                                    <p className="text-xs text-neutral-500">
-                                                                        {
-                                                                            f.description
-                                                                        }
-                                                                    </p>
-                                                                )}
                                                             </SpecialFinishChoiceTile>
                                                         );
                                                     },
@@ -2593,11 +2619,6 @@ export default function ShopShow({
                                                     </span>
                                                 )}
                                             </div>
-                                            {e.description && (
-                                                <p className="text-xs text-neutral-500">
-                                                    {e.description}
-                                                </p>
-                                            )}
                                         </ChoiceTile>
                                     ))}
                                 </div>
@@ -2642,11 +2663,6 @@ export default function ShopShow({
                                                             </span>
                                                         )}
                                                     </div>
-                                                    {e.description && (
-                                                        <p className="text-xs text-neutral-500">
-                                                            {e.description}
-                                                        </p>
-                                                    )}
                                                 </ChoiceTile>
                                             ),
                                         )}
@@ -3647,7 +3663,11 @@ function DynamicOptionGroups({
                                                 </span>
                                             )}
                                         </div>
-                                        {isCustomSize &&
+                                        {shouldShowSwatchCaption(
+                                            group.key,
+                                            code,
+                                        ) &&
+                                        (isCustomSize &&
                                         active &&
                                         customSize ? (
                                             <p className="text-xs text-neutral-500">
@@ -3658,7 +3678,7 @@ function DynamicOptionGroups({
                                             <p className="text-xs text-neutral-500">
                                                 {value.description}
                                             </p>
-                                        ) : null}
+                                        ) : null)}
                                     </>
                                 );
 

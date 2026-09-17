@@ -125,8 +125,37 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
             data_get($product->product_config, 'options.paper_finish.values.1.description'),
         );
         $this->assertSame(
-            'UV effect business card',
-            data_get($product->product_config, 'options.paper_finish.values.2.description'),
+            ['matte', 'gloss'],
+            data_get($product->product_config, 'options.paper_finish.values.*.code'),
+        );
+        $this->assertFalse(
+            data_get($product->product_config, 'options.paper_finish.required'),
+        );
+        $this->assertSame(
+            'matte',
+            data_get($product->product_config, 'options.paper_finish.default'),
+        );
+        $this->assertSame(
+            'UV',
+            data_get($product->product_config, 'options.uv_finish.label'),
+        );
+        $this->assertSame(
+            'select',
+            data_get($product->product_config, 'options.uv_finish.type'),
+        );
+        $this->assertFalse(
+            data_get($product->product_config, 'options.uv_finish.required'),
+        );
+        $this->assertNull(
+            data_get($product->product_config, 'options.uv_finish.default'),
+        );
+        $this->assertSame(
+            ['single_side_uv', 'both_sides_uv'],
+            data_get($product->product_config, 'options.uv_finish.values.*.code'),
+        );
+        $this->assertSame(
+            ['single side UV', 'both sides UV'],
+            data_get($product->product_config, 'options.uv_finish.values.*.label'),
         );
         $this->assertSame(
             '/images/product-options/business-cards/swatches/square.webp',
