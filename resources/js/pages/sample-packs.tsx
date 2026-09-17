@@ -203,8 +203,8 @@ export default function SamplePacks() {
                     <div className="flex flex-col justify-center">
                         <div className="overflow-hidden rounded-md bg-neutral-50">
                             <img
-                                src="https://picsum.photos/seed/bc-sample-open/1000/800"
-                                alt="Open sample folder showcasing business card designs"
+                                src="/images/sample-packs/business-card-sample-pack-01.webp"
+                                alt="Printed sample cards showing full-color, tactile, and smooth print finishes"
                                 loading="lazy"
                                 className="w-full object-cover"
                             />
@@ -215,20 +215,20 @@ export default function SamplePacks() {
                     <div className="flex flex-col justify-center">
                         <div className="grid grid-cols-3 gap-3">
                             <img
-                                src="https://picsum.photos/seed/texture-linen/300/200"
-                                alt="Close-up of textured linen paper"
+                                src="/images/sample-packs/business-card-sample-pack-02.webp"
+                                alt="Creative paper and print sample collection"
                                 loading="lazy"
                                 className="aspect-[3/2] w-full rounded-md bg-neutral-50 object-cover"
                             />
                             <img
-                                src="https://picsum.photos/seed/card-hold/300/200"
-                                alt="Hand holding a premium business card"
+                                src="/images/sample-packs/business-card-sample-pack-03.webp"
+                                alt="InkPavo textured paper and print samples arranged on a pastel surface"
                                 loading="lazy"
                                 className="aspect-[3/2] w-full rounded-md bg-neutral-50 object-cover"
                             />
                             <img
-                                src="https://picsum.photos/seed/foil-detail/300/200"
-                                alt="Gold foil detail on card edge"
+                                src="/images/sample-packs/business-card-sample-pack-04.webp"
+                                alt="Premium business cards in charcoal and white with copper foil"
                                 loading="lazy"
                                 className="aspect-[3/2] w-full rounded-md bg-neutral-50 object-cover"
                             />
@@ -259,20 +259,20 @@ export default function SamplePacks() {
                     <div className="flex flex-col justify-center md:order-1">
                         <div className="grid grid-cols-3 gap-3">
                             <img
-                                src="https://picsum.photos/seed/green-booklet/300/200"
-                                alt="Green sample pack booklet"
+                                src="/images/sample-packs/all-products-sample-pack-01.webp"
+                                alt="Colorful premium business card print samples"
                                 loading="lazy"
                                 className="aspect-[3/2] w-full rounded-md bg-white object-cover"
                             />
                             <img
-                                src="https://picsum.photos/seed/flipping-pages/300/200"
-                                alt="Flipping through sample materials"
+                                src="/images/sample-packs/all-products-sample-pack-02.webp"
+                                alt="InkPavo business cards and sample packaging arranged on a wood table"
                                 loading="lazy"
                                 className="aspect-[3/2] w-full rounded-md bg-white object-cover"
                             />
                             <img
-                                src="https://picsum.photos/seed/sticker-sheet/300/200"
-                                alt="Sample sticker sheets"
+                                src="/images/sample-packs/all-products-sample-pack-03.webp"
+                                alt="Gold foil InkPavo business cards on a textured desk"
                                 loading="lazy"
                                 className="aspect-[3/2] w-full rounded-md bg-white object-cover"
                             />
@@ -298,8 +298,8 @@ export default function SamplePacks() {
                     <div className="flex flex-col justify-center md:order-2">
                         <div className="overflow-hidden rounded-md bg-white">
                             <img
-                                src="https://picsum.photos/seed/rainbow-samples/1000/800"
-                                alt="Vibrant array of sample materials: yellow, blue, orange cards and stickers"
+                                src="/images/sample-packs/all-products-sample-pack-04.webp"
+                                alt="Soft-touch paper sample cards in muted green, white, and cream"
                                 loading="lazy"
                                 className="w-full object-cover"
                             />
