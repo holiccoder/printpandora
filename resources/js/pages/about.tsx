@@ -47,11 +47,11 @@ export default function About() {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
                         {/* Left Side: Body text */}
-                        <div className="space-y-6 text-base leading-relaxed text-neutral-700">
+                        <div className="space-y-6 font-sans text-lg leading-relaxed text-neutral-700">
                             {c.body_paragraphs.map((p: string, i: number) => (
                                 <p
                                     key={`p-${i}`}
-                                    className="first:text-lg first:text-neutral-950"
+                                    className="first:text-neutral-950"
                                 >
                                     {p}
                                 </p>
@@ -80,7 +80,7 @@ export default function About() {
                         <h2 className="font-serif text-3xl font-bold text-neutral-900 md:text-4xl">
                             {s.heading}
                         </h2>
-                        <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-neutral-600">
+                        <p className="mx-auto mt-6 max-w-3xl font-sans text-lg leading-relaxed text-neutral-600">
                             {s.body}
                         </p>
                     </div>

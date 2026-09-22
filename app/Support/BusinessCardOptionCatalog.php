@@ -57,13 +57,40 @@ final class BusinessCardOptionCatalog
      * @var array<string, string>
      */
     private const QUALITY_TEXTURE_SWATCH_IMAGES = [
-        'shattered_glass_film' => '/images/product-options/business-cards/swatches/quality/shattered-glass-film.png',
-        'holographic_film' => '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+        'matte' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
+        'gloss' => '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
         'starlight_film' => '/images/product-options/business-cards/swatches/quality/starlight-film.png',
-        'holographic_star_film' => '/images/product-options/business-cards/swatches/quality/holographic-star-film.png',
+        'holographic_film' => '/images/product-options/business-cards/swatches/quality/holographic-film.png',
         'soft_touch_film' => '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+    ];
+
+    /**
+     * Keep the generic legacy fallback stable for products whose own texture
+     * contract is not the standard-quality business-card contract.
+     *
+     * @var array<string, string>
+     */
+    private const SHARED_TEXTURE_SWATCH_IMAGES = [
         'matte' => '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
         'gloss' => '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
+        'starlight_film' => '/images/products/standard-quality-business-cards/texture/starlight-film.png',
+        'holographic_film' => '/images/products/standard-quality-business-cards/texture/holographic-film.png',
+        'soft_touch_film' => '/images/products/standard-quality-business-cards/texture/soft-touch-film.png',
+    ];
+
+    private const QUALITY_3D_UV_SWATCH_IMAGE = '/images/products/standard-quality-business-cards/3d-uv.png';
+
+    /**
+     * @var array<string, string>
+     */
+    private const QUALITY_COLD_FOIL_SWATCH_IMAGES = [
+        'cold_red_gold' => '/images/product-options/business-cards/swatches/cold/red-gold.png',
+        'cold_blue_gold' => '/images/product-options/business-cards/swatches/cold/blue-gold.png',
+        'cold_bright_gold' => '/images/product-options/business-cards/swatches/cold/bright-gold.png',
+        'cold_bright_silver' => '/images/product-options/business-cards/swatches/cold/bright-silver.png',
+        'cold_green_gold' => '/images/product-options/business-cards/swatches/cold/green-gold.png',
+        'cold_matte_gold' => '/images/product-options/business-cards/swatches/cold/matte-gold.png',
+        'cold_matte_silver' => '/images/product-options/business-cards/swatches/cold/matte-silver.png',
     ];
 
     /**
@@ -320,7 +347,7 @@ final class BusinessCardOptionCatalog
                 'print_code' => self::PRINT_CODE_SWATCH_IMAGE,
                 'signature_stripe' => self::SIGNATURE_STRIPE_SWATCH_IMAGE,
             ],
-            'texture' => self::QUALITY_TEXTURE_SWATCH_IMAGES,
+            'texture' => self::SHARED_TEXTURE_SWATCH_IMAGES,
         ];
 
         foreach ($fallbacks as $groupKey => $groupFallbacks) {
@@ -480,7 +507,20 @@ final class BusinessCardOptionCatalog
         return [
             'sizes' => self::group('Size', self::sizeValues($options), 'standard'),
             'corners' => self::group('Corners', self::cornerValues($options), 'square'),
-            'texture' => self::group('Texture', self::textureValues($options), 'shattered_glass_film'),
+            'texture' => self::group(
+                'Paper Finish',
+                self::textureValues($options),
+                'matte',
+                false,
+                false,
+            ),
+            'uv_finish' => self::group(
+                '3D UV',
+                self::uvFinishValues($options),
+                null,
+                false,
+                false,
+            ),
             'special_finish' => self::group(
                 'Special Finish',
                 [...self::hotFoilValues($options), ...self::coldFoilValues($options)],
@@ -912,15 +952,14 @@ final class BusinessCardOptionCatalog
      */
     private static function coldFoilValues(array $options): array
     {
-        $swatches = '/images/product-options/business-cards/swatches/cold/';
         $foils = [
-            ['code' => 'cold_red_gold', 'label' => 'Cold Red Gold', 'description' => 'Vibrant cold red foil', 'swatch_image' => $swatches.'red-gold.png'],
-            ['code' => 'cold_blue_gold', 'label' => 'Cold Blue Gold', 'description' => 'Elegant cold blue foil', 'swatch_image' => $swatches.'blue-gold.png'],
-            ['code' => 'cold_bright_gold', 'label' => 'Cold Bright Gold', 'description' => 'Glistening cold gold foil', 'swatch_image' => $swatches.'bright-gold.png'],
-            ['code' => 'cold_bright_silver', 'label' => 'Cold Bright Silver', 'description' => 'Shining cold silver foil', 'swatch_image' => $swatches.'bright-silver.png'],
-            ['code' => 'cold_green_gold', 'label' => 'Cold Green Gold', 'description' => 'Rich cold green gold foil', 'swatch_image' => $swatches.'green-gold.png'],
-            ['code' => 'cold_matte_gold', 'label' => 'Cold Matte Gold', 'description' => 'Sophisticated matte gold foil', 'swatch_image' => $swatches.'matte-gold.png'],
-            ['code' => 'cold_matte_silver', 'label' => 'Cold Matte Silver', 'description' => 'Elegant matte silver foil', 'swatch_image' => $swatches.'matte-silver.png'],
+            ['code' => 'cold_red_gold', 'label' => 'Cold Red Gold', 'description' => 'Vibrant cold red foil', 'swatch_image' => self::QUALITY_COLD_FOIL_SWATCH_IMAGES['cold_red_gold']],
+            ['code' => 'cold_blue_gold', 'label' => 'Cold Blue Gold', 'description' => 'Elegant cold blue foil', 'swatch_image' => self::QUALITY_COLD_FOIL_SWATCH_IMAGES['cold_blue_gold']],
+            ['code' => 'cold_bright_gold', 'label' => 'Cold Bright Gold', 'description' => 'Glistening cold gold foil', 'swatch_image' => self::QUALITY_COLD_FOIL_SWATCH_IMAGES['cold_bright_gold']],
+            ['code' => 'cold_bright_silver', 'label' => 'Cold Bright Silver', 'description' => 'Shining cold silver foil', 'swatch_image' => self::QUALITY_COLD_FOIL_SWATCH_IMAGES['cold_bright_silver']],
+            ['code' => 'cold_green_gold', 'label' => 'Cold Green Gold', 'description' => 'Rich cold green gold foil', 'swatch_image' => self::QUALITY_COLD_FOIL_SWATCH_IMAGES['cold_green_gold']],
+            ['code' => 'cold_matte_gold', 'label' => 'Cold Matte Gold', 'description' => 'Sophisticated matte gold foil', 'swatch_image' => self::QUALITY_COLD_FOIL_SWATCH_IMAGES['cold_matte_gold']],
+            ['code' => 'cold_matte_silver', 'label' => 'Cold Matte Silver', 'description' => 'Elegant matte silver foil', 'swatch_image' => self::QUALITY_COLD_FOIL_SWATCH_IMAGES['cold_matte_silver']],
         ];
 
         return array_map(
@@ -936,11 +975,6 @@ final class BusinessCardOptionCatalog
     private static function textureValues(array $options): array
     {
         $textures = [
-            ['code' => 'shattered_glass_film', 'label' => 'Shattered Glass Film', 'description' => ''],
-            ['code' => 'holographic_film', 'label' => 'Holographic Film', 'description' => ''],
-            ['code' => 'starlight_film', 'label' => 'Starlight Film', 'description' => ''],
-            ['code' => 'holographic_star_film', 'label' => 'Holographic Star Film', 'description' => ''],
-            ['code' => 'soft_touch_film', 'label' => 'Soft-Touch Film', 'description' => ''],
             [
                 'code' => 'matte',
                 'label' => 'Matte',
@@ -951,6 +985,9 @@ final class BusinessCardOptionCatalog
                 'label' => 'Gloss',
                 'description' => 'Eye-catchingly shiny. Makes color photos pop.',
             ],
+            ['code' => 'starlight_film', 'label' => 'Starlight Film', 'description' => ''],
+            ['code' => 'holographic_film', 'label' => 'Holographic Film', 'description' => ''],
+            ['code' => 'soft_touch_film', 'label' => 'Soft-Touch Film', 'description' => ''],
         ];
 
         return array_map(
@@ -960,6 +997,36 @@ final class BusinessCardOptionCatalog
                 'swatch_image' => self::QUALITY_TEXTURE_SWATCH_IMAGES[$texture['code']],
             ]),
             $textures,
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<int, array<string, mixed>>
+     */
+    private static function uvFinishValues(array $options): array
+    {
+        return array_map(
+            fn (array $value): array => self::value(
+                $options,
+                'uv_finish',
+                $value['code'],
+                $value,
+            ),
+            [
+                [
+                    'code' => 'single_side_uv',
+                    'label' => 'single side',
+                    'description' => '',
+                    'swatch_image' => self::QUALITY_3D_UV_SWATCH_IMAGE,
+                ],
+                [
+                    'code' => 'both_sides_uv',
+                    'label' => 'both sides',
+                    'description' => '',
+                    'swatch_image' => self::QUALITY_3D_UV_SWATCH_IMAGE,
+                ],
+            ],
         );
     }
 
@@ -1082,11 +1149,12 @@ final class BusinessCardOptionCatalog
         array $values,
         string|array|null $default,
         bool $multiSelect = false,
+        bool $required = true,
     ): array {
         return [
             'label' => $label,
             'type' => $multiSelect ? 'multi_select' : 'select',
-            'required' => true,
+            'required' => $required,
             'default' => $default,
             'values' => array_values($values),
         ];

@@ -36,6 +36,35 @@ export function normalizeOptionValue(group: string, value: string): string {
         .replace(/[\s_]+/g, '-');
 }
 
+/**
+ * Apply the standard-quality Texture/3D UV relationship while preserving
+ * non-matte/non-gloss textures alongside a UV selection.
+ */
+export function applyTextureUvSelection(
+    selected: Record<string, string | string[]>,
+    groupKey: string,
+    value: string,
+): Record<string, string | string[]> {
+    const next = { ...selected, [groupKey]: value };
+
+    if (
+        groupKey === 'texture' &&
+        Object.prototype.hasOwnProperty.call(next, 'uv_finish') &&
+        (value === 'matte' || value === 'gloss')
+    ) {
+        next.uv_finish = '';
+    }
+
+    if (
+        groupKey === 'uv_finish' &&
+        (next.texture === 'matte' || next.texture === 'gloss')
+    ) {
+        next.texture = '';
+    }
+
+    return next;
+}
+
 function matches(
     match: Record<string, string>,
     selected: Record<string, string | string[]>,

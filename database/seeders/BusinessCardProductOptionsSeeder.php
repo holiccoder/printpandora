@@ -6,6 +6,9 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductConfigurationService;
 use App\Support\BusinessCardOptionCatalog;
+use App\Support\ClassicStandardBusinessCardGallery;
+use App\Support\SolidQualityBusinessCardGallery;
+use App\Support\StandardQualityBusinessCardGallery;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -353,6 +356,19 @@ class BusinessCardProductOptionsSeeder extends Seeder
 
                 $config = $this->canonicalConfigForProduct($product, $configuration);
 
+                if ($slug === ClassicStandardBusinessCardGallery::PRODUCT_SLUG) {
+                    $config = ClassicStandardBusinessCardGallery::synchronizeConfig($config);
+                }
+
+                if ($slug === StandardQualityBusinessCardGallery::PRODUCT_SLUG) {
+                    $config = $configuration->canonicalConfig($product);
+                    $config = StandardQualityBusinessCardGallery::synchronizeConfig($config);
+                }
+
+                if ($slug === SolidQualityBusinessCardGallery::PRODUCT_SLUG) {
+                    $config = SolidQualityBusinessCardGallery::synchronizeConfig($config);
+                }
+
                 if ($slug === 'classic-special-business-cards') {
                     $config['media'] = ClassicSpecialBusinessCardOptionsSeeder::synchronizeDefaultGallery(
                         is_array($config['media'] ?? null) ? $config['media'] : [],
@@ -370,6 +386,17 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 }
 
                 $product->forceFill([
+                    'featured_image' => in_array($slug, [
+                        ClassicStandardBusinessCardGallery::PRODUCT_SLUG,
+                        StandardQualityBusinessCardGallery::PRODUCT_SLUG,
+                        SolidQualityBusinessCardGallery::PRODUCT_SLUG,
+                    ], true)
+                        ? match ($slug) {
+                            StandardQualityBusinessCardGallery::PRODUCT_SLUG => StandardQualityBusinessCardGallery::DEFAULT_GALLERY[0],
+                            SolidQualityBusinessCardGallery::PRODUCT_SLUG => SolidQualityBusinessCardGallery::DEFAULT_GALLERY[0],
+                            default => ClassicStandardBusinessCardGallery::DEFAULT_GALLERY[0],
+                        }
+                        : $product->featured_image,
                     'product_config' => $config,
                 ])->save();
 
@@ -653,10 +680,10 @@ class BusinessCardProductOptionsSeeder extends Seeder
         ));
         $defaultGallery = [
             $defaultImage,
-            ...array_values(array_map(
+            ...array_map(
                 static fn (string $finish): string => $finishImages[$finish],
                 self::PVC_DEFAULT_FINISH_ORDER,
-            )),
+            ),
             ...$defaultGallery,
         ];
         $media['gallery'] = $defaultGallery;

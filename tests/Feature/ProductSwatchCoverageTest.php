@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Support\BusinessCardOptionCatalog;
+use App\Support\SolidQualityBusinessCardGallery;
+use App\Support\StandardQualityBusinessCardGallery;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
@@ -131,16 +133,29 @@ class ProductSwatchCoverageTest extends TestCase
             ],
             'business-cards/standard-quality-business-cards.json' => [
                 'texture' => [
-                    'shattered_glass_film' => '/images/product-options/business-cards/swatches/quality/shattered-glass-film.png',
-                    'holographic_film' => '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+                    'matte' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
+                    'gloss' => '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
                     'starlight_film' => '/images/product-options/business-cards/swatches/quality/starlight-film.png',
-                    'holographic_star_film' => '/images/product-options/business-cards/swatches/quality/holographic-star-film.png',
+                    'holographic_film' => '/images/product-options/business-cards/swatches/quality/holographic-film.png',
                     'soft_touch_film' => '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
-                    'matte' => '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
-                    'gloss' => '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
+                ],
+                'uv_finish' => [
+                    'single_side_uv' => '/images/products/standard-quality-business-cards/3d-uv.png',
+                    'both_sides_uv' => '/images/products/standard-quality-business-cards/3d-uv.png',
                 ],
             ],
             'business-cards/solid-quality-business-cards.json' => [
+                'paper_finish' => [
+                    'matte' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
+                    'gloss' => '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
+                    'starry_film' => '/images/product-options/business-cards/swatches/quality/starlight-film.png',
+                    'soft_touch_film' => '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+                    'holo_film' => '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+                ],
+                'uv_finish' => [
+                    'single_side_uv' => '/images/product-options/uv-swatch.png',
+                    'both_sides_uv' => '/images/product-options/uv-swatch.png',
+                ],
                 'print_code' => [
                     'no_print_code' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
                     'need_print_code' => '/images/product-options/business-cards/swatches/pvc-print-code.png',
@@ -166,6 +181,29 @@ class ProductSwatchCoverageTest extends TestCase
                 $this->assertSame(array_keys($expectedValues), array_column($values, 'code'));
                 $this->assertSame(array_values($expectedValues), array_column($values, 'swatch_image'));
             }
+        }
+
+        $this->assertFileExists(
+            public_path('images/products/standard-quality-business-cards/3d-uv.png'),
+        );
+
+        $expectedColdFoilSwatches = [
+            'cold_matte_gold' => '/images/product-options/business-cards/swatches/cold/matte-gold.png',
+            'cold_matte_silver' => '/images/product-options/business-cards/swatches/cold/matte-silver.png',
+            'cold_bright_gold' => '/images/product-options/business-cards/swatches/cold/bright-gold.png',
+            'cold_bright_silver' => '/images/product-options/business-cards/swatches/cold/bright-silver.png',
+            'cold_red_gold' => '/images/product-options/business-cards/swatches/cold/red-gold.png',
+            'cold_green_gold' => '/images/product-options/business-cards/swatches/cold/green-gold.png',
+            'cold_blue_gold' => '/images/product-options/business-cards/swatches/cold/blue-gold.png',
+        ];
+
+        foreach ($expectedColdFoilSwatches as $code => $image) {
+            $value = collect($this->optionValues(
+                $legacySourceOptions['business-cards/solid-quality-business-cards.json'],
+                'special_finish',
+            ))->firstWhere('code', $code);
+
+            $this->assertSame($image, $value['swatch_image'] ?? null, $code);
         }
     }
 
@@ -194,6 +232,57 @@ class ProductSwatchCoverageTest extends TestCase
             '/images/product-options/business-cards/swatches/pvc-print-code.png',
             data_get($normalized, 'print_code.values.1.swatch_image'),
         );
+    }
+
+    public function test_standard_quality_product_assets_have_webp_derivatives(): void
+    {
+        $paths = [
+            ...StandardQualityBusinessCardGallery::DEFAULT_GALLERY,
+            '/images/products/standard-quality-business-cards/standard-matte-square.png',
+            '/images/products/standard-quality-business-cards/standard-matte-rounded.png',
+            '/images/products/standard-quality-business-cards/standard-gloss-rounded.png',
+            '/images/products/standard-quality-business-cards/standard-gloss-square.png',
+            '/images/products/standard-quality-business-cards/texture/starlight-film.png',
+            '/images/products/standard-quality-business-cards/texture/holographic-film.png',
+            '/images/products/standard-quality-business-cards/texture/soft-touch-film.png',
+            '/images/products/standard-quality-business-cards/3d-uv.png',
+            ...array_values(StandardQualityBusinessCardGallery::COLD_FOIL_IMAGES),
+        ];
+
+        foreach (array_unique($paths) as $path) {
+            $absolutePath = public_path(ltrim($path, '/'));
+
+            $this->assertFileExists($absolutePath);
+            $this->assertFileExists(
+                preg_replace('/\.png$/i', '.webp', $absolutePath),
+            );
+        }
+    }
+
+    public function test_solid_quality_product_assets_have_webp_derivatives(): void
+    {
+        $paths = [
+            ...SolidQualityBusinessCardGallery::DEFAULT_GALLERY,
+            '/images/products/solid-quality-business-cards/standard-matte-square.png',
+            '/images/products/solid-quality-business-cards/standard-matte-rounded.png',
+            '/images/products/solid-quality-business-cards/standard-gloss-rounded.png',
+            '/images/products/solid-quality-business-cards/texture/starlight-film.png',
+            '/images/products/solid-quality-business-cards/texture/laser-film.png',
+            '/images/products/solid-quality-business-cards/texture/soft-touch-film.png',
+            '/images/products/solid-quality-business-cards/texture/starlight-film-primary.png',
+            '/images/products/solid-quality-business-cards/texture/laser-film-primary.png',
+            '/images/products/solid-quality-business-cards/texture/soft-touch-film-primary.png',
+            ...array_values(SolidQualityBusinessCardGallery::COLD_FOIL_IMAGES),
+        ];
+
+        foreach (array_unique($paths) as $path) {
+            $absolutePath = public_path(ltrim($path, '/'));
+
+            $this->assertFileExists($absolutePath);
+            $this->assertFileExists(
+                preg_replace('/\.png$/i', '.webp', $absolutePath),
+            );
+        }
     }
 
     /**

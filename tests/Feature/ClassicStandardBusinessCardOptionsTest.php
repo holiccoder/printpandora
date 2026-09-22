@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\PricingService;
+use App\Support\ClassicStandardBusinessCardGallery;
 use Database\Seeders\ClassicStandardBusinessCardOptionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
@@ -47,6 +48,7 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
             'faq' => [['question' => 'Keep this FAQ', 'answer' => 'Yes']],
         ]);
 
+        (new ClassicStandardBusinessCardOptionsSeeder)->run();
         (new ClassicStandardBusinessCardOptionsSeeder)->run();
 
         $product->refresh();
@@ -173,6 +175,25 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
         $this->assertArrayNotHasKey('drill', $product->product_config['options']);
         $this->assertArrayNotHasKey('special_finish_on_sides', $product->product_config['options']);
         $this->assertSame('Keep this FAQ', data_get($product->product_config, 'faq.0.question'));
+        $this->assertSame(
+            ClassicStandardBusinessCardGallery::DEFAULT_GALLERY,
+            data_get($product->product_config, 'media.gallery'),
+        );
+        $this->assertSame(
+            ClassicStandardBusinessCardGallery::DEFAULT_GALLERY[0],
+            $product->featured_image,
+        );
+
+        $galleryRules = data_get($product->product_config, 'media.gallery_rules', []);
+
+        foreach (ClassicStandardBusinessCardGallery::rules() as $expectedRule) {
+            $rule = collect(is_array($galleryRules) ? $galleryRules : [])
+                ->firstWhere('id', $expectedRule['id']);
+
+            $this->assertSame($expectedRule['match'], data_get($rule, 'match'));
+            $this->assertSame($expectedRule['images'], data_get($rule, 'images'));
+            $this->assertSame($expectedRule['primary'], data_get($rule, 'primary'));
+        }
     }
 
     public function test_custom_dimensions_are_normalized_and_priced_as_standard_cards(): void

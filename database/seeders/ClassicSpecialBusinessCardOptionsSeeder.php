@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Product;
 use App\Services\ProductConfigurationService;
 use App\Support\BusinessCardOptionCatalog;
+use App\Support\ClassicSpecialBusinessCardTexture;
 use Illuminate\Database\Seeder;
 
 class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
@@ -30,7 +31,9 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
             ->first();
 
         if (! $product) {
-            $this->command?->warn('Classic special business cards product was not found.');
+            if ($this->command !== null) {
+                $this->command->warn('Classic special business cards product was not found.');
+            }
 
             return;
         }
@@ -170,7 +173,9 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
 
         $product->forceFill(['product_config' => $config])->save();
 
-        $this->command?->info('Classic special business card options imported.');
+        if ($this->command !== null) {
+            $this->command->info('Classic special business card options imported.');
+        }
     }
 
     /**
@@ -186,13 +191,18 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
         $galleryRules = is_array($media['gallery_rules'] ?? null)
             ? array_values($media['gallery_rules'])
             : [];
+        $textureRuleIds = array_map(
+            static fn (array $rule): string => $rule['id'],
+            ClassicSpecialBusinessCardTexture::galleryRules(),
+        );
+        $galleryRules = array_values(array_filter(
+            $galleryRules,
+            static fn (mixed $rule): bool => is_array($rule)
+                && ! in_array((string) ($rule['id'] ?? ''), $textureRuleIds, true),
+        ));
         $hasDefaultRule = false;
 
         foreach ($galleryRules as &$rule) {
-            if (! is_array($rule)) {
-                continue;
-            }
-
             $images = is_array($rule['images'] ?? null) ? $rule['images'] : [];
             $containsClassicSpecialImage = count(array_filter(
                 $images,
@@ -224,7 +234,28 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
             ];
         }
 
-        $media['gallery_rules'] = $galleryRules;
+        $defaultRules = [];
+        $otherRules = [];
+
+        foreach ($galleryRules as $rule) {
+            $match = is_array($rule['match'] ?? null) ? $rule['match'] : [];
+
+            if (($rule['id'] ?? null) === 'default' || $match === []) {
+                if ($defaultRules === []) {
+                    $defaultRules[] = $rule;
+                }
+
+                continue;
+            }
+
+            $otherRules[] = $rule;
+        }
+
+        $media['gallery_rules'] = [
+            ...$defaultRules,
+            ...ClassicSpecialBusinessCardTexture::galleryRules(),
+            ...$otherRules,
+        ];
 
         return $media;
     }
@@ -282,31 +313,7 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
                 'label' => 'Matte',
                 'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
             ],
-            [
-                'code' => 'water_ripple_paper',
-                'label' => 'Water Ripple Paper',
-                'swatch_image' => '/images/products/classic-special-business-cards/texture/water-ripple-paper.png',
-            ],
-            [
-                'code' => 'linen_paper',
-                'label' => 'Linen Paper',
-                'swatch_image' => '/images/products/classic-special-business-cards/texture/linen-paper.png',
-            ],
-            [
-                'code' => 'eggshell_paper',
-                'label' => 'Eggshell Paper',
-                'swatch_image' => '/images/products/classic-special-business-cards/texture/eggshell-paper.png',
-            ],
-            [
-                'code' => 'white_cardstock',
-                'label' => 'White Cardstock',
-                'swatch_image' => '/images/products/classic-special-business-cards/texture/white-cardstock.png',
-            ],
-            [
-                'code' => 'pearlized_paper',
-                'label' => 'Pearlized Paper',
-                'swatch_image' => '/images/products/classic-special-business-cards/texture/pearlized-paper.png',
-            ],
+            ...ClassicSpecialBusinessCardTexture::optionDefinitions(),
         ];
     }
 }

@@ -97,6 +97,12 @@
             "code": "pearlized_paper",
             "description": "",
             "swatch_image": "/images/products/classic-special-business-cards/texture/pearlized-paper.png"
+        },
+        {
+            "name": "Pin-point embossed paper",
+            "code": "pin_point_embossed_paper",
+            "description": "",
+            "swatch_image": "/images/products/classic-special-business-cards/texture/pin-point-embossed-paper-square.png"
         }
     ],
     "special_finish": [
@@ -206,6 +212,246 @@
                 "/images/classic-special-business-cards/default02.png",
                 "/images/classic-special-business-cards/default03.png",
                 "/images/classic-special-business-cards/default04.png"
+            ]
+        },
+        {
+            "id": "texture-pin-point-embossed-paper-square",
+            "match": {
+                "texture": "pin_point_embossed_paper",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/pin-point-embossed-paper-square.png"
+            ]
+        },
+        {
+            "id": "texture-pin-point-embossed-paper-rounded",
+            "match": {
+                "texture": "pin_point_embossed_paper",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/pin-point-embossed-paper-rounded.png"
+            ]
+        },
+        {
+            "id": "texture-water-ripple-paper-standard-square",
+            "match": {
+                "texture": "water_ripple_paper",
+                "sizes": "Standard",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/water-ripple-paper.png"
+            ]
+        },
+        {
+            "id": "texture-water-ripple-paper-standard-rounded",
+            "match": {
+                "texture": "water_ripple_paper",
+                "sizes": "Standard",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/water-ripple-paper-rounded.png"
+            ]
+        },
+        {
+            "id": "texture-water-ripple-paper-square-size-square",
+            "match": {
+                "texture": "water_ripple_paper",
+                "sizes": "Square",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/water-ripple-paper-square-size.png"
+            ]
+        },
+        {
+            "id": "texture-water-ripple-paper-square-size-rounded",
+            "match": {
+                "texture": "water_ripple_paper",
+                "sizes": "Square",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/water-ripple-paper-square-size-rounded.png"
+            ]
+        },
+        {
+            "id": "texture-linen-paper-standard-square",
+            "match": {
+                "texture": "linen_paper",
+                "sizes": "Standard",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/linen-paper.png"
+            ]
+        },
+        {
+            "id": "texture-linen-paper-standard-rounded",
+            "match": {
+                "texture": "linen_paper",
+                "sizes": "Standard",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/linen-paper-rounded.png"
+            ]
+        },
+        {
+            "id": "texture-linen-paper-square-size-square",
+            "match": {
+                "texture": "linen_paper",
+                "sizes": "Square",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/linen-paper-square-size.png"
+            ]
+        },
+        {
+            "id": "texture-linen-paper-square-size-rounded",
+            "match": {
+                "texture": "linen_paper",
+                "sizes": "Square",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/linen-paper-square-size-rounded.png"
+            ]
+        },
+        {
+            "id": "texture-eggshell-paper-standard-square",
+            "match": {
+                "texture": "eggshell_paper",
+                "sizes": "Standard",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/eggshell-paper.png"
+            ]
+        },
+        {
+            "id": "texture-eggshell-paper-standard-rounded",
+            "match": {
+                "texture": "eggshell_paper",
+                "sizes": "Standard",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/eggshell-paper-rounded.png"
+            ]
+        },
+        {
+            "id": "texture-eggshell-paper-square-size-square",
+            "match": {
+                "texture": "eggshell_paper",
+                "sizes": "Square",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/eggshell-paper-square-size.png"
+            ]
+        },
+        {
+            "id": "texture-eggshell-paper-square-size-rounded",
+            "match": {
+                "texture": "eggshell_paper",
+                "sizes": "Square",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/eggshell-paper-square-size-rounded.png"
+            ]
+        },
+        {
+            "id": "texture-white-cardstock-standard-square",
+            "match": {
+                "texture": "white_cardstock",
+                "sizes": "Standard",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/white-cardstock.png"
+            ]
+        },
+        {
+            "id": "texture-white-cardstock-standard-rounded",
+            "match": {
+                "texture": "white_cardstock",
+                "sizes": "Standard",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/white-cardstock-rounded.png"
+            ]
+        },
+        {
+            "id": "texture-white-cardstock-square-size-square",
+            "match": {
+                "texture": "white_cardstock",
+                "sizes": "Square",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/white-cardstock-square-size.png"
+            ]
+        },
+        {
+            "id": "texture-white-cardstock-square-size-rounded",
+            "match": {
+                "texture": "white_cardstock",
+                "sizes": "Square",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/white-cardstock-square-size-rounded.png"
+            ]
+        },
+        {
+            "id": "texture-pearlized-paper-standard-square",
+            "match": {
+                "texture": "pearlized_paper",
+                "sizes": "Standard",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/pearlized-paper.png"
+            ]
+        },
+        {
+            "id": "texture-pearlized-paper-standard-rounded",
+            "match": {
+                "texture": "pearlized_paper",
+                "sizes": "Standard",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/pearlized-paper-rounded.png"
+            ]
+        },
+        {
+            "id": "texture-pearlized-paper-square-size-square",
+            "match": {
+                "texture": "pearlized_paper",
+                "sizes": "Square",
+                "corners": "Square"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/pearlized-paper-square-size.png"
+            ]
+        },
+        {
+            "id": "texture-pearlized-paper-square-size-rounded",
+            "match": {
+                "texture": "pearlized_paper",
+                "sizes": "Square",
+                "corners": "Rounded"
+            },
+            "images": [
+                "/images/products/classic-special-business-cards/texture/pearlized-paper-square-size-rounded.png"
             ]
         },
         {

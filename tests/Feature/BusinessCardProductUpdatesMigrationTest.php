@@ -4,6 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Support\ClassicSpecialBusinessCardTexture;
+use App\Support\SolidQualityBusinessCardGallery;
+use App\Support\StandardQualityBusinessCardGallery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -462,6 +465,210 @@ class BusinessCardProductUpdatesMigrationTest extends TestCase
         $this->assertSame(['j8_pinhole_paper'], array_column($superTexture['values'], 'code'));
     }
 
+    public function test_migration_adds_classic_special_pin_point_embossed_texture_and_gallery_rules(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        Product::create([
+            'name' => 'Classic Special Business Cards',
+            'slug' => 'classic-special-business-cards',
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'texture' => [
+                        'label' => 'Texture',
+                        'values' => [
+                            [
+                                'code' => 'matte',
+                                'label' => 'Matte',
+                                'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
+                            ],
+                        ],
+                    ],
+                ],
+                'media' => [
+                    'gallery_rules' => [
+                        [
+                            'id' => 'default',
+                            'match' => [],
+                            'images' => ['/images/classic-special-business-cards/default01.png'],
+                            'primary' => '/images/classic-special-business-cards/default01.png',
+                        ],
+                    ],
+                ],
+            ],
+            'product_options' => [
+                'texture' => [
+                    [
+                        'name' => 'Matte',
+                        'code' => 'matte',
+                        'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
+                    ],
+                ],
+                'galleries' => [
+                    [
+                        'id' => 'default',
+                        'is_default' => true,
+                        'match' => [],
+                        'images' => ['/images/classic-special-business-cards/default01.png'],
+                    ],
+                ],
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_18_000003_add_classic_special_pin_point_embossed_texture.php',
+        );
+        $migration->up();
+        $migration->up();
+
+        $product = Product::where('slug', 'classic-special-business-cards')->firstOrFail();
+
+        $this->assertSame(
+            ['matte', ClassicSpecialBusinessCardTexture::CODE],
+            data_get($product->product_config, 'options.texture.values.*.code'),
+        );
+        $this->assertSame(
+            ClassicSpecialBusinessCardTexture::SQUARE_IMAGE,
+            data_get($product->product_config, 'options.texture.values.1.swatch_image'),
+        );
+        $this->assertSame(
+            ClassicSpecialBusinessCardTexture::SQUARE_IMAGE,
+            data_get($product->product_config, 'media.gallery_rules.1.primary'),
+        );
+        $this->assertSame(
+            ClassicSpecialBusinessCardTexture::ROUNDED_IMAGE,
+            data_get($product->product_config, 'media.gallery_rules.2.primary'),
+        );
+        $this->assertSame(
+            ['matte', ClassicSpecialBusinessCardTexture::CODE],
+            data_get($product->product_options, 'texture.*.code'),
+        );
+        $this->assertSame(
+            ClassicSpecialBusinessCardTexture::ROUNDED_IMAGE,
+            data_get($product->product_options, 'galleries.2.images.0'),
+        );
+    }
+
+    public function test_migration_updates_classic_special_art_texture_mappings(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        $textureCodes = array_column(
+            ClassicSpecialBusinessCardTexture::mappedTextureDefinitions(),
+            'code',
+        );
+        $canonicalTextures = array_map(
+            static fn (string $code): array => [
+                'code' => $code,
+                'label' => 'Old '.$code,
+                'swatch_image' => '/images/old/'.$code.'.png',
+            ],
+            $textureCodes,
+        );
+        $legacyTextures = array_map(
+            static fn (string $code): array => [
+                'name' => 'Old '.$code,
+                'code' => $code,
+                'swatch_image' => '/images/old/'.$code.'.png',
+            ],
+            $textureCodes,
+        );
+
+        Product::create([
+            'name' => 'Classic Special Business Cards',
+            'slug' => 'classic-special-business-cards',
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'texture' => [
+                        'values' => $canonicalTextures,
+                    ],
+                ],
+                'media' => [
+                    'gallery_rules' => [
+                        [
+                            'id' => 'default',
+                            'match' => [],
+                            'images' => ['/images/classic-special-business-cards/default01.png'],
+                        ],
+                        [
+                            'id' => 'old-water-ripple-rule',
+                            'match' => ['texture' => 'water_ripple_paper'],
+                            'images' => ['/images/old/water-ripple.png'],
+                        ],
+                    ],
+                ],
+            ],
+            'product_options' => [
+                'texture' => $legacyTextures,
+                'galleries' => [
+                    [
+                        'id' => 'default',
+                        'is_default' => true,
+                        'match' => [],
+                        'images' => ['/images/classic-special-business-cards/default01.png'],
+                    ],
+                    [
+                        'id' => 'old-water-ripple-rule',
+                        'match' => ['texture' => 'water_ripple_paper'],
+                        'images' => ['/images/old/water-ripple.png'],
+                    ],
+                ],
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_19_000001_update_classic_special_texture_gallery.php',
+        );
+        $migration->up();
+        $migration->up();
+
+        $product = Product::where('slug', 'classic-special-business-cards')->firstOrFail();
+        $expectedSwatches = array_column(
+            ClassicSpecialBusinessCardTexture::mappedTextureDefinitions(),
+            'swatch_image',
+        );
+
+        $this->assertSame(
+            $expectedSwatches,
+            data_get($product->product_config, 'options.texture.values.*.swatch_image'),
+        );
+        $this->assertSame(
+            $expectedSwatches,
+            data_get($product->product_options, 'texture.*.swatch_image'),
+        );
+
+        $canonicalRules = data_get($product->product_config, 'media.gallery_rules', []);
+        $legacyRules = data_get($product->product_options, 'galleries', []);
+
+        $this->assertCount(
+            count(ClassicSpecialBusinessCardTexture::mappedGalleryRules()) + 1,
+            $canonicalRules,
+        );
+        $this->assertCount(
+            count(ClassicSpecialBusinessCardTexture::mappedGalleryRules()) + 1,
+            $legacyRules,
+        );
+
+        foreach (ClassicSpecialBusinessCardTexture::mappedGalleryRules() as $expectedRule) {
+            $canonicalRule = collect($canonicalRules)->firstWhere('id', $expectedRule['id']);
+            $legacyRule = collect($legacyRules)->firstWhere('id', $expectedRule['id']);
+
+            $this->assertSame($expectedRule['match'], data_get($canonicalRule, 'match'));
+            $this->assertSame($expectedRule['images'], data_get($canonicalRule, 'images'));
+            $this->assertSame($expectedRule['primary'], data_get($canonicalRule, 'primary'));
+            $this->assertSame($expectedRule['match'], data_get($legacyRule, 'match'));
+            $this->assertSame($expectedRule['images'], data_get($legacyRule, 'images'));
+        }
+    }
+
     public function test_migration_makes_hot_and_cold_foil_groups_multi_select(): void
     {
         $category = ProductCategory::create([
@@ -738,6 +945,630 @@ class BusinessCardProductUpdatesMigrationTest extends TestCase
         $this->assertArrayHasKey(
             'paper_finish',
             $otherProduct->fresh()->product_options,
+        );
+    }
+
+    public function test_migration_replaces_standard_quality_contract_and_gallery_idempotently(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        $product = Product::create([
+            'name' => 'Standard Quality Business Cards',
+            'slug' => StandardQualityBusinessCardGallery::PRODUCT_SLUG,
+            'product_category_id' => $category->id,
+            'featured_image' => '/images/old-standard-quality.png',
+            'product_config' => [
+                'options' => [
+                    'sizes' => ['values' => [['code' => 'standard'], ['code' => 'square']]],
+                    'corners' => ['values' => [['code' => 'square'], ['code' => 'rounded']]],
+                    'texture' => [
+                        'default' => 'shattered_glass_film',
+                        'values' => [
+                            ['code' => 'shattered_glass_film'],
+                            ['code' => 'holographic_film'],
+                            ['code' => 'holographic_star_film'],
+                            ['code' => 'matte'],
+                            ['code' => 'gloss'],
+                        ],
+                    ],
+                    'special_finish' => [
+                        'values' => [
+                            ['code' => 'no_special_finish'],
+                            ['code' => 'cold_bright_gold'],
+                        ],
+                    ],
+                ],
+                'media' => [
+                    'gallery' => ['/images/old-standard-quality.png'],
+                    'gallery_rules' => [
+                        [
+                            'id' => 'default',
+                            'match' => [],
+                            'images' => ['/images/old-standard-quality.png'],
+                            'primary' => '/images/old-standard-quality.png',
+                        ],
+                        [
+                            'id' => 'keep-this-special-rule',
+                            'match' => ['special_finish' => 'bright_gold'],
+                            'images' => ['/images/keep-this-special.png'],
+                            'primary' => '/images/keep-this-special.png',
+                        ],
+                    ],
+                ],
+            ],
+            'product_options' => [
+                'texture' => [
+                    ['name' => 'Shattered Glass Film', 'code' => 'shattered_glass_film'],
+                    ['name' => 'Holographic Star Film', 'code' => 'holographic_star_film'],
+                    ['name' => 'Matte', 'code' => 'matte'],
+                ],
+                'paper_finish' => [
+                    ['name' => 'Matte', 'code' => 'matte'],
+                    ['name' => '3D UV', 'code' => 'uv'],
+                ],
+                'galleries' => [
+                    [
+                        'id' => 'default',
+                        'match' => [],
+                        'images' => ['/images/old-standard-quality.png'],
+                    ],
+                ],
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_19_000002_update_standard_quality_business_card_options_and_gallery.php',
+        );
+        $migration->up();
+        $product->refresh();
+        $afterFirstConfig = $product->product_config;
+        $afterFirstLegacy = $product->product_options;
+
+        $migration->up();
+        $product->refresh();
+
+        $this->assertSame($afterFirstConfig, $product->product_config);
+        $this->assertSame($afterFirstLegacy, $product->product_options);
+        $this->assertSame(
+            ['matte', 'gloss', 'starlight_film', 'holographic_film', 'soft_touch_film'],
+            data_get($product->product_config, 'options.texture.values.*.code'),
+        );
+        $this->assertSame(
+            'Paper Finish',
+            data_get($product->product_config, 'options.texture.label'),
+        );
+        $this->assertSame('matte', data_get($product->product_config, 'options.texture.default'));
+        $this->assertFalse(data_get($product->product_config, 'options.texture.required'));
+        $this->assertSame(
+            ['single_side_uv', 'both_sides_uv'],
+            data_get($product->product_config, 'options.uv_finish.values.*.code'),
+        );
+        $this->assertArrayNotHasKey('paper_finish', $product->product_config['options']);
+        $this->assertSame(
+            StandardQualityBusinessCardGallery::DEFAULT_GALLERY,
+            data_get($product->product_config, 'media.gallery'),
+        );
+        $this->assertSame(
+            '/images/products/standard-quality-business-cards/default-01.png',
+            $product->featured_image,
+        );
+        $this->assertSame(
+            '/images/keep-this-special.png',
+            data_get(
+                collect(data_get($product->product_config, 'media.gallery_rules'))
+                    ->firstWhere('id', 'keep-this-special-rule'),
+                'primary',
+            ),
+        );
+        $this->assertSame(
+            '/images/products/standard-quality-business-cards/cold-foil/cold-bright-gold.png',
+            data_get(
+                collect(data_get($product->product_config, 'media.gallery_rules'))
+                    ->firstWhere('id', 'shared-foil-cold_bright_gold'),
+                'primary',
+            ),
+        );
+        $this->assertArrayNotHasKey('paper_finish', $product->product_options);
+        $this->assertSame(
+            ['matte', 'gloss', 'starlight_film', 'holographic_film', 'soft_touch_film'],
+            data_get($product->product_options, 'texture.*.code'),
+        );
+        $this->assertSame(
+            ['single_side_uv', 'both_sides_uv'],
+            data_get($product->product_options, 'uv_finish.*.code'),
+        );
+    }
+
+    public function test_migration_replaces_solid_quality_artwork_and_contract_idempotently(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        $product = Product::create([
+            'name' => 'Solid Quality Business Cards',
+            'slug' => SolidQualityBusinessCardGallery::PRODUCT_SLUG,
+            'product_category_id' => $category->id,
+            'featured_image' => '/images/old-solid-quality.png',
+            'product_config' => [
+                'options' => [
+                    'sizes' => ['values' => [['code' => 'standard'], ['code' => 'square']]],
+                    'texture' => [
+                        'values' => [['code' => 'old_texture']],
+                    ],
+                    'paper_finish' => [
+                        'values' => [
+                            ['code' => 'matte', 'label' => 'Matte Lamination'],
+                            ['code' => 'gloss', 'label' => 'Gloss Lamination'],
+                            ['code' => 'starry_film', 'label' => 'Starlight Film'],
+                            ['code' => 'soft_touch_film', 'label' => 'Soft-Touch Lamination'],
+                            ['code' => 'holo_film', 'label' => 'Laser Film'],
+                        ],
+                    ],
+                    'uv_finish' => [
+                        'label' => 'UV',
+                        'type' => 'select',
+                        'required' => true,
+                        'default' => 'no_3d_uv',
+                        'values' => [
+                            ['code' => 'no_3d_uv', 'label' => 'No 3D UV'],
+                            ['code' => '3d_uv', 'label' => '3D UV'],
+                        ],
+                    ],
+                    'special_finish' => [
+                        'values' => [
+                            ['code' => 'no_special_finish'],
+                            ['code' => 'cold_bright_gold'],
+                        ],
+                    ],
+                ],
+                'media' => [
+                    'gallery' => ['/images/old-solid-quality.png'],
+                    'gallery_rules' => [
+                        [
+                            'id' => 'default',
+                            'match' => [],
+                            'images' => ['/images/old-solid-quality.png'],
+                            'primary' => '/images/old-solid-quality.png',
+                        ],
+                        [
+                            'id' => 'keep-this-hot-foil',
+                            'match' => ['special_finish' => 'bright_gold'],
+                            'images' => ['/images/keep-this-hot-foil.png'],
+                            'primary' => '/images/keep-this-hot-foil.png',
+                        ],
+                        [
+                            'id' => '3d-uv',
+                            'match' => ['uv_finish' => '3d_uv'],
+                            'images' => ['/images/products/classic-solid/user-3d-uv.png'],
+                            'primary' => '/images/products/classic-solid/user-3d-uv.png',
+                        ],
+                    ],
+                ],
+            ],
+            'product_options' => [
+                'sizes' => [
+                    ['name' => 'Standard', 'code' => 'standard'],
+                    ['name' => 'Square', 'code' => 'square'],
+                ],
+                'paper_finish' => [
+                    ['name' => 'Matte Lamination', 'code' => 'matte'],
+                    ['name' => 'Gloss Lamination', 'code' => 'gloss'],
+                    ['name' => 'Starlight Film', 'code' => 'starry_film'],
+                    ['name' => 'Soft-Touch Lamination', 'code' => 'soft_touch_film'],
+                    ['name' => 'Laser Film', 'code' => 'holo_film'],
+                ],
+                'uv_finish' => [
+                    ['name' => 'No 3D UV', 'code' => 'no_3d_uv'],
+                    ['name' => '3D UV', 'code' => '3d_uv', 'swatch_image' => '/images/product-options/uv-swatch.png'],
+                ],
+                'special_finish' => [
+                    ['name' => 'No finish', 'code' => 'no_special_finish'],
+                    ['name' => 'Cold Bright Gold', 'code' => 'cold_bright_gold'],
+                ],
+                'galleries' => [
+                    [
+                        'id' => 'default',
+                        'match' => [],
+                        'images' => ['/images/old-solid-quality.png'],
+                    ],
+                    [
+                        'id' => 'keep-this-hot-foil',
+                        'match' => ['special_finish' => 'bright_gold'],
+                        'images' => ['/images/keep-this-hot-foil.png'],
+                    ],
+                    [
+                        'id' => '3d-uv',
+                        'match' => ['uv_finish' => '3d_uv'],
+                        'images' => ['/images/products/classic-solid/user-3d-uv.png'],
+                    ],
+                ],
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_22_000001_update_solid_quality_business_card_options_and_gallery.php',
+        );
+        $migration->up();
+        $product->refresh();
+        $afterFirstConfig = $product->product_config;
+        $afterFirstLegacy = $product->product_options;
+
+        $migration->up();
+        $product->refresh();
+
+        $this->assertSame($afterFirstConfig, $product->product_config);
+        $this->assertSame($afterFirstLegacy, $product->product_options);
+        $this->assertSame(
+            ['standard', 'square', 'custom'],
+            data_get($product->product_config, 'options.sizes.values.*.code'),
+        );
+        $this->assertSame(
+            ['matte', 'gloss', 'starry_film', 'soft_touch_film', 'holo_film'],
+            data_get($product->product_config, 'options.paper_finish.values.*.code'),
+        );
+        $this->assertArrayNotHasKey('texture', $product->product_config['options']);
+        $this->assertSame(
+            ['Matte', 'Gloss', 'Starlight Film', 'Soft-Touch Film', 'Laser Film'],
+            data_get($product->product_config, 'options.paper_finish.values.*.label'),
+        );
+        $this->assertSame(
+            [
+                '/images/product-options/business-cards/swatches/quality/starlight-film.png',
+                '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+                '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+            ],
+            collect(data_get($product->product_config, 'options.paper_finish.values.*.swatch_image'))
+                ->slice(2)
+                ->values()
+                ->all(),
+        );
+        $this->assertSame(
+            ['single_side_uv', 'both_sides_uv'],
+            data_get($product->product_config, 'options.uv_finish.values.*.code'),
+        );
+        $this->assertSame('3D UV', data_get($product->product_config, 'options.uv_finish.label'));
+        $this->assertSame(
+            ['single side', 'both sides'],
+            data_get($product->product_config, 'options.uv_finish.values.*.label'),
+        );
+        $this->assertNull(data_get($product->product_config, 'options.uv_finish.default'));
+        $this->assertSame(
+            [
+                ['uv_finish' => 'single_side_uv', 'special_finish' => 'no_special_finish'],
+                ['uv_finish' => 'both_sides_uv', 'special_finish' => 'no_special_finish'],
+            ],
+            collect(data_get($product->product_config, 'media.gallery_rules'))
+                ->filter(fn (mixed $rule): bool => is_array($rule)
+                    && str_starts_with((string) ($rule['id'] ?? ''), '3d-uv-'))
+                ->map(fn (array $rule): array => $rule['match'])
+                ->values()
+                ->all(),
+        );
+        $this->assertSame(
+            SolidQualityBusinessCardGallery::DEFAULT_GALLERY,
+            data_get($product->product_config, 'media.gallery'),
+        );
+        $this->assertSame(
+            '/images/products/solid-quality-business-cards/default-01.png',
+            $product->featured_image,
+        );
+        $this->assertSame(
+            '/images/products/solid-quality-business-cards/standard-matte-square.png',
+            data_get(
+                collect(data_get($product->product_config, 'media.gallery_rules'))
+                    ->firstWhere('id', 'standard-matte-square'),
+                'primary',
+            ),
+        );
+        $this->assertSame(
+            [
+                'standard-starlight-film' => '/images/products/solid-quality-business-cards/texture/starlight-film-primary.png',
+                'standard-laser-film' => '/images/products/solid-quality-business-cards/texture/laser-film-primary.png',
+                'standard-soft-touch-film' => '/images/products/solid-quality-business-cards/texture/soft-touch-film-primary.png',
+            ],
+            collect(data_get($product->product_config, 'media.gallery_rules'))
+                ->filter(fn (mixed $rule): bool => is_array($rule)
+                    && in_array($rule['id'] ?? null, [
+                        'standard-starlight-film',
+                        'standard-laser-film',
+                        'standard-soft-touch-film',
+                    ], true))
+                ->pluck('primary', 'id')
+                ->all(),
+        );
+        $this->assertSame(
+            '/images/keep-this-hot-foil.png',
+            data_get(
+                collect(data_get($product->product_config, 'media.gallery_rules'))
+                    ->firstWhere('id', 'keep-this-hot-foil'),
+                'primary',
+            ),
+        );
+        $this->assertSame(
+            '/images/products/solid-quality-business-cards/cold-foil/cold-bright-gold.png',
+            data_get(
+                collect(data_get($product->product_config, 'media.gallery_rules'))
+                    ->firstWhere('id', 'shared-foil-cold_bright_gold'),
+                'primary',
+            ),
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/cold/bright-gold.png',
+            data_get($product->product_options, 'special_finish.1.swatch_image'),
+        );
+        $this->assertSame(
+            ['single_side_uv', 'both_sides_uv'],
+            data_get($product->product_options, 'uv_finish.*.code'),
+        );
+        $this->assertSame(
+            ['single side', 'both sides'],
+            data_get($product->product_options, 'uv_finish.*.name'),
+        );
+        $this->assertSame(
+            [
+                ['uv_finish' => 'single_side_uv', 'special_finish' => 'no_special_finish'],
+                ['uv_finish' => 'both_sides_uv', 'special_finish' => 'no_special_finish'],
+            ],
+            collect(data_get($product->product_options, 'galleries'))
+                ->filter(fn (mixed $gallery): bool => is_array($gallery)
+                    && str_starts_with((string) ($gallery['id'] ?? ''), '3d-uv-'))
+                ->map(fn (array $gallery): array => $gallery['match'])
+                ->values()
+                ->all(),
+        );
+    }
+
+    public function test_business_card_option_group_label_migration_is_idempotent(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        $standard = Product::create([
+            'name' => 'Standard Quality Business Cards',
+            'slug' => StandardQualityBusinessCardGallery::PRODUCT_SLUG,
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'texture' => ['label' => 'Texture'],
+                ],
+            ],
+        ]);
+        $solid = Product::create([
+            'name' => 'Solid Quality Business Cards',
+            'slug' => SolidQualityBusinessCardGallery::PRODUCT_SLUG,
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'uv_finish' => ['label' => 'UV'],
+                ],
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_22_000003_update_business_card_option_group_labels.php',
+        );
+        $migration->up();
+        $standard->refresh();
+        $solid->refresh();
+        $afterFirstStandard = $standard->product_config;
+        $afterFirstSolid = $solid->product_config;
+
+        $migration->up();
+        $standard->refresh();
+        $solid->refresh();
+
+        $this->assertSame($afterFirstStandard, $standard->product_config);
+        $this->assertSame($afterFirstSolid, $solid->product_config);
+        $this->assertSame(
+            'Paper Finish',
+            data_get($standard->product_config, 'options.texture.label'),
+        );
+        $this->assertSame(
+            '3D UV',
+            data_get($solid->product_config, 'options.uv_finish.label'),
+        );
+    }
+
+    public function test_follow_up_migration_updates_standard_quality_paper_finish_swatches_idempotently(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        $codes = [
+            'matte',
+            'gloss',
+            'starlight_film',
+            'holographic_film',
+            'soft_touch_film',
+        ];
+        $oldSwatches = array_fill_keys($codes, '/images/old-swatch.png');
+        $product = Product::create([
+            'name' => 'Standard Quality Business Cards',
+            'slug' => StandardQualityBusinessCardGallery::PRODUCT_SLUG,
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'texture' => [
+                        'values' => array_map(
+                            static fn (string $code): array => [
+                                'code' => $code,
+                                'swatch_image' => $oldSwatches[$code],
+                            ],
+                            $codes,
+                        ),
+                    ],
+                ],
+            ],
+            'product_options' => [
+                'texture' => array_map(
+                    static fn (string $code): array => [
+                        'code' => $code,
+                        'swatch_image' => $oldSwatches[$code],
+                    ],
+                    $codes,
+                ),
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_22_000004_update_standard_quality_paper_finish_swatches.php',
+        );
+        $migration->up();
+        $product->refresh();
+        $afterFirstConfig = $product->product_config;
+        $afterFirstLegacy = $product->product_options;
+
+        $migration->up();
+        $product->refresh();
+
+        $this->assertSame($afterFirstConfig, $product->product_config);
+        $this->assertSame($afterFirstLegacy, $product->product_options);
+        $expectedSwatches = [
+            '/images/product-options/business-cards/laminates/matte-526x251.jpg',
+            '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
+            '/images/product-options/business-cards/swatches/quality/starlight-film.png',
+            '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+            '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+        ];
+        $this->assertSame(
+            $expectedSwatches,
+            data_get($product->product_config, 'options.texture.values.*.swatch_image'),
+        );
+        $this->assertSame(
+            $expectedSwatches,
+            data_get($product->product_options, 'texture.*.swatch_image'),
+        );
+    }
+
+    public function test_follow_up_migration_restores_solid_quality_film_swatches_and_primary_images_idempotently(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        $oldSwatches = [
+            'starry_film' => '/images/products/solid-quality-business-cards/texture/starlight-film.png',
+            'soft_touch_film' => '/images/products/solid-quality-business-cards/texture/soft-touch-film.png',
+            'holo_film' => '/images/products/solid-quality-business-cards/texture/laser-film.png',
+        ];
+        $galleryImages = [
+            'standard-starlight-film' => '/images/products/solid-quality-business-cards/texture/starlight-film.png',
+            'standard-laser-film' => '/images/products/solid-quality-business-cards/texture/laser-film.png',
+            'standard-soft-touch-film' => '/images/products/solid-quality-business-cards/texture/soft-touch-film.png',
+        ];
+
+        $product = Product::create([
+            'name' => 'Solid Quality Business Cards',
+            'slug' => SolidQualityBusinessCardGallery::PRODUCT_SLUG,
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'options' => [
+                    'paper_finish' => [
+                        'values' => array_map(
+                            static fn (string $code, string $swatch): array => [
+                                'code' => $code,
+                                'swatch_image' => $swatch,
+                            ],
+                            array_keys($oldSwatches),
+                            array_values($oldSwatches),
+                        ),
+                    ],
+                ],
+                'media' => [
+                    'gallery_rules' => array_map(
+                        static fn (string $id, string $image): array => [
+                            'id' => $id,
+                            'match' => [
+                                'sizes' => 'standard',
+                                'corners' => 'square',
+                                'paper_finish' => match ($id) {
+                                    'standard-starlight-film' => 'starry_film',
+                                    'standard-laser-film' => 'holo_film',
+                                    default => 'soft_touch_film',
+                                },
+                                'special_finish' => 'no_special_finish',
+                            ],
+                            'images' => [$image],
+                            'primary' => $image,
+                        ],
+                        array_keys($galleryImages),
+                        array_values($galleryImages),
+                    ),
+                ],
+            ],
+            'product_options' => [
+                'paper_finish' => array_map(
+                    static fn (string $code, string $swatch): array => [
+                        'name' => $code,
+                        'code' => $code,
+                        'swatch_image' => $swatch,
+                    ],
+                    array_keys($oldSwatches),
+                    array_values($oldSwatches),
+                ),
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_22_000002_restore_solid_quality_film_swatches_and_primary_images.php',
+        );
+        $migration->up();
+        $product->refresh();
+        $afterFirstConfig = $product->product_config;
+        $afterFirstLegacy = $product->product_options;
+
+        $migration->up();
+        $product->refresh();
+
+        $this->assertSame($afterFirstConfig, $product->product_config);
+        $this->assertSame($afterFirstLegacy, $product->product_options);
+        $this->assertSame(
+            [
+                '/images/product-options/business-cards/swatches/quality/starlight-film.png',
+                '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+                '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+            ],
+            data_get($product->product_config, 'options.paper_finish.values.*.swatch_image'),
+        );
+        $this->assertSame(
+            [
+                'standard-starlight-film' => '/images/products/solid-quality-business-cards/texture/starlight-film-primary.png',
+                'standard-laser-film' => '/images/products/solid-quality-business-cards/texture/laser-film-primary.png',
+                'standard-soft-touch-film' => '/images/products/solid-quality-business-cards/texture/soft-touch-film-primary.png',
+            ],
+            collect(data_get($product->product_config, 'media.gallery_rules'))
+                ->filter(fn (mixed $rule): bool => is_array($rule)
+                    && in_array($rule['id'] ?? null, array_keys($galleryImages), true))
+                ->pluck('primary', 'id')
+                ->all(),
+        );
+        $this->assertSame(
+            [
+                $galleryImages['standard-starlight-film'],
+            ],
+            data_get(
+                collect(data_get($product->product_config, 'media.gallery_rules'))
+                    ->firstWhere('id', 'standard-starlight-film'),
+                'images',
+            ),
+        );
+        $this->assertSame(
+            [
+                '/images/product-options/business-cards/swatches/quality/starlight-film.png',
+                '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+                '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+            ],
+            data_get($product->product_options, 'paper_finish.*.swatch_image'),
         );
     }
 

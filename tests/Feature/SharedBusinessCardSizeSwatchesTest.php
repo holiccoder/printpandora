@@ -78,7 +78,7 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                     data_get($values, 'custom.description'),
                     $slug,
                 );
-            } elseif ($slug !== 'solid-quality-business-cards') {
+            } else {
                 $this->assertSame(
                     'max range: 2.1 - 3.5 inches',
                     data_get($values, 'custom.description'),
@@ -168,7 +168,7 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                     data_get($storefront, 'sizes.2.description'),
                     $slug,
                 );
-            } elseif ($slug !== 'solid-quality-business-cards') {
+            } else {
                 $this->assertSame(
                     'max range: 2.1 - 3.5 inches',
                     data_get($values, 'custom.description'),
@@ -260,7 +260,7 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
                     data_get($config, 'options.sizes.values.2.description'),
                     $slug,
                 );
-            } elseif ($slug !== 'solid-quality-business-cards') {
+            } else {
                 $this->assertSame(
                     'max range: 2.1 - 3.5 inches',
                     data_get($config, 'options.sizes.values.2.description'),

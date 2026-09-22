@@ -4,7 +4,10 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Support\BusinessCardOptionCatalog;
+use App\Support\ClassicSpecialBusinessCardTexture;
 use App\Support\HardcodedContent;
+use App\Support\SolidQualityBusinessCardGallery;
+use App\Support\StandardQualityBusinessCardGallery;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -31,6 +34,7 @@ class ProductConfigurationService
     public const OPTION_GROUP_LABELS = [
         'sizes' => 'Size',
         'corners' => 'Corners',
+        'texture' => 'Texture',
         'paper_finish' => 'Paper Finish',
         'uv_finish' => 'UV',
         'special_finish' => 'Special Finish',
@@ -371,6 +375,7 @@ class ProductConfigurationService
                     ? $config['media']['gallery_rules']
                     : [],
                 $config['options'],
+                (string) $product->slug,
             );
 
             return $config;
@@ -1174,6 +1179,24 @@ class ProductConfigurationService
             $config = $this->withoutBusinessCardNfc($config);
         }
 
+        if ($product->slug === StandardQualityBusinessCardGallery::PRODUCT_SLUG) {
+            $config = StandardQualityBusinessCardGallery::synchronizeConfig($config);
+            $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
+                $config['media']['gallery_rules'],
+                $config['options'],
+                (string) $product->slug,
+            );
+        }
+
+        if ($product->slug === SolidQualityBusinessCardGallery::PRODUCT_SLUG) {
+            $config = SolidQualityBusinessCardGallery::synchronizeConfig($config);
+            $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
+                $config['media']['gallery_rules'],
+                $config['options'],
+                (string) $product->slug,
+            );
+        }
+
         $options = $this->toStorefrontOptions(
             $config,
             $product,
@@ -1556,7 +1579,16 @@ class ProductConfigurationService
         $groupLabels = self::OPTION_GROUP_LABELS;
 
         if (array_key_exists('texture', $legacy)) {
-            $groupLabels['texture'] = 'Texture';
+            $groupLabels['texture'] = $productSlug === StandardQualityBusinessCardGallery::PRODUCT_SLUG
+                ? 'Paper Finish'
+                : 'Texture';
+        }
+
+        if (
+            array_key_exists('uv_finish', $legacy)
+            && $productSlug === SolidQualityBusinessCardGallery::PRODUCT_SLUG
+        ) {
+            $groupLabels['uv_finish'] = '3D UV';
         }
 
         foreach ([
@@ -1580,7 +1612,10 @@ class ProductConfigurationService
 
             $items = is_array($legacy[$key] ?? null) ? $legacy[$key] : [];
             $isOptionalUvGroup = $key === 'uv_finish'
-                && $productSlug === 'classic-standard-business-cards';
+                && in_array($productSlug, [
+                    'classic-standard-business-cards',
+                    StandardQualityBusinessCardGallery::PRODUCT_SLUG,
+                ], true);
 
             $options[$key] = [
                 'label' => $label,
@@ -1657,8 +1692,7 @@ class ProductConfigurationService
         string $key,
         array $items,
         ?string $productSlug = null,
-    ): string
-    {
+    ): string {
         if ($key !== 'special_finish') {
             return 'select';
         }
@@ -1686,12 +1720,13 @@ class ProductConfigurationService
             }
 
             $images = is_array($gallery['images'] ?? null) ? array_values($gallery['images']) : [];
+            $primary = $gallery['primary'] ?? null;
 
             return [
                 'id' => (string) ($gallery['id'] ?? "gallery-{$index}"),
                 'match' => is_array($gallery['match'] ?? null) ? $gallery['match'] : [],
                 'images' => $images,
-                'primary' => $images[0] ?? null,
+                'primary' => filled($primary) ? $primary : ($images[0] ?? null),
             ];
         }, $galleries, array_keys($galleries));
     }
@@ -2139,6 +2174,7 @@ class ProductConfigurationService
         $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
             $config['media']['gallery_rules'],
             $config['options'],
+            (string) $product->slug,
         );
 
         if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {
@@ -2179,6 +2215,24 @@ class ProductConfigurationService
                 ],
                 array_slice($cards, 0, 2),
             ));
+        }
+
+        if ($product->slug === StandardQualityBusinessCardGallery::PRODUCT_SLUG) {
+            $config = StandardQualityBusinessCardGallery::synchronizeConfig($config);
+            $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
+                $config['media']['gallery_rules'],
+                $config['options'],
+                (string) $product->slug,
+            );
+        }
+
+        if ($product->slug === SolidQualityBusinessCardGallery::PRODUCT_SLUG) {
+            $config = SolidQualityBusinessCardGallery::synchronizeConfig($config);
+            $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
+                $config['media']['gallery_rules'],
+                $config['options'],
+                (string) $product->slug,
+            );
         }
 
         if ($this->shouldRemoveBusinessCardNfc($product)) {
@@ -2326,7 +2380,11 @@ class ProductConfigurationService
      * @param  array<string, mixed>  $options
      * @return array<int, array<string, mixed>>
      */
-    private function withSharedBusinessCardFoilGalleryRules(array $rules, array $options): array
+    private function withSharedBusinessCardFoilGalleryRules(
+        array $rules,
+        array $options,
+        ?string $productSlug = null,
+    ): array
     {
         $specialFinishValues = data_get($options, 'special_finish.values', []);
 
@@ -2345,7 +2403,14 @@ class ProductConfigurationService
         $sharedRules = [];
         $sharedCodes = [];
 
-        foreach (self::SHARED_BUSINESS_CARD_FOIL_IMAGES as $code => $image) {
+        $productFoilImages = match ($productSlug) {
+            StandardQualityBusinessCardGallery::PRODUCT_SLUG => StandardQualityBusinessCardGallery::COLD_FOIL_IMAGES,
+            SolidQualityBusinessCardGallery::PRODUCT_SLUG => SolidQualityBusinessCardGallery::COLD_FOIL_IMAGES,
+            default => [],
+        };
+        $foilImages = $productFoilImages + self::SHARED_BUSINESS_CARD_FOIL_IMAGES;
+
+        foreach ($foilImages as $code => $image) {
             $normalizedCode = $this->normalizedRuleValue($code);
 
             if (! isset($availableCodes[$normalizedCode])) {
@@ -2392,6 +2457,15 @@ class ProductConfigurationService
     private function normalizeProductSpecificOptions(array $options, Product $product): array
     {
         $options = $this->splitUvPaperFinishOptionGroup($options);
+
+        if ($product->slug === SolidQualityBusinessCardGallery::PRODUCT_SLUG) {
+            return $this->orderedOptionGroups(
+                SolidQualityBusinessCardGallery::synchronizeOptions(
+                    BusinessCardOptionCatalog::normalizeSharedSwatchImages($options),
+                ),
+            );
+        }
+
         $catalogOptions = BusinessCardOptionCatalog::normalize((string) $product->slug, $options);
 
         if ($catalogOptions !== null) {
@@ -2527,31 +2601,7 @@ class ProductConfigurationService
                     'label' => 'Matte',
                     'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
                 ],
-                [
-                    'code' => 'water_ripple_paper',
-                    'label' => 'Water Ripple Paper',
-                    'swatch_image' => '/images/products/classic-special-business-cards/texture/water-ripple-paper.png',
-                ],
-                [
-                    'code' => 'linen_paper',
-                    'label' => 'Linen Paper',
-                    'swatch_image' => '/images/products/classic-special-business-cards/texture/linen-paper.png',
-                ],
-                [
-                    'code' => 'eggshell_paper',
-                    'label' => 'Eggshell Paper',
-                    'swatch_image' => '/images/products/classic-special-business-cards/texture/eggshell-paper.png',
-                ],
-                [
-                    'code' => 'white_cardstock',
-                    'label' => 'White Cardstock',
-                    'swatch_image' => '/images/products/classic-special-business-cards/texture/white-cardstock.png',
-                ],
-                [
-                    'code' => 'pearlized_paper',
-                    'label' => 'Pearlized Paper',
-                    'swatch_image' => '/images/products/classic-special-business-cards/texture/pearlized-paper.png',
-                ],
+                ...ClassicSpecialBusinessCardTexture::optionDefinitions(),
             ],
         );
 

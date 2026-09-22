@@ -24,6 +24,7 @@ import type { DynamicPricingData } from '@/lib/pricing';
 import type { PricingRule } from '@/lib/pricing';
 import { isPvcProductSlug } from '@/lib/product-images';
 import {
+    applyTextureUvSelection,
     findMatchingGallery,
     getProductThumbnailImages,
     getPreferredGalleryMatchKey,
@@ -1693,7 +1694,11 @@ export default function ShopShow({
 
         setSelectedDynamicOptions((current) => {
             if (group.type !== 'multi_select') {
-                const next = { ...current, [groupKey]: value };
+                const next = applyTextureUvSelection(
+                    current,
+                    groupKey,
+                    value,
+                );
                 const paperFinishGroup = dynamicOptionGroups.find(
                     (item) => item.key === 'paper_finish',
                 );
@@ -3840,32 +3845,28 @@ function SpecialFinishChoiceTile({
                 className="absolute inset-0 z-0 rounded-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-inset"
             />
             <div className="pointer-events-none relative z-10 p-2">
-                <div className="relative">
-                    {children}
-                    {label && (
-                        <p className="mt-2 text-sm font-bold text-black">
-                            {label}
-                        </p>
-                    )}
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex overflow-hidden rounded-b-sm">
-                        {SPECIAL_FINISH_SIDE_OPTIONS.map((option) => (
-                            <button
-                                key={option.value}
-                                type="button"
-                                aria-label={`Apply finish to ${option.label}`}
-                                aria-pressed={finishSide === option.value}
-                                disabled={disabled}
-                                onClick={() => onFinishSideChange(option.value)}
-                                className={`pointer-events-auto flex min-w-0 flex-1 items-center justify-center border px-2 py-1 text-center text-[10px] leading-tight font-semibold shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
-                                    finishSide === option.value
-                                        ? 'border-primary bg-primary text-primary-foreground hover:bg-[#800020]'
-                                        : 'border-white/80 bg-white/90 text-neutral-800 backdrop-blur-sm hover:bg-white'
-                                }`}
-                            >
-                                {option.label}
-                            </button>
-                        ))}
-                    </div>
+                {children}
+                {label && (
+                    <p className="mt-2 text-sm font-bold text-black">{label}</p>
+                )}
+                <div className="pointer-events-none mt-1 flex overflow-hidden rounded-sm">
+                    {SPECIAL_FINISH_SIDE_OPTIONS.map((option) => (
+                        <button
+                            key={option.value}
+                            type="button"
+                            aria-label={`Apply finish to ${option.label}`}
+                            aria-pressed={finishSide === option.value}
+                            disabled={disabled}
+                            onClick={() => onFinishSideChange(option.value)}
+                            className={`pointer-events-auto flex min-w-0 flex-1 items-center justify-center border px-2 py-1 text-center text-[10px] leading-tight font-semibold shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                                finishSide === option.value
+                                    ? 'border-primary bg-primary text-primary-foreground hover:bg-[#800020]'
+                                    : 'border-white/80 bg-white/90 text-neutral-800 backdrop-blur-sm hover:bg-white'
+                            }`}
+                        >
+                            {option.label}
+                        </button>
+                    ))}
                 </div>
             </div>
         </div>

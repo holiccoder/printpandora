@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductConfigurationService;
+use App\Support\ClassicSpecialBusinessCardTexture;
 use Database\Seeders\ClassicSpecialBusinessCardOptionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -27,6 +28,7 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
             'is_active' => true,
         ]);
 
+        (new ClassicSpecialBusinessCardOptionsSeeder)->run();
         (new ClassicSpecialBusinessCardOptionsSeeder)->run();
 
         $product->refresh();
@@ -55,6 +57,42 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
         ];
         $this->assertSame($defaultGallery, data_get($product->product_config, 'media.gallery'));
         $this->assertSame($defaultGallery, data_get($product->product_config, 'media.gallery_rules.0.images'));
+        $this->assertSame(
+            [ClassicSpecialBusinessCardTexture::SQUARE_IMAGE],
+            data_get($product->product_config, 'media.gallery_rules.1.images'),
+        );
+        $this->assertSame(
+            ClassicSpecialBusinessCardTexture::SQUARE_IMAGE,
+            data_get($product->product_config, 'media.gallery_rules.1.primary'),
+        );
+        $this->assertSame(
+            [ClassicSpecialBusinessCardTexture::ROUNDED_IMAGE],
+            data_get($product->product_config, 'media.gallery_rules.2.images'),
+        );
+        $this->assertSame(
+            ClassicSpecialBusinessCardTexture::ROUNDED_IMAGE,
+            data_get($product->product_config, 'media.gallery_rules.2.primary'),
+        );
+        foreach ([ClassicSpecialBusinessCardTexture::SQUARE_IMAGE, ClassicSpecialBusinessCardTexture::ROUNDED_IMAGE] as $image) {
+            $this->assertFileExists(public_path(ltrim($image, '/')));
+            $this->assertFileExists(public_path(ltrim(str_replace('.png', '.webp', $image), '/')));
+        }
+        $galleryRulesById = [];
+        foreach (data_get($product->product_config, 'media.gallery_rules', []) as $rule) {
+            if (is_array($rule) && isset($rule['id'])) {
+                $galleryRulesById[$rule['id']] = $rule;
+            }
+        }
+        foreach (ClassicSpecialBusinessCardTexture::mappedGalleryRules() as $expectedRule) {
+            $actualRule = $galleryRulesById[$expectedRule['id']] ?? null;
+
+            $this->assertIsArray($actualRule);
+            $this->assertSame($expectedRule['match'], $actualRule['match'] ?? null);
+            $this->assertSame($expectedRule['images'], $actualRule['images'] ?? null);
+            $this->assertSame($expectedRule['primary'], $actualRule['primary'] ?? null);
+            $this->assertFileExists(public_path(ltrim($expectedRule['images'][0], '/')));
+            $this->assertFileExists(public_path(ltrim(str_replace('.png', '.webp', $expectedRule['images'][0]), '/')));
+        }
         $this->assertArrayNotHasKey('paper_finish', $product->product_config['options']);
         $this->assertSame(
             ['square', 'rounded'],
@@ -93,6 +131,7 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
                 'eggshell_paper',
                 'white_cardstock',
                 'pearlized_paper',
+                'pin_point_embossed_paper',
             ],
             data_get($product->product_config, 'options.texture.values.*.code'),
         );
@@ -104,12 +143,13 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
                 '/images/products/classic-special-business-cards/texture/eggshell-paper.png',
                 '/images/products/classic-special-business-cards/texture/white-cardstock.png',
                 '/images/products/classic-special-business-cards/texture/pearlized-paper.png',
+                ClassicSpecialBusinessCardTexture::SQUARE_IMAGE,
             ],
             data_get($product->product_config, 'options.texture.values.*.swatch_image'),
         );
-        $this->assertNotContains(
-            'pin_hole_paper',
-            data_get($product->product_config, 'options.texture.values.*.code'),
+        $this->assertSame(
+            ClassicSpecialBusinessCardTexture::LABEL,
+            data_get($product->product_config, 'options.texture.values.6.label'),
         );
         $this->assertArrayNotHasKey('print_code', $product->product_config['options']);
         $this->assertArrayNotHasKey('drill', $product->product_config['options']);
@@ -162,7 +202,7 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
             data_get($options, 'option_groups.0.values.2.description'),
         );
         $this->assertSame(
-            ['matte', 'water_ripple_paper', 'linen_paper', 'eggshell_paper', 'white_cardstock', 'pearlized_paper'],
+            ['matte', 'water_ripple_paper', 'linen_paper', 'eggshell_paper', 'white_cardstock', 'pearlized_paper', 'pin_point_embossed_paper'],
             array_column(data_get($options, 'option_groups.2.values', []), 'code'),
         );
         $this->assertSame('matte', data_get($options, 'option_groups.2.default'));
@@ -200,14 +240,7 @@ class ClassicSpecialBusinessCardOptionsTest extends TestCase
         );
         $this->assertArrayNotHasKey('paper_finish', $options);
         $this->assertSame(
-            ['matte', 'water_ripple_paper', 'linen_paper', 'eggshell_paper', 'white_cardstock', 'pearlized_paper'],
-            array_map(
-                fn (array $value): string => $value['code'],
-                data_get($options, 'texture', []),
-            ),
-        );
-        $this->assertNotContains(
-            'pin_hole_paper',
+            ['matte', 'water_ripple_paper', 'linen_paper', 'eggshell_paper', 'white_cardstock', 'pearlized_paper', 'pin_point_embossed_paper'],
             array_map(
                 fn (array $value): string => $value['code'],
                 data_get($options, 'texture', []),

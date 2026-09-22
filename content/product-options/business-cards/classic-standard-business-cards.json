@@ -1208,218 +1208,213 @@
     ],
     "galleries": [
         {
-            "id": "square-matte-scorner",
-            "match": {
-                "sizes": "Square",
-                "paper_finish": "Matte",
-                "corners": "Square",
-                "special_finish": "no special finish"
-            },
+            "id": "default",
+            "is_default": true,
+            "match": {},
             "images": [
-                "/images/square-classic/square-scorner-matte-no-foil.png"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-default-01.png",
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-default-02.png",
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-default-03.png",
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-default-04.png"
             ]
         },
         {
-            "id": "square-matte-rcorner",
+            "id": "standard-matte-square",
             "match": {
-                "sizes": "Square",
-                "paper_finish": "Matte",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
+                "sizes": "standard",
+                "paper_finish": "matte",
+                "corners": "square",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/square-classic/square-rcorner-matte-no-foil.png"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-matte-square.png"
             ]
         },
         {
-            "id": "square-glossy-scorner",
+            "id": "square-matte-square",
             "match": {
-                "sizes": "Square",
-                "paper_finish": "Gloss",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "sizes": "square",
+                "paper_finish": "matte",
+                "corners": "square",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/square-classic/square-scorner-glossy-no-foil.png"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-matte-square.png"
             ]
         },
         {
-            "id": "square-glossy-rcorner",
+            "id": "standard-matte-rounded",
             "match": {
-                "sizes": "Square",
-                "paper_finish": "Gloss",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
+                "sizes": "standard",
+                "paper_finish": "matte",
+                "corners": "rounded",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/square-classic/rcorner-square-glossy-no-foil.png"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-matte-rounded.png"
             ]
         },
         {
-            "id": "square-uv-scorner",
+            "id": "square-matte-rounded",
             "match": {
-                "sizes": "Square",
+                "sizes": "square",
+                "paper_finish": "matte",
+                "corners": "rounded",
+                "special_finish": "no_special_finish"
+            },
+            "images": [
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-matte-rounded.png"
+            ]
+        },
+        {
+            "id": "standard-gloss-square",
+            "match": {
+                "sizes": "standard",
+                "paper_finish": "gloss",
+                "corners": "square",
+                "special_finish": "no_special_finish"
+            },
+            "images": [
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-gloss-square.png"
+            ]
+        },
+        {
+            "id": "square-gloss-square",
+            "match": {
+                "sizes": "square",
+                "paper_finish": "gloss",
+                "corners": "square",
+                "special_finish": "no_special_finish"
+            },
+            "images": [
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-gloss-square.png"
+            ]
+        },
+        {
+            "id": "standard-gloss-rounded",
+            "match": {
+                "sizes": "standard",
+                "paper_finish": "gloss",
+                "corners": "rounded",
+                "special_finish": "no_special_finish"
+            },
+            "images": [
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-gloss-rounded.png"
+            ]
+        },
+        {
+            "id": "square-gloss-rounded",
+            "match": {
+                "sizes": "square",
+                "paper_finish": "gloss",
+                "corners": "rounded",
+                "special_finish": "no_special_finish"
+            },
+            "images": [
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-gloss-rounded.png"
+            ]
+        },
+        {
+            "id": "standard-uv-square-single-side",
+            "match": {
+                "sizes": "standard",
                 "uv_finish": "single_side_uv",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "corners": "square",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/square-classic/square-scorner-uv-no-foil.png"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-uv-square.png"
             ]
         },
         {
-            "id": "square-uv-scorner-both-sides",
+            "id": "standard-uv-square-both-sides",
             "match": {
-                "sizes": "Square",
+                "sizes": "standard",
                 "uv_finish": "both_sides_uv",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "corners": "square",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/square-classic/square-scorner-uv-no-foil.png"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-uv-square.png"
             ]
         },
         {
-            "id": "square-uv-rcorner",
+            "id": "standard-uv-rounded-single-side",
             "match": {
-                "sizes": "Square",
+                "sizes": "standard",
                 "uv_finish": "single_side_uv",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
+                "corners": "rounded",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/square-classic/rcorner-square-uv-no-foil.png"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-uv-rounded.png"
             ]
         },
         {
-            "id": "square-uv-rcorner-both-sides",
+            "id": "standard-uv-rounded-both-sides",
             "match": {
-                "sizes": "Square",
+                "sizes": "standard",
                 "uv_finish": "both_sides_uv",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
+                "corners": "rounded",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/square-classic/rcorner-square-uv-no-foil.png"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-uv-rounded.png"
             ]
         },
         {
-            "id": "gloss",
+            "id": "square-uv-square-single-side",
             "match": {
-                "paper_finish": "Gloss",
-                "corners": "Square",
-                "special_finish": "no special finish"
-            },
-            "images": [
-                "/images/product-options/business-cards/galleries/standard-classic/gloss/01.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/gloss/02.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/gloss/03.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/gloss/04.webp"
-            ]
-        },
-        {
-            "id": "gloss-rounded",
-            "match": {
-                "paper_finish": "Gloss",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
-            },
-            "images": [
-                "/images/product-options/business-cards/galleries/standard-classic/gloss-rounded/01.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/gloss-rounded/02.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/gloss-rounded/03.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/gloss-rounded/04.webp"
-            ]
-        },
-        {
-            "id": "matte",
-            "match": {
-                "paper_finish": "Matte",
-                "corners": "Square",
-                "special_finish": "no special finish"
-            },
-            "images": [
-                "/images/product-options/business-cards/galleries/standard-classic/matte/04.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte/01.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte/02.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte/03.webp"
-            ]
-        },
-        {
-            "id": "matte-rounded",
-            "match": {
-                "paper_finish": "Matte",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
-            },
-            "images": [
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded/01.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded/02.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded/03.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded/04.webp"
-            ]
-        },
-        {
-            "id": "matte-uv",
-            "match": {
+                "sizes": "square",
                 "uv_finish": "single_side_uv",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "corners": "square",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/01.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/02.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/03.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/04.webp"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-uv-square.png"
             ]
         },
         {
-            "id": "matte-uv-both-sides",
+            "id": "square-uv-square-both-sides",
             "match": {
+                "sizes": "square",
                 "uv_finish": "both_sides_uv",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "corners": "square",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/01.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/02.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/03.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-uv/04.webp"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-uv-square.png"
             ]
         },
         {
-            "id": "matte-rounded-uv",
+            "id": "square-uv-rounded-single-side",
             "match": {
+                "sizes": "square",
                 "uv_finish": "single_side_uv",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
+                "corners": "rounded",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/01.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/02.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/03.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/04.webp"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-uv-rounded.png"
             ]
         },
         {
-            "id": "matte-rounded-uv-both-sides",
+            "id": "square-uv-rounded-both-sides",
             "match": {
+                "sizes": "square",
                 "uv_finish": "both_sides_uv",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
+                "corners": "rounded",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/01.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/02.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/03.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte-rounded-uv/04.webp"
+                "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-uv-rounded.png"
             ]
         },
         {
             "id": "matte-foil",
             "match": {
-                "paper_finish": "Matte",
-                "corners": "Square",
+                "paper_finish": "matte",
+                "corners": "square",
                 "special_finish": "gold foil"
             },
             "images": [
@@ -1431,25 +1426,14 @@
         {
             "id": "matte-foil-rounded",
             "match": {
-                "paper_finish": "Matte",
-                "corners": "Rounded",
+                "paper_finish": "matte",
+                "corners": "rounded",
                 "special_finish": "gold foil"
             },
             "images": [
                 "/images/product-options/business-cards/galleries/standard-classic/matte-foil/01.webp",
                 "/images/product-options/business-cards/galleries/standard-classic/matte-foil/02.webp",
                 "/images/product-options/business-cards/galleries/standard-classic/matte-foil/03.webp"
-            ]
-        },
-        {
-            "id": "default",
-            "is_default": true,
-            "match": {},
-            "images": [
-                "/images/product-options/business-cards/galleries/standard-classic/matte/04.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte/03.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte/02.webp",
-                "/images/product-options/business-cards/galleries/standard-classic/matte/01.webp"
             ]
         }
     ],

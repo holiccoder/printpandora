@@ -145,27 +145,67 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get($quality->product_config, 'options.sizes.values.2.description'),
         );
         $this->assertSame(
-            ['shattered_glass_film', 'holographic_film', 'starlight_film', 'holographic_star_film', 'soft_touch_film', 'matte', 'gloss'],
+            ['matte', 'gloss', 'starlight_film', 'holographic_film', 'soft_touch_film'],
             data_get($quality->product_config, 'options.texture.values.*.code'),
         );
         $this->assertSame(
+            'Paper Finish',
+            data_get($quality->product_config, 'options.texture.label'),
+        );
+        $this->assertSame(
             [
-                '/images/product-options/business-cards/swatches/quality/shattered-glass-film.png',
-                '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+                '/images/product-options/business-cards/laminates/matte-526x251.jpg',
+                '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
                 '/images/product-options/business-cards/swatches/quality/starlight-film.png',
-                '/images/product-options/business-cards/swatches/quality/holographic-star-film.png',
+                '/images/product-options/business-cards/swatches/quality/holographic-film.png',
                 '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
-                '/images/product-options/business-cards/swatches/matte-paper-finish.webp',
-                '/images/product-options/business-cards/swatches/gloss-paper-finish.webp',
             ],
             data_get($quality->product_config, 'options.texture.values.*.swatch_image'),
         );
+        $this->assertFalse(data_get($quality->product_config, 'options.texture.required'));
+        $this->assertSame('matte', data_get($quality->product_config, 'options.texture.default'));
+        $this->assertSame('3D UV', data_get($quality->product_config, 'options.uv_finish.label'));
+        $this->assertFalse(data_get($quality->product_config, 'options.uv_finish.required'));
+        $this->assertNull(data_get($quality->product_config, 'options.uv_finish.default'));
+        $this->assertSame(
+            ['single_side_uv', 'both_sides_uv'],
+            data_get($quality->product_config, 'options.uv_finish.values.*.code'),
+        );
+        $this->assertSame(
+            ['single side', 'both sides'],
+            data_get($quality->product_config, 'options.uv_finish.values.*.label'),
+        );
+        $this->assertSame(
+            [
+                '/images/products/standard-quality-business-cards/3d-uv.png',
+                '/images/products/standard-quality-business-cards/3d-uv.png',
+            ],
+            data_get($quality->product_config, 'options.uv_finish.values.*.swatch_image'),
+        );
         $this->assertArrayNotHasKey('paper_finish', $quality->product_config['options']);
+        $this->assertSame(
+            [
+                '/images/products/standard-quality-business-cards/default-01.png',
+                '/images/products/standard-quality-business-cards/default-02.png',
+                '/images/products/standard-quality-business-cards/default-03.png',
+                '/images/products/standard-quality-business-cards/default-04.png',
+            ],
+            data_get($quality->product_config, 'media.gallery'),
+        );
+        $this->assertSame(
+            '/images/products/standard-quality-business-cards/default-01.png',
+            $quality->featured_image,
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/cold/bright-gold.png',
+            data_get($quality->product_config, 'options.special_finish.values', [])[
+                array_search('cold_bright_gold', data_get($quality->product_config, 'options.special_finish.values.*.code'), true)
+            ]['swatch_image'],
+        );
         $this->assertContains(
             'cold_bright_gold',
             data_get($quality->product_config, 'options.special_finish.values.*.code'),
         );
-        $this->assertSame(['/images/quality.jpg'], data_get($quality->product_config, 'media.gallery'));
         $this->assertSame('Keep this FAQ', data_get($quality->product_config, 'faq.0.question'));
         $this->assertSame('Keep this design spec', data_get($quality->product_config, 'detail_sections.design_specifications.heading'));
 
@@ -478,6 +518,18 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get($config, 'options.sizes.values.1.swatch_image'),
         );
         $this->assertSame(
+            ['standard', 'square', 'custom'],
+            data_get($config, 'options.sizes.values.*.code'),
+        );
+        $this->assertSame(
+            'max range: 2.1 - 3.5 inches',
+            data_get($config, 'options.sizes.values.2.description'),
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/custom-size.webp',
+            data_get($config, 'options.sizes.values.2.swatch_image'),
+        );
+        $this->assertSame(
             ['no_print_code', 'need_print_code'],
             data_get($config, 'options.print_code.values.*.code'),
         );
@@ -506,23 +558,87 @@ class BusinessCardProductOptionsTest extends TestCase
         );
         $this->assertSame(
             [
-                'Matte Lamination',
-                'Gloss Lamination',
+                'Matte',
+                'Gloss',
                 'Starlight Film',
-                'Soft-Touch Lamination',
+                'Soft-Touch Film',
                 'Laser Film',
             ],
             data_get($config, 'options.paper_finish.values.*.label'),
         );
         $this->assertSame(
-            ['no_3d_uv', '3d_uv'],
+            [
+                '/images/product-options/business-cards/laminates/matte-526x251.jpg',
+                '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
+                '/images/product-options/business-cards/swatches/quality/starlight-film.png',
+                '/images/product-options/business-cards/swatches/quality/soft-touch-film.png',
+                '/images/product-options/business-cards/swatches/quality/holographic-film.png',
+            ],
+            data_get($config, 'options.paper_finish.values.*.swatch_image'),
+        );
+        $this->assertSame(
+            ['single_side_uv', 'both_sides_uv'],
             data_get($config, 'options.uv_finish.values.*.code'),
         );
-        $this->assertSame('no_3d_uv', data_get($config, 'options.uv_finish.default'));
+        $this->assertSame('3D UV', data_get($config, 'options.uv_finish.label'));
+        $this->assertSame(
+            ['single side', 'both sides'],
+            data_get($config, 'options.uv_finish.values.*.label'),
+        );
+        $this->assertNull(data_get($config, 'options.uv_finish.default'));
         $this->assertSame('select', data_get($config, 'options.uv_finish.type'));
         $uvGalleryRule = collect(data_get($config, 'media.gallery_rules', []))
-            ->firstWhere('id', '3d-uv');
-        $this->assertSame(['uv_finish' => '3d_uv'], $uvGalleryRule['match'] ?? null);
+            ->firstWhere('id', '3d-uv-single-side');
+        $this->assertSame(
+            [
+                'uv_finish' => 'single_side_uv',
+                'special_finish' => 'no_special_finish',
+            ],
+            $uvGalleryRule['match'] ?? null,
+        );
+        $this->assertSame(
+            ['uv_finish' => 'both_sides_uv', 'special_finish' => 'no_special_finish'],
+            collect(data_get($config, 'media.gallery_rules', []))
+                ->firstWhere('id', '3d-uv-both-sides')['match'] ?? null,
+        );
+        $this->assertSame(
+            [
+                '/images/products/solid-quality-business-cards/default-01.png',
+                '/images/products/solid-quality-business-cards/default-02.png',
+                '/images/products/solid-quality-business-cards/default-03.png',
+                '/images/products/solid-quality-business-cards/default-04.png',
+            ],
+            data_get($config, 'media.gallery'),
+        );
+        $this->assertSame(
+            '/images/products/solid-quality-business-cards/standard-matte-square.png',
+            collect(data_get($config, 'media.gallery_rules', []))
+                ->firstWhere('id', 'standard-matte-square')['primary'] ?? null,
+        );
+        $paperFinishPrimaries = collect(data_get($config, 'media.gallery_rules', []))
+            ->filter(fn (mixed $rule): bool => is_array($rule)
+                && in_array($rule['id'] ?? null, [
+                    'standard-starlight-film',
+                    'standard-laser-film',
+                    'standard-soft-touch-film',
+                ], true))
+            ->pluck('primary', 'id');
+        $this->assertSame(
+            [
+                'standard-starlight-film' => '/images/products/solid-quality-business-cards/texture/starlight-film-primary.png',
+                'standard-laser-film' => '/images/products/solid-quality-business-cards/texture/laser-film-primary.png',
+                'standard-soft-touch-film' => '/images/products/solid-quality-business-cards/texture/soft-touch-film-primary.png',
+            ],
+            $paperFinishPrimaries->all(),
+        );
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/cold/bright-gold.png',
+            data_get($config, 'options.special_finish.values.14.swatch_image'),
+        );
+        $this->assertSame(
+            '/images/products/solid-quality-business-cards/default-01.png',
+            $product->featured_image,
+        );
         $storefront = app(ProductConfigurationService::class)->storefrontOptions($product);
         $this->assertSame(
             ['sizes', 'corners', 'paper_finish', 'uv_finish', 'special_finish', 'print_code', 'drill'],

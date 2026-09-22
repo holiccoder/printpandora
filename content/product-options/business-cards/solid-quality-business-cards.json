@@ -153,11 +153,17 @@
                     "price_per_card": 0
                 }
             ]
+        },
+        {
+            "code": "custom",
+            "name": "Custom",
+            "description": "max range: 2.1 - 3.5 inches",
+            "swatch_image": "/images/product-options/business-cards/swatches/custom-size.webp"
         }
     ],
     "paper_finish": [
         {
-            "name": "Matte Lamination",
+            "name": "Matte",
             "code": "matte",
             "description": "With a smooth feel. Shine-free so no glare.",
             "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
@@ -221,7 +227,7 @@
             ]
         },
         {
-            "name": "Gloss Lamination",
+            "name": "Gloss",
             "code": "gloss",
             "description": "Eye-catchingly shiny. Makes color photos pop.",
             "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
@@ -349,7 +355,7 @@
             ]
         },
         {
-            "name": "Soft-Touch Lamination",
+            "name": "Soft-Touch Film",
             "code": "soft_touch_film",
             "description": "Velvety, soft tactile premium laminate",
             "swatch_image": "/images/product-options/business-cards/swatches/quality/soft-touch-film.png",
@@ -479,14 +485,17 @@
     ],
     "uv_finish": [
         {
-            "name": "No 3D UV",
-            "code": "no_3d_uv",
-            "description": "No 3D UV finish."
+            "name": "single side",
+            "label": "single side",
+            "code": "single_side_uv",
+            "description": "",
+            "swatch_image": "/images/product-options/uv-swatch.png"
         },
         {
-            "name": "3D UV",
-            "code": "3d_uv",
-            "description": "Raised gloss highlights with a dimensional feel.",
+            "name": "both sides",
+            "label": "both sides",
+            "code": "both_sides_uv",
+            "description": "",
             "swatch_image": "/images/product-options/uv-swatch.png"
         }
     ],
@@ -1719,118 +1728,86 @@
             "is_default": true,
             "match": {},
             "images": [
-                "/images/products/classic-solid/user-matte-default-01.png",
-                "/images/products/classic-solid/user-matte-default-02.png",
-                "/images/products/classic-solid/user-matte-default-03.png",
-                "/images/products/classic-solid/user-matte-default-04.png"
+                "/images/products/solid-quality-business-cards/default-01.png",
+                "/images/products/solid-quality-business-cards/default-02.png",
+                "/images/products/solid-quality-business-cards/default-03.png",
+                "/images/products/solid-quality-business-cards/default-04.png"
             ]
         },
         {
-            "id": "matte_square_dutch",
+            "id": "standard-matte-square",
             "match": {
-                "paper_finish": "Matte",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "sizes": "standard",
+                "corners": "square",
+                "paper_finish": "matte",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/products/classic-solid/user-matte-square.png"
+                "/images/products/solid-quality-business-cards/standard-matte-square.png"
             ]
         },
         {
-            "id": "matte_rounded_dutch",
+            "id": "standard-matte-rounded",
             "match": {
-                "paper_finish": "Matte",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
+                "sizes": "standard",
+                "corners": "rounded",
+                "paper_finish": "matte",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/products/classic-solid/user-matte-rounded.png"
+                "/images/products/solid-quality-business-cards/standard-matte-rounded.png"
             ]
         },
         {
-            "id": "gloss_rounded_dutch",
+            "id": "standard-gloss-rounded",
             "match": {
-                "paper_finish": "Gloss",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
+                "sizes": "standard",
+                "corners": "rounded",
+                "paper_finish": "gloss",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/products/classic-solid/user-gloss-rounded.png"
+                "/images/products/solid-quality-business-cards/standard-gloss-rounded.png"
             ]
         },
         {
-            "id": "gloss_square_dutch",
+            "id": "standard-starlight-film",
             "match": {
-                "paper_finish": "Gloss",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "sizes": "standard",
+                "corners": "square",
+                "paper_finish": "starry_film",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/products/classic-solid/user-gloss-square.png"
-            ]
+                "/images/products/solid-quality-business-cards/texture/starlight-film.png"
+            ],
+            "primary": "/images/products/solid-quality-business-cards/texture/starlight-film-primary.png"
         },
         {
-            "id": "cold-matte-gold",
+            "id": "standard-laser-film",
             "match": {
-                "special_finish": "cold_matte_gold"
+                "sizes": "standard",
+                "corners": "square",
+                "paper_finish": "holo_film",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/products/classic-solid/user-cold-matte-gold.png"
-            ]
+                "/images/products/solid-quality-business-cards/texture/laser-film.png"
+            ],
+            "primary": "/images/products/solid-quality-business-cards/texture/laser-film-primary.png"
         },
         {
-            "id": "cold-matte-silver",
+            "id": "standard-soft-touch-film",
             "match": {
-                "special_finish": "cold_matte_silver"
+                "sizes": "standard",
+                "corners": "square",
+                "paper_finish": "soft_touch_film",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/products/classic-solid/user-cold-matte-silver.png"
-            ]
-        },
-        {
-            "id": "cold-bright-gold",
-            "match": {
-                "special_finish": "cold_bright_gold"
-            },
-            "images": [
-                "/images/products/classic-solid/user-cold-bright-gold.png"
-            ]
-        },
-        {
-            "id": "cold-bright-silver",
-            "match": {
-                "special_finish": "cold_bright_silver"
-            },
-            "images": [
-                "/images/products/classic-solid/user-cold-bright-silver.png"
-            ]
-        },
-        {
-            "id": "cold-red-gold",
-            "match": {
-                "special_finish": "cold_red_gold"
-            },
-            "images": [
-                "/images/products/classic-solid/user-cold-red-gold.png"
-            ]
-        },
-        {
-            "id": "cold-green-gold",
-            "match": {
-                "special_finish": "cold_green_gold"
-            },
-            "images": [
-                "/images/products/classic-solid/user-cold-green-gold.png"
-            ]
-        },
-        {
-            "id": "cold-blue-gold",
-            "match": {
-                "special_finish": "cold_blue_gold"
-            },
-            "images": [
-                "/images/products/classic-solid/user-cold-blue-gold.png"
-            ]
+                "/images/products/solid-quality-business-cards/texture/soft-touch-film.png"
+            ],
+            "primary": "/images/products/solid-quality-business-cards/texture/soft-touch-film-primary.png"
         },
         {
             "id": "hot-matte-silver",
@@ -1914,39 +1891,23 @@
             ]
         },
         {
-            "id": "3d-uv",
+            "id": "3d-uv-single-side",
             "match": {
-                "uv_finish": "3d_uv"
+                "uv_finish": "single_side_uv",
+                "special_finish": "no_special_finish"
             },
             "images": [
                 "/images/products/classic-solid/user-3d-uv.png"
             ]
         },
         {
-            "id": "starry-film",
+            "id": "3d-uv-both-sides",
             "match": {
-                "paper_finish": "starry_film"
+                "uv_finish": "both_sides_uv",
+                "special_finish": "no_special_finish"
             },
             "images": [
-                "/images/products/classic-solid/user-starry-film.png"
-            ]
-        },
-        {
-            "id": "soft-touch-film",
-            "match": {
-                "paper_finish": "soft_touch_film"
-            },
-            "images": [
-                "/images/products/classic-solid/user-soft-touch-film.png"
-            ]
-        },
-        {
-            "id": "holo-film",
-            "match": {
-                "paper_finish": "holo_film"
-            },
-            "images": [
-                "/images/products/classic-solid/user-holo-film.png"
+                "/images/products/classic-solid/user-3d-uv.png"
             ]
         },
         {
@@ -2003,64 +1964,74 @@
             ]
         },
         {
-            "id": "gloss-square",
+            "id": "shared-foil-cold_matte_gold",
             "match": {
-                "sizes": "Square",
-                "paper_finish": "Gloss",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "special_finish": "cold_matte_gold"
             },
             "images": [
-                "/images/products/classic-solid/user-gloss-square.png"
-            ]
+                "/images/products/solid-quality-business-cards/cold-foil/cold-matte-gold.png"
+            ],
+            "primary": "/images/products/solid-quality-business-cards/cold-foil/cold-matte-gold.png"
         },
         {
-            "id": "gloss",
+            "id": "shared-foil-cold_matte_silver",
             "match": {
-                "sizes": "Standard",
-                "paper_finish": "Gloss",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "special_finish": "cold_matte_silver"
             },
             "images": [
-                "/images/products/classic-solid/user-gloss.png"
-            ]
+                "/images/products/solid-quality-business-cards/cold-foil/cold-matte-silver.png"
+            ],
+            "primary": "/images/products/solid-quality-business-cards/cold-foil/cold-matte-silver.png"
         },
         {
-            "id": "matte-rounded",
+            "id": "shared-foil-cold_bright_gold",
             "match": {
-                "sizes": "Standard",
-                "paper_finish": "Matte",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
+                "special_finish": "cold_bright_gold"
             },
             "images": [
-                "/images/products/classic-solid/user-matte-rounded.png"
-            ]
+                "/images/products/solid-quality-business-cards/cold-foil/cold-bright-gold.png"
+            ],
+            "primary": "/images/products/solid-quality-business-cards/cold-foil/cold-bright-gold.png"
         },
         {
-            "id": "matte",
+            "id": "shared-foil-cold_bright_silver",
             "match": {
-                "sizes": "Standard",
-                "paper_finish": "Matte",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "special_finish": "cold_bright_silver"
             },
             "images": [
-                "/images/products/classic-solid/user-matte-square.png"
-            ]
+                "/images/products/solid-quality-business-cards/cold-foil/cold-bright-silver.png"
+            ],
+            "primary": "/images/products/solid-quality-business-cards/cold-foil/cold-bright-silver.png"
         },
         {
-            "id": "square",
+            "id": "shared-foil-cold_red_gold",
             "match": {
-                "sizes": "Square",
-                "paper_finish": "Matte",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "special_finish": "cold_red_gold"
             },
             "images": [
-                "/images/products/classic-solid/user-matte-square.png"
-            ]
+                "/images/products/solid-quality-business-cards/cold-foil/cold-red-gold.png"
+            ],
+            "primary": "/images/products/solid-quality-business-cards/cold-foil/cold-red-gold.png"
+        },
+        {
+            "id": "shared-foil-cold_green_gold",
+            "match": {
+                "special_finish": "cold_green_gold"
+            },
+            "images": [
+                "/images/products/solid-quality-business-cards/cold-foil/cold-green-gold.png"
+            ],
+            "primary": "/images/products/solid-quality-business-cards/cold-foil/cold-green-gold.png"
+        },
+        {
+            "id": "shared-foil-cold_blue_gold",
+            "match": {
+                "special_finish": "cold_blue_gold"
+            },
+            "images": [
+                "/images/products/solid-quality-business-cards/cold-foil/cold-blue-gold.png"
+            ],
+            "primary": "/images/products/solid-quality-business-cards/cold-foil/cold-blue-gold.png"
         }
     ],
     "detail_sections": {

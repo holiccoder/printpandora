@@ -5,16 +5,15 @@ namespace Database\Seeders;
 use App\Models\Product;
 use App\Services\ProductConfigurationService;
 use App\Support\BusinessCardOptionCatalog;
+use App\Support\ClassicStandardBusinessCardGallery;
 use Illuminate\Database\Seeder;
 
 class ClassicStandardBusinessCardOptionsSeeder extends Seeder
 {
-    private const PRODUCT_SLUG = 'classic-standard-business-cards';
-
     public function run(): void
     {
         $product = Product::query()
-            ->where('slug', self::PRODUCT_SLUG)
+            ->where('slug', ClassicStandardBusinessCardGallery::PRODUCT_SLUG)
             ->first();
 
         if (! $product) {
@@ -27,6 +26,7 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
 
         $configuration = app(ProductConfigurationService::class);
         $config = $configuration->canonicalConfig($product);
+        $config = ClassicStandardBusinessCardGallery::synchronizeConfig($config);
         $existing = is_array($config['options'] ?? null) ? $config['options'] : [];
 
         $config['options'] = [
@@ -237,7 +237,10 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
         $normalizedProduct->setAttribute('product_config', $config);
         $config = $configuration->canonicalConfig($normalizedProduct);
 
-        $product->forceFill(['product_config' => $config])->save();
+        $product->forceFill([
+            'featured_image' => ClassicStandardBusinessCardGallery::DEFAULT_GALLERY[0],
+            'product_config' => $config,
+        ])->save();
 
         if ($this->command !== null) {
             $this->command->info('Classic standard business card options imported.');

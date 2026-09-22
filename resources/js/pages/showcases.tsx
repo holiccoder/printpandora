@@ -87,7 +87,7 @@ export default function Showcases({ showcases }: Props) {
                                                         alt={alt}
                                                         loading="lazy"
                                                         decoding="async"
-                                                        className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+                                                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                                                     />
                                                 </div>
                                             </button>
