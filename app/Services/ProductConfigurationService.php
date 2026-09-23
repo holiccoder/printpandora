@@ -34,6 +34,7 @@ class ProductConfigurationService
     public const OPTION_GROUP_LABELS = [
         'sizes' => 'Size',
         'corners' => 'Corners',
+        'thickness' => 'Thickness',
         'texture' => 'Texture',
         'paper_finish' => 'Paper Finish',
         'uv_finish' => 'UV',
@@ -53,10 +54,11 @@ class ProductConfigurationService
         'size' => 1,
         'corners' => 2,
         'corner' => 2,
-        'texture' => 3,
-        'paper_finish' => 4,
-        'uv_finish' => 5,
-        'special_finish' => 6,
+        'thickness' => 3,
+        'texture' => 4,
+        'paper_finish' => 5,
+        'uv_finish' => 6,
+        'special_finish' => 7,
     ];
 
     private const UV_FINISH_SWATCH_IMAGE = '/images/product-options/uv-swatch.png';
@@ -677,6 +679,7 @@ class ProductConfigurationService
                 foreach ([
                     'description',
                     'swatch_image',
+                    'color_swatch_image',
                     'width',
                     'height',
                     'min_width',
@@ -684,6 +687,11 @@ class ProductConfigurationService
                     'min_height',
                     'max_height',
                     'area_sq_m',
+                    'thickness_code',
+                    'texture_code',
+                    'texture_label',
+                    'color_code',
+                    'color_label',
                 ] as $property) {
                     if (array_key_exists($property, $value) && $value[$property] !== '') {
                         $normalizedValue[$property] = $value[$property];
@@ -1635,6 +1643,7 @@ class ProductConfigurationService
                     foreach ([
                         'description',
                         'swatch_image',
+                        'color_swatch_image',
                         'width',
                         'height',
                         'min_width',
@@ -1789,6 +1798,7 @@ class ProductConfigurationService
                 foreach ([
                     'description',
                     'swatch_image',
+                    'color_swatch_image',
                     'width',
                     'height',
                     'min_width',
@@ -1796,6 +1806,11 @@ class ProductConfigurationService
                     'min_height',
                     'max_height',
                     'area_sq_m',
+                    'thickness_code',
+                    'texture_code',
+                    'texture_label',
+                    'color_code',
+                    'color_label',
                 ] as $property) {
                     if (array_key_exists($property, $value)) {
                         $legacy[$property] = $property === 'swatch_image'
@@ -1965,6 +1980,7 @@ class ProductConfigurationService
             'image_url',
             'primary',
             'swatch_image',
+            'color_swatch_image',
             'thumbnail',
             'thumbnail_url',
         ];
@@ -2941,6 +2957,7 @@ class ProductConfigurationService
             '滚边' => 'edge_coloring',
             '对裱' => 'double_mounting',
             '异形模切' => 'custom_die_cut',
+            '凹凸' => 'emboss',
             default => $this->legacyProcessCode($name, $normalizedName),
         };
     }

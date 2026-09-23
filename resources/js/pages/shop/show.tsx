@@ -116,10 +116,11 @@ const OPTION_GROUP_ORDER: Record<string, number> = {
     size: 1,
     corners: 2,
     corner: 2,
-    texture: 3,
-    paper_finish: 4,
-    uv_finish: 5,
-    special_finish: 6,
+    thickness: 3,
+    texture: 4,
+    paper_finish: 5,
+    uv_finish: 6,
+    special_finish: 7,
 };
 
 const OPTION_GROUP_FALLBACK_ORDER = Object.keys(OPTION_GROUP_ORDER).length + 1;
@@ -154,12 +155,18 @@ interface ProductOptionValue {
     name: string;
     description?: string;
     swatch_image?: string;
+    color_swatch_image?: string;
     width?: string;
     height?: string;
     min_width?: string;
     max_width?: string;
     min_height?: string;
     max_height?: string;
+    thickness_code?: string;
+    texture_code?: string;
+    texture_label?: string;
+    color_code?: string;
+    color_label?: string;
 }
 
 interface ProductOptionGroup {
@@ -569,7 +576,10 @@ function selectedDynamicOptionDetails(
             return {
                 groupKey: group.key,
                 code,
-                label: value?.name,
+                label:
+                    group.key === 'texture' && value?.texture_label
+                        ? `${value.texture_label}${value.color_label ? ` · ${value.color_label}` : ''}`
+                        : value?.name,
                 description: value?.description,
             };
         });
@@ -1165,6 +1175,8 @@ export default function ShopShow({
     );
     const [lastSelectedGalleryOptionKey, setLastSelectedGalleryOptionKey] =
         useState<string | null>(null);
+    const [lastInteractedOptionGroupKey, setLastInteractedOptionGroupKey] =
+        useState<string | null>(null);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
     const [added, setAdded] = useState(false);
@@ -1251,15 +1263,16 @@ export default function ShopShow({
     };
 
     const rememberGalleryOptionSelection = (groupKey: string) => {
-        if (
+        setLastInteractedOptionGroupKey(groupKey);
+        setLastSelectedGalleryOptionKey(
             getPreferredGalleryMatchKey(
                 configuredGalleries,
                 isPvcProduct,
                 groupKey,
             )
-        ) {
-            setLastSelectedGalleryOptionKey(groupKey);
-        }
+                ? groupKey
+                : null,
+        );
     };
 
     const hasSelection = usesDynamicOptions
@@ -1474,14 +1487,27 @@ export default function ShopShow({
         }
 
         if (configuredGalleries.length > 0) {
+            const preferredGalleryMatchKey = getPreferredGalleryMatchKey(
+                configuredGalleries,
+                isPvcProduct,
+                lastSelectedGalleryOptionKey,
+            );
+
+            // Cotton finish diagrams are swatches only. Selecting a finish
+            // without a dedicated gallery rule must leave the original
+            // product gallery in place instead of falling through to the
+            // selected texture's sample image.
+            if (
+                lastInteractedOptionGroupKey === 'special_finish' &&
+                !preferredGalleryMatchKey
+            ) {
+                return defaultGallery;
+            }
+
             const matched = findMatchingGallery(
                 configuredGalleries,
                 selectedOptions,
-                getPreferredGalleryMatchKey(
-                    configuredGalleries,
-                    isPvcProduct,
-                    lastSelectedGalleryOptionKey,
-                ),
+                preferredGalleryMatchKey,
             );
 
             if (matched) {
@@ -1496,6 +1522,7 @@ export default function ShopShow({
         selectedOptions,
         isPvcProduct,
         lastSelectedGalleryOptionKey,
+        lastInteractedOptionGroupKey,
         defaultGallery,
         fallbackGallery,
     ]);
@@ -1655,7 +1682,11 @@ export default function ShopShow({
 
         rememberGalleryOptionSelection(groupKey);
 
-        if (groupKey === 'paper_finish') {
+        if (
+            groupKey === 'paper_finish' ||
+            groupKey === 'thickness' ||
+            groupKey === 'texture'
+        ) {
             setSelectedThumbnail(null);
         }
 
@@ -1694,11 +1725,34 @@ export default function ShopShow({
 
         setSelectedDynamicOptions((current) => {
             if (group.type !== 'multi_select') {
-                const next = applyTextureUvSelection(
-                    current,
-                    groupKey,
-                    value,
-                );
+                if (groupKey === 'thickness') {
+                    const textureGroup = dynamicOptionGroups.find(
+                        (item) => item.key === 'texture',
+                    );
+                    const currentTextureCode =
+                        typeof current.texture === 'string'
+                            ? current.texture
+                            : '';
+                    const currentTexture = textureGroup?.values.find(
+                        (item) =>
+                            optionValueCode(item) === currentTextureCode &&
+                            item.thickness_code === value,
+                    );
+                    const firstTexture = textureGroup?.values.find(
+                        (item) => item.thickness_code === value,
+                    );
+                    const nextTexture = currentTexture ?? firstTexture;
+
+                    return {
+                        ...current,
+                        [groupKey]: value,
+                        texture: nextTexture
+                            ? optionValueCode(nextTexture)
+                            : '',
+                    };
+                }
+
+                const next = applyTextureUvSelection(current, groupKey, value);
                 const paperFinishGroup = dynamicOptionGroups.find(
                     (item) => item.key === 'paper_finish',
                 );
@@ -1706,11 +1760,17 @@ export default function ShopShow({
                     (item) => item.key === 'uv_finish',
                 );
 
-                if (groupKey === 'paper_finish' && uvGroup?.required === false) {
+                if (
+                    groupKey === 'paper_finish' &&
+                    uvGroup?.required === false
+                ) {
                     next.uv_finish = '';
                 }
 
-                if (groupKey === 'uv_finish' && paperFinishGroup?.required === false) {
+                if (
+                    groupKey === 'uv_finish' &&
+                    paperFinishGroup?.required === false
+                ) {
                     next.paper_finish = '';
                 }
 
@@ -3555,6 +3615,49 @@ function DynamicOptionGroups({
                               : !optionValueCode(value).startsWith('cold_'),
                       )
                     : group.values;
+                const visibleTextureValues =
+                    group.key === 'texture' &&
+                    typeof selected.thickness === 'string' &&
+                    selected.thickness !== ''
+                        ? values.filter(
+                              (value) =>
+                                  value.thickness_code === selected.thickness,
+                          )
+                        : values;
+
+                if (group.key === 'thickness') {
+                    return (
+                        <ThicknessOptionGroup
+                            key={group.key}
+                            group={group}
+                            selected={selected}
+                            onSelect={(groupKey, code) => {
+                                onSelect(groupKey, code);
+                                markInteracted();
+                            }}
+                        />
+                    );
+                }
+
+                if (
+                    group.key === 'texture' &&
+                    visibleTextureValues.some(
+                        (value) => value.texture_code && value.color_code,
+                    )
+                ) {
+                    return (
+                        <CottonTextureOptionGroup
+                            key={group.key}
+                            group={group}
+                            values={visibleTextureValues}
+                            selected={selected}
+                            onSelect={(groupKey, code) => {
+                                onSelect(groupKey, code);
+                                markInteracted();
+                            }}
+                        />
+                    );
+                }
 
                 return (
                     <OptionGroup key={group.key} label={group.label}>
@@ -3743,6 +3846,194 @@ function DynamicOptionGroups({
                 );
             })}
         </>
+    );
+}
+
+function ThicknessOptionGroup({
+    group,
+    selected,
+    onSelect,
+}: {
+    group: ProductOptionGroup;
+    selected: Record<string, string | string[]>;
+    onSelect: (groupKey: string, value: string) => void;
+}) {
+    const selectedValue = selected[group.key];
+    const selectedCode = typeof selectedValue === 'string' ? selectedValue : '';
+
+    return (
+        <OptionGroup label={group.label}>
+            <div
+                className="grid grid-cols-1 gap-3 sm:grid-cols-3"
+                role="radiogroup"
+                aria-label={group.label}
+            >
+                {group.values.map((value) => {
+                    const code = optionValueCode(value);
+                    const active = selectedCode === code;
+
+                    return (
+                        <label
+                            key={code}
+                            className={`flex cursor-pointer items-center gap-3 rounded-md border-2 px-4 py-3 text-sm font-semibold transition-colors ${
+                                active
+                                    ? 'border-[#800020] bg-[#800020]/5 text-neutral-900'
+                                    : 'border-neutral-200 text-neutral-700 hover:border-neutral-300'
+                            }`}
+                        >
+                            <input
+                                type="radio"
+                                name={`option-${group.key}`}
+                                value={code}
+                                checked={active}
+                                onChange={() => onSelect(group.key, code)}
+                                className="size-4 accent-[#800020]"
+                            />
+                            <span>{value.name}</span>
+                        </label>
+                    );
+                })}
+            </div>
+        </OptionGroup>
+    );
+}
+
+function CottonTextureOptionGroup({
+    group,
+    values,
+    selected,
+    onSelect,
+}: {
+    group: ProductOptionGroup;
+    values: ProductOptionValue[];
+    selected: Record<string, string | string[]>;
+    onSelect: (groupKey: string, value: string) => void;
+}) {
+    const textureGroups = new Map<
+        string,
+        { label: string; values: ProductOptionValue[] }
+    >();
+
+    for (const value of values) {
+        const textureCode = value.texture_code ?? optionValueCode(value);
+        const existing = textureGroups.get(textureCode);
+
+        if (existing) {
+            existing.values.push(value);
+        } else {
+            textureGroups.set(textureCode, {
+                label: value.texture_label ?? value.name,
+                values: [value],
+            });
+        }
+    }
+
+    const selectedValue = selected[group.key];
+    const selectedCode = typeof selectedValue === 'string' ? selectedValue : '';
+
+    return (
+        <OptionGroup label={group.label}>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {Array.from(textureGroups.entries()).map(
+                    ([textureCode, texture]) => {
+                        const activeValue =
+                            texture.values.find(
+                                (value) =>
+                                    optionValueCode(value) === selectedCode,
+                            ) ?? texture.values[0];
+                        const textureActive = texture.values.some(
+                            (value) => optionValueCode(value) === selectedCode,
+                        );
+
+                        if (!activeValue) {
+                            return null;
+                        }
+
+                        return (
+                            <div
+                                key={textureCode}
+                                className={`rounded-md border-2 p-3 transition-colors ${
+                                    textureActive
+                                        ? 'border-[#800020] bg-[#800020]/5'
+                                        : 'border-neutral-200'
+                                }`}
+                            >
+                                <button
+                                    type="button"
+                                    aria-pressed={textureActive}
+                                    onClick={() =>
+                                        onSelect(
+                                            group.key,
+                                            optionValueCode(activeValue),
+                                        )
+                                    }
+                                    className="block w-full text-left"
+                                >
+                                    {activeValue.swatch_image ? (
+                                        <img
+                                            src={activeValue.swatch_image}
+                                            alt=""
+                                            className="h-40 w-full rounded-sm object-contain"
+                                        />
+                                    ) : (
+                                        <div className="flex h-40 items-center justify-center text-xs text-neutral-400">
+                                            Texture sample
+                                        </div>
+                                    )}
+                                    <p className="mt-2 text-sm font-semibold text-neutral-900">
+                                        {texture.label}
+                                    </p>
+                                    {activeValue.color_label && (
+                                        <p className="mt-1 text-xs text-neutral-500">
+                                            {activeValue.color_label}
+                                        </p>
+                                    )}
+                                </button>
+
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                    {texture.values.map((value) => {
+                                        const code = optionValueCode(value);
+                                        const colorActive =
+                                            selectedCode === code;
+
+                                        return (
+                                            <button
+                                                key={code}
+                                                type="button"
+                                                aria-label={`${texture.label} ${value.color_label ?? value.name}`}
+                                                aria-pressed={colorActive}
+                                                title={
+                                                    value.color_label ??
+                                                    value.name
+                                                }
+                                                onClick={() =>
+                                                    onSelect(group.key, code)
+                                                }
+                                                className={`flex size-8 items-center justify-center rounded-full border-2 transition-colors focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:outline-none ${
+                                                    colorActive
+                                                        ? 'border-[#800020]'
+                                                        : 'border-neutral-200 hover:border-neutral-400'
+                                                }`}
+                                            >
+                                                {value.color_swatch_image ? (
+                                                    <img
+                                                        src={value.color_swatch_image}
+                                                        alt=""
+                                                        className="size-6 rounded-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <span className="size-6 rounded-full bg-neutral-200" />
+                                                )}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    },
+                )}
+            </div>
+        </OptionGroup>
     );
 }
 

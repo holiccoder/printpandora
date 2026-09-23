@@ -216,8 +216,9 @@ class PricingService
         $groups = is_array($config['options'] ?? null) ? $config['options'] : [];
         $normalized = $options;
         $errors = [];
+        $resolvedGroups = [];
 
-        foreach (['sizes', 'corners', 'texture'] as $key) {
+        foreach (['sizes', 'corners', 'thickness', 'texture'] as $key) {
             $allowed = $this->allowedOptionCodes($groups[$key] ?? []);
             $submitted = $this->submittedOptionValues($options[$key] ?? null);
             $resolved = $this->resolveAllowedOptionCodes($submitted, $allowed);
@@ -226,6 +227,7 @@ class PricingService
                 $errors["options.{$key}"] = match ($key) {
                     'sizes' => 'Select one size.',
                     'corners' => 'Select one corner style.',
+                    'thickness' => 'Select one thickness.',
                     default => 'Select one texture.',
                 };
 
@@ -233,6 +235,25 @@ class PricingService
             }
 
             $normalized[$key] = $resolved[0];
+            $resolvedGroups[$key] = $resolved[0];
+        }
+
+        if (
+            ! isset($errors['options.thickness'], $errors['options.texture'])
+            && isset($resolvedGroups['thickness'], $resolvedGroups['texture'])
+        ) {
+            $textureValue = collect($groups['texture']['values'] ?? [])
+                ->first(fn (mixed $value): bool => is_array($value)
+                    && $this->normalizeOptionValue($value['code'] ?? '')
+                        === $this->normalizeOptionValue($resolvedGroups['texture']));
+
+            if (
+                ! is_array($textureValue)
+                || $this->normalizeOptionValue($textureValue['thickness_code'] ?? '')
+                    !== $this->normalizeOptionValue($resolvedGroups['thickness'])
+            ) {
+                $errors['options.texture'] = 'Select a texture from the selected thickness.';
+            }
         }
 
         $specialFinishAllowed = $this->allowedOptionCodes($groups['special_finish'] ?? []);
@@ -719,7 +740,7 @@ class PricingService
         }
 
         if (
-            in_array($code, ['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut'], true)
+            in_array($code, ['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut', 'emboss'], true)
         ) {
             $values = is_array($options['special_finish'] ?? null)
                 ? $options['special_finish']
@@ -818,6 +839,7 @@ class PricingService
             '滚边' => 'edge_coloring',
             '对裱' => 'double_mounting',
             '异形模切' => 'custom_die_cut',
+            '凹凸' => 'emboss',
             default => match ($normalizedName) {
                 'rounded', 'rounded-corners', 'round' => 'rounded_corners',
                 default => $normalizedName,

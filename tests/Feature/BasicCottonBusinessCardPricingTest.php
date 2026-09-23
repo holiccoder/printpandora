@@ -160,7 +160,8 @@ class BasicCottonBusinessCardPricingTest extends TestCase
         return [
             'sizes' => 'standard',
             'corners' => $corners,
-            'texture' => 'wild_450gsm',
+            'thickness' => '300_360g',
+            'texture' => 'wild_300gsm_white',
             'special_finish' => $specialFinish,
         ];
     }
@@ -194,9 +195,20 @@ class BasicCottonBusinessCardPricingTest extends TestCase
                             ['code' => 'rounded', 'label' => 'Rounded'],
                         ],
                     ],
+                    'thickness' => [
+                        'values' => [
+                            ['code' => '300_360g', 'label' => '300-360g'],
+                            ['code' => '360_450g', 'label' => '360-450g'],
+                            ['code' => '450_700g', 'label' => '450-700g'],
+                        ],
+                    ],
                     'texture' => [
                         'values' => [
-                            ['code' => 'wild_450gsm', 'label' => 'Wild 450gsm'],
+                            [
+                                'code' => 'wild_300gsm_white',
+                                'label' => 'Wilde (300 GSM) · White',
+                                'thickness_code' => '300_360g',
+                            ],
                         ],
                     ],
                     'special_finish' => [

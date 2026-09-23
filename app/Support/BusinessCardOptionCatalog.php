@@ -94,28 +94,547 @@ final class BusinessCardOptionCatalog
     ];
 
     /**
-     * Cotton texture artwork is shared by all five cotton-card products.
-     * Keep the source PNG path in the contract; the storefront image resolver
-     * serves the matching WebP derivative when it is available.
+     * Cotton special-finish semantic diagrams are shared by all five
+     * cotton-card products and are used only as option swatches.
      *
-     * @var array<int, array{code: string, label: string, image: string}>
+     * @var array<string, string>
+     */
+    private const COTTON_SPECIAL_FINISH_SWATCH_IMAGES = [
+        'laser' => '/images/products/cotton/special-finishes/laser-diagram.png',
+        'edge_coloring' => '/images/products/cotton/special-finishes/edge-coloring-diagram.png',
+        'double_mounting' => '/images/products/cotton/special-finishes/double-mounting-diagram.png',
+        'custom_die_cut' => '/images/products/cotton/special-finishes/custom-die-cut-diagram.png',
+        'emboss' => '/images/products/cotton/special-finishes/emboss-deboss-diagram.png',
+    ];
+
+    /**
+     * Supplied primary artwork for cotton special finishes. Custom die-cut
+     * intentionally has no gallery override until a primary image is supplied.
+     *
+     * @var array<string, string>
+     */
+    private const COTTON_SPECIAL_FINISH_PRIMARY_IMAGES = [
+        'laser' => '/images/products/cotton/special-finishes/laser.png',
+        'edge_coloring' => '/images/products/cotton/special-finishes/edge-coloring.png',
+        'double_mounting' => '/images/products/cotton/special-finishes/double-mounting.png',
+        'emboss' => '/images/products/cotton/special-finishes/emboss.png',
+    ];
+
+    /**
+     * Cotton thicknesses are shared by all five cotton-card products.
+     *
+     * @var list<array{code: string, label: string}>
+     */
+    private const COTTON_THICKNESSES = [
+        ['code' => '300_360g', 'label' => '300-360g'],
+        ['code' => '360_450g', 'label' => '360-450g'],
+        ['code' => '450_700g', 'label' => '450-700g'],
+    ];
+
+    /**
+     * English storefront names for the supplied cotton-paper brands.
+     *
+     * @var array<string, string>
+     */
+    private const COTTON_TEXTURE_LABELS = [
+        '维尔德(300GSM)' => 'Wilde (300 GSM)',
+        '蒙特利卡(360GSM)' => 'Montericca (360 GSM)',
+        '卡昆滑面(300GSM)' => 'Kakun Smooth (300 GSM)',
+        '冠雅(352GSM)' => 'Guanya (352 GSM)',
+        '臻皮(360GSM)' => 'Zhenpi (360 GSM)',
+        '维尔德(450GSM)' => 'Wilde (450 GSM)',
+        '凝柔(420GSM)' => 'Ningrou (420 GSM)',
+        '卡昆滑面(450GSM)' => 'Kakun Smooth (450 GSM)',
+        '冠雅(446GSM)' => 'Guanya (446 GSM)',
+        '蒙特利卡(530GSM)' => 'Montericca (530 GSM)',
+        '凝柔(523g)' => 'Ningrou (523 GSM)',
+        '海蒂(550GSM)' => 'Haiti (550 GSM)',
+        '艾维克(550GSM)' => 'Aweike (550 GSM)',
+        '新冠雅(550GSM)' => 'New Guanya (550 GSM)',
+        '素墨(700GSM)' => 'Sumei (700 GSM)',
+        '爵士金属(500GSM)' => 'Jazz Metal (500 GSM)',
+        '冰白珠光(500GSM)' => 'Ice White Pearl (500 GSM)',
+        '松卡(600GSM)' => 'Songka (600 GSM)',
+        '极墨(680GSM)' => 'Extreme Ink (680 GSM)',
+        '丝感古典白(685GSM)' => 'Silk Classic White (685 GSM)',
+    ];
+
+    /**
+     * English storefront names for cotton-paper colors and finishes.
+     *
+     * @var array<string, string>
+     */
+    private const COTTON_COLOR_LABELS = [
+        '白色' => 'White',
+        '米色' => 'Beige',
+        '棉白' => 'Cotton White',
+        '土灰' => 'Earth Gray',
+        '深蓝' => 'Deep Blue',
+        '青色' => 'Teal',
+        '黑色' => 'Black',
+        '深红' => 'Deep Red',
+        '靛蓝' => 'Indigo',
+        '犀牛纹' => 'Rhino Texture',
+        '蜥蜴纹黑色' => 'Black Lizard Texture',
+        '浅棕' => 'Light Brown',
+        '深咖' => 'Dark Coffee',
+        '奶黄' => 'Cream Yellow',
+        '浅灰' => 'Light Gray',
+        '巧克力' => 'Chocolate',
+        '雪白' => 'Snow White',
+        '超白' => 'Ultra White',
+        '牛皮' => 'Kraft',
+        '坚毅黑' => 'Strong Black',
+        '大红' => 'Bright Red',
+        '深灰' => 'Dark Gray',
+        '牛仔色' => 'Denim',
+        '拉丝金' => 'Brushed Gold',
+        '拉丝银' => 'Brushed Silver',
+        '淡黄色' => 'Pale Yellow',
+    ];
+
+    /**
+     * Cotton paper sample artwork is shared by all five cotton-card
+     * products. Texture values are deliberately one value per paper/color
+     * combination so the selected value can map directly to a gallery rule.
+     * The storefront groups these values back into paper cards and color
+     * circles using the metadata below.
+     *
+     * @var list<array{
+     *     code: string,
+     *     thickness_code: string,
+     *     texture_code: string,
+     *     texture_label: string,
+     *     color_code: string,
+     *     color_label: string,
+     *     image: string,
+     *     color_swatch_image: string
+     * }>
      */
     private const COTTON_TEXTURES = [
-        ['code' => 'wild_450gsm', 'label' => 'Wild 450gsm', 'image' => '/images/products/cotton/textures/01-wild-450gsm.png'],
-        ['code' => 'classic_crest_natural_white', 'label' => 'Classic Crest Natural White', 'image' => '/images/products/cotton/textures/02-classic-crest-natural-white.png'],
-        ['code' => 'materica_cotton_white_530gsm', 'label' => 'Materica Cotton White 530gsm', 'image' => '/images/products/cotton/textures/03-materica-cotton-white-530gsm.png'],
-        ['code' => 'classic_crest_white', 'label' => 'Classic Crest White', 'image' => '/images/products/cotton/textures/04-classic-crest-white.png'],
-        ['code' => 'vent_nouveau_cream', 'label' => 'Vent Nouveau Cream', 'image' => '/images/products/cotton/textures/05-vent-nouveau-cream.png'],
-        ['code' => 'vent_nouveau_light_gray', 'label' => 'Vent Nouveau Light Gray', 'image' => '/images/products/cotton/textures/06-vent-nouveau-light-gray.png'],
-        ['code' => 'italian_deep_black_680gsm', 'label' => 'Italian Deep Black 680gsm', 'image' => '/images/products/cotton/textures/07-italian-deep-black-680gsm.png'],
-        ['code' => 'vent_nouveau_white', 'label' => 'Vent Nouveau White', 'image' => '/images/products/cotton/textures/08-vent-nouveau-white.png'],
-        ['code' => 'vent_nouveau_warm_gray', 'label' => 'Vent Nouveau Warm Gray', 'image' => '/images/products/cotton/textures/09-vent-nouveau-warm-gray.png'],
-        ['code' => 'materica_paper_360gsm_black', 'label' => 'Materica Paper 360gsm Black', 'image' => '/images/products/cotton/textures/10-materica-paper-360gsm-black.png'],
-        ['code' => 'vent_nouveau_cream_v2', 'label' => 'Vent Nouveau Cream V2', 'image' => '/images/products/cotton/textures/11-vent-nouveau-cream-v2.png'],
-        ['code' => 'classic_crest_natural_white_dark_texture', 'label' => 'Classic Crest Natural White Dark Texture', 'image' => '/images/products/cotton/textures/12-classic-crest-natural-white-dark-texture.png'],
-        ['code' => 'italian_materica_specialty_paper', 'label' => 'Italian Materica Specialty Paper', 'image' => '/images/products/cotton/textures/13-italian-materica-specialty-paper.png'],
-        ['code' => 'vent_nouveau_brown', 'label' => 'Vent Nouveau Brown', 'image' => '/images/products/cotton/textures/14-vent-nouveau-brown.png'],
-        ['code' => 'fedrigoni_sirio_white_480gsm', 'label' => 'Fedrigoni Sirio White 480gsm', 'image' => '/images/products/cotton/textures/15-fedrigoni-sirio-white-480gsm.png'],
+        [
+            'code' => 'wild_300gsm_white',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'wild_300gsm',
+            'texture_label' => '维尔德(300GSM)',
+            'color_code' => 'white',
+            'color_label' => '白色',
+            'image' => '/images/products/cotton/paper-samples/wild-300gsm-white.png',
+        ],
+        [
+            'code' => 'montericca_360gsm_beige',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'montericca_360gsm',
+            'texture_label' => '蒙特利卡(360GSM)',
+            'color_code' => 'beige',
+            'color_label' => '米色',
+            'image' => '/images/products/cotton/paper-samples/montericca-360gsm-beige.png',
+        ],
+        [
+            'code' => 'montericca_360gsm_cotton_white',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'montericca_360gsm',
+            'texture_label' => '蒙特利卡(360GSM)',
+            'color_code' => 'cotton_white',
+            'color_label' => '棉白',
+            'image' => '/images/products/cotton/paper-samples/montericca-360gsm-cotton-white.png',
+        ],
+        [
+            'code' => 'montericca_360gsm_earth_gray',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'montericca_360gsm',
+            'texture_label' => '蒙特利卡(360GSM)',
+            'color_code' => 'earth_gray',
+            'color_label' => '土灰',
+            'image' => '/images/products/cotton/paper-samples/montericca-360gsm-earth-gray.png',
+        ],
+        [
+            'code' => 'montericca_360gsm_deep_blue',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'montericca_360gsm',
+            'texture_label' => '蒙特利卡(360GSM)',
+            'color_code' => 'deep_blue',
+            'color_label' => '深蓝',
+            'image' => '/images/products/cotton/paper-samples/montericca-360gsm-deep-blue.png',
+        ],
+        [
+            'code' => 'montericca_360gsm_teal_brown',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'montericca_360gsm',
+            'texture_label' => '蒙特利卡(360GSM)',
+            'color_code' => 'teal_brown',
+            'color_label' => '青色',
+            'image' => '/images/products/cotton/paper-samples/montericca-360gsm-teal-brown.png',
+        ],
+        [
+            'code' => 'montericca_360gsm_black',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'montericca_360gsm',
+            'texture_label' => '蒙特利卡(360GSM)',
+            'color_code' => 'black',
+            'color_label' => '黑色',
+            'image' => '/images/products/cotton/paper-samples/montericca-360gsm-black.png',
+        ],
+        [
+            'code' => 'kakun_smooth_300gsm_deep_red',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'kakun_smooth_300gsm',
+            'texture_label' => '卡昆滑面(300GSM)',
+            'color_code' => 'deep_red',
+            'color_label' => '深红',
+            'image' => '/images/products/cotton/paper-samples/kakun-smooth-300gsm-deep-red.png',
+        ],
+        [
+            'code' => 'kakun_smooth_300gsm_indigo',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'kakun_smooth_300gsm',
+            'texture_label' => '卡昆滑面(300GSM)',
+            'color_code' => 'indigo',
+            'color_label' => '靛蓝',
+            'image' => '/images/products/cotton/paper-samples/kakun-smooth-300gsm-indigo.png',
+        ],
+        [
+            'code' => 'kakun_smooth_300gsm_deep_blue',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'kakun_smooth_300gsm',
+            'texture_label' => '卡昆滑面(300GSM)',
+            'color_code' => 'deep_blue',
+            'color_label' => '深蓝',
+            'image' => '/images/products/cotton/paper-samples/kakun-smooth-300gsm-deep-blue.png',
+        ],
+        [
+            'code' => 'guanya_352gsm_black',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'guanya_352gsm',
+            'texture_label' => '冠雅(352GSM)',
+            'color_code' => 'black',
+            'color_label' => '黑色',
+            'image' => '/images/products/cotton/paper-samples/guanya-352gsm-black.png',
+        ],
+        [
+            'code' => 'zhenpi_360gsm_rhinoceros',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'zhenpi_360gsm',
+            'texture_label' => '臻皮(360GSM)',
+            'color_code' => 'rhinoceros',
+            'color_label' => '犀牛纹',
+            'image' => '/images/products/cotton/paper-samples/zhenpi-360gsm-rhinoceros.png',
+        ],
+        [
+            'code' => 'zhenpi_360gsm_lizard_black',
+            'thickness_code' => '300_360g',
+            'texture_code' => 'zhenpi_360gsm',
+            'texture_label' => '臻皮(360GSM)',
+            'color_code' => 'lizard_black',
+            'color_label' => '蜥蜴纹黑色',
+            'image' => '/images/products/cotton/paper-samples/zhenpi-360gsm-lizard-black.png',
+        ],
+        [
+            'code' => 'wild_450gsm_white',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'wild_450gsm',
+            'texture_label' => '维尔德(450GSM)',
+            'color_code' => 'white',
+            'color_label' => '白色',
+            'image' => '/images/products/cotton/paper-samples/wild-450gsm-white.png',
+        ],
+        [
+            'code' => 'wild_450gsm_light_brown',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'wild_450gsm',
+            'texture_label' => '维尔德(450GSM)',
+            'color_code' => 'light_brown',
+            'color_label' => '浅棕',
+            'image' => '/images/products/cotton/paper-samples/wild-450gsm-light-brown.png',
+        ],
+        [
+            'code' => 'wild_450gsm_dark_coffee',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'wild_450gsm',
+            'texture_label' => '维尔德(450GSM)',
+            'color_code' => 'dark_coffee',
+            'color_label' => '深咖',
+            'image' => '/images/products/cotton/paper-samples/wild-450gsm-dark-coffee.png',
+        ],
+        [
+            'code' => 'wild_450gsm_black',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'wild_450gsm',
+            'texture_label' => '维尔德(450GSM)',
+            'color_code' => 'black',
+            'color_label' => '黑色',
+            'image' => '/images/products/cotton/paper-samples/wild-450gsm-black.png',
+        ],
+        [
+            'code' => 'ningrou_420gsm_cream_yellow',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'ningrou_420gsm',
+            'texture_label' => '凝柔(420GSM)',
+            'color_code' => 'cream_yellow',
+            'color_label' => '奶黄',
+            'image' => '/images/products/cotton/paper-samples/ningrou-420gsm-cream-yellow.png',
+        ],
+        [
+            'code' => 'ningrou_420gsm_light_gray',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'ningrou_420gsm',
+            'texture_label' => '凝柔(420GSM)',
+            'color_code' => 'light_gray',
+            'color_label' => '浅灰',
+            'image' => '/images/products/cotton/paper-samples/ningrou-420gsm-light-gray.png',
+        ],
+        [
+            'code' => 'ningrou_420gsm_white',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'ningrou_420gsm',
+            'texture_label' => '凝柔(420GSM)',
+            'color_code' => 'white',
+            'color_label' => '白色',
+            'image' => '/images/products/cotton/paper-samples/ningrou-420gsm-white.png',
+        ],
+        [
+            'code' => 'ningrou_420gsm_indigo',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'ningrou_420gsm',
+            'texture_label' => '凝柔(420GSM)',
+            'color_code' => 'indigo',
+            'color_label' => '靛蓝',
+            'image' => '/images/products/cotton/paper-samples/ningrou-420gsm-indigo.png',
+        ],
+        [
+            'code' => 'ningrou_420gsm_chocolate',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'ningrou_420gsm',
+            'texture_label' => '凝柔(420GSM)',
+            'color_code' => 'chocolate',
+            'color_label' => '巧克力',
+            'image' => '/images/products/cotton/paper-samples/ningrou-420gsm-chocolate.png',
+        ],
+        [
+            'code' => 'kakun_smooth_450gsm_black',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'kakun_smooth_450gsm',
+            'texture_label' => '卡昆滑面(450GSM)',
+            'color_code' => 'black',
+            'color_label' => '黑色',
+            'image' => '/images/products/cotton/paper-samples/kakun-smooth-450gsm-black.png',
+        ],
+        [
+            'code' => 'kakun_smooth_450gsm_snow_white',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'kakun_smooth_450gsm',
+            'texture_label' => '卡昆滑面(450GSM)',
+            'color_code' => 'snow_white',
+            'color_label' => '雪白',
+            'image' => '/images/products/cotton/paper-samples/kakun-smooth-450gsm-snow-white.png',
+        ],
+        [
+            'code' => 'guanya_446gsm_ultra_white',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'guanya_446gsm',
+            'texture_label' => '冠雅(446GSM)',
+            'color_code' => 'ultra_white',
+            'color_label' => '超白',
+            'image' => '/images/products/cotton/paper-samples/guanya-446gsm-ultra-white.png',
+        ],
+        [
+            'code' => 'guanya_446gsm_cream_yellow',
+            'thickness_code' => '360_450g',
+            'texture_code' => 'guanya_446gsm',
+            'texture_label' => '冠雅(446GSM)',
+            'color_code' => 'cream_yellow',
+            'color_label' => '奶黄',
+            'image' => '/images/products/cotton/paper-samples/guanya-446gsm-cream-yellow.png',
+        ],
+        [
+            'code' => 'montericca_530gsm_cotton_white',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'montericca_530gsm',
+            'texture_label' => '蒙特利卡(530GSM)',
+            'color_code' => 'cotton_white',
+            'color_label' => '棉白',
+            'image' => '/images/products/cotton/paper-samples/montericca-530gsm-cotton-white.png',
+        ],
+        [
+            'code' => 'ningrou_523g_white',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'ningrou_523g',
+            'texture_label' => '凝柔(523g)',
+            'color_code' => 'white',
+            'color_label' => '白色',
+            'image' => '/images/products/cotton/paper-samples/ningrou-523g-white.png',
+        ],
+        [
+            'code' => 'haiti_550gsm_white',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'haiti_550gsm',
+            'texture_label' => '海蒂(550GSM)',
+            'color_code' => 'white',
+            'color_label' => '白色',
+            'image' => '/images/products/cotton/paper-samples/haiti-550gsm-white.png',
+        ],
+        [
+            'code' => 'haiti_550gsm_black',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'haiti_550gsm',
+            'texture_label' => '海蒂(550GSM)',
+            'color_code' => 'black',
+            'color_label' => '黑色',
+            'image' => '/images/products/cotton/paper-samples/haiti-550gsm-black.png',
+        ],
+        [
+            'code' => 'haiti_550gsm_kraft',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'haiti_550gsm',
+            'texture_label' => '海蒂(550GSM)',
+            'color_code' => 'kraft',
+            'color_label' => '牛皮',
+            'image' => '/images/products/cotton/paper-samples/haiti-550gsm-kraft.png',
+        ],
+        [
+            'code' => 'aweike_550gsm_white',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'aweike_550gsm',
+            'texture_label' => '艾维克(550GSM)',
+            'color_code' => 'white',
+            'color_label' => '白色',
+            'image' => '/images/products/cotton/paper-samples/aweike-550gsm-white.png',
+        ],
+        [
+            'code' => 'aweike_550gsm_strong_black',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'aweike_550gsm',
+            'texture_label' => '艾维克(550GSM)',
+            'color_code' => 'strong_black',
+            'color_label' => '坚毅黑',
+            'image' => '/images/products/cotton/paper-samples/aweike-550gsm-strong-black.png',
+        ],
+        [
+            'code' => 'new_guanya_550gsm_cream_yellow',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'new_guanya_550gsm',
+            'texture_label' => '新冠雅(550GSM)',
+            'color_code' => 'cream_yellow',
+            'color_label' => '奶黄',
+            'image' => '/images/products/cotton/paper-samples/new-guanya-550gsm-cream-yellow.png',
+        ],
+        [
+            'code' => 'new_guanya_550gsm_ultra_white',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'new_guanya_550gsm',
+            'texture_label' => '新冠雅(550GSM)',
+            'color_code' => 'ultra_white',
+            'color_label' => '超白',
+            'image' => '/images/products/cotton/paper-samples/new-guanya-550gsm-ultra-white.png',
+        ],
+        [
+            'code' => 'sumei_700gsm_red',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'sumei_700gsm',
+            'texture_label' => '素墨(700GSM)',
+            'color_code' => 'red',
+            'color_label' => '大红',
+            'image' => '/images/products/cotton/paper-samples/sumei-700gsm-red.png',
+        ],
+        [
+            'code' => 'sumei_700gsm_white',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'sumei_700gsm',
+            'texture_label' => '素墨(700GSM)',
+            'color_code' => 'white',
+            'color_label' => '白色',
+            'image' => '/images/products/cotton/paper-samples/sumei-700gsm-white.png',
+        ],
+        [
+            'code' => 'sumei_700gsm_deep_blue',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'sumei_700gsm',
+            'texture_label' => '素墨(700GSM)',
+            'color_code' => 'deep_blue',
+            'color_label' => '深蓝',
+            'image' => '/images/products/cotton/paper-samples/sumei-700gsm-deep-blue.png',
+        ],
+        [
+            'code' => 'sumei_700gsm_dark_gray',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'sumei_700gsm',
+            'texture_label' => '素墨(700GSM)',
+            'color_code' => 'dark_gray',
+            'color_label' => '深灰',
+            'image' => '/images/products/cotton/paper-samples/sumei-700gsm-dark-gray.png',
+        ],
+        [
+            'code' => 'sumei_700gsm_denim',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'sumei_700gsm',
+            'texture_label' => '素墨(700GSM)',
+            'color_code' => 'denim',
+            'color_label' => '牛仔色',
+            'image' => '/images/products/cotton/paper-samples/sumei-700gsm-denim.png',
+        ],
+        [
+            'code' => 'sumei_700gsm_black',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'sumei_700gsm',
+            'texture_label' => '素墨(700GSM)',
+            'color_code' => 'black',
+            'color_label' => '黑色',
+            'image' => '/images/products/cotton/paper-samples/sumei-700gsm-black.png',
+        ],
+        [
+            'code' => 'jazz_metal_500gsm_brushed_gold',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'jazz_metal_500gsm',
+            'texture_label' => '爵士金属(500GSM)',
+            'color_code' => 'brushed_gold',
+            'color_label' => '拉丝金',
+            'image' => '/images/products/cotton/paper-samples/jazz-metal-500gsm-brushed-gold.png',
+        ],
+        [
+            'code' => 'jazz_metal_500gsm_brushed_silver',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'jazz_metal_500gsm',
+            'texture_label' => '爵士金属(500GSM)',
+            'color_code' => 'brushed_silver',
+            'color_label' => '拉丝银',
+            'image' => '/images/products/cotton/paper-samples/jazz-metal-500gsm-brushed-silver.png',
+        ],
+        [
+            'code' => 'ice_white_pearl_500gsm_white',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'ice_white_pearl_500gsm',
+            'texture_label' => '冰白珠光(500GSM)',
+            'color_code' => 'white',
+            'color_label' => '白色',
+            'image' => '/images/products/cotton/paper-samples/ice-white-pearl-500gsm-white.png',
+        ],
+        [
+            'code' => 'songka_600gsm_pale_yellow',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'songka_600gsm',
+            'texture_label' => '松卡(600GSM)',
+            'color_code' => 'pale_yellow',
+            'color_label' => '淡黄色',
+            'image' => '/images/products/cotton/paper-samples/songka-600gsm-pale-yellow.png',
+        ],
+        [
+            'code' => 'extreme_ink_680gsm_black',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'extreme_ink_680gsm',
+            'texture_label' => '极墨(680GSM)',
+            'color_code' => 'black',
+            'color_label' => '黑色',
+            'image' => '/images/products/cotton/paper-samples/extreme-ink-680gsm-black.png',
+        ],
+        [
+            'code' => 'silk_classic_white_685gsm_white',
+            'thickness_code' => '450_700g',
+            'texture_code' => 'silk_classic_white_685gsm',
+            'texture_label' => '丝感古典白(685GSM)',
+            'color_code' => 'white',
+            'color_label' => '白色',
+            'image' => '/images/products/cotton/paper-samples/silk-classic-white-685gsm-white.png',
+        ],
     ];
 
     /**
@@ -196,10 +715,11 @@ final class BusinessCardOptionCatalog
     /**
      * Add the shared cotton texture galleries ahead of less-specific rules.
      * A texture gallery must win over the existing rounded-corner gallery when
-     * both options are selected.
+     * both options are selected. Cotton special-finish diagrams remain option
+     * swatches; supplied finish artwork is used for finish gallery primaries.
      *
-     * Obsolete texture, finish, NFC, and finish-side rules are removed while
-     * unrelated product-specific rules remain intact.
+     * Obsolete texture, special-finish, NFC, and finish-side rules are removed
+     * while unrelated product-specific rules remain intact.
      *
      * @param  array<int, mixed>  $rules
      * @return array<int, array<string, mixed>>
@@ -217,7 +737,8 @@ final class BusinessCardOptionCatalog
             $match = is_array($rule['match'] ?? null) ? $rule['match'] : [];
 
             if (
-                array_key_exists('texture', $match)
+                array_key_exists('thickness', $match)
+                || array_key_exists('texture', $match)
                 || array_key_exists('special_finish', $match)
                 || array_key_exists('special_finish_on_sides', $match)
                 || array_key_exists('with_nfc', $match)
@@ -239,15 +760,30 @@ final class BusinessCardOptionCatalog
         $textureRules = array_map(
             static fn (array $texture): array => [
                 'id' => "texture_{$texture['code']}",
-                'match' => ['texture' => $texture['code']],
+                'match' => [
+                    'thickness' => $texture['thickness_code'],
+                    'texture' => $texture['code'],
+                ],
                 'images' => [$texture['image']],
                 'primary' => $texture['image'],
             ],
             self::COTTON_TEXTURES,
         );
 
+        $specialFinishRules = array_map(
+            static fn (string $code, string $image): array => [
+                'id' => "special_finish_{$code}",
+                'match' => ['special_finish' => $code],
+                'images' => [$image],
+                'primary' => $image,
+            ],
+            array_keys(self::COTTON_SPECIAL_FINISH_PRIMARY_IMAGES),
+            array_values(self::COTTON_SPECIAL_FINISH_PRIMARY_IMAGES),
+        );
+
         return [
             ...$defaultRules,
+            ...$specialFinishRules,
             ...$textureRules,
             ...$otherRules,
         ];
@@ -609,7 +1145,16 @@ final class BusinessCardOptionCatalog
         return [
             'sizes' => self::group('Size', self::cottonSizeValues($options), 'standard'),
             'corners' => self::group('Corners', self::cornerValues($options), 'square'),
-            'texture' => self::group('Texture', self::cottonTextureValues($options), 'wild_450gsm'),
+            'thickness' => self::group(
+                'Thickness',
+                self::cottonThicknessValues($options),
+                '300_360g',
+            ),
+            'texture' => self::group(
+                'Texture',
+                self::cottonTextureValues($options),
+                'wild_300gsm_white',
+            ),
             'special_finish' => self::group(
                 'Special Finish',
                 self::cottonSpecialFinishValues($options),
@@ -817,6 +1362,26 @@ final class BusinessCardOptionCatalog
                 'swatch_image' => '/images/product-options/business-cards/swatches/rounded.webp',
             ]),
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return list<array<string, mixed>>
+     */
+    private static function cottonThicknessValues(array $options): array
+    {
+        return array_map(
+            fn (array $thickness): array => self::value(
+                $options,
+                'thickness',
+                $thickness['code'],
+                [
+                    'label' => $thickness['label'],
+                    'description' => $thickness['label'].' cotton paper.',
+                ],
+            ),
+            self::COTTON_THICKNESSES,
+        );
     }
 
     /**
@@ -1036,19 +1601,33 @@ final class BusinessCardOptionCatalog
      */
     private static function cottonTextureValues(array $options): array
     {
-        return array_map(
-            static fn (array $texture): array => self::value(
+        return array_map(function (array $texture) use ($options): array {
+            $textureLabel = self::COTTON_TEXTURE_LABELS[$texture['texture_label']]
+                ?? $texture['texture_label'];
+            $colorLabel = self::COTTON_COLOR_LABELS[$texture['color_label']]
+                ?? $texture['color_label'];
+
+            return self::value(
                 $options,
                 'texture',
                 $texture['code'],
                 [
-                    'label' => $texture['label'],
-                    'description' => $texture['label'].' texture.',
+                    'label' => $textureLabel.' · '.$colorLabel,
+                    'description' => $textureLabel.' · '.$colorLabel,
                     'swatch_image' => $texture['image'],
+                    'color_swatch_image' => str_replace(
+                        '/images/products/cotton/paper-samples/',
+                        '/images/products/cotton/paper-samples/swatches/',
+                        (string) preg_replace('/\.png$/', '.webp', $texture['image']),
+                    ),
+                    'thickness_code' => $texture['thickness_code'],
+                    'texture_code' => $texture['texture_code'],
+                    'texture_label' => $textureLabel,
+                    'color_code' => $texture['color_code'],
+                    'color_label' => $colorLabel,
                 ],
-            ),
-            self::COTTON_TEXTURES,
-        );
+            );
+        }, self::COTTON_TEXTURES);
     }
 
     /**
@@ -1059,24 +1638,34 @@ final class BusinessCardOptionCatalog
     {
         $finishes = [
             [
+                'code' => 'laser',
+                'label' => 'Laser',
+                'description' => 'Precision laser cutting or detailing.',
+                'swatch_image' => self::COTTON_SPECIAL_FINISH_SWATCH_IMAGES['laser'],
+            ],
+            [
                 'code' => 'edge_coloring',
                 'label' => 'Edge Coloring',
                 'description' => 'Color applied to the edges of the card.',
+                'swatch_image' => self::COTTON_SPECIAL_FINISH_SWATCH_IMAGES['edge_coloring'],
             ],
             [
                 'code' => 'double_mounting',
                 'label' => 'Double Mounting',
                 'description' => 'Two cotton paper layers mounted together.',
+                'swatch_image' => self::COTTON_SPECIAL_FINISH_SWATCH_IMAGES['double_mounting'],
             ],
             [
                 'code' => 'custom_die_cut',
                 'label' => 'Custom Die-Cut',
                 'description' => 'A custom die-cut card shape.',
+                'swatch_image' => self::COTTON_SPECIAL_FINISH_SWATCH_IMAGES['custom_die_cut'],
             ],
             [
-                'code' => 'laser',
-                'label' => 'Laser',
-                'description' => 'Precision laser cutting or detailing.',
+                'code' => 'emboss',
+                'label' => 'Emboss / Deboss',
+                'description' => 'Raised or recessed detail pressed into the card.',
+                'swatch_image' => self::COTTON_SPECIAL_FINISH_SWATCH_IMAGES['emboss'],
             ],
         ];
 

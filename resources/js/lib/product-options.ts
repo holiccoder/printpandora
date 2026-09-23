@@ -90,19 +90,21 @@ function matches(
  * Return the gallery match key that should win when a product has multiple
  * independent option galleries matching the same selection.
  *
- * PVC cards default to their paper-finish gallery, then follow the last
- * selected option group when that group has a gallery rule of its own.
+ * PVC cards default to their paper-finish gallery. For any product, a clicked
+ * option group can take precedence when that group has a gallery rule of its
+ * own; this lets multi-select groups show the last clicked value.
  */
 export function getPreferredGalleryMatchKey(
     galleries: ProductGallery[],
     isPvcProduct: boolean,
     lastSelectedOptionKey: string | null = null,
 ): string | undefined {
-    if (!isPvcProduct) {
+    const preferredKey =
+        lastSelectedOptionKey ?? (isPvcProduct ? 'paper_finish' : undefined);
+
+    if (!preferredKey) {
         return undefined;
     }
-
-    const preferredKey = lastSelectedOptionKey ?? 'paper_finish';
 
     return galleries.some(
         (gallery) =>
@@ -133,14 +135,37 @@ export function findMatchingGallery(
         (gallery) => !gallery.is_default && matches(gallery.match, selected),
     );
 
+    const preferredValue = preferredMatchKey
+        ? selected[preferredMatchKey]
+        : undefined;
+    const preferredValues = Array.isArray(preferredValue)
+        ? [...preferredValue].reverse()
+        : preferredValue !== undefined
+          ? [preferredValue]
+          : [];
+
     const preferred = preferredMatchKey
-        ? matchingSpecific.find((gallery) =>
-              Object.prototype.hasOwnProperty.call(
-                  gallery.match,
-                  preferredMatchKey,
-              ),
+        ? preferredValues.reduce<ProductGallery | undefined>(
+              (matched, value) =>
+                  matched ??
+                  matchingSpecific.find(
+                      (gallery) =>
+                          Object.prototype.hasOwnProperty.call(
+                              gallery.match,
+                              preferredMatchKey,
+                          ) &&
+                          normalizeOptionValue(
+                              preferredMatchKey,
+                              gallery.match[preferredMatchKey],
+                          ) === normalizeOptionValue(preferredMatchKey, value),
+                  ),
+              undefined,
           )
         : undefined;
+
+    if (preferredMatchKey && preferredValues.length > 0 && !preferred) {
+        return galleries.find((gallery) => gallery.is_default);
+    }
 
     if (preferred) {
         return preferred;

@@ -167,6 +167,130 @@ test('PVC print-code selections prefer their own galleries after the swatch is c
     }
 });
 
+test('cotton paper-sample galleries require both the selected thickness and color variant', () => {
+    const galleries = [
+        {
+            id: 'default',
+            is_default: true,
+            match: {},
+            images: ['/images/products/cotton/basic/basic-01.png'],
+        },
+        {
+            id: 'texture_wild_300gsm_white',
+            match: {
+                thickness: '300_360g',
+                texture: 'wild_300gsm_white',
+            },
+            images: [
+                '/images/products/cotton/paper-samples/wild-300gsm-white.webp',
+            ],
+        },
+    ];
+
+    assert.equal(
+        findMatchingGallery(
+            galleries,
+            {
+                thickness: '300_360g',
+                texture: 'wild_300gsm_white',
+            },
+        )?.id,
+        'texture_wild_300gsm_white',
+    );
+    assert.equal(
+        findMatchingGallery(
+            galleries,
+            {
+                thickness: '450_700g',
+                texture: 'wild_300gsm_white',
+            },
+        )?.id,
+        'default',
+    );
+});
+
+test('cotton special-finish galleries take precedence over paper-sample galleries', () => {
+    const galleries = [
+        {
+            id: 'default',
+            is_default: true,
+            match: {},
+            images: ['/images/products/cotton/basic/basic-01.png'],
+        },
+        {
+            id: 'special_finish_edge_coloring',
+            match: { special_finish: 'edge_coloring' },
+            images: [
+                '/images/products/cotton/special-finishes/edge-coloring.webp',
+            ],
+        },
+        {
+            id: 'texture_wild_300gsm_white',
+            match: {
+                thickness: '300_360g',
+                texture: 'wild_300gsm_white',
+            },
+            images: [
+                '/images/products/cotton/paper-samples/wild-300gsm-white.webp',
+            ],
+        },
+    ];
+
+    assert.equal(
+        findMatchingGallery(galleries, {
+            thickness: '300_360g',
+            texture: 'wild_300gsm_white',
+            special_finish: ['edge_coloring'],
+        })?.id,
+        'special_finish_edge_coloring',
+    );
+});
+
+test('multi-select gallery previews the last clicked matching swatch', () => {
+    const galleries = [
+        {
+            id: 'default',
+            is_default: true,
+            match: {},
+            images: ['/images/products/cotton/basic/basic-01.png'],
+        },
+        {
+            id: 'special_finish_edge_coloring',
+            match: { special_finish: 'edge_coloring' },
+            images: ['/images/products/cotton/special-finishes/edge.webp'],
+        },
+        {
+            id: 'special_finish_laser',
+            match: { special_finish: 'laser' },
+            images: ['/images/products/cotton/special-finishes/laser.webp'],
+        },
+    ];
+
+    const preferredKey = getPreferredGalleryMatchKey(
+        galleries,
+        false,
+        'special_finish',
+    );
+
+    assert.equal(preferredKey, 'special_finish');
+    assert.equal(
+        findMatchingGallery(
+            galleries,
+            { special_finish: ['edge_coloring', 'laser'] },
+            preferredKey,
+        )?.id,
+        'special_finish_laser',
+    );
+    assert.equal(
+        findMatchingGallery(
+            galleries,
+            { special_finish: ['laser', 'edge_coloring'] },
+            preferredKey,
+        )?.id,
+        'special_finish_edge_coloring',
+    );
+});
+
 test('classic standard galleries map every size, finish, corner, and UV selection', () => {
     const config = JSON.parse(
         readFileSync(

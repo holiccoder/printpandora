@@ -20,7 +20,8 @@ class CottonBusinessCardOptionsTest extends TestCase
 
         $baseOptions = [
             'corners' => 'square',
-            'texture' => 'wild_450gsm',
+            'thickness' => '300_360g',
+            'texture' => 'wild_300gsm_white',
             'special_finish' => ['edge_coloring', 'laser'],
             'special_finish_on_sides' => [
                 'edge_coloring' => 'both_sides',
@@ -72,7 +73,8 @@ class CottonBusinessCardOptionsTest extends TestCase
         $validOptions = [
             'sizes' => 'custom',
             'corners' => 'square',
-            'texture' => 'wild_450gsm',
+            'thickness' => '300_360g',
+            'texture' => 'wild_300gsm_white',
             'special_finish' => ['laser'],
         ];
         $defaultedSides = $pricing->validateOptions($product, $validOptions + [
@@ -114,13 +116,30 @@ class CottonBusinessCardOptionsTest extends TestCase
             $pricing->validateOptions($product, [
                 'sizes' => 'standard',
                 'corners' => 'square',
-                'texture' => 'wild_450gsm',
+                'thickness' => '300_360g',
+                'texture' => 'wild_300gsm_white',
                 'special_finish' => [],
             ]);
             $this->fail('An empty cotton special-finish selection was accepted.');
         } catch (ValidationException) {
             $this->addToAssertionCount(1);
         }
+    }
+
+    public function test_texture_must_belong_to_the_selected_thickness(): void
+    {
+        $product = $this->makeProduct();
+        $pricing = app(PricingService::class);
+
+        $this->expectException(ValidationException::class);
+
+        $pricing->validateOptions($product, [
+            'sizes' => 'standard',
+            'corners' => 'square',
+            'thickness' => '450_700g',
+            'texture' => 'wild_300gsm_white',
+            'special_finish' => ['laser'],
+        ]);
     }
 
     private function makeProduct(): Product

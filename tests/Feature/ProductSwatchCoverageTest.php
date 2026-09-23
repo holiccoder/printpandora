@@ -234,6 +234,97 @@ class ProductSwatchCoverageTest extends TestCase
         );
     }
 
+    public function test_cotton_thickness_and_paper_sample_contract_has_complete_assets(): void
+    {
+        $options = BusinessCardOptionCatalog::normalize(
+            'basic-cotton-business-card',
+            [],
+        );
+
+        $this->assertIsArray($options);
+        $this->assertSame(
+            ['300_360g', '360_450g', '450_700g'],
+            data_get($options, 'thickness.values.*.code'),
+        );
+
+        $textureValues = data_get($options, 'texture.values', []);
+        $this->assertCount(47, $textureValues);
+        $this->assertSame(
+            [13, 13, 21],
+            collect($textureValues)
+                ->groupBy('thickness_code')
+                ->map(fn ($values): int => $values->count())
+                ->values()
+                ->all(),
+        );
+
+        foreach ($textureValues as $value) {
+            $image = (string) ($value['swatch_image'] ?? '');
+            $this->assertStringStartsWith(
+                '/images/products/cotton/paper-samples/',
+                $image,
+            );
+            $this->assertFileExists(public_path(ltrim($image, '/')));
+            $this->assertFileExists(
+                public_path(preg_replace('/\.png$/i', '.webp', ltrim($image, '/'))),
+            );
+
+            $colorSwatch = (string) ($value['color_swatch_image'] ?? '');
+            $this->assertStringStartsWith(
+                '/images/products/cotton/paper-samples/swatches/',
+                $colorSwatch,
+            );
+            $this->assertStringEndsWith('.webp', $colorSwatch);
+            $this->assertFileExists(public_path(ltrim($colorSwatch, '/')));
+        }
+    }
+
+    public function test_cotton_special_finish_swatches_have_complete_assets(): void
+    {
+        $options = BusinessCardOptionCatalog::normalize(
+            'basic-cotton-business-card',
+            [],
+        );
+
+        $expectedImages = [
+            '/images/products/cotton/special-finishes/laser-diagram.png',
+            '/images/products/cotton/special-finishes/edge-coloring-diagram.png',
+            '/images/products/cotton/special-finishes/double-mounting-diagram.png',
+            '/images/products/cotton/special-finishes/custom-die-cut-diagram.png',
+            '/images/products/cotton/special-finishes/emboss-deboss-diagram.png',
+        ];
+
+        $this->assertSame(
+            $expectedImages,
+            data_get($options, 'special_finish.values.*.swatch_image'),
+        );
+
+        foreach ($expectedImages as $image) {
+            $sourcePath = public_path(ltrim($image, '/'));
+
+            $this->assertFileExists($sourcePath);
+            $this->assertFileExists(
+                preg_replace('/\.png$/i', '.webp', $sourcePath),
+            );
+        }
+
+        $expectedPrimaryImages = [
+            '/images/products/cotton/special-finishes/laser.png',
+            '/images/products/cotton/special-finishes/edge-coloring.png',
+            '/images/products/cotton/special-finishes/double-mounting.png',
+            '/images/products/cotton/special-finishes/emboss.png',
+        ];
+
+        foreach ($expectedPrimaryImages as $image) {
+            $sourcePath = public_path(ltrim($image, '/'));
+
+            $this->assertFileExists($sourcePath);
+            $this->assertFileExists(
+                preg_replace('/\.png$/i', '.webp', $sourcePath),
+            );
+        }
+    }
+
     public function test_standard_quality_product_assets_have_webp_derivatives(): void
     {
         $paths = [

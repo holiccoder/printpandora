@@ -706,6 +706,75 @@ class BusinessCardProductOptionsTest extends TestCase
             'grand-cotton-business-card',
         ];
 
+        $expectedThicknessCodes = ['300_360g', '360_450g', '450_700g'];
+        $expectedThicknessLabels = ['300-360g', '360-450g', '450-700g'];
+        $expectedTextureCodes = [
+            'wild_300gsm_white',
+            'montericca_360gsm_beige',
+            'montericca_360gsm_cotton_white',
+            'montericca_360gsm_earth_gray',
+            'montericca_360gsm_deep_blue',
+            'montericca_360gsm_teal_brown',
+            'montericca_360gsm_black',
+            'kakun_smooth_300gsm_deep_red',
+            'kakun_smooth_300gsm_indigo',
+            'kakun_smooth_300gsm_deep_blue',
+            'guanya_352gsm_black',
+            'zhenpi_360gsm_rhinoceros',
+            'zhenpi_360gsm_lizard_black',
+            'wild_450gsm_white',
+            'wild_450gsm_light_brown',
+            'wild_450gsm_dark_coffee',
+            'wild_450gsm_black',
+            'ningrou_420gsm_cream_yellow',
+            'ningrou_420gsm_light_gray',
+            'ningrou_420gsm_white',
+            'ningrou_420gsm_indigo',
+            'ningrou_420gsm_chocolate',
+            'kakun_smooth_450gsm_black',
+            'kakun_smooth_450gsm_snow_white',
+            'guanya_446gsm_ultra_white',
+            'guanya_446gsm_cream_yellow',
+            'montericca_530gsm_cotton_white',
+            'ningrou_523g_white',
+            'haiti_550gsm_white',
+            'haiti_550gsm_black',
+            'haiti_550gsm_kraft',
+            'aweike_550gsm_white',
+            'aweike_550gsm_strong_black',
+            'new_guanya_550gsm_cream_yellow',
+            'new_guanya_550gsm_ultra_white',
+            'sumei_700gsm_red',
+            'sumei_700gsm_white',
+            'sumei_700gsm_deep_blue',
+            'sumei_700gsm_dark_gray',
+            'sumei_700gsm_denim',
+            'sumei_700gsm_black',
+            'jazz_metal_500gsm_brushed_gold',
+            'jazz_metal_500gsm_brushed_silver',
+            'ice_white_pearl_500gsm_white',
+            'songka_600gsm_pale_yellow',
+            'extreme_ink_680gsm_black',
+            'silk_classic_white_685gsm_white',
+        ];
+        $expectedTextureImages = array_map(
+            static fn (string $code): string => '/images/products/cotton/paper-samples/'.str_replace('_', '-', $code).'.png',
+            $expectedTextureCodes,
+        );
+        $expectedSpecialFinishImages = [
+            '/images/products/cotton/special-finishes/laser-diagram.png',
+            '/images/products/cotton/special-finishes/edge-coloring-diagram.png',
+            '/images/products/cotton/special-finishes/double-mounting-diagram.png',
+            '/images/products/cotton/special-finishes/custom-die-cut-diagram.png',
+            '/images/products/cotton/special-finishes/emboss-deboss-diagram.png',
+        ];
+        $expectedSpecialFinishPrimaryImages = [
+            '/images/products/cotton/special-finishes/laser.png',
+            '/images/products/cotton/special-finishes/edge-coloring.png',
+            '/images/products/cotton/special-finishes/double-mounting.png',
+            '/images/products/cotton/special-finishes/emboss.png',
+        ];
+
         foreach ($slugs as $slug) {
             Product::create([
                 'name' => $slug,
@@ -750,7 +819,7 @@ class BusinessCardProductOptionsTest extends TestCase
             ];
 
             $this->assertSame(
-                ['sizes', 'corners', 'texture', 'special_finish'],
+                ['sizes', 'corners', 'thickness', 'texture', 'special_finish'],
                 array_keys($options),
             );
             $this->assertSame(
@@ -776,45 +845,35 @@ class BusinessCardProductOptionsTest extends TestCase
             $this->assertSame('2.13', data_get($options, 'sizes.values.2.max_height'));
             $this->assertSame(['square', 'rounded'], data_get($options, 'corners.values.*.code'));
             $this->assertSame(
-                [
-                    'wild_450gsm',
-                    'classic_crest_natural_white',
-                    'materica_cotton_white_530gsm',
-                    'classic_crest_white',
-                    'vent_nouveau_cream',
-                    'vent_nouveau_light_gray',
-                    'italian_deep_black_680gsm',
-                    'vent_nouveau_white',
-                    'vent_nouveau_warm_gray',
-                    'materica_paper_360gsm_black',
-                    'vent_nouveau_cream_v2',
-                    'classic_crest_natural_white_dark_texture',
-                    'italian_materica_specialty_paper',
-                    'vent_nouveau_brown',
-                    'fedrigoni_sirio_white_480gsm',
-                ],
+                $expectedThicknessCodes,
+                data_get($options, 'thickness.values.*.code'),
+            );
+            $this->assertSame(
+                $expectedThicknessLabels,
+                data_get($options, 'thickness.values.*.label'),
+            );
+            $this->assertSame('300_360g', data_get($options, 'thickness.default'));
+            $this->assertSame(
+                $expectedTextureCodes,
                 data_get($options, 'texture.values.*.code'),
             );
             $this->assertSame(
-                [
-                    '/images/products/cotton/textures/01-wild-450gsm.png',
-                    '/images/products/cotton/textures/02-classic-crest-natural-white.png',
-                    '/images/products/cotton/textures/03-materica-cotton-white-530gsm.png',
-                    '/images/products/cotton/textures/04-classic-crest-white.png',
-                    '/images/products/cotton/textures/05-vent-nouveau-cream.png',
-                    '/images/products/cotton/textures/06-vent-nouveau-light-gray.png',
-                    '/images/products/cotton/textures/07-italian-deep-black-680gsm.png',
-                    '/images/products/cotton/textures/08-vent-nouveau-white.png',
-                    '/images/products/cotton/textures/09-vent-nouveau-warm-gray.png',
-                    '/images/products/cotton/textures/10-materica-paper-360gsm-black.png',
-                    '/images/products/cotton/textures/11-vent-nouveau-cream-v2.png',
-                    '/images/products/cotton/textures/12-classic-crest-natural-white-dark-texture.png',
-                    '/images/products/cotton/textures/13-italian-materica-specialty-paper.png',
-                    '/images/products/cotton/textures/14-vent-nouveau-brown.png',
-                    '/images/products/cotton/textures/15-fedrigoni-sirio-white-480gsm.png',
-                ],
+                $expectedTextureImages,
                 data_get($options, 'texture.values.*.swatch_image'),
             );
+            $this->assertSame(
+                [
+                    ...array_fill(0, 13, '300_360g'),
+                    ...array_fill(0, 13, '360_450g'),
+                    ...array_fill(0, 21, '450_700g'),
+                ],
+                data_get($options, 'texture.values.*.thickness_code'),
+            );
+            $this->assertSame(
+                'Wilde (300 GSM) · White',
+                data_get($options, 'texture.values.0.label'),
+            );
+            $this->assertSame('Teal', data_get($options, 'texture.values.5.color_label'));
             foreach (data_get($options, 'texture.values.*.swatch_image', []) as $image) {
                 $this->assertFileExists(
                     public_path(str_replace('.png', '.webp', ltrim($image, '/'))),
@@ -822,36 +881,53 @@ class BusinessCardProductOptionsTest extends TestCase
             }
             $this->assertSame(
                 [
+                    'laser',
                     'edge_coloring',
                     'double_mounting',
                     'custom_die_cut',
-                    'laser',
+                    'emboss',
                 ],
                 data_get($options, 'special_finish.values.*.code'),
+            );
+            $this->assertSame(
+                $expectedSpecialFinishImages,
+                data_get($options, 'special_finish.values.*.swatch_image'),
             );
             $this->assertSame('multi_select', data_get($options, 'special_finish.type'));
             $this->assertSame([], data_get($options, 'special_finish.default'));
             $this->assertSame($gallery, data_get($product->product_config, 'media.gallery'));
             $this->assertSame($gallery[0], $product->featured_image);
-            $this->assertCount(17, data_get($product->product_config, 'media.gallery_rules'));
+            $this->assertCount(53, data_get($product->product_config, 'media.gallery_rules'));
+            $specialFinishRules = collect(data_get($product->product_config, 'media.gallery_rules', []))
+                ->filter(fn (mixed $rule): bool => is_array($rule) && array_key_exists('special_finish', $rule['match'] ?? []))
+                ->values();
+            $this->assertSame(
+                ['laser', 'edge_coloring', 'double_mounting', 'emboss'],
+                $specialFinishRules->pluck('match.special_finish')->all(),
+            );
+            $this->assertSame(
+                $expectedSpecialFinishPrimaryImages,
+                $specialFinishRules->pluck('primary')->all(),
+            );
             $this->assertSame(
                 ['corners' => 'rounded'],
-                data_get($product->product_config, 'media.gallery_rules.16.match'),
-            );
-            $this->assertSame(
-                ['texture' => 'vent_nouveau_cream_v2'],
-                data_get($product->product_config, 'media.gallery_rules.11.match'),
-            );
-            $this->assertSame(
-                '/images/products/cotton/textures/11-vent-nouveau-cream-v2.png',
-                data_get($product->product_config, 'media.gallery_rules.11.primary'),
+                data_get($product->product_config, 'media.gallery_rules.52.match'),
             );
             $textureRules = collect(data_get($product->product_config, 'media.gallery_rules', []))
                 ->filter(fn (mixed $rule): bool => is_array($rule) && array_key_exists('texture', $rule['match'] ?? []));
-            $this->assertCount(15, $textureRules);
+            $this->assertCount(47, $textureRules);
             $this->assertSame(
                 data_get($options, 'texture.values.*.swatch_image'),
                 $textureRules->pluck('primary')->values()->all(),
+            );
+            $sampleRule = $textureRules->firstWhere('id', 'texture_montericca_360gsm_teal_brown');
+            $this->assertSame(
+                ['thickness' => '300_360g', 'texture' => 'montericca_360gsm_teal_brown'],
+                $sampleRule['match'] ?? null,
+            );
+            $this->assertSame(
+                '/images/products/cotton/paper-samples/montericca-360gsm-teal-brown.png',
+                $sampleRule['primary'] ?? null,
             );
             $this->assertSame('Keep this FAQ', data_get($product->product_config, 'faq.0.question'));
             $this->assertSame(
@@ -889,7 +965,7 @@ class BusinessCardProductOptionsTest extends TestCase
 
         $this->assertTrue((bool) data_get($options, 'dynamic_options'));
         $this->assertSame(
-            ['sizes', 'corners', 'texture', 'special_finish'],
+            ['sizes', 'corners', 'thickness', 'texture', 'special_finish'],
             array_column(data_get($options, 'option_groups', []), 'key'),
         );
         $this->assertSame(
@@ -906,13 +982,29 @@ class BusinessCardProductOptionsTest extends TestCase
         $this->assertSame('0.70', data_get($options, 'option_groups.0.values.2.min_width'));
         $this->assertSame('3.54', data_get($options, 'option_groups.0.values.2.max_width'));
         $this->assertSame(
-            ['edge_coloring', 'double_mounting', 'custom_die_cut', 'laser'],
-            array_column(data_get($options, 'option_groups.3.values', []), 'code'),
+            ['300_360g', '360_450g', '450_700g'],
+            array_column(data_get($options, 'option_groups.2.values', []), 'code'),
         );
-        $this->assertSame([], data_get($options, 'option_groups.3.default'));
         $this->assertSame(
-            '/images/products/cotton/textures/01-wild-450gsm.webp',
-            data_get($options, 'option_groups.2.values.0.swatch_image'),
+            '300-360g',
+            data_get($options, 'option_groups.2.values.0.name'),
+        );
+        $this->assertSame(
+                ['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut', 'emboss'],
+            array_column(data_get($options, 'option_groups.4.values', []), 'code'),
+        );
+        $this->assertSame([], data_get($options, 'option_groups.4.default'));
+        $this->assertSame(
+            '/images/products/cotton/paper-samples/wild-300gsm-white.webp',
+            data_get($options, 'option_groups.3.values.0.swatch_image'),
+        );
+        $this->assertSame(
+            'Wilde (300 GSM)',
+            data_get($options, 'option_groups.3.values.0.texture_label'),
+        );
+        $this->assertSame(
+            'White',
+            data_get($options, 'option_groups.3.values.0.color_label'),
         );
     }
 
