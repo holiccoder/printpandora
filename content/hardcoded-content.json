@@ -65,6 +65,10 @@
                     "href": "/flyers-and-brochures"
                 },
                 {
+                    "label": "Showcases",
+                    "href": "/showcases"
+                },
+                {
                     "label": "Design Service",
                     "href": "/business-card-design-service"
                 },
@@ -75,10 +79,6 @@
                 {
                     "label": "Help & FAQs",
                     "href": "/faq-and-help-center"
-                },
-                {
-                    "label": "Showcases",
-                    "href": "/showcases"
                 },
                 {
                     "label": "Designer Partner Program",
