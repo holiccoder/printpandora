@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Admin;
+use App\Models\Category;
+use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -77,6 +80,42 @@ class BusinessCardRoutesTest extends TestCase
                 ));
 
         $this->assertFileExists(public_path(ltrim($shippingImage, '/')));
+    }
+
+    public function test_business_card_landing_exposes_the_latest_three_blog_posts(): void
+    {
+        $admin = Admin::factory()->create();
+        $category = Category::query()->create([
+            'name' => 'Design Tips',
+            'slug' => 'design-tips',
+        ]);
+
+        $createPost = function (string $suffix, int $secondsAgo) use ($admin, $category): Post {
+            return Post::query()->create([
+                'title' => "Business card article {$suffix}",
+                'slug' => "business-card-article-{$suffix}",
+                'body' => '<p>Article body.</p>',
+                'featured_image' => null,
+                'category_id' => $category->id,
+                'admin_id' => $admin->id,
+                'is_published' => true,
+                'published_at' => now()->subSeconds($secondsAgo),
+            ]);
+        };
+
+        $latest = $createPost('latest', 1);
+        $second = $createPost('second', 2);
+        $third = $createPost('third', 3);
+        $createPost('older', 4);
+
+        $this->get('/business-cards')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('shop/business-cards')
+                ->has('blogPosts', 3)
+                ->where('blogPosts.0.id', $latest->id)
+                ->where('blogPosts.1.id', $second->id)
+                ->where('blogPosts.2.id', $third->id));
     }
 
     public function test_public_business_card_path_loads_the_existing_product(): void

@@ -5,6 +5,7 @@ import { Link } from '@inertiajs/react';
 import {
     ArrowRight,
     ChevronRight,
+    FileText,
     Globe,
     Leaf,
     Pencil,
@@ -12,6 +13,8 @@ import {
     Truck,
     Upload,
 } from 'lucide-react';
+import MoreGoodStuffSection from '@/components/product-detail/more-good-stuff-section';
+import type { RecentPost } from '@/components/recent-posts';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
@@ -37,12 +40,10 @@ const finishHref = '/business-cards';
 const designHref = '/business-cards';
 const designIcons = [Pencil, Upload, Globe];
 const perkIcons = [ShieldCheck, Leaf, Truck];
-const crossSellHrefs = [
-    '/postcards',
-    '/postcards',
-    '/stickers-and-labels',
-    '/business-cards',
-];
+
+interface Props {
+    blogPosts: RecentPost[];
+}
 
 /* -------------------------------------------------------------------------- */
 /* Shared section helpers (kept local to the page)                            */
@@ -101,15 +102,37 @@ function ShopLink({
     );
 }
 
+function postExcerpt(body: string, length = 140): string {
+    const text = body.replace(/<[^>]+>/g, '').trim();
+
+    if (text.length <= length) {
+        return text;
+    }
+
+    return `${text.slice(0, length).replace(/\s+\S*$/, '')}…`;
+}
+
+function formatPostDate(iso: string): string {
+    return new Date(iso).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+}
+
 /* -------------------------------------------------------------------------- */
 /* Page                                                                       */
 /* -------------------------------------------------------------------------- */
 
-export default function BusinessCardsLanding() {
+export default function BusinessCardsLanding({ blogPosts }: Props) {
     const c = useContent('business_cards_landing_page') as any;
+    const productDetailContent = useContent('product_detail_page') as any;
     const ACCENT = c.accent_color;
     const WARM_BG = c.warm_bg;
     const sections = c.sections;
+    const moreGoodStuff =
+        productDetailContent.shared_detail_sections.business_cards
+            .more_good_stuff;
 
     const formatCta = (template: string, name: string) =>
         String(template).replace('{name}', name);
@@ -477,22 +500,49 @@ export default function BusinessCardsLanding() {
                         accent={ACCENT}
                     />
                     <ul className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-                        {sections.how_to_use.items.map((tip: any) => (
-                            <li key={tip.title}>
-                                <div className="overflow-hidden rounded-md bg-neutral-100">
-                                    <img
-                                        src={tip.image_url}
-                                        alt={tip.title}
-                                        loading="lazy"
-                                        className="aspect-[4/3] w-full object-cover"
-                                    />
-                                </div>
-                                <h3 className="mt-4 text-base font-bold text-neutral-900">
-                                    {tip.title}
-                                </h3>
-                                <p className="mt-1 text-sm text-neutral-600">
-                                    {tip.blurb}
-                                </p>
+                        {blogPosts.slice(0, 3).map((post) => (
+                            <li key={post.id} className="group">
+                                <Link
+                                    href={`/blog/${post.slug}`}
+                                    className="block overflow-hidden rounded-lg border border-neutral-200 bg-white transition-shadow hover:shadow-md"
+                                >
+                                    {post.featured_image ? (
+                                        <div className="aspect-[4/3] overflow-hidden bg-neutral-100">
+                                            <img
+                                                src={post.featured_image}
+                                                alt={post.title}
+                                                loading="lazy"
+                                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="flex aspect-[4/3] items-center justify-center bg-neutral-100 text-neutral-300">
+                                            <FileText className="size-10" />
+                                        </div>
+                                    )}
+                                    <div className="p-5">
+                                        <span className="inline-block rounded-full bg-[#e6efe9] px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-[#800020] uppercase">
+                                            {post.category.name}
+                                        </span>
+                                        <h3 className="mt-3 text-base leading-snug font-semibold text-neutral-900 group-hover:text-[#800020]">
+                                            {post.title}
+                                        </h3>
+                                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-neutral-600">
+                                            {postExcerpt(post.body)}
+                                        </p>
+                                        <div className="mt-4 flex items-center justify-between gap-3 text-xs text-neutral-500">
+                                            <time>
+                                                {formatPostDate(
+                                                    post.published_at,
+                                                )}
+                                            </time>
+                                            <span className="inline-flex items-center gap-1 font-semibold text-[#800020]">
+                                                Read article
+                                                <ChevronRight className="size-3.5" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </Link>
                             </li>
                         ))}
                     </ul>
@@ -520,52 +570,8 @@ export default function BusinessCardsLanding() {
                 </div>
             </section>
 
-            {/* 10. Cross-sell ---------------------------------------------- */}
-            <section className="border-t border-neutral-100 bg-white">
-                <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
-                    <SectionHeader
-                        title={sections.cross_sell.heading}
-                        subtitle={sections.cross_sell.subtitle}
-                        accent={ACCENT}
-                    />
-                    <ul className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                        {sections.cross_sell.items.map(
-                            (item: any, i: number) => {
-                                const href =
-                                    crossSellHrefs[i] ?? '/business-cards';
-
-                                return (
-                                    <li key={item.name} className="group">
-                                        <Link href={href} className="block">
-                                            <div className="overflow-hidden rounded-md bg-neutral-100">
-                                                <img
-                                                    src={item.image_url}
-                                                    alt={item.name}
-                                                    loading="lazy"
-                                                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                                />
-                                            </div>
-                                            <h3 className="mt-3 text-base font-bold text-neutral-900">
-                                                {item.name}
-                                            </h3>
-                                            <ShopLink
-                                                href={href}
-                                                accent={ACCENT}
-                                            >
-                                                {formatCta(
-                                                    sections.cross_sell
-                                                        .cta_template,
-                                                    item.name,
-                                                )}
-                                            </ShopLink>
-                                        </Link>
-                                    </li>
-                                );
-                            },
-                        )}
-                    </ul>
-                </div>
-            </section>
+            {/* 10. Even more good stuff ------------------------------------ */}
+            <MoreGoodStuffSection content={moreGoodStuff} />
         </StorefrontLayout>
     );
 }

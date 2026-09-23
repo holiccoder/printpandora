@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminAiChatController;
 use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BusinessCardsController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignerPartnerApplicationController;
@@ -103,7 +104,7 @@ Route::get('blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // Product catalog
-Route::inertia('/business-cards', 'shop/business-cards')->name('shop.business-cards');
+Route::get('/business-cards', [BusinessCardsController::class, 'index'])->name('shop.business-cards');
 Route::get('business-cards/{slug}', [ProductController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('shop.business-card.show');
