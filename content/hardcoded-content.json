@@ -69,10 +69,6 @@
                     "href": "/business-card-design-service"
                 },
                 {
-                    "label": "Designer Partner Program",
-                    "href": "/designer-partner-program"
-                },
-                {
                     "label": "Blog",
                     "href": "/blog"
                 },
@@ -83,6 +79,10 @@
                 {
                     "label": "Showcases",
                     "href": "/showcases"
+                },
+                {
+                    "label": "Designer Partner Program",
+                    "href": "/designer-partner-program"
                 }
             ],
             "business_cards_mega_menu": {
