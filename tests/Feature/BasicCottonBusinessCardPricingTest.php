@@ -69,7 +69,7 @@ class BasicCottonBusinessCardPricingTest extends TestCase
         $product = $this->makeProduct();
         $pricing = app(PricingService::class);
 
-        foreach (['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut', 'emboss'] as $finish) {
+        foreach (['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut', 'emboss', 'deboss'] as $finish) {
             $this->assertSame(
                 170.0,
                 $pricing->calculate(
@@ -154,6 +154,7 @@ class BasicCottonBusinessCardPricingTest extends TestCase
                 'double_mounting',
                 'custom_die_cut',
                 'emboss',
+                'deboss',
             ],
             array_column(data_get($options, 'pricing_rules.0.pricing.processes'), 'code'),
         );
@@ -267,6 +268,7 @@ class BasicCottonBusinessCardPricingTest extends TestCase
                             ['code' => 'double_mounting', 'label' => 'Double Mounting'],
                             ['code' => 'custom_die_cut', 'label' => 'Custom Die-Cut'],
                             ['code' => 'emboss', 'label' => 'Emboss / Deboss'],
+                            ['code' => 'deboss', 'label' => 'Deboss'],
                         ],
                     ],
                 ],
@@ -346,6 +348,12 @@ class BasicCottonBusinessCardPricingTest extends TestCase
                 [
                     'name' => 'Emboss / Deboss',
                     'code' => 'emboss',
+                    'markup' => 1,
+                    'rates' => $specialRates,
+                ],
+                [
+                    'name' => 'Deboss',
+                    'code' => 'deboss',
                     'markup' => 1,
                     'rates' => $specialRates,
                 ],

@@ -287,7 +287,8 @@ class ProductSwatchCoverageTest extends TestCase
             '/images/products/cotton/special-finishes/edge-coloring-diagram.png',
             '/images/products/cotton/special-finishes/double-mounting-diagram.png',
             '/images/products/cotton/special-finishes/custom-die-cut-diagram.png',
-            '/images/products/cotton/special-finishes/emboss-deboss-diagram.png',
+            '/images/products/cotton/special-finishes/deboss-diagram.png',
+            '/images/products/cotton/special-finishes/deboss-diagram.png',
         ];
 
         $this->assertSame(
@@ -308,7 +309,9 @@ class ProductSwatchCoverageTest extends TestCase
             '/images/products/cotton/special-finishes/laser.png',
             '/images/products/cotton/special-finishes/edge-coloring.png',
             '/images/products/cotton/special-finishes/double-mounting.png',
+            '/images/products/cotton/special-finishes/custom-die-cut.png',
             '/images/products/cotton/special-finishes/emboss.png',
+            '/images/products/cotton/special-finishes/deboss.png',
         ];
 
         foreach ($expectedPrimaryImages as $image) {

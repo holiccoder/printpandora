@@ -107,11 +107,11 @@ final class BusinessCardOptionCatalog
         'double_mounting' => '/images/products/cotton/special-finishes/double-mounting-diagram.png',
         'custom_die_cut' => '/images/products/cotton/special-finishes/custom-die-cut-diagram.png',
         'emboss' => '/images/products/cotton/special-finishes/emboss-deboss-diagram.png',
+        'deboss' => '/images/products/cotton/special-finishes/deboss-diagram.png',
     ];
 
     /**
-     * Supplied primary artwork for cotton special finishes. Custom die-cut
-     * intentionally has no gallery override until a primary image is supplied.
+     * Supplied primary artwork for cotton special finishes.
      *
      * @var array<string, string>
      */
@@ -119,7 +119,9 @@ final class BusinessCardOptionCatalog
         'laser' => '/images/products/cotton/special-finishes/laser.png',
         'edge_coloring' => '/images/products/cotton/special-finishes/edge-coloring.png',
         'double_mounting' => '/images/products/cotton/special-finishes/double-mounting.png',
+        'custom_die_cut' => '/images/products/cotton/special-finishes/custom-die-cut.png',
         'emboss' => '/images/products/cotton/special-finishes/emboss.png',
+        'deboss' => '/images/products/cotton/special-finishes/deboss.png',
     ];
 
     /**
@@ -1954,6 +1956,12 @@ final class BusinessCardOptionCatalog
                 'label' => 'Emboss / Deboss',
                 'description' => 'Raised or recessed detail pressed into the card.',
                 'swatch_image' => self::COTTON_SPECIAL_FINISH_SWATCH_IMAGES['emboss'],
+            ],
+            [
+                'code' => 'deboss',
+                'label' => 'Deboss',
+                'description' => 'A recessed detail pressed into the card.',
+                'swatch_image' => self::COTTON_SPECIAL_FINISH_SWATCH_IMAGES['deboss'],
             ],
         ];
 

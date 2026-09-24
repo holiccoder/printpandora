@@ -21,7 +21,7 @@ class BusinessCardBuyingOrderingGuideTranslationTest extends TestCase
             $post->title,
         );
         $this->assertSame(
-            '/images/blog/business-card-buying-ordering-guide-featured.webp',
+            '/images/blog/business-card-buying-ordering-guide-featured.png',
             $post->featured_image,
         );
         $this->assertStringContainsString(

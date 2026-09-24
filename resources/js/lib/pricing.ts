@@ -275,11 +275,17 @@ function pricingProcessCode(
     const explicitCode = process.code?.trim();
 
     if (explicitCode) {
-        return normalizeOptionValue(explicitCode);
+        const normalizedCode = normalizeOptionValue(explicitCode);
+
+        return normalizedCode === 'emboss-deboss' ? 'emboss' : normalizedCode;
     }
 
     const name = process.name.trim();
     const normalizedName = normalizeOptionValue(name);
+
+    if (normalizedName === 'emboss-deboss') {
+        return 'emboss';
+    }
 
     switch (name) {
         case '圆角':
@@ -401,6 +407,8 @@ function processIsSelected(
             'edge-coloring',
             'double-mounting',
             'custom-die-cut',
+            'emboss',
+            'deboss',
         ].includes(code)
     ) {
         const values =

@@ -454,6 +454,27 @@ function optionValueCode(value: ProductOptionValue): string {
     );
 }
 
+function accentProductShortDescription(html: string): string {
+    const withAvailableHeading = html.replace(
+        /(<(?:strong|b)\b[^>]*>)(\s*Available(?:\s+finishing)?\s+(?:options?|finishes?)\s*:?\s*)(<\/(?:strong|b)>)/gi,
+        '$1<span class="text-primary">$2</span>$3',
+    );
+
+    return withAvailableHeading
+        .split(/(<[^>]+>)/g)
+        .map((part) => {
+            if (part.startsWith('<')) {
+                return part;
+            }
+
+            return part.replace(
+                /\bshipping\b|\bbusiness(?:\s|&nbsp;|-)days?\b/gi,
+                (match) => `<span class="text-primary">${match}</span>`,
+            );
+        })
+        .join('');
+}
+
 function isColdFoilCode(value?: string | null): boolean {
     return normalizeOptionText(value).startsWith('cold ');
 }
@@ -2270,9 +2291,11 @@ export default function ShopShow({
                             {product.name}
                         </h1>
                         <div
-                            className="mt-4 text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-0 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
+                            className="mt-4 text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_em]:text-primary [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-0 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:text-primary"
                             dangerouslySetInnerHTML={{
-                                __html: product.subtitle ?? '',
+                                __html: accentProductShortDescription(
+                                    product.subtitle ?? '',
+                                ),
                             }}
                         />
                         {startingPriceText && (

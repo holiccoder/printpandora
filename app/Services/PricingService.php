@@ -765,7 +765,7 @@ class PricingService
         }
 
         if (
-            in_array($code, ['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut', 'emboss'], true)
+            in_array($code, ['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut', 'emboss', 'deboss'], true)
         ) {
             $values = is_array($options['special_finish'] ?? null)
                 ? $options['special_finish']
@@ -848,11 +848,17 @@ class PricingService
         $explicitCode = trim((string) ($process['code'] ?? ''));
 
         if ($explicitCode !== '') {
-            return $this->normalizeOptionValue($explicitCode);
+            $normalizedCode = $this->normalizeOptionValue($explicitCode);
+
+            return $normalizedCode === 'emboss_deboss' ? 'emboss' : $normalizedCode;
         }
 
         $name = trim((string) ($process['name'] ?? ''));
         $normalizedName = $this->normalizeOptionValue($name);
+
+        if ($normalizedName === 'emboss_deboss') {
+            return 'emboss';
+        }
 
         return match ($name) {
             '圆角' => 'rounded_corners',

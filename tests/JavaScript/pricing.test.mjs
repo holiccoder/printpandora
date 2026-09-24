@@ -58,6 +58,18 @@ const scenario = {
             markup: 1,
             rates: specialRates,
         })),
+        {
+            name: 'Emboss / Deboss',
+            code: 'emboss',
+            markup: 1,
+            rates: specialRates,
+        },
+        {
+            name: 'Deboss',
+            code: 'deboss',
+            markup: 1,
+            rates: specialRates,
+        },
     ],
 };
 
@@ -147,6 +159,16 @@ test('cotton pricing does not add unselected special finishes', () => {
 
     assert.equal(tiers[0].currentPrice, 170);
     assert.ok(Math.abs(tiers[0].pricePerCard - 0.85002) < 1e-10);
+});
+
+test('cotton pricing applies the deboss process', () => {
+    const tiers = tiersFor({
+        sizes: 'standard',
+        corners: 'square',
+        special_finish: ['deboss'],
+    });
+
+    assert.equal(tiers[0].currentPrice, 170);
 });
 
 const foilRuleScenario = {

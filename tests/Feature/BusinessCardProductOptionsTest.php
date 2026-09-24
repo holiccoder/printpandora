@@ -750,13 +750,16 @@ class BusinessCardProductOptionsTest extends TestCase
             '/images/products/cotton/special-finishes/edge-coloring-diagram.png',
             '/images/products/cotton/special-finishes/double-mounting-diagram.png',
             '/images/products/cotton/special-finishes/custom-die-cut-diagram.png',
-            '/images/products/cotton/special-finishes/emboss-deboss-diagram.png',
+            '/images/products/cotton/special-finishes/deboss-diagram.png',
+            '/images/products/cotton/special-finishes/deboss-diagram.png',
         ];
         $expectedSpecialFinishPrimaryImages = [
             '/images/products/cotton/special-finishes/laser.png',
             '/images/products/cotton/special-finishes/edge-coloring.png',
             '/images/products/cotton/special-finishes/double-mounting.png',
+            '/images/products/cotton/special-finishes/custom-die-cut.png',
             '/images/products/cotton/special-finishes/emboss.png',
+            '/images/products/cotton/special-finishes/deboss.png',
         ];
 
         foreach ($slugs as $slug) {
@@ -870,6 +873,7 @@ class BusinessCardProductOptionsTest extends TestCase
                     'double_mounting',
                     'custom_die_cut',
                     'emboss',
+                    'deboss',
                 ],
                 data_get($options, 'special_finish.values.*.code'),
             );
@@ -917,12 +921,12 @@ class BusinessCardProductOptionsTest extends TestCase
             );
             $this->assertSame($gallery, data_get($product->product_config, 'media.gallery'));
             $this->assertSame($gallery[0], $product->featured_image);
-            $this->assertCount(62, data_get($product->product_config, 'media.gallery_rules'));
+            $this->assertCount(64, data_get($product->product_config, 'media.gallery_rules'));
             $specialFinishRules = collect(data_get($product->product_config, 'media.gallery_rules', []))
                 ->filter(fn (mixed $rule): bool => is_array($rule) && array_key_exists('special_finish', $rule['match'] ?? []))
                 ->values();
             $this->assertSame(
-                ['laser', 'edge_coloring', 'double_mounting', 'emboss'],
+                ['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut', 'emboss', 'deboss'],
                 $specialFinishRules->pluck('match.special_finish')->all(),
             );
             $this->assertSame(
@@ -948,7 +952,7 @@ class BusinessCardProductOptionsTest extends TestCase
             );
             $this->assertSame(
                 ['corners' => 'rounded'],
-                data_get($product->product_config, 'media.gallery_rules.52.match'),
+                data_get($product->product_config, 'media.gallery_rules.54.match'),
             );
             $textureRules = collect(data_get($product->product_config, 'media.gallery_rules', []))
                 ->filter(fn (mixed $rule): bool => is_array($rule) && array_key_exists('texture', $rule['match'] ?? []));
@@ -1027,7 +1031,7 @@ class BusinessCardProductOptionsTest extends TestCase
             data_get($options, 'option_groups.2.values.0.name'),
         );
         $this->assertSame(
-            ['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut', 'emboss'],
+            ['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut', 'emboss', 'deboss'],
             array_column(data_get($options, 'option_groups.4.values', []), 'code'),
         );
         $this->assertSame([], data_get($options, 'option_groups.4.default'));
