@@ -17,6 +17,30 @@ class ShowcasesTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_default_showcase_categories_are_available_in_requested_order(): void
+    {
+        $this->get('/showcases')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->has('categories', 8)
+                ->where('categories.0.name', 'Cotton Paper Business Cards')
+                ->where('categories.0.slug', 'cotton-paper-business-cards')
+                ->where('categories.1.name', 'Premium Business Cards')
+                ->where('categories.1.slug', 'premium-business-cards')
+                ->where('categories.2.name', 'Metal Business Cards')
+                ->where('categories.2.slug', 'metal-business-cards')
+                ->where('categories.3.name', 'Stickers & Labels')
+                ->where('categories.3.slug', 'stickers-labels')
+                ->where('categories.4.name', 'Folded Brochures')
+                ->where('categories.4.slug', 'folded-brochures')
+                ->where('categories.5.name', 'Cards & Postcards')
+                ->where('categories.5.slug', 'cards-and-postcards')
+                ->where('categories.6.name', 'Paper Stocks')
+                ->where('categories.6.slug', 'paper-stocks')
+                ->where('categories.7.name', 'Finishing Techniques')
+                ->where('categories.7.slug', 'finishing-techniques'));
+    }
+
     public function test_imported_showcases_are_available_to_the_frontend(): void
     {
         $showcase = Showcase::query()->first();
