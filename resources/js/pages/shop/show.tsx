@@ -101,6 +101,7 @@ const HOT_FOIL_CODES = new Set([
 ]);
 
 type SpecialFinishSide = 'one_side' | 'both_sides';
+type FoilOptionGroupKey = 'special_finish' | 'hot_foil';
 
 const DEFAULT_SPECIAL_FINISH_SIDE: SpecialFinishSide = 'one_side';
 const SPECIAL_FINISH_SIDE_OPTIONS: Array<{
@@ -121,6 +122,7 @@ const OPTION_GROUP_ORDER: Record<string, number> = {
     paper_finish: 5,
     uv_finish: 6,
     special_finish: 7,
+    hot_foil: 8,
 };
 
 const OPTION_GROUP_FALLBACK_ORDER = Object.keys(OPTION_GROUP_ORDER).length + 1;
@@ -520,6 +522,17 @@ function specialFinishSidesForSelection(
     }, {});
 }
 
+function foilSidesForSelection(
+    options: Record<string, string | string[]>,
+    sides: Record<string, SpecialFinishSide>,
+): Record<string, SpecialFinishSide> {
+    return {
+        ...(specialFinishSidesForSelection(options.special_finish, sides) ??
+            {}),
+        ...(specialFinishSidesForSelection(options.hot_foil, sides) ?? {}),
+    };
+}
+
 function optionAddsTurnaroundTime(option: SelectedOptionDetails): boolean {
     const group = normalizeOptionText(option.groupKey);
     const code = normalizeOptionText(option.code);
@@ -911,8 +924,10 @@ export default function ShopShow({
         (productOptions.pricing_data != null ||
             (productOptions.pricing_rules?.length ?? 0) > 0);
 
-    const dynamicStartQty = hasDynamicPricing
-        ? (productOptions.pricing_data?.rectangle?.startQuantity ??
+    const dynamicRecommendedQty = hasDynamicPricing
+        ? (productOptions.pricing_data?.rectangle?.recommendedQuantity ??
+          productOptions.pricing_rules?.[0]?.pricing.recommendedQuantity ??
+          productOptions.pricing_data?.rectangle?.startQuantity ??
           productOptions.pricing_rules?.[0]?.pricing.startQuantity ??
           null)
         : null;
@@ -1057,7 +1072,7 @@ export default function ShopShow({
         return rec?.qty ?? null;
     })();
 
-    const RECOMMENDED_QTY = dynamicStartQty ?? staticRecommendedQty;
+    const RECOMMENDED_QTY = dynamicRecommendedQty ?? staticRecommendedQty;
 
     const configuredGalleries = useMemo(
         () => productOptions?.galleries ?? [],
@@ -1484,14 +1499,22 @@ export default function ShopShow({
     const cartOptions = useMemo<
         Record<string, string | string[] | Record<string, SpecialFinishSide>>
     >(() => {
-        const sides = specialFinishSidesForSelection(
+        const specialFinishSides = specialFinishSidesForSelection(
             selectedOptions.special_finish,
             selectedSpecialFinishSides,
         );
+        const hotFoilSides = specialFinishSidesForSelection(
+            selectedOptions.hot_foil,
+            selectedSpecialFinishSides,
+        );
 
-        return sides
-            ? { ...selectedOptions, special_finish_on_sides: sides }
-            : selectedOptions;
+        return {
+            ...selectedOptions,
+            ...(specialFinishSides
+                ? { special_finish_on_sides: specialFinishSides }
+                : {}),
+            ...(hotFoilSides ? { hot_foil_on_sides: hotFoilSides } : {}),
+        };
     }, [selectedOptions, selectedSpecialFinishSides]);
 
     const defaultGallery = useMemo(
@@ -1612,10 +1635,10 @@ export default function ShopShow({
                 Math.max(0, cornersIndex),
                 Math.max(0, specialIndex),
                 selectedOptions,
-                specialFinishSidesForSelection(
-                    selectedOptions.special_finish,
+                foilSidesForSelection(
+                    selectedOptions,
                     selectedSpecialFinishSides,
-                ) ?? {},
+                ),
             );
         }
 
@@ -1709,14 +1732,14 @@ export default function ShopShow({
             setSelectedSize(value);
         }
 
-        if (groupKey === 'special_finish') {
-            if (isNoSpecialFinishCode(value)) {
+        if (groupKey === 'special_finish' || groupKey === 'hot_foil') {
+            if (groupKey === 'special_finish' && isNoSpecialFinishCode(value)) {
                 setSelectedSpecialFinishSides({});
             } else if (group.type === 'multi_select') {
                 const selectedValues = Array.isArray(
-                    selectedDynamicOptions.special_finish,
+                    selectedDynamicOptions[groupKey],
                 )
-                    ? selectedDynamicOptions.special_finish
+                    ? selectedDynamicOptions[groupKey]
                     : [];
 
                 setSelectedSpecialFinishSides((current) => {
@@ -1740,6 +1763,13 @@ export default function ShopShow({
 
         setSelectedDynamicOptions((current) => {
             if (group.type !== 'multi_select') {
+                if (group.required === false && current[groupKey] === value) {
+                    return {
+                        ...current,
+                        [groupKey]: '',
+                    };
+                }
+
                 if (groupKey === 'thickness') {
                     const textureGroup = dynamicOptionGroups.find(
                         (item) => item.key === 'texture',
@@ -1827,9 +1857,10 @@ export default function ShopShow({
     function selectSpecialFinishSide(
         side: SpecialFinishSide,
         finishCode: string,
+        groupKey: FoilOptionGroupKey = 'special_finish',
     ) {
         if (usesDynamicOptions) {
-            const selected = selectedDynamicOptions.special_finish;
+            const selected = selectedDynamicOptions[groupKey];
             const selectedValues = Array.isArray(selected)
                 ? selected
                 : selected
@@ -1837,9 +1868,12 @@ export default function ShopShow({
                   : [];
 
             if (!selectedValues.includes(finishCode)) {
-                selectDynamicOption('special_finish', finishCode);
+                selectDynamicOption(groupKey, finishCode);
             }
-        } else if (selectedSpecialFinish !== finishCode) {
+        } else if (
+            groupKey === 'special_finish' &&
+            selectedSpecialFinish !== finishCode
+        ) {
             selectOption('special_finish', finishCode);
         }
 
@@ -2317,6 +2351,7 @@ export default function ShopShow({
                                 customSize={confirmedCustomSize}
                                 onCustomSizeSelect={openCustomSizeModal}
                                 showSpecialFinishSides={!isCottonBusinessCards}
+                                showHotFoilSides={true}
                                 specialFinishSides={selectedSpecialFinishSides}
                                 onSpecialFinishSideChange={
                                     selectSpecialFinishSide
@@ -3585,6 +3620,7 @@ function DynamicOptionGroups({
     customSize,
     onCustomSizeSelect,
     showSpecialFinishSides,
+    showHotFoilSides,
     specialFinishSides,
     onSpecialFinishSideChange,
 }: {
@@ -3594,10 +3630,12 @@ function DynamicOptionGroups({
     customSize?: { width: number; height: number } | null;
     onCustomSizeSelect?: () => void;
     showSpecialFinishSides: boolean;
+    showHotFoilSides: boolean;
     specialFinishSides: Record<string, SpecialFinishSide>;
     onSpecialFinishSideChange: (
         side: SpecialFinishSide,
         finishCode: string,
+        groupKey: FoilOptionGroupKey,
     ) => void;
 }) {
     const [foilTab, setFoilTab] = useState<'hot' | 'cold'>('hot');
@@ -3610,8 +3648,10 @@ function DynamicOptionGroups({
     return (
         <>
             {groups.map((group) => {
+                const isFoilGroup =
+                    group.key === 'special_finish' || group.key === 'hot_foil';
                 const hasColdFoilValues =
-                    group.key === 'special_finish' &&
+                    isFoilGroup &&
                     group.values.some((value) =>
                         optionValueCode(value).startsWith('cold_'),
                     );
@@ -3668,47 +3708,46 @@ function DynamicOptionGroups({
 
                 return (
                     <OptionGroup key={group.key} label={group.label}>
-                        {group.key === 'special_finish' &&
-                            group.type === 'multi_select' && (
-                                <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-neutral-100 pb-2">
-                                    <span className="text-sm font-semibold text-neutral-700">
-                                        {group.values.some((value) =>
-                                            isFoilOption(
-                                                optionValueCode(value),
-                                                value.name,
-                                                value.description,
+                        {isFoilGroup && group.type === 'multi_select' && (
+                            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-neutral-100 pb-2">
+                                <span className="text-sm font-semibold text-neutral-700">
+                                    {group.values.some((value) =>
+                                        isFoilOption(
+                                            optionValueCode(value),
+                                            value.name,
+                                            value.description,
+                                        ),
+                                    )
+                                        ? 'Choose one or more foil colors'
+                                        : 'Choose one or more finishes'}
+                                </span>
+                                {hasColdFoilValues && (
+                                    <div className="flex rounded-md bg-neutral-100 p-0.5">
+                                        {(['hot', 'cold'] as const).map(
+                                            (tab) => (
+                                                <button
+                                                    key={tab}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setFoilTab(tab);
+                                                        markInteracted();
+                                                    }}
+                                                    className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
+                                                        foilTab === tab
+                                                            ? 'bg-white text-[#800020] shadow-sm'
+                                                            : 'text-neutral-500 hover:text-neutral-800'
+                                                    }`}
+                                                >
+                                                    {tab === 'hot'
+                                                        ? 'Hot Foil'
+                                                        : 'Cold Foil'}
+                                                </button>
                                             ),
-                                        )
-                                            ? 'Choose one or more foil colors'
-                                            : 'Choose one or more finishes'}
-                                    </span>
-                                    {hasColdFoilValues && (
-                                        <div className="flex rounded-md bg-neutral-100 p-0.5">
-                                            {(['hot', 'cold'] as const).map(
-                                                (tab) => (
-                                                    <button
-                                                        key={tab}
-                                                        type="button"
-                                                        onClick={() => {
-                                                            setFoilTab(tab);
-                                                            markInteracted();
-                                                        }}
-                                                        className={`rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
-                                                            foilTab === tab
-                                                                ? 'bg-white text-[#800020] shadow-sm'
-                                                                : 'text-neutral-500 hover:text-neutral-800'
-                                                        }`}
-                                                    >
-                                                        {tab === 'hot'
-                                                            ? 'Hot Foil'
-                                                            : 'Cold Foil'}
-                                                    </button>
-                                                ),
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
                         <div
                             className={`grid grid-cols-2 gap-3 ${
                                 group.key === 'texture'
@@ -3738,8 +3777,11 @@ function DynamicOptionGroups({
                                 const isCustomSize =
                                     group.key === 'sizes' && code === 'custom';
                                 const hasSpecialFinishSide =
-                                    showSpecialFinishSides &&
-                                    group.key === 'special_finish' &&
+                                    (group.key === 'special_finish'
+                                        ? showSpecialFinishSides
+                                        : group.key === 'hot_foil'
+                                          ? showHotFoilSides
+                                          : false) &&
                                     !isNoSpecialFinishCode(code);
                                 const isSvg =
                                     typeof swatch === 'string' &&
@@ -3818,6 +3860,9 @@ function DynamicOptionGroups({
                                                 onSpecialFinishSideChange(
                                                     side,
                                                     code,
+                                                    group.key === 'hot_foil'
+                                                        ? 'hot_foil'
+                                                        : 'special_finish',
                                                 );
                                                 markInteracted();
                                             }}

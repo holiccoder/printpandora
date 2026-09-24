@@ -20,11 +20,11 @@ class ShowcaseCategoryResource extends Resource
 
     protected static ?int $navigationSort = 46;
 
-    protected static ?string $modelLabel = 'Showcase category';
+    protected static ?string $modelLabel = '案例分类';
 
-    protected static ?string $pluralModelLabel = 'Showcase categories';
+    protected static ?string $pluralModelLabel = '案例分类';
 
-    protected static ?string $navigationLabel = 'Showcase categories';
+    protected static ?string $navigationLabel = '案例分类';
 
     protected static string|\UnitEnum|null $navigationGroup = '博客管理';
 
@@ -33,18 +33,18 @@ class ShowcaseCategoryResource extends Resource
         return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Name')
+                    ->label('名称')
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
                 Forms\Components\TextInput::make('slug')
-                    ->label('Slug')
+                    ->label('别名')
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
                 Forms\Components\TextInput::make('sort_order')
-                    ->label('Sort order')
+                    ->label('排序')
                     ->numeric()
                     ->integer()
                     ->default(0),
@@ -56,30 +56,30 @@ class ShowcaseCategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Name')
+                    ->label('名称')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('slug')
-                    ->label('Slug')
+                    ->label('别名')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('showcases_count')
                     ->counts('showcases')
-                    ->label('Showcases'),
+                    ->label('案例数'),
                 Tables\Columns\TextColumn::make('sort_order')
-                    ->label('Sort order')
+                    ->label('排序')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('创建时间')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\EditAction::make()->label('编辑'),
+                Actions\DeleteAction::make()->label('删除'),
             ])
             ->bulkActions([
-                Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make()->label('删除所选'),
             ])
             ->defaultSort('sort_order');
     }

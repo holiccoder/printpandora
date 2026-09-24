@@ -6,7 +6,6 @@ use App\Models\Product;
 use App\Support\BusinessCardOptionCatalog;
 use App\Support\ClassicSpecialBusinessCardTexture;
 use App\Support\HardcodedContent;
-use App\Support\PostcardProductImageCatalog;
 use App\Support\SolidQualityBusinessCardGallery;
 use App\Support\StandardQualityBusinessCardGallery;
 use Illuminate\Support\Str;
@@ -40,6 +39,7 @@ class ProductConfigurationService
         'paper_finish' => 'Paper Finish',
         'uv_finish' => 'UV',
         'special_finish' => 'Special Finish',
+        'hot_foil' => 'Hot Foil',
         'print_code' => 'Print Code',
         'drill' => 'Drilling',
     ];
@@ -60,6 +60,7 @@ class ProductConfigurationService
         'paper_finish' => 5,
         'uv_finish' => 6,
         'special_finish' => 7,
+        'hot_foil' => 8,
     ];
 
     private const UV_FINISH_SWATCH_IMAGE = '/images/product-options/uv-swatch.png';
@@ -412,7 +413,8 @@ class ProductConfigurationService
             }
 
             $isMultiSelect = ($group['type'] ?? 'select') === 'multi_select'
-                || ((string) $key === 'special_finish'
+                || (string) $key === 'hot_foil'
+                || (in_array((string) $key, ['special_finish', 'hot_foil'], true)
                     && $this->hasFoilOptionValues($group['values'] ?? []));
 
             $rows[] = [
@@ -970,6 +972,13 @@ class ProductConfigurationService
             'packageName' => (string) ($scenario['package_name'] ?? $scenario['packageName'] ?? ''),
             'basePrice' => (float) ($scenario['base_price_per_card'] ?? $scenario['basePrice'] ?? 0),
             'startQuantity' => (int) ($scenario['start_quantity'] ?? $scenario['startQuantity'] ?? 0),
+            'recommendedQuantity' => (int) (
+                $scenario['recommended_quantity']
+                ?? $scenario['recommendedQuantity']
+                ?? $scenario['start_quantity']
+                ?? $scenario['startQuantity']
+                ?? 0
+            ),
             'paperRates' => $this->mapToNumericValues($scenario['quantity_discounts_percent'] ?? $scenario['paperRates'] ?? []),
             'processes' => array_values(array_map(function (mixed $process): array {
                 if (! is_array($process)) {
@@ -1085,6 +1094,19 @@ class ProductConfigurationService
      */
     private function normalizePricingPayload(array $pricing): array
     {
+        if (
+            ! array_key_exists('recommendedQuantity', $pricing)
+            && array_key_exists('recommended_quantity', $pricing)
+        ) {
+            $pricing['recommendedQuantity'] = $pricing['recommended_quantity'];
+        }
+
+        if (array_key_exists('recommendedQuantity', $pricing) && is_numeric($pricing['recommendedQuantity'])) {
+            $pricing['recommendedQuantity'] = (int) $pricing['recommendedQuantity'];
+        }
+
+        unset($pricing['recommended_quantity']);
+
         if (! is_array($pricing['processes'] ?? null)) {
             return $pricing;
         }
@@ -1202,17 +1224,6 @@ class ProductConfigurationService
             $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
                 $config['media']['gallery_rules'],
                 $config['options'],
-                (string) $product->slug,
-            );
-        }
-
-        // The six postcard entries reuse business-card option contracts, but
-        // have their own default 4x3 product artwork. Apply that override
-        // after managed business-card gallery synchronization so the default
-        // image remains stable for every storefront request.
-        if (PostcardProductImageCatalog::isAppliedTo($product)) {
-            $config = PostcardProductImageCatalog::applyToConfig(
-                $config,
                 (string) $product->slug,
             );
         }
@@ -1732,11 +1743,12 @@ class ProductConfigurationService
         array $items,
         ?string $productSlug = null,
     ): string {
-        if ($key !== 'special_finish') {
+        if (! in_array($key, ['special_finish', 'hot_foil'], true)) {
             return 'select';
         }
 
-        return $productSlug === 'classic-standard-business-cards'
+        return $key === 'hot_foil'
+            || $productSlug === 'classic-standard-business-cards'
             || $this->hasFoilOptionValues($items)
             ? 'multi_select'
             : 'select';
@@ -1854,7 +1866,9 @@ class ProductConfigurationService
 
             $optionKey = (string) $key;
             $isMultiSelect = ($group['type'] ?? 'select') === 'multi_select'
-                || ($optionKey === 'special_finish' && $this->hasFoilOptionValues($values));
+                || $optionKey === 'hot_foil'
+                || (in_array($optionKey, ['special_finish', 'hot_foil'], true)
+                    && $this->hasFoilOptionValues($values));
             $required = (bool) ($group['required'] ?? true);
             $default = array_key_exists('default', $group)
                 ? $group['default']
@@ -2082,6 +2096,11 @@ class ProductConfigurationService
                 'packageName' => (string) ($scenario['package_name'] ?? ''),
                 'basePrice' => (float) $scenario['base_price_per_card'],
                 'startQuantity' => (int) $scenario['start_quantity'],
+                'recommendedQuantity' => (int) (
+                    $scenario['recommended_quantity']
+                    ?? $scenario['recommendedQuantity']
+                    ?? $scenario['start_quantity']
+                ),
                 'paperRates' => $this->mapToNumericValues($scenario['quantity_discounts_percent'] ?? []),
                 'processes' => $processes,
             ];
@@ -2107,6 +2126,12 @@ class ProductConfigurationService
                 'package_name' => $scenario['packageName'] ?? '',
                 'base_price_per_card' => (float) ($scenario['basePrice'] ?? 0),
                 'start_quantity' => (int) ($scenario['startQuantity'] ?? 0),
+                'recommended_quantity' => (int) (
+                    $scenario['recommendedQuantity']
+                    ?? $scenario['recommended_quantity']
+                    ?? $scenario['startQuantity']
+                    ?? 0
+                ),
                 'quantity_discounts_percent' => $this->mapToNumericValues($scenario['paperRates'] ?? []),
                 'processes' => array_values(array_map(function (mixed $process): array {
                     if (! is_array($process)) {
@@ -2449,17 +2474,19 @@ class ProductConfigurationService
         array $options,
         ?string $productSlug = null,
     ): array {
-        $specialFinishValues = data_get($options, 'special_finish.values', []);
-
-        if (! is_array($specialFinishValues)) {
-            return array_values(array_filter($rules, is_array(...)));
-        }
-
         $availableCodes = [];
 
-        foreach ($specialFinishValues as $value) {
-            if (is_array($value) && filled($value['code'] ?? null)) {
-                $availableCodes[$this->normalizedRuleValue($value['code'])] = true;
+        foreach (['special_finish', 'hot_foil'] as $groupKey) {
+            $values = data_get($options, "{$groupKey}.values", []);
+
+            if (! is_array($values)) {
+                continue;
+            }
+
+            foreach ($values as $value) {
+                if (is_array($value) && filled($value['code'] ?? null)) {
+                    $availableCodes[$groupKey][$this->normalizedRuleValue($value['code'])] = true;
+                }
             }
         }
 
@@ -2476,17 +2503,21 @@ class ProductConfigurationService
         foreach ($foilImages as $code => $image) {
             $normalizedCode = $this->normalizedRuleValue($code);
 
-            if (! isset($availableCodes[$normalizedCode])) {
-                continue;
-            }
+            foreach (['special_finish', 'hot_foil'] as $groupKey) {
+                if (! isset($availableCodes[$groupKey][$normalizedCode])) {
+                    continue;
+                }
 
-            $sharedCodes[$normalizedCode] = true;
-            $sharedRules[] = [
-                'id' => "shared-foil-{$code}",
-                'match' => ['special_finish' => $code],
-                'images' => [$image],
-                'primary' => $image,
-            ];
+                $sharedCodes[$groupKey][$normalizedCode] = true;
+                $sharedRules[] = [
+                    'id' => $groupKey === 'special_finish'
+                        ? "shared-foil-{$code}"
+                        : "shared-foil-{$groupKey}-{$code}",
+                    'match' => [$groupKey => $code],
+                    'images' => [$image],
+                    'primary' => $image,
+                ];
+            }
         }
 
         if ($sharedRules === []) {
@@ -2501,9 +2532,17 @@ class ProductConfigurationService
                 }
 
                 $match = $rule['match'] ?? [];
-                $specialFinish = is_array($match) ? ($match['special_finish'] ?? null) : null;
+                if (! is_array($match)) {
+                    return true;
+                }
 
-                return ! isset($sharedCodes[$this->normalizedRuleValue($specialFinish)]);
+                foreach ($sharedCodes as $groupKey => $codes) {
+                    if (isset($codes[$this->normalizedRuleValue($match[$groupKey] ?? null)])) {
+                        return false;
+                    }
+                }
+
+                return true;
             },
         ));
 
@@ -2590,7 +2629,7 @@ class ProductConfigurationService
                 'code' => 'custom',
                 'label' => 'Custom',
                 'description' => BusinessCardOptionCatalog::CUSTOM_SIZE_DESCRIPTION,
-                'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
+                'swatch_image' => BusinessCardOptionCatalog::CUSTOM_SIZE_SWATCH_IMAGE,
             ],
         ];
 

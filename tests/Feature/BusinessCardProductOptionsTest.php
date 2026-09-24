@@ -803,7 +803,7 @@ class BusinessCardProductOptionsTest extends TestCase
             ];
 
             $this->assertSame(
-                ['sizes', 'corners', 'thickness', 'texture', 'special_finish'],
+                ['sizes', 'corners', 'thickness', 'texture', 'special_finish', 'hot_foil'],
                 array_keys($options),
             );
             $this->assertSame(
@@ -879,9 +879,45 @@ class BusinessCardProductOptionsTest extends TestCase
             );
             $this->assertSame('multi_select', data_get($options, 'special_finish.type'));
             $this->assertSame([], data_get($options, 'special_finish.default'));
+            $this->assertSame(
+                [
+                    'black_gold',
+                    'blue_gold',
+                    'bright_gold',
+                    'bright_silver',
+                    'green_gold',
+                    'matte_gold',
+                    'matte_silver',
+                    'red_gold',
+                    'rose_gold',
+                    'aged_gold',
+                    'muted_purple_gold',
+                ],
+                data_get($options, 'hot_foil.values.*.code'),
+            );
+            $this->assertSame('Hot Foil', data_get($options, 'hot_foil.label'));
+            $this->assertSame('multi_select', data_get($options, 'hot_foil.type'));
+            $this->assertFalse((bool) data_get($options, 'hot_foil.required'));
+            $this->assertSame([], data_get($options, 'hot_foil.default'));
+            $this->assertSame(
+                [
+                    '/images/product-options/business-cards/swatches/black-gold.png',
+                    '/images/product-options/business-cards/swatches/blue-gold.png',
+                    '/images/product-options/business-cards/swatches/bright-gold.png',
+                    '/images/product-options/business-cards/swatches/bright-silver.png',
+                    '/images/product-options/business-cards/swatches/green-gold.png',
+                    '/images/product-options/business-cards/swatches/matte-gold.png',
+                    '/images/product-options/business-cards/swatches/matte-silver.png',
+                    '/images/product-options/business-cards/swatches/red-gold.png',
+                    '/images/product-options/business-cards/swatches/rose-gold.png',
+                    '/images/product-options/business-cards/swatches/aged-gold.png',
+                    '/images/product-options/business-cards/swatches/muted-purple-gold.png',
+                ],
+                data_get($options, 'hot_foil.values.*.swatch_image'),
+            );
             $this->assertSame($gallery, data_get($product->product_config, 'media.gallery'));
             $this->assertSame($gallery[0], $product->featured_image);
-            $this->assertCount(53, data_get($product->product_config, 'media.gallery_rules'));
+            $this->assertCount(62, data_get($product->product_config, 'media.gallery_rules'));
             $specialFinishRules = collect(data_get($product->product_config, 'media.gallery_rules', []))
                 ->filter(fn (mixed $rule): bool => is_array($rule) && array_key_exists('special_finish', $rule['match'] ?? []))
                 ->values();
@@ -892,6 +928,23 @@ class BusinessCardProductOptionsTest extends TestCase
             $this->assertSame(
                 $expectedSpecialFinishPrimaryImages,
                 $specialFinishRules->pluck('primary')->all(),
+            );
+            $hotFoilRules = collect(data_get($product->product_config, 'media.gallery_rules', []))
+                ->filter(fn (mixed $rule): bool => is_array($rule) && array_key_exists('hot_foil', $rule['match'] ?? []))
+                ->values();
+            $this->assertSame(
+                [
+                    'black_gold',
+                    'blue_gold',
+                    'bright_gold',
+                    'bright_silver',
+                    'green_gold',
+                    'matte_gold',
+                    'matte_silver',
+                    'red_gold',
+                    'rose_gold',
+                ],
+                $hotFoilRules->pluck('match.hot_foil')->all(),
             );
             $this->assertSame(
                 ['corners' => 'rounded'],
@@ -949,7 +1002,7 @@ class BusinessCardProductOptionsTest extends TestCase
 
         $this->assertTrue((bool) data_get($options, 'dynamic_options'));
         $this->assertSame(
-            ['sizes', 'corners', 'thickness', 'texture', 'special_finish'],
+            ['sizes', 'corners', 'thickness', 'texture', 'special_finish', 'hot_foil'],
             array_column(data_get($options, 'option_groups', []), 'key'),
         );
         $this->assertSame(
@@ -978,6 +1031,26 @@ class BusinessCardProductOptionsTest extends TestCase
             array_column(data_get($options, 'option_groups.4.values', []), 'code'),
         );
         $this->assertSame([], data_get($options, 'option_groups.4.default'));
+        $this->assertSame(
+            [
+                'black_gold',
+                'blue_gold',
+                'bright_gold',
+                'bright_silver',
+                'green_gold',
+                'matte_gold',
+                'matte_silver',
+                'red_gold',
+                'rose_gold',
+                'aged_gold',
+                'muted_purple_gold',
+            ],
+            array_column(data_get($options, 'option_groups.5.values', []), 'code'),
+        );
+        $this->assertSame('Hot Foil', data_get($options, 'option_groups.5.label'));
+        $this->assertSame('multi_select', data_get($options, 'option_groups.5.type'));
+        $this->assertFalse((bool) data_get($options, 'option_groups.5.required'));
+        $this->assertSame([], data_get($options, 'option_groups.5.default'));
         $this->assertSame(
             '/images/products/cotton/paper-samples/wild-300gsm-white.webp',
             data_get($options, 'option_groups.3.values.0.swatch_image'),

@@ -13,38 +13,68 @@ use App\Models\Product;
 final class PostcardProductImageCatalog
 {
     /**
-     * @var array<string, array{source_file: string, image: string, previous: string}>
+     * @var array<string, array{source_file: string, image: string, previous_gallery: list<string>}>
      */
     private const DEFINITIONS = [
         'classic-standard-business-cards' => [
             'source_file' => 'beauty_edit_clean_three_sheet_4x3.png',
             'image' => '/images/products/postcards/classic-standard-postcards.png',
-            'previous' => '/images/products/classic-standard-business-cards/classic-standard-business-cards-default-01.png',
+            'previous_gallery' => [
+                '/images/products/classic-standard-business-cards/classic-standard-business-cards-default-01.png',
+                '/images/products/classic-standard-business-cards/classic-standard-business-cards-default-02.png',
+                '/images/products/classic-standard-business-cards/classic-standard-business-cards-default-03.png',
+                '/images/products/classic-standard-business-cards/classic-standard-business-cards-default-04.png',
+            ],
         ],
         'classic-special-business-cards' => [
             'source_file' => '03_企业明信片_J2亚麻纸_4x3明亮版.png',
             'image' => '/images/products/postcards/classic-special-postcards.png',
-            'previous' => '/images/classic-special-business-cards/default01.png',
+            'previous_gallery' => [
+                '/images/classic-special-business-cards/default01.png',
+                '/images/classic-special-business-cards/default02.png',
+                '/images/classic-special-business-cards/default03.png',
+                '/images/classic-special-business-cards/default04.png',
+            ],
         ],
         'super-standard-business-cards' => [
             'source_file' => '08_地产名片_J50珠光纸_4x3明亮版.png',
             'image' => '/images/products/postcards/super-standard-postcards.png',
-            'previous' => '/images/products/super-business-cards/super-business-cards-default-01.png',
+            'previous_gallery' => [
+                '/images/products/super-business-cards/super-business-cards-default-01.png',
+                '/images/products/super-business-cards/super-business-cards-default-02.png',
+                '/images/products/super-business-cards/super-business-cards-default-03.png',
+                '/images/products/super-business-cards/super-business-cards-default-04.png',
+            ],
         ],
         'super-luxe-business-cards' => [
             'source_file' => '07_large_6x9in_4x3_3840x2880.png',
             'image' => '/images/products/postcards/super-luxe-postcards.png',
-            'previous' => '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-01.png',
+            'previous_gallery' => [
+                '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-01.png',
+                '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-02.png',
+                '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-03.png',
+                '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-04.png',
+            ],
         ],
         'standard-quality-business-cards' => [
             'source_file' => '05_创意公司卡_J3颗粒纸_4x3明亮版.png',
             'image' => '/images/products/postcards/quality-standard-postcards.png',
-            'previous' => '/images/products/standard-quality-business-cards/default-01.png',
+            'previous_gallery' => [
+                '/images/products/standard-quality-business-cards/default-01.png',
+                '/images/products/standard-quality-business-cards/default-02.png',
+                '/images/products/standard-quality-business-cards/default-03.png',
+                '/images/products/standard-quality-business-cards/default-04.png',
+            ],
         ],
         'solid-quality-business-cards' => [
             'source_file' => '05_medium_5x7in_4x3_3840x2880.png',
             'image' => '/images/products/postcards/quality-solid-postcards.png',
-            'previous' => '/images/products/solid-quality-business-cards/default-01.png',
+            'previous_gallery' => [
+                '/images/products/solid-quality-business-cards/default-01.png',
+                '/images/products/solid-quality-business-cards/default-02.png',
+                '/images/products/solid-quality-business-cards/default-03.png',
+                '/images/products/solid-quality-business-cards/default-04.png',
+            ],
         ],
     ];
 
@@ -133,17 +163,19 @@ final class PostcardProductImageCatalog
         $config = is_array($product->product_config)
             ? $product->product_config
             : [];
+        $previousGallery = $definition['previous_gallery'];
+        $previousImage = $previousGallery[0];
         $config['product'] = is_array($config['product'] ?? null)
             ? $config['product']
             : [];
-        $config['product']['featured_image'] = $definition['previous'];
+        $config['product']['featured_image'] = $previousImage;
         $config['media'] = is_array($config['media'] ?? null)
             ? $config['media']
             : [];
-        $config['media']['gallery'] = [$definition['previous']];
+        $config['media']['gallery'] = $previousGallery;
 
         $product->forceFill([
-            'featured_image' => $definition['previous'],
+            'featured_image' => $previousImage,
             'product_config' => $config,
         ])->saveQuietly();
 

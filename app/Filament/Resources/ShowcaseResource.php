@@ -96,11 +96,11 @@ class ShowcaseResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\EditAction::make()->label('编辑'),
+                Actions\DeleteAction::make()->label('删除'),
             ])
             ->bulkActions([
-                Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make()->label('删除所选'),
             ])
             ->defaultSort('id');
     }

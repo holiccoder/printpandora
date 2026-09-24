@@ -17,7 +17,7 @@ class ListShowcases extends ListRecords
     public function getTabs(): array
     {
         $tabs = [
-            'all' => Tab::make('All')
+            'all' => Tab::make('全部')
                 ->badge(Showcase::query()->count()),
         ];
 
@@ -33,7 +33,7 @@ class ListShowcases extends ListRecords
                 );
         }
 
-        $tabs['uncategorized'] = Tab::make('Uncategorized')
+        $tabs['uncategorized'] = Tab::make('未分类')
             ->badge(Showcase::query()->whereNull('category_id')->count())
             ->modifyQueryUsing(
                 fn (Builder $query): Builder => $query->whereNull('category_id'),
@@ -45,7 +45,7 @@ class ListShowcases extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('新建案例'),
         ];
     }
 }

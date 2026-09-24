@@ -33,6 +33,7 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
         return [
             'standard' => '/images/product-options/business-cards/swatches/standard-size.webp',
             'square' => '/images/product-options/business-cards/swatches/square-size.webp',
+            'custom' => '/images/product-options/business-cards/swatches/custom-size.webp',
         ][$code];
     }
 
@@ -69,6 +70,11 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
             $this->assertSame(
                 $this->expectedSizeSwatch($slug, 'square'),
                 data_get($values, 'square.swatch_image'),
+                $slug,
+            );
+            $this->assertSame(
+                $this->expectedSizeSwatch($slug, 'custom'),
+                data_get($values, 'custom.swatch_image'),
                 $slug,
             );
 
@@ -141,6 +147,11 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
             $this->assertSame(
                 $this->expectedSizeSwatch($slug, 'square'),
                 data_get($values, 'square.swatch_image'),
+                $slug,
+            );
+            $this->assertSame(
+                $this->expectedSizeSwatch($slug, 'custom'),
+                data_get($values, 'custom.swatch_image'),
                 $slug,
             );
 
@@ -251,6 +262,11 @@ class SharedBusinessCardSizeSwatchesTest extends TestCase
             $this->assertSame(
                 $this->expectedSizeSwatch($slug, 'square'),
                 data_get($config, 'options.sizes.values.1.swatch_image'),
+                $slug,
+            );
+            $this->assertSame(
+                $this->expectedSizeSwatch($slug, 'custom'),
+                data_get($config, 'options.sizes.values.2.swatch_image'),
                 $slug,
             );
 

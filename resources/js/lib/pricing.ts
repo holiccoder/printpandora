@@ -2,6 +2,7 @@ export interface PricingScenario {
     packageName: string;
     basePrice: number;
     startQuantity: number;
+    recommendedQuantity?: number;
     paperRates: Record<string, number>;
     unitMultipliers?: Record<string, number>;
     area_based?: boolean;
@@ -71,7 +72,8 @@ export function resolvePricingScenario(
             (!Object.prototype.hasOwnProperty.call(
                 selectedOptions,
                 'uv_finish',
-            ) && finishIndex === 2));
+            ) &&
+                finishIndex === 2));
 
     if (sizeIndex === 0) {
         return isUv ? 'uv' : 'rectangle';
@@ -142,6 +144,18 @@ function selectedFinishCodes(
               ? [selectedFinish]
               : []
     ).map(normalizeOptionValue);
+}
+
+function selectedFoilOptionValues(
+    selectedOptions: Record<string, string | string[]>,
+): string[] {
+    return ['special_finish', 'hot_foil'].flatMap((groupKey) => {
+        const selected = selectedOptions[groupKey];
+
+        return (Array.isArray(selected) ? selected : [selected]).filter(
+            (value): value is string => typeof value === 'string',
+        );
+    });
 }
 
 function isFoilOptionCode(code: string): boolean {
@@ -406,7 +420,7 @@ function processIsSelected(
         rawName.includes('彩印') ||
         rawName.includes('镀色')
     ) {
-        const selectedFinish = selectedOptions.special_finish;
+        const selectedFinish = selectedFoilOptionValues(selectedOptions);
 
         if (selectedFinish !== undefined) {
             const values = Array.isArray(selectedFinish)
@@ -524,6 +538,9 @@ export function computeDynamicTiers(
         ]),
     ].sort((a, b) => a - b);
 
+    const recommendedQuantity =
+        scenario.recommendedQuantity ?? scenario.startQuantity;
+    const selectedFoilValues = selectedFoilOptionValues(selectedOptions);
     const selectedProcesses = scenario.processes.filter((process) =>
         processIsSelected(
             process,
@@ -545,13 +562,10 @@ export function computeDynamicTiers(
         }
 
         for (const process of selectedProcesses) {
-            const markup = isFoilProcess(
-                process,
-                selectedOptions.special_finish,
-            )
+            const markup = isFoilProcess(process, selectedFoilValues)
                 ? process.markup *
                   foilSideMultiplier(
-                      selectedOptions.special_finish,
+                      selectedFoilValues,
                       selectedSpecialFinishSides,
                       process,
                   )
@@ -573,7 +587,7 @@ export function computeDynamicTiers(
             pricePerCard: adjustedUnit,
             currentPrice: Math.round(qty * adjustedUnit),
             originalPrice: null,
-            recommended: qty === scenario.startQuantity,
+            recommended: qty === recommendedQuantity,
         };
     });
 }

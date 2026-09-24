@@ -280,6 +280,31 @@ class PricingService
             );
         }
 
+        $hotFoilAllowed = $this->allowedOptionCodes($groups['hot_foil'] ?? []);
+        $hotFoilSubmitted = $this->submittedOptionValues($options['hot_foil'] ?? null);
+        $hotFoilResolved = $this->resolveAllowedOptionCodes(
+            $hotFoilSubmitted,
+            $hotFoilAllowed,
+        );
+
+        if ($hotFoilSubmitted === []) {
+            $normalized['hot_foil'] = [];
+            $normalized['hot_foil_on_sides'] = [];
+        } elseif (
+            count($hotFoilResolved) !== count(array_unique(array_map(
+                fn (string $value): string => $this->normalizeOptionValue($value),
+                $hotFoilSubmitted,
+            )))
+        ) {
+            $errors['options.hot_foil'] = 'Select only valid hot foil colors.';
+        } else {
+            $normalized['hot_foil'] = $hotFoilResolved;
+            $normalized['hot_foil_on_sides'] = $this->normalizeCottonSpecialFinishSides(
+                $hotFoilResolved,
+                $options['hot_foil_on_sides'] ?? null,
+            );
+        }
+
         if ($errors !== []) {
             throw ValidationException::withMessages($errors);
         }
@@ -763,11 +788,7 @@ class PricingService
             || str_contains($rawName, '彩印')
             || str_contains($rawName, '镀色')
         ) {
-            $specialFinishValues = is_array($options['special_finish'] ?? null)
-                ? $options['special_finish']
-                : [$options['special_finish'] ?? ''];
-
-            foreach ($specialFinishValues as $item) {
+            foreach ($this->selectedFoilOptionValues($options) as $item) {
                 $normalized = $this->normalizeOptionValue($item);
 
                 if (
@@ -951,8 +972,7 @@ class PricingService
         int $sizeIndex,
         int $finishIndex,
         array $options = [],
-    ): string
-    {
+    ): string {
         $hasUv = isset($data['uv']);
         $selectedUv = $options['uv_finish'] ?? null;
         $hasSelectedUv = is_array($selectedUv)
@@ -1012,8 +1032,14 @@ class PricingService
             fn (mixed $process): bool => is_array($process)
                 && $this->processIsSelected($process, $pricingOptions),
         ));
-        return array_map(function (int $qty) use ($scenario, $selectedProcesses, $pricingOptions) {
-            $isStart = $qty === (int) $scenario['startQuantity'];
+        $recommendedQuantity = (int) (
+            $scenario['recommendedQuantity']
+            ?? $scenario['recommended_quantity']
+            ?? $scenario['startQuantity']
+        );
+
+        return array_map(function (int $qty) use ($scenario, $selectedProcesses, $pricingOptions, $recommendedQuantity) {
+            $isRecommended = $qty === $recommendedQuantity;
             $unit = (float) $scenario['basePrice'];
             $unitMultipliers = is_array($scenario['unitMultipliers'] ?? null)
                 ? $scenario['unitMultipliers']
@@ -1052,25 +1078,23 @@ class PricingService
                 'pricePerCard' => $unit,
                 'currentPrice' => round($qty * $unit),
                 'originalPrice' => null,
-                'recommended' => $isStart,
+                'recommended' => $isRecommended,
             ];
         }, $quantities);
     }
 
     /**
      * Each selected hot/cold foil adds one foil markup. A foil selected for
-     * both sides adds one additional markup, with the side map keyed by the
-     * selected special-finish code so multiple finishes stay independent.
+     * both sides adds one additional markup, with side maps keyed by the
+     * selected finish code so multiple finishes stay independent.
      *
      * @param  array<string, mixed>  $options
      */
     private function foilSideMultiplier(array $options, ?array $process = null): int
     {
-        $selectedFinish = $options['special_finish'] ?? null;
-        $selectedValues = is_array($selectedFinish) ? $selectedFinish : [$selectedFinish];
         $selectedCodes = [];
 
-        foreach ($selectedValues as $value) {
+        foreach ($this->selectedFoilOptionValues($options) as $value) {
             if (is_scalar($value)) {
                 $normalized = $this->normalizeOptionValue($value);
 
@@ -1129,7 +1153,20 @@ class PricingService
             return 1;
         }
 
-        $sides = $options['special_finish_on_sides'] ?? null;
+        $sideMap = [];
+        $scalarSide = null;
+
+        foreach (['special_finish_on_sides', 'hot_foil_on_sides'] as $sideKey) {
+            $submittedSides = $options[$sideKey] ?? null;
+
+            if (is_array($submittedSides)) {
+                $sideMap = array_replace($sideMap, $submittedSides);
+            } elseif (is_scalar($submittedSides) && $scalarSide === null) {
+                $scalarSide = $submittedSides;
+            }
+        }
+
+        $sides = $sideMap !== [] ? $sideMap : $scalarSide;
 
         if (is_scalar($sides)) {
             $sideMultiplier = $this->normalizeOptionValue($sides) === 'both_sides' ? 2 : 1;
@@ -1177,7 +1214,8 @@ class PricingService
             return str_contains($rawName, 'foil')
                 || str_contains($rawName, '冷烫')
                 || str_contains($rawName, '热烫')
-                || $this->hasFoilSelection($options['special_finish'] ?? null);
+                || $this->hasFoilSelection($options['special_finish'] ?? null)
+                || $this->hasFoilSelection($options['hot_foil'] ?? null);
         }
 
         return $this->isFoilOptionCode($code)
@@ -1196,6 +1234,29 @@ class PricingService
         }
 
         return false;
+    }
+
+    /**
+     * Return selected values from both foil-capable option groups. Cotton
+     * products keep hot foil colors in their own group, while older products
+     * still submit them through special_finish.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<int, mixed>
+     */
+    private function selectedFoilOptionValues(array $options): array
+    {
+        $values = [];
+
+        foreach (['special_finish', 'hot_foil'] as $groupKey) {
+            $selected = $options[$groupKey] ?? null;
+            $values = [
+                ...$values,
+                ...(is_array($selected) ? $selected : [$selected]),
+            ];
+        }
+
+        return $values;
     }
 
     private function isFoilOptionCode(string $code): bool

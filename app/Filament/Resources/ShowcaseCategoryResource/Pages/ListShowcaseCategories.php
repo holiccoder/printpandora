@@ -13,7 +13,7 @@ class ListShowcaseCategories extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('新建案例分类'),
         ];
     }
 }

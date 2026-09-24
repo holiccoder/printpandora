@@ -62,7 +62,7 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                         'code' => 'custom',
                         'label' => 'Custom',
                         'description' => BusinessCardOptionCatalog::CLASSIC_STANDARD_CUSTOM_SIZE_DESCRIPTION,
-                        'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
+                        'swatch_image' => BusinessCardOptionCatalog::CUSTOM_SIZE_SWATCH_IMAGE,
                     ],
                 ],
             ],

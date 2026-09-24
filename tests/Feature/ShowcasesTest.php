@@ -57,6 +57,19 @@ class ShowcasesTest extends TestCase
                 ->where('showcases.data.0.image_url', $showcase->image_url));
     }
 
+    public function test_current_showcases_belong_to_the_cotton_business_cards_category(): void
+    {
+        $category = ShowcaseCategory::query()
+            ->where('slug', 'cotton-paper-business-cards')
+            ->firstOrFail();
+
+        $this->assertGreaterThan(0, Showcase::query()->count());
+        $this->assertSame(
+            Showcase::query()->count(),
+            Showcase::query()->where('category_id', $category->id)->count(),
+        );
+    }
+
     public function test_showcases_are_paginated_at_sixteen_per_page(): void
     {
         Showcase::query()->delete();

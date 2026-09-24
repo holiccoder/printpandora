@@ -142,6 +142,61 @@ class CottonBusinessCardOptionsTest extends TestCase
         ]);
     }
 
+    public function test_hot_foil_is_validated_as_its_own_optional_group(): void
+    {
+        $product = $this->makeProduct();
+        $pricing = app(PricingService::class);
+
+        $validated = $pricing->validateOptions($product, [
+            'sizes' => 'standard',
+            'corners' => 'square',
+            'thickness' => '300_360g',
+            'texture' => 'wild_300gsm_white',
+            'special_finish' => ['laser'],
+            'hot_foil' => ['black_gold', 'rose_gold'],
+            'hot_foil_on_sides' => [
+                'black_gold' => 'both_sides',
+                'rose_gold' => 'one_side',
+            ],
+        ]);
+
+        $this->assertSame(['black_gold', 'rose_gold'], $validated['hot_foil']);
+        $this->assertSame(
+            [
+                'black_gold' => 'both_sides',
+                'rose_gold' => 'one_side',
+            ],
+            $validated['hot_foil_on_sides'],
+        );
+        $this->assertSame(['laser'], $validated['special_finish']);
+
+        $defaultedSides = $pricing->validateOptions($product, [
+            'sizes' => 'standard',
+            'corners' => 'square',
+            'thickness' => '300_360g',
+            'texture' => 'wild_300gsm_white',
+            'special_finish' => ['laser'],
+            'hot_foil' => ['black_gold'],
+            'hot_foil_on_sides' => ['black_gold' => 'invalid_side'],
+        ]);
+
+        $this->assertSame(
+            ['black_gold' => 'one_side'],
+            $defaultedSides['hot_foil_on_sides'],
+        );
+
+        $this->expectException(ValidationException::class);
+
+        $pricing->validateOptions($product, [
+            'sizes' => 'standard',
+            'corners' => 'square',
+            'thickness' => '300_360g',
+            'texture' => 'wild_300gsm_white',
+            'special_finish' => ['laser'],
+            'hot_foil' => ['not-a-hot-foil-color'],
+        ]);
+    }
+
     private function makeProduct(): Product
     {
         $category = ProductCategory::create([

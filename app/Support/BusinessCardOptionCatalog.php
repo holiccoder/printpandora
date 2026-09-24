@@ -8,6 +8,8 @@ final class BusinessCardOptionCatalog
 
     public const SQUARE_SIZE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/square-size.webp';
 
+    public const CUSTOM_SIZE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/custom-size.webp';
+
     public const CUSTOM_SIZE_DESCRIPTION = 'max range: 2.1 - 3.5 inches';
 
     public const COTTON_CUSTOM_SIZE_DESCRIPTION = 'Width 0.70-3.54 in; height 0.70-2.13 in.';
@@ -839,6 +841,8 @@ final class BusinessCardOptionCatalog
                     $value['description'] = self::CLASSIC_STANDARD_SQUARE_SIZE_DESCRIPTION;
                 }
             } elseif ($code === 'custom') {
+                $value['swatch_image'] = self::CUSTOM_SIZE_SWATCH_IMAGE;
+
                 if ($slug === 'classic-standard-business-cards') {
                     $value['description'] = self::CLASSIC_STANDARD_CUSTOM_SIZE_DESCRIPTION;
                 } elseif (self::isCottonBusinessCard((string) $slug)) {
@@ -1449,6 +1453,13 @@ final class BusinessCardOptionCatalog
                 [],
                 true,
             ),
+            'hot_foil' => self::group(
+                'Hot Foil',
+                self::hotFoilValues($options, 'hot_foil'),
+                [],
+                true,
+                false,
+            ),
         ];
     }
 
@@ -1595,7 +1606,7 @@ final class BusinessCardOptionCatalog
             self::value($options, 'sizes', 'custom', [
                 'label' => 'Custom',
                 'description' => self::CUSTOM_SIZE_DESCRIPTION,
-                'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
+                'swatch_image' => self::CUSTOM_SIZE_SWATCH_IMAGE,
             ]),
         ];
     }
@@ -1622,7 +1633,7 @@ final class BusinessCardOptionCatalog
             self::value($options, 'sizes', 'custom', [
                 'label' => 'Custom',
                 'description' => self::COTTON_CUSTOM_SIZE_DESCRIPTION,
-                'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
+                'swatch_image' => self::CUSTOM_SIZE_SWATCH_IMAGE,
                 'min_width' => '0.70',
                 'max_width' => '3.54',
                 'min_height' => '0.70',
@@ -1750,7 +1761,10 @@ final class BusinessCardOptionCatalog
      * @param  array<string, mixed>  $options
      * @return array<int, array<string, mixed>>
      */
-    private static function hotFoilValues(array $options): array
+    private static function hotFoilValues(
+        array $options,
+        string $groupKey = 'special_finish',
+    ): array
     {
         $swatches = '/images/product-options/business-cards/swatches/';
         $foils = [
@@ -1770,7 +1784,7 @@ final class BusinessCardOptionCatalog
         return array_map(
             fn (array $foil): array => self::value(
                 $options,
-                'special_finish',
+                $groupKey,
                 $foil['code'],
                 array_replace(
                     [

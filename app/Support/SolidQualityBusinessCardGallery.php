@@ -285,7 +285,7 @@ final class SolidQualityBusinessCardGallery
             } elseif ($code === 'custom') {
                 $hasCustom = true;
                 $value['description'] = BusinessCardOptionCatalog::CUSTOM_SIZE_DESCRIPTION;
-                $value['swatch_image'] = '/images/product-options/business-cards/swatches/custom-size.webp';
+                $value['swatch_image'] = BusinessCardOptionCatalog::CUSTOM_SIZE_SWATCH_IMAGE;
             }
         }
         unset($value);
@@ -295,7 +295,7 @@ final class SolidQualityBusinessCardGallery
                 'code' => 'custom',
                 'label' => 'Custom',
                 'description' => BusinessCardOptionCatalog::CUSTOM_SIZE_DESCRIPTION,
-                'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
+                'swatch_image' => BusinessCardOptionCatalog::CUSTOM_SIZE_SWATCH_IMAGE,
             ];
         }
 

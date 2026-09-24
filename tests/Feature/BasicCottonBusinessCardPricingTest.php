@@ -42,6 +42,28 @@ class BasicCottonBusinessCardPricingTest extends TestCase
         }
     }
 
+    public function test_start_quantity_can_be_50_while_200_is_recommended(): void
+    {
+        $payload = $this->pricingPayload();
+        $payload['startQuantity'] = 50;
+        $payload['recommendedQuantity'] = 200;
+        $product = $this->makeProduct($payload);
+        $pricing = app(PricingService::class);
+
+        $this->assertSame(
+            95.0,
+            $pricing->calculate(
+                $product->id,
+                $this->cottonOptions('square', []) + ['quantity' => 50],
+            ),
+        );
+
+        $storefront = app(ProductConfigurationService::class)->storefrontOptions($product->fresh());
+
+        $this->assertSame(50, data_get($storefront, 'pricing_rules.0.pricing.startQuantity'));
+        $this->assertSame(200, data_get($storefront, 'pricing_rules.0.pricing.recommendedQuantity'));
+    }
+
     public function test_each_cotton_special_finish_is_priced_independently(): void
     {
         $product = $this->makeProduct();

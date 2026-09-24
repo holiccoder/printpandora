@@ -80,6 +80,41 @@ function tiersFor(selectedOptions) {
     );
 }
 
+test('start quantity and recommended quantity are independent', () => {
+    const tiers = computeDynamicTiers(
+        {
+            rules: [
+                {
+                    id: 'independent-quantity-contract',
+                    match: {},
+                    pricing: {
+                        packageName: 'Business cards',
+                        basePrice: 1,
+                        startQuantity: 50,
+                        recommendedQuantity: 200,
+                        paperRates: {
+                            100: 0,
+                            200: 10,
+                        },
+                        processes: [],
+                    },
+                },
+            ],
+        },
+        0,
+        0,
+        0,
+        0,
+    );
+
+    assert.deepEqual(
+        tiers.map((tier) => tier.qty),
+        [50, 100, 200],
+    );
+    assert.equal(tiers.find((tier) => tier.qty === 50)?.recommended, false);
+    assert.equal(tiers.find((tier) => tier.qty === 200)?.recommended, true);
+});
+
 test('cotton pricing applies every selected process and the start-tier discounts', () => {
     const tiers = tiersFor({
         sizes: 'standard',
@@ -180,14 +215,29 @@ test('hot and cold foil sides multiply only their own markup', () => {
     );
 });
 
+test('hot foil colors can be selected from the independent hot_foil group', () => {
+    assert.equal(
+        foilTiersFor(
+            { hot_foil: ['black_gold'] },
+            { black_gold: 'one_side' },
+        )[0].currentPrice,
+        30,
+    );
+    assert.equal(
+        foilTiersFor(
+            { hot_foil: ['black_gold'] },
+            { black_gold: 'both_sides' },
+        )[0].currentPrice,
+        50,
+    );
+});
+
 const multiFoilRuleScenario = {
     packageName: 'Multiple foil test',
     basePrice: 0.1,
     startQuantity: 100,
     paperRates: { 100: 0 },
-    processes: [
-        { code: 'foil', name: 'Foil', markup: 0.2, rates: {} },
-    ],
+    processes: [{ code: 'foil', name: 'Foil', markup: 0.2, rates: {} }],
 };
 
 function multiFoilTiersFor(selectedOptions, sides) {

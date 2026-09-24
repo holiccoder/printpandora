@@ -35,6 +35,30 @@ class BusinessCardFoilPricingTest extends TestCase
         $this->assertSame(50.0, $bothSides);
     }
 
+    public function test_independent_hot_foil_group_uses_its_own_side_map(): void
+    {
+        $product = $this->makeProduct();
+        $pricing = app(PricingService::class);
+        $baseOptions = [
+            'sizes' => 'standard',
+            'paper_finish' => 'matte',
+            'corners' => 'square',
+            'special_finish' => ['laser'],
+            'hot_foil' => ['black_gold'],
+            'quantity' => '100',
+        ];
+
+        $singleSide = $pricing->calculate($product->id, $baseOptions + [
+            'hot_foil_on_sides' => ['black_gold' => 'one_side'],
+        ]);
+        $bothSides = $pricing->calculate($product->id, $baseOptions + [
+            'hot_foil_on_sides' => ['black_gold' => 'both_sides'],
+        ]);
+
+        $this->assertSame(30.0, $singleSide);
+        $this->assertSame(50.0, $bothSides);
+    }
+
     public function test_hot_and_cold_foil_side_prices_are_independent_in_rules(): void
     {
         $category = ProductCategory::create([

@@ -22,6 +22,7 @@ class ProductSwatchCoverageTest extends TestCase
         'corners',
         'paper_finish',
         'special_finish',
+        'hot_foil',
         'print_code',
         'drill',
         'texture',
@@ -317,6 +318,44 @@ class ProductSwatchCoverageTest extends TestCase
             $this->assertFileExists(
                 preg_replace('/\.png$/i', '.webp', $sourcePath),
             );
+        }
+    }
+
+    public function test_cotton_hot_foil_swatches_have_complete_assets(): void
+    {
+        $slugs = [
+            'basic-cotton-business-card',
+            'classic-cotton-business-card',
+            'premium-cotton-business-card',
+            'luxe-cotton-business-card',
+            'grand-cotton-business-card',
+        ];
+
+        $expectedCodes = [
+            'black_gold',
+            'blue_gold',
+            'bright_gold',
+            'bright_silver',
+            'green_gold',
+            'matte_gold',
+            'matte_silver',
+            'red_gold',
+            'rose_gold',
+            'aged_gold',
+            'muted_purple_gold',
+        ];
+
+        foreach ($slugs as $slug) {
+            $options = BusinessCardOptionCatalog::normalize($slug, []);
+
+            $this->assertSame($expectedCodes, data_get($options, 'hot_foil.values.*.code'));
+            $this->assertSame('Hot Foil', data_get($options, 'hot_foil.label'));
+            $this->assertSame('multi_select', data_get($options, 'hot_foil.type'));
+            $this->assertFalse((bool) data_get($options, 'hot_foil.required'));
+
+            foreach (data_get($options, 'hot_foil.values.*.swatch_image', []) as $image) {
+                $this->assertFileExists(public_path(ltrim($image, '/')));
+            }
         }
     }
 

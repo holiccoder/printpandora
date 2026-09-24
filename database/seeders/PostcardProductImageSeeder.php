@@ -14,7 +14,7 @@ class PostcardProductImageSeeder extends Seeder
             $product = Product::query()->where('slug', $productSlug)->first();
 
             if ($product !== null) {
-                PostcardProductImageCatalog::apply($product);
+                PostcardProductImageCatalog::restorePrevious($product);
             }
         }
     }
