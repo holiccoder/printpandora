@@ -23,7 +23,7 @@ class ShowcasesTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->has('categories', 8)
-                ->where('categories.0.name', 'Cotton Paper Business Cards')
+                ->where('categories.0.name', 'Cotton Business Cards')
                 ->where('categories.0.slug', 'cotton-paper-business-cards')
                 ->where('categories.1.name', 'Premium Business Cards')
                 ->where('categories.1.slug', 'premium-business-cards')
@@ -31,13 +31,13 @@ class ShowcasesTest extends TestCase
                 ->where('categories.2.slug', 'metal-business-cards')
                 ->where('categories.3.name', 'Stickers & Labels')
                 ->where('categories.3.slug', 'stickers-labels')
-                ->where('categories.4.name', 'Folded Brochures')
+                ->where('categories.4.name', 'Brochures')
                 ->where('categories.4.slug', 'folded-brochures')
                 ->where('categories.5.name', 'Cards & Postcards')
                 ->where('categories.5.slug', 'cards-and-postcards')
                 ->where('categories.6.name', 'Paper Stocks')
                 ->where('categories.6.slug', 'paper-stocks')
-                ->where('categories.7.name', 'Finishing Techniques')
+                ->where('categories.7.name', 'Finishes')
                 ->where('categories.7.slug', 'finishing-techniques'));
     }
 
