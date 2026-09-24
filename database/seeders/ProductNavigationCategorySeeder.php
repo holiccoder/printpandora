@@ -14,7 +14,7 @@ class ProductNavigationCategorySeeder extends Seeder
         DB::transaction(function (): void {
             $definitions = [
                 ['name' => 'Business Cards', 'slug' => 'business-cards', 'parent_slug' => null],
-                ['name' => 'Postcards', 'slug' => 'postcards', 'parent_slug' => null],
+                ['name' => 'Cards & Postcards', 'slug' => 'cards-and-postcards', 'parent_slug' => null],
                 ['name' => 'Stickers & Labels', 'slug' => 'stickers-and-labels', 'parent_slug' => null],
                 ['name' => 'Flyers & Brochures', 'slug' => 'flyers-brochures', 'parent_slug' => null],
                 ['name' => 'Cotton Business Cards', 'slug' => 'cotton-business-cards', 'parent_slug' => 'business-cards'],
@@ -42,6 +42,21 @@ class ProductNavigationCategorySeeder extends Seeder
             }
 
             $businessCardsId = $categoryIds['business-cards'];
+
+            // Move any products that still point to the legacy postcards
+            // category before the cleanup below removes that category.
+            $legacyPostcards = ProductCategory::query()
+                ->where('slug', 'postcards')
+                ->where('id', '!=', $categoryIds['cards-and-postcards'])
+                ->first();
+
+            if ($legacyPostcards !== null) {
+                Product::query()
+                    ->where('product_category_id', $legacyPostcards->getKey())
+                    ->update(['product_category_id' => $categoryIds['cards-and-postcards']]);
+
+                $legacyPostcards->delete();
+            }
 
             // Products from the old categories that are not present in the
             // header navigation remain available under Business Cards.

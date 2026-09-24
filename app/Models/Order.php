@@ -8,16 +8,57 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 
 /**
  * @property-read Collection<int, OrderItem> $items
  * @property-read Collection<int, ProductDesignRequest> $productDesignRequests
  * @property-read Collection<int, DesignServiceRequest> $designServiceRequests
+ * @property-read Carbon|null $shipped_at
  */
 class Order extends Model
 {
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_CONFIRMED = 'confirmed';
+
+    public const STATUS_PENDING_MODIFICATION = 'pending_modification';
+
+    public const STATUS_PENDING_PRODUCTION = 'pending_production';
+
+    public const STATUS_PRODUCTION = 'production';
+
+    public const STATUS_PENDING_SHIPMENT = 'pending_shipment';
+
+    public const STATUS_SHIPPED = 'shipped';
+
+    public const STATUS_CANCELLED = 'cancelled';
+
+    /**
+     * @return array<string, string>
+     */
+    public static function statusOptions(): array
+    {
+        return [
+            self::STATUS_PENDING => '待付款',
+            self::STATUS_CONFIRMED => '已确认',
+            self::STATUS_PENDING_MODIFICATION => '待修改',
+            self::STATUS_PENDING_PRODUCTION => '待生产',
+            self::STATUS_PRODUCTION => '生产中',
+            self::STATUS_PENDING_SHIPMENT => '待发货',
+            self::STATUS_SHIPPED => '已发货',
+            self::STATUS_CANCELLED => '已取消',
+        ];
+    }
+
     protected static function booted(): void
     {
+        static::saving(function (Order $order): void {
+            if ($order->status === self::STATUS_SHIPPED && $order->shipped_at === null) {
+                $order->shipped_at = now();
+            }
+        });
+
         static::updated(function (Order $order): void {
             if ($order->wasChanged('payment_status') && $order->payment_status === 'paid') {
                 OrderPaid::dispatch($order);
@@ -49,6 +90,7 @@ class Order extends Model
         'shipping_method',
         'shipping_carrier',
         'shipping_fee',
+        'shipped_at',
         'shipping_weight_grams',
         'shipping_length_cm',
         'shipping_width_cm',
@@ -72,6 +114,7 @@ class Order extends Model
         return [
             'total' => 'decimal:2',
             'shipping_fee' => 'decimal:2',
+            'shipped_at' => 'datetime',
             'shipping_weight_grams' => 'integer',
             'shipping_length_cm' => 'decimal:2',
             'shipping_width_cm' => 'decimal:2',

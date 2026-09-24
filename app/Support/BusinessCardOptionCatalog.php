@@ -126,9 +126,9 @@ final class BusinessCardOptionCatalog
      * @var list<array{code: string, label: string}>
      */
     private const COTTON_THICKNESSES = [
-        ['code' => '300_360g', 'label' => '300-360g'],
-        ['code' => '360_450g', 'label' => '360-450g'],
-        ['code' => '450_700g', 'label' => '450-700g'],
+        ['code' => '300_360g', 'label' => '15.8-24pt'],
+        ['code' => '360_450g', 'label' => '24-35.4pt'],
+        ['code' => '450_700g', 'label' => '35.4-44pt'],
     ];
 
     /**
@@ -981,6 +981,174 @@ final class BusinessCardOptionCatalog
     }
 
     /**
+     * Remove the legacy "No finish" sentinel and make foil special-finish
+     * groups optional. The helper accepts both canonical option groups and the
+     * legacy flat arrays used by product-option JSON files.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    public static function normalizeSpecialFinishOptions(array $options): array
+    {
+        $group = $options['special_finish'] ?? null;
+
+        if (! is_array($group)) {
+            return $options;
+        }
+
+        $isCanonicalGroup = array_key_exists('values', $group)
+            || array_key_exists('type', $group)
+            || array_key_exists('required', $group)
+            || array_key_exists('default', $group)
+            || array_key_exists('key', $group);
+
+        if ($isCanonicalGroup && ! array_key_exists('values', $group)) {
+            return $options;
+        }
+
+        $values = $isCanonicalGroup ? ($group['values'] ?? null) : $group;
+
+        if (! is_array($values)) {
+            return $options;
+        }
+
+        $hadNoFinishValue = $isCanonicalGroup
+            && self::isNoSpecialFinishValue($group['default'] ?? null);
+        $filteredValues = [];
+
+        foreach ($values as $value) {
+            if (self::isNoSpecialFinishValue($value)) {
+                $hadNoFinishValue = true;
+
+                continue;
+            }
+
+            $filteredValues[] = $value;
+        }
+
+        if (! $isCanonicalGroup) {
+            $options['special_finish'] = array_values($filteredValues);
+
+            return $options;
+        }
+
+        $group['values'] = array_values($filteredValues);
+        $hasFoilValues = $hadNoFinishValue || self::hasFoilValues($filteredValues);
+
+        if ($hasFoilValues) {
+            $group['type'] = 'multi_select';
+            $group['required'] = false;
+            $group['default'] = [];
+        }
+
+        $options['special_finish'] = $group;
+
+        return $options;
+    }
+
+    /**
+     * Return whether a legacy option value represents the removed sentinel.
+     */
+    public static function isNoSpecialFinishValue(mixed $value): bool
+    {
+        if (! is_array($value)) {
+            return in_array(
+                self::normalizeSpecialFinishToken($value),
+                ['none', 'no', 'no_finish', 'no_special_finish', 'no_foil'],
+                true,
+            );
+        }
+
+        if (array_is_list($value)) {
+            foreach ($value as $item) {
+                if (self::isNoSpecialFinishValue($item)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        foreach (['code', 'name', 'label'] as $key) {
+            $token = self::normalizeSpecialFinishToken($value[$key] ?? null);
+
+            if (in_array($token, ['none', 'no', 'no_finish', 'no_special_finish', 'no_foil'], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Remove obsolete no-finish predicates from gallery matches. An empty
+     * special-finish selection is represented by the absence of the option,
+     * so the old sentinel must not remain a gallery condition.
+     *
+     * @param  array<int, mixed>  $rules
+     * @return array<int, array<string, mixed>>
+     */
+    public static function normalizeSpecialFinishGalleryRules(array $rules): array
+    {
+        return array_values(array_map(
+            static function (mixed $rule): array {
+                if (! is_array($rule)) {
+                    return [];
+                }
+
+                if (! array_key_exists('match', $rule) || ! is_array($rule['match'])) {
+                    return $rule;
+                }
+
+                $match = $rule['match'];
+
+                if (self::isNoSpecialFinishValue($match['special_finish'] ?? null)) {
+                    unset($match['special_finish']);
+                }
+
+                $rule['match'] = $match;
+
+                return $rule;
+            },
+            $rules,
+        ));
+    }
+
+    private static function hasFoilValues(array $values): bool
+    {
+        foreach ($values as $value) {
+            $text = is_array($value)
+                ? strtolower(implode(' ', array_filter([
+                    (string) ($value['code'] ?? ''),
+                    (string) ($value['name'] ?? ''),
+                    (string) ($value['label'] ?? ''),
+                    (string) ($value['description'] ?? ''),
+                ])))
+                : strtolower((string) $value);
+
+            if (
+                str_contains($text, 'foil')
+                || preg_match('/(^|[ _-])(hot|cold)(?:[ _-]|$)/', $text) === 1
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static function normalizeSpecialFinishToken(mixed $value): string
+    {
+        if (! is_scalar($value)) {
+            return '';
+        }
+
+        return strtolower(trim((string) $value)) === ''
+            ? ''
+            : str_replace(['-', ' '], '_', strtolower(trim((string) $value)));
+    }
+
+    /**
      * Normalize an existing option map to the requested product contract.
      *
      * @param  array<string, mixed>  $options
@@ -1019,7 +1187,11 @@ final class BusinessCardOptionCatalog
         }
         unset($group);
 
-        return self::normalizeSharedSwatchImages($normalized);
+        return self::normalizeSpecialFinishOptions(
+            self::normalizeOptionalPrintAndDrillingOptions(
+                self::normalizeSharedSwatchImages($normalized),
+            ),
+        );
     }
 
     /**
@@ -1032,6 +1204,114 @@ final class BusinessCardOptionCatalog
     public static function pvcFinishImages(string $slug): array
     {
         return self::PVC_FINISH_IMAGES[$slug] ?? [];
+    }
+
+    /**
+     * Remove the legacy "no" sentinel from print-code and drilling groups.
+     * These groups are optional, so the absence of a selection represents no
+     * print code, stripe, or drilling.
+     *
+     * The helper accepts both canonical option groups and the flat arrays used
+     * by legacy product-option JSON files.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    public static function normalizeOptionalPrintAndDrillingOptions(array $options): array
+    {
+        if (is_array($options['option_groups'] ?? null)) {
+            foreach ($options['option_groups'] as $index => $group) {
+                if (! is_array($group) || ! is_string($group['key'] ?? null)) {
+                    continue;
+                }
+
+                $options['option_groups'][$index] = self::normalizeOptionalPrintAndDrillingGroup(
+                    $group,
+                    $group['key'],
+                );
+            }
+        }
+
+        foreach ($options as $groupKey => $group) {
+            if ($groupKey === 'option_groups' || ! is_string($groupKey) || ! is_array($group)) {
+                continue;
+            }
+
+            $options[$groupKey] = self::normalizeOptionalPrintAndDrillingGroup($group, $groupKey);
+        }
+
+        return $options;
+    }
+
+    /**
+     * @param  array<string, mixed>  $group
+     * @return array<string, mixed>
+     */
+    private static function normalizeOptionalPrintAndDrillingGroup(array $group, string $groupKey): array
+    {
+        $sentinel = self::optionalOptionSentinel($groupKey);
+
+        if ($sentinel === null) {
+            return $group;
+        }
+
+        $isCanonicalGroup = array_key_exists('values', $group)
+            || array_key_exists('type', $group)
+            || array_key_exists('required', $group)
+            || array_key_exists('default', $group);
+        $values = $isCanonicalGroup ? ($group['values'] ?? null) : $group;
+
+        if (! is_array($values)) {
+            return $group;
+        }
+
+        $values = array_values(array_filter(
+            $values,
+            static fn (mixed $value): bool => ! self::isOptionalOptionSentinel($value, $sentinel),
+        ));
+
+        if (! $isCanonicalGroup) {
+            return $values;
+        }
+
+        $group['values'] = $values;
+        $group['required'] = false;
+        $group['default'] = null;
+
+        return $group;
+    }
+
+    private static function optionalOptionSentinel(string $groupKey): ?string
+    {
+        $normalizedKey = str_replace(['-', ' '], '_', strtolower(trim($groupKey)));
+
+        return match ($normalizedKey) {
+            'drill', 'drilling' => 'no_drilling',
+            'print_code_or_magnetic_stripe' => 'no_print_code_or_magnetic_stripe',
+            'print_code_or_signature_stripe' => 'no_print_code_or_signature_stripe',
+            default => str_contains($normalizedKey, 'print_code')
+                ? 'no_print_code'
+                : null,
+        };
+    }
+
+    private static function isOptionalOptionSentinel(mixed $value, string $sentinel): bool
+    {
+        if (! is_array($value)) {
+            $token = str_replace(['-', ' '], '_', strtolower(trim((string) $value)));
+
+            return $token === $sentinel;
+        }
+
+        foreach (['code', 'label', 'name'] as $key) {
+            $token = str_replace(['-', ' '], '_', strtolower(trim((string) ($value[$key] ?? ''))));
+
+            if ($token === $sentinel) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1060,8 +1340,9 @@ final class BusinessCardOptionCatalog
             'special_finish' => self::group(
                 'Special Finish',
                 [...self::hotFoilValues($options), ...self::coldFoilValues($options)],
-                'no_special_finish',
+                [],
                 true,
+                false,
             ),
         ];
     }
@@ -1081,7 +1362,9 @@ final class BusinessCardOptionCatalog
             'print_code' => self::group(
                 'Print Code',
                 self::printCodeValues($options, self::PVC_PRINT_CODE_SWATCH_IMAGE),
-                'no_print_code',
+                null,
+                false,
+                false,
             ),
         ];
     }
@@ -1105,13 +1388,16 @@ final class BusinessCardOptionCatalog
                     self::PVC_PRINT_CODE_SWATCH_IMAGE,
                     self::PVC_SIGNATURE_STRIPE_SWATCH_IMAGE,
                 ),
-                'no_print_code_or_signature_stripe',
+                null,
+                false,
+                false,
             ),
             'special_finish' => self::group(
                 'Special Finish',
                 self::hotFoilValues($options),
-                'no_special_finish',
+                [],
                 true,
+                false,
             ),
         ];
     }
@@ -1131,7 +1417,9 @@ final class BusinessCardOptionCatalog
             'print_code' => self::group(
                 'Print Code',
                 self::printCodeValues($options, self::PVC_PRINT_CODE_SWATCH_IMAGE),
-                'no_print_code',
+                null,
+                false,
+                false,
             ),
         ];
     }
@@ -1177,8 +1465,9 @@ final class BusinessCardOptionCatalog
             'special_finish' => self::group(
                 'Special Finish',
                 self::hotFoilValues($options),
-                'no_special_finish',
+                [],
                 true,
+                false,
             ),
         ];
     }
@@ -1196,8 +1485,9 @@ final class BusinessCardOptionCatalog
             'special_finish' => self::group(
                 'Special Finish',
                 self::hotFoilValues($options),
-                'no_special_finish',
+                [],
                 true,
+                false,
             ),
         ];
     }
@@ -1241,11 +1531,6 @@ final class BusinessCardOptionCatalog
             'print_code_or_magnetic_stripe' => self::group(
                 'Print Code or Magnetic Stripe',
                 [
-                    self::value($options, 'print_code_or_magnetic_stripe', 'no_print_code_or_magnetic_stripe', [
-                        'label' => 'No print code or magnetic stripe',
-                        'description' => 'No print code or magnetic stripe.',
-                        'swatch_image' => '/images/product-options/business-cards/swatches/metal/no-print-code-or-magnetic-stripe.png',
-                    ]),
                     self::value($options, 'print_code_or_magnetic_stripe', 'print_code', [
                         'label' => 'Print code',
                         'description' => 'Add a printed code to the card.',
@@ -1257,7 +1542,9 @@ final class BusinessCardOptionCatalog
                         'swatch_image' => '/images/product-options/business-cards/swatches/metal/magnetic-stripe.png',
                     ]),
                 ],
-                'no_print_code_or_magnetic_stripe',
+                null,
+                false,
+                false,
             ),
         ];
 
@@ -1425,11 +1712,6 @@ final class BusinessCardOptionCatalog
         $printCodeSwatchImage ??= self::PRINT_CODE_SWATCH_IMAGE;
 
         return [
-            self::value($options, 'print_code', 'no_print_code', [
-                'label' => 'No print code',
-                'description' => 'Do not add a print code.',
-                'swatch_image' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
-            ]),
             self::value($options, 'print_code', 'print_code', [
                 'label' => 'Print code',
                 'description' => 'Add a print code to the card.',
@@ -1451,11 +1733,6 @@ final class BusinessCardOptionCatalog
         $signatureStripeSwatchImage ??= self::SIGNATURE_STRIPE_SWATCH_IMAGE;
 
         return [
-            self::value($options, 'print_code_or_signature_stripe', 'no_print_code_or_signature_stripe', [
-                'label' => 'No print code or signature stripe',
-                'description' => 'Do not add a print code or signature stripe.',
-                'swatch_image' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
-            ]),
             self::value($options, 'print_code_or_signature_stripe', 'print_code', [
                 'label' => 'Print code',
                 'description' => 'Add a print code to the card.',
@@ -1477,7 +1754,6 @@ final class BusinessCardOptionCatalog
     {
         $swatches = '/images/product-options/business-cards/swatches/';
         $foils = [
-            ['code' => 'no_special_finish', 'label' => 'No finish', 'swatch_image' => '/images/product-options/no-foil.png', 'description' => 'No special finish, thanks.'],
             ['code' => 'black_gold', 'label' => 'Black Gold', 'swatch_image' => $swatches.'black-gold.png'],
             ['code' => 'blue_gold', 'label' => 'Blue Gold', 'swatch_image' => $swatches.'blue-gold.png'],
             ['code' => 'bright_gold', 'label' => 'Bright Gold', 'swatch_image' => $swatches.'bright-gold.png'],
@@ -1499,9 +1775,7 @@ final class BusinessCardOptionCatalog
                 array_replace(
                     [
                         'label' => $foil['label'],
-                        'description' => $foil['code'] === 'no_special_finish'
-                            ? 'No special finish, thanks.'
-                            : $foil['label'].' hot foil.',
+                        'description' => $foil['label'].' hot foil.',
                         'swatch_image' => $foil['swatch_image'],
                     ],
                     $foil,

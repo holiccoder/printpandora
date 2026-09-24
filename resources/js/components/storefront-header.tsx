@@ -7,6 +7,7 @@ import {
     Menu,
     Package,
     Search,
+    TicketPercent,
     User,
     UserCog,
 } from 'lucide-react';
@@ -71,6 +72,8 @@ type NavCategory = {
     mega?: MegaMenu;
     /** render the menu as a compact anchored dropdown instead */
     compactDropdown?: boolean;
+    /** show child links in a nested third-level flyout */
+    nestedDropdown?: boolean;
 };
 
 type GlobalCart = {
@@ -188,6 +191,26 @@ export function StorefrontHeader({
                         promos: stickers.promo_cards as PromoBlock[],
                     },
                     compactDropdown: true,
+                };
+            }
+
+            if (nav.label === 'Cards & Postcards') {
+                const cardsPostcards = h.cards_postcards_mega_menu;
+
+                return {
+                    label: nav.label,
+                    href: nav.href,
+                    mega: {
+                        groups: cardsPostcards.link_groups.map((g) => ({
+                            links: g.links.map((l) => ({
+                                ...l,
+                                children: l.children as MegaLink[] | undefined,
+                            })),
+                        })),
+                        promos: cardsPostcards.promo_cards as PromoBlock[],
+                    },
+                    compactDropdown: true,
+                    nestedDropdown: true,
                 };
             }
 
@@ -311,6 +334,15 @@ export function StorefrontHeader({
                                         >
                                             <Package className="mr-2 size-4" />
                                             {h.auth.dropdown_orders_label}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href={h.auth.dropdown_coupons_href}
+                                            className="cursor-pointer"
+                                        >
+                                            <TicketPercent className="mr-2 size-4" />
+                                            {h.auth.dropdown_coupons_label}
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
@@ -444,13 +476,16 @@ export function StorefrontHeader({
                                                 }
                                                 className={
                                                     cat.compactDropdown
-                                                        ? '!absolute !top-full !left-0 !z-50 !mt-1.5 !w-64 !max-w-none !bg-white !p-0 shadow-lg data-[state=closed]:hidden data-[state=open]:visible'
+                                                        ? '!absolute !top-full !left-0 !z-50 !mt-1.5 !w-64 !max-w-none !overflow-visible !bg-white !p-0 shadow-lg data-[state=closed]:hidden data-[state=open]:visible'
                                                         : '!fixed !inset-x-0 !left-0 !z-50 !mt-0 !w-screen !max-w-none border-t border-neutral-200 !bg-white p-0 shadow-lg data-[state=closed]:hidden data-[state=open]:visible'
                                                 }
                                             >
                                                 {cat.compactDropdown ? (
                                                     <CompactDropdown
                                                         mega={cat.mega}
+                                                        nestedDropdown={
+                                                            cat.nestedDropdown
+                                                        }
                                                     />
                                                 ) : (
                                                     <MegaPanel
@@ -479,7 +514,107 @@ function ActiveUnderline() {
     );
 }
 
-function CompactDropdown({ mega }: { mega: MegaMenu }) {
+function CompactDropdown({
+    mega,
+    nestedDropdown = false,
+}: {
+    mega: MegaMenu;
+    nestedDropdown?: boolean;
+}) {
+    const [activeLink, setActiveLink] = useState<string | null>(null);
+
+    if (nestedDropdown) {
+        return (
+            <div className="w-64 p-2" onMouseLeave={() => setActiveLink(null)}>
+                {mega.groups.map((group, groupIndex) => (
+                    <div
+                        key={groupIndex}
+                        className={cn(
+                            groupIndex > 0 &&
+                                'mt-2 border-t border-dotted border-neutral-200 pt-2',
+                        )}
+                    >
+                        <ul className="space-y-0.5">
+                            {group.links.map((link) => {
+                                const hasChildren = !!link.children?.length;
+                                const isOpen = activeLink === link.label;
+
+                                return (
+                                    <li
+                                        key={link.label}
+                                        className="relative"
+                                        onMouseEnter={() =>
+                                            setActiveLink(
+                                                hasChildren ? link.label : null,
+                                            )
+                                        }
+                                    >
+                                        <Link
+                                            href={link.href}
+                                            onFocus={() =>
+                                                setActiveLink(
+                                                    hasChildren
+                                                        ? link.label
+                                                        : null,
+                                                )
+                                            }
+                                            aria-haspopup={
+                                                hasChildren ? 'menu' : undefined
+                                            }
+                                            aria-expanded={
+                                                hasChildren ? isOpen : undefined
+                                            }
+                                            className={cn(
+                                                'flex items-center justify-between rounded-sm px-3 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-[#800020]',
+                                                isOpen &&
+                                                    'bg-neutral-50 text-[#800020]',
+                                            )}
+                                        >
+                                            <span>{link.label}</span>
+                                            {hasChildren ? (
+                                                <ChevronRight className="size-4 text-neutral-400" />
+                                            ) : null}
+                                        </Link>
+                                        {hasChildren && isOpen ? (
+                                            <div className="absolute top-0 left-full z-10 w-64 rounded-sm border border-neutral-200 bg-white p-2 shadow-lg">
+                                                <ul
+                                                    role="menu"
+                                                    className="space-y-0.5"
+                                                >
+                                                    {link.children!.map(
+                                                        (child) => (
+                                                            <li
+                                                                key={
+                                                                    child.label
+                                                                }
+                                                            >
+                                                                <Link
+                                                                    href={
+                                                                        child.href
+                                                                    }
+                                                                    role="menuitem"
+                                                                    className="block rounded-sm px-3 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-[#800020]"
+                                                                >
+                                                                    {
+                                                                        child.label
+                                                                    }
+                                                                </Link>
+                                                            </li>
+                                                        ),
+                                                    )}
+                                                </ul>
+                                            </div>
+                                        ) : null}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
     return (
         <div className="w-64 p-2">
             {mega.groups.map((group, groupIndex) => (

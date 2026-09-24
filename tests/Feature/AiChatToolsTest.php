@@ -19,7 +19,7 @@ class AiChatToolsTest extends TestCase
     {
         return Order::create([
             'user_id' => $user->id,
-            'status' => 'processing',
+            'status' => Order::STATUS_PRODUCTION,
             'payment_status' => 'paid',
             'total' => 65,
             'customer_name' => $user->name,
@@ -46,7 +46,7 @@ class AiChatToolsTest extends TestCase
         $result = (new LookupOrder($user))->handle(new ToolRequest([]));
 
         $this->assertStringContainsString("Order #{$order->id}", $result);
-        $this->assertStringContainsString('processing', $result);
+        $this->assertStringContainsString(Order::STATUS_PRODUCTION, $result);
     }
 
     public function test_lookup_order_never_returns_another_customers_order(): void

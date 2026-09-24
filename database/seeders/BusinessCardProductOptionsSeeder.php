@@ -577,6 +577,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
                 $configuration->syncProductProjection($product->fresh());
             }
 
+            $this->normalizeOptionalPrintAndDrillingOptionsAcrossProducts();
         });
 
         if ($this->command !== null) {
@@ -924,8 +925,46 @@ class BusinessCardProductOptionsSeeder extends Seeder
                     (string) $product->slug,
                 ),
             );
+            $config['options'] = BusinessCardOptionCatalog::normalizeOptionalPrintAndDrillingOptions(
+                $config['options'],
+            );
         }
 
         return $this->removeBusinessCardNfc($config);
+    }
+
+    private function normalizeOptionalPrintAndDrillingOptionsAcrossProducts(): void
+    {
+        Product::query()
+            ->orderBy('id')
+            ->each(function (Product $product): void {
+                $updates = [];
+                $config = is_array($product->product_config) ? $product->product_config : [];
+
+                if (is_array($config['options'] ?? null)) {
+                    $normalizedOptions = BusinessCardOptionCatalog::normalizeOptionalPrintAndDrillingOptions(
+                        $config['options'],
+                    );
+
+                    if ($normalizedOptions !== $config['options']) {
+                        $config['options'] = $normalizedOptions;
+                        $updates['product_config'] = $config;
+                    }
+                }
+
+                $legacy = is_array($product->product_options) ? $product->product_options : [];
+
+                if ($legacy !== []) {
+                    $normalizedLegacy = BusinessCardOptionCatalog::normalizeOptionalPrintAndDrillingOptions($legacy);
+
+                    if ($normalizedLegacy !== $legacy) {
+                        $updates['product_options'] = $normalizedLegacy;
+                    }
+                }
+
+                if ($updates !== []) {
+                    $product->forceFill($updates)->save();
+                }
+            });
     }
 }

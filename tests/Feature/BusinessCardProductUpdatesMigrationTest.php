@@ -1239,8 +1239,8 @@ class BusinessCardProductUpdatesMigrationTest extends TestCase
         $this->assertNull(data_get($product->product_config, 'options.uv_finish.default'));
         $this->assertSame(
             [
-                ['uv_finish' => 'single_side_uv', 'special_finish' => 'no_special_finish'],
-                ['uv_finish' => 'both_sides_uv', 'special_finish' => 'no_special_finish'],
+                ['uv_finish' => 'single_side_uv'],
+                ['uv_finish' => 'both_sides_uv'],
             ],
             collect(data_get($product->product_config, 'media.gallery_rules'))
                 ->filter(fn (mixed $rule): bool => is_array($rule)
@@ -1311,8 +1311,8 @@ class BusinessCardProductUpdatesMigrationTest extends TestCase
         );
         $this->assertSame(
             [
-                ['uv_finish' => 'single_side_uv', 'special_finish' => 'no_special_finish'],
-                ['uv_finish' => 'both_sides_uv', 'special_finish' => 'no_special_finish'],
+                ['uv_finish' => 'single_side_uv'],
+                ['uv_finish' => 'both_sides_uv'],
             ],
             collect(data_get($product->product_options, 'galleries'))
                 ->filter(fn (mixed $gallery): bool => is_array($gallery)

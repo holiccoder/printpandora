@@ -6,12 +6,82 @@ use App\Models\DiscountCode;
 use App\Models\DiscountRedemption;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use RuntimeException;
 
 class DiscountService
 {
     public const FIRST_ORDER_CODE = 'WELCOME15';
+
+    /**
+     * Return the discount codes that the customer can currently use.
+     *
+     * Minimum subtotals intentionally do not disqualify a code here: the
+     * customer can still use that offer when their cart reaches the stated
+     * threshold.
+     *
+     * @return Collection<int, DiscountCode>
+     */
+    public function availableForCustomer(User $customer): Collection
+    {
+        $now = now();
+        $customerEmail = Str::lower(trim((string) $customer->email));
+        $hasPreviousOrder = $this->customerHasPreviousOrder(
+            $customer->id,
+            $customer->email,
+        );
+
+        return DiscountCode::query()
+            ->where('is_active', true)
+            ->where(function (Builder $query) use ($now): void {
+                $query
+                    ->whereNull('starts_at')
+                    ->orWhere('starts_at', '<=', $now);
+            })
+            ->where(function (Builder $query) use ($now): void {
+                $query
+                    ->whereNull('ends_at')
+                    ->orWhere('ends_at', '>=', $now);
+            })
+            ->where(function (Builder $query): void {
+                $query
+                    ->where(function (Builder $query): void {
+                        $query
+                            ->where('type', 'percent')
+                            ->where('value', '>', 0)
+                            ->where('value', '<=', 100);
+                    })
+                    ->orWhere(function (Builder $query): void {
+                        $query
+                            ->where('type', 'fixed')
+                            ->where('value', '>', 0);
+                    });
+            })
+            ->where(function (Builder $query): void {
+                $query
+                    ->whereNull('max_uses')
+                    ->orWhereColumn('usage_count', '<', 'max_uses');
+            })
+            ->when(
+                $hasPreviousOrder,
+                fn (Builder $query): Builder => $query->where('first_order_only', false),
+            )
+            ->withCount([
+                'redemptions as customer_redemption_count' => function (Builder $query) use ($customerEmail): void {
+                    $query->whereRaw('LOWER(customer_email) = ?', [$customerEmail]);
+                },
+            ])
+            ->orderBy('ends_at')
+            ->orderBy('code')
+            ->get()
+            ->filter(
+                fn (DiscountCode $discountCode): bool => $discountCode->max_uses_per_customer === null
+                    || (int) $discountCode->customer_redemption_count < (int) $discountCode->max_uses_per_customer,
+            )
+            ->values();
+    }
 
     /**
      * Return the validated pricing quote for a code and cart subtotal.

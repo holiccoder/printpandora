@@ -209,7 +209,6 @@ class ProductConfigurationServiceTest extends TestCase
                     'special_finish' => [
                         'type' => 'multi_select',
                         'values' => [
-                            ['code' => 'no_special_finish', 'label' => 'No finish'],
                             ['code' => 'bright_gold', 'label' => 'Bright Gold'],
                         ],
                     ],
@@ -409,7 +408,7 @@ class ProductConfigurationServiceTest extends TestCase
             array_slice(data_get($options, 'detail_sections.more_good_stuff.items.*.name'), 1),
         );
         $this->assertSame(
-            ['/stickers-and-labels', '/postcards', '/flyers-and-brochures'],
+            ['/stickers-and-labels', '/cards-and-postcards', '/flyers-and-brochures'],
             array_slice(data_get($options, 'detail_sections.more_good_stuff.items.*.href'), 1),
         );
         $this->assertSame(

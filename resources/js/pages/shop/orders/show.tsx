@@ -3,6 +3,10 @@ import { Link } from '@inertiajs/react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
+import {
+    ORDER_STATUS_COLORS,
+    orderStatusLabel,
+} from '@/lib/order-status';
 import { isPvcProductSlug } from '@/lib/product-images';
 
 interface OrderItem {
@@ -50,19 +54,6 @@ interface Props {
     order: Order;
 }
 
-const statusColors: Record<string, string> = {
-    pending:
-        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
-    confirmed: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
-    processing:
-        'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
-    shipped:
-        'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-100',
-    delivered:
-        'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
-    cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
-};
-
 export default function OrderShow({ order }: Props) {
     const c = useContent('shop_orders_show_page') as any;
 
@@ -98,9 +89,9 @@ export default function OrderShow({ order }: Props) {
                             {order.id}
                         </h1>
                         <span
-                            className={`rounded-full px-3 py-1 text-sm font-medium capitalize ${statusColors[order.status] ?? 'bg-neutral-100'}`}
+                            className={`rounded-full px-3 py-1 text-sm font-medium ${ORDER_STATUS_COLORS[order.status] ?? 'bg-neutral-100'}`}
                         >
-                            {order.status}
+                            {orderStatusLabel(order.status)}
                         </span>
                     </div>
 

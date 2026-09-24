@@ -123,11 +123,9 @@ class ProductSwatchCoverageTest extends TestCase
         $expectedLegacySwatches = [
             'business-cards/classic-business-cards.json' => [
                 'print_code' => [
-                    'no_print_code' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
                     'need_print_code' => '/images/product-options/business-cards/swatches/pvc-print-code.png',
                 ],
                 'drill' => [
-                    'no_drilling' => '/images/product-options/business-cards/swatches/drilling/no-drilling.png',
                     'needs_drilling' => '/images/product-options/business-cards/swatches/drilling/needs-drilling.png',
                 ],
             ],
@@ -157,17 +155,14 @@ class ProductSwatchCoverageTest extends TestCase
                     'both_sides_uv' => '/images/product-options/uv-swatch.png',
                 ],
                 'print_code' => [
-                    'no_print_code' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
                     'need_print_code' => '/images/product-options/business-cards/swatches/pvc-print-code.png',
                 ],
                 'drill' => [
-                    'no_drilling' => '/images/product-options/business-cards/swatches/drilling/no-drilling.png',
                     'needs_drilling' => '/images/product-options/business-cards/swatches/drilling/needs-drilling.png',
                 ],
             ],
             'pvc-business-cards/standard-pvc-card.json' => [
                 'print_code_or_signature_stripe' => [
-                    'no_print_code_or_signature_stripe' => '/images/product-options/business-cards/swatches/pvc-no-print-code.png',
                     'print_code' => '/images/products/pvc/pvc-print-code.png',
                     'signature_stripe' => '/images/products/pvc/pvc-signature-stripe.png',
                 ],

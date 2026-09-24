@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ShowcaseResource extends Resource
 {
@@ -31,6 +32,19 @@ class ShowcaseResource extends Resource
     {
         return $schema
             ->schema([
+                Forms\Components\Select::make('category_id')
+                    ->label('分类')
+                    ->relationship(
+                        'category',
+                        'name',
+                        fn (Builder $query): Builder => $query
+                            ->orderBy('sort_order')
+                            ->orderBy('name'),
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->nullable()
+                    ->placeholder('未分类'),
                 Forms\Components\TextInput::make('image_name')
                     ->label('图片名称')
                     ->nullable()
@@ -53,12 +67,18 @@ class ShowcaseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')
-                    ->label('图片')
-                    ->getStateUsing(fn (Showcase $record): string => str_starts_with($record->image_url, 'http://') || str_starts_with($record->image_url, 'https://')
+                    ->label('缩略图')
+                    ->state(fn (Showcase $record): string => str_starts_with($record->image_url, 'http://') || str_starts_with($record->image_url, 'https://')
                         ? $record->image_url
                         : url($record->image_url))
                     ->checkFileExistence(false)
+                    ->imageSize(80)
                     ->square(),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label('分类')
+                    ->badge()
+                    ->placeholder('未分类')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('image_name')
                     ->label('图片名称')
                     ->searchable()
@@ -69,11 +89,6 @@ class ShowcaseResource extends Resource
                     ->searchable()
                     ->limit(40)
                     ->placeholder('—'),
-                Tables\Columns\TextColumn::make('image_url')
-                    ->label('图片地址')
-                    ->searchable()
-                    ->limit(45)
-                    ->copyable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
                     ->dateTime()

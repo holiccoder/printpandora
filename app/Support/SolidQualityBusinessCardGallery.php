@@ -441,7 +441,6 @@ final class SolidQualityBusinessCardGallery
             'id' => $id,
             'match' => [
                 'uv_finish' => $uvFinish,
-                'special_finish' => 'no_special_finish',
             ],
             'images' => [self::UV_GALLERY_IMAGE],
             'primary' => self::UV_GALLERY_IMAGE,
@@ -506,7 +505,6 @@ final class SolidQualityBusinessCardGallery
                 'sizes' => $size,
                 'corners' => $corner,
                 'paper_finish' => $paperFinish,
-                'special_finish' => 'no_special_finish',
             ],
             $assetName,
         );
@@ -529,7 +527,6 @@ final class SolidQualityBusinessCardGallery
                 'sizes' => $size,
                 'corners' => $corner,
                 'paper_finish' => $paperFinish,
-                'special_finish' => 'no_special_finish',
             ],
             $assetName,
             self::PAPER_FINISH_PRIMARY_IMAGES[$paperFinish] ?? null,

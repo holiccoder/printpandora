@@ -123,7 +123,7 @@ final class StandardQualityBusinessCardGallery
     {
         return self::rule(
             $id,
-            ['texture' => $texture, 'special_finish' => 'no_special_finish'],
+            ['texture' => $texture],
             $assetName,
         );
     }
@@ -135,7 +135,7 @@ final class StandardQualityBusinessCardGallery
     {
         return self::rule(
             $id,
-            ['uv_finish' => $uvFinish, 'special_finish' => 'no_special_finish'],
+            ['uv_finish' => $uvFinish],
             '3d-uv',
         );
     }
@@ -156,7 +156,6 @@ final class StandardQualityBusinessCardGallery
                 'sizes' => $size,
                 'corners' => $corner,
                 'texture' => $texture,
-                'special_finish' => 'no_special_finish',
             ],
             $assetName,
         );

@@ -415,70 +415,6 @@
     ],
     "special_finish": [
         {
-            "name": "No finish",
-            "code": "no_special_finish",
-            "description": "no special finish, thanks",
-            "swatch_image": "/images/product-options/no-foil.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
             "name": "Black gold",
             "code": "black_gold",
             "description": "Black gold",
@@ -1223,8 +1159,7 @@
             "match": {
                 "sizes": "standard",
                 "paper_finish": "matte",
-                "corners": "square",
-                "special_finish": "no_special_finish"
+                "corners": "square"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-matte-square.png"
@@ -1235,8 +1170,7 @@
             "match": {
                 "sizes": "square",
                 "paper_finish": "matte",
-                "corners": "square",
-                "special_finish": "no_special_finish"
+                "corners": "square"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-matte-square.png"
@@ -1247,8 +1181,7 @@
             "match": {
                 "sizes": "standard",
                 "paper_finish": "matte",
-                "corners": "rounded",
-                "special_finish": "no_special_finish"
+                "corners": "rounded"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-matte-rounded.png"
@@ -1259,8 +1192,7 @@
             "match": {
                 "sizes": "square",
                 "paper_finish": "matte",
-                "corners": "rounded",
-                "special_finish": "no_special_finish"
+                "corners": "rounded"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-matte-rounded.png"
@@ -1271,8 +1203,7 @@
             "match": {
                 "sizes": "standard",
                 "paper_finish": "gloss",
-                "corners": "square",
-                "special_finish": "no_special_finish"
+                "corners": "square"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-gloss-square.png"
@@ -1283,8 +1214,7 @@
             "match": {
                 "sizes": "square",
                 "paper_finish": "gloss",
-                "corners": "square",
-                "special_finish": "no_special_finish"
+                "corners": "square"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-gloss-square.png"
@@ -1295,8 +1225,7 @@
             "match": {
                 "sizes": "standard",
                 "paper_finish": "gloss",
-                "corners": "rounded",
-                "special_finish": "no_special_finish"
+                "corners": "rounded"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-gloss-rounded.png"
@@ -1307,8 +1236,7 @@
             "match": {
                 "sizes": "square",
                 "paper_finish": "gloss",
-                "corners": "rounded",
-                "special_finish": "no_special_finish"
+                "corners": "rounded"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-gloss-rounded.png"
@@ -1319,8 +1247,7 @@
             "match": {
                 "sizes": "standard",
                 "uv_finish": "single_side_uv",
-                "corners": "square",
-                "special_finish": "no_special_finish"
+                "corners": "square"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-uv-square.png"
@@ -1331,8 +1258,7 @@
             "match": {
                 "sizes": "standard",
                 "uv_finish": "both_sides_uv",
-                "corners": "square",
-                "special_finish": "no_special_finish"
+                "corners": "square"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-uv-square.png"
@@ -1343,8 +1269,7 @@
             "match": {
                 "sizes": "standard",
                 "uv_finish": "single_side_uv",
-                "corners": "rounded",
-                "special_finish": "no_special_finish"
+                "corners": "rounded"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-uv-rounded.png"
@@ -1355,8 +1280,7 @@
             "match": {
                 "sizes": "standard",
                 "uv_finish": "both_sides_uv",
-                "corners": "rounded",
-                "special_finish": "no_special_finish"
+                "corners": "rounded"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-standard-uv-rounded.png"
@@ -1367,8 +1291,7 @@
             "match": {
                 "sizes": "square",
                 "uv_finish": "single_side_uv",
-                "corners": "square",
-                "special_finish": "no_special_finish"
+                "corners": "square"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-uv-square.png"
@@ -1379,8 +1302,7 @@
             "match": {
                 "sizes": "square",
                 "uv_finish": "both_sides_uv",
-                "corners": "square",
-                "special_finish": "no_special_finish"
+                "corners": "square"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-uv-square.png"
@@ -1391,8 +1313,7 @@
             "match": {
                 "sizes": "square",
                 "uv_finish": "single_side_uv",
-                "corners": "rounded",
-                "special_finish": "no_special_finish"
+                "corners": "rounded"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-uv-rounded.png"
@@ -1403,8 +1324,7 @@
             "match": {
                 "sizes": "square",
                 "uv_finish": "both_sides_uv",
-                "corners": "rounded",
-                "special_finish": "no_special_finish"
+                "corners": "rounded"
             },
             "images": [
                 "/images/products/classic-standard-business-cards/classic-standard-business-cards-square-uv-rounded.png"
@@ -1576,14 +1496,14 @@
                     "id": "original-postcards",
                     "name": "Original Postcards",
                     "image_url": "/images/product-detail/even-more/original-postcards.png",
-                    "href": "/postcards",
+                    "href": "/cards-and-postcards",
                     "link_label": "Original Postcards ›"
                 },
                 {
                     "id": "super-postcards",
                     "name": "Super Postcards",
                     "image_url": "/images/product-detail/even-more/super-postcards.png",
-                    "href": "/postcards",
+                    "href": "/cards-and-postcards",
                     "link_label": "Super Postcards ›"
                 },
                 {

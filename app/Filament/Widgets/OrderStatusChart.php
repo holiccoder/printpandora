@@ -26,21 +26,16 @@ class OrderStatusChart extends ChartWidget
             ->pluck('count', 'status')
             ->toArray();
 
-        $statuses = [
-            'pending' => '待付款',
-            'confirmed' => '已确认',
-            'processing' => '处理中',
-            'shipped' => '已发货',
-            'delivered' => '已送达',
-            'cancelled' => '已取消',
-        ];
+        $statuses = Order::statusOptions();
 
         $colors = [
             'pending' => '#f59e0b',
             'confirmed' => '#3b82f6',
-            'processing' => '#6366f1',
+            'pending_modification' => '#f97316',
+            'pending_production' => '#a855f7',
+            'production' => '#6366f1',
+            'pending_shipment' => '#14b8a6',
             'shipped' => '#8b5cf6',
-            'delivered' => '#10b981',
             'cancelled' => '#ef4444',
         ];
 

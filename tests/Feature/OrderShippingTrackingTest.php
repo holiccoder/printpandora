@@ -30,7 +30,7 @@ class OrderShippingTrackingTest extends TestCase
 
         $order = Order::create([
             'user_id' => $user->id,
-            'status' => 'processing',
+            'status' => Order::STATUS_PRODUCTION,
             'total' => 49.99,
             'customer_name' => 'Tracking Customer',
             'customer_email' => 'tracking@example.com',

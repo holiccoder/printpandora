@@ -3,6 +3,7 @@ import { Form, Link } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
 import InputError from '@/components/input-error';
 import SEO from '@/components/seo';
+import ShippingAddressFields from '@/components/shipping-address-fields';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +17,11 @@ type Props = {
         name: string;
         email: string;
         email_verified_at: string | null;
+        shipping_address: string | null;
+        shipping_city: string | null;
+        shipping_state: string | null;
+        shipping_zip: string | null;
+        shipping_country: string | null;
     };
     status?: string;
 };
@@ -99,6 +105,17 @@ export default function DashboardProfile({ user, status }: Props) {
                                             </p>
                                         )}
                                     </div>
+
+                                    <ShippingAddressFields
+                                        initialValues={user}
+                                        content={c.shipping_address}
+                                        errors={
+                                            errors as Record<
+                                                string,
+                                                string | undefined
+                                            >
+                                        }
+                                    />
 
                                     {/* Password is optional — leave both fields blank to keep the
                                         existing password unchanged. */}

@@ -147,88 +147,78 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
             'special_finish' => [
                 'label' => 'Special Finish',
                 'type' => 'multi_select',
-                'required' => true,
-                'default' => 'no_special_finish',
-                'values' => array_merge(
-                    [
+                'required' => false,
+                'default' => [],
+                'values' => array_map(
+                    fn (array $foil): array => array_replace(
+                        $this->existingValue($existing, 'special_finish', $foil['code'], [
+                            'label' => $foil['label'],
+                            'description' => "{$foil['label']} hot foil.",
+                            'swatch_image' => $foil['swatch_image'],
+                        ]),
                         [
-                            'code' => 'no_special_finish',
-                            'label' => 'No finish',
-                            'description' => 'No special finish, thanks.',
-                            'swatch_image' => '/images/product-options/no-foil.png',
-                        ],
-                    ],
-                    array_map(
-                        fn (array $foil): array => array_replace(
-                            $this->existingValue($existing, 'special_finish', $foil['code'], [
-                                'label' => $foil['label'],
-                                'description' => "{$foil['label']} hot foil.",
-                                'swatch_image' => $foil['swatch_image'],
-                            ]),
-                            [
-                                'label' => $foil['label'],
-                                'description' => "{$foil['label']} hot foil.",
-                                'swatch_image' => $foil['swatch_image'],
-                            ],
-                        ),
-                        [
-                            [
-                                'code' => 'black_gold',
-                                'label' => 'Black Gold',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/black-gold.png',
-                            ],
-                            [
-                                'code' => 'blue_gold',
-                                'label' => 'Blue Gold',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/blue-gold.png',
-                            ],
-                            [
-                                'code' => 'bright_gold',
-                                'label' => 'Bright Gold',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/bright-gold.png',
-                            ],
-                            [
-                                'code' => 'bright_silver',
-                                'label' => 'Bright Silver',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/bright-silver.png',
-                            ],
-                            [
-                                'code' => 'green_gold',
-                                'label' => 'Green Gold',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/green-gold.png',
-                            ],
-                            [
-                                'code' => 'matte_gold',
-                                'label' => 'Matte Gold',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/matte-gold.png',
-                            ],
-                            [
-                                'code' => 'matte_silver',
-                                'label' => 'Matte Silver',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/matte-silver.png',
-                            ],
-                            [
-                                'code' => 'red_gold',
-                                'label' => 'Red Gold',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/red-gold.png',
-                            ],
-                            [
-                                'code' => 'rose_gold',
-                                'label' => 'Rose Gold',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/rose-gold.png',
-                            ],
-                            [
-                                'code' => 'aged_gold',
-                                'label' => 'Aged Gold',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/aged-gold.png',
-                            ],
-                            [
-                                'code' => 'muted_purple_gold',
-                                'label' => 'Muted Purple Gold',
-                                'swatch_image' => '/images/product-options/business-cards/swatches/muted-purple-gold.png',
-                            ],
+                            'label' => $foil['label'],
+                            'description' => "{$foil['label']} hot foil.",
+                            'swatch_image' => $foil['swatch_image'],
                         ],
                     ),
+                    [
+                        [
+                            'code' => 'black_gold',
+                            'label' => 'Black Gold',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/black-gold.png',
+                        ],
+                        [
+                            'code' => 'blue_gold',
+                            'label' => 'Blue Gold',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/blue-gold.png',
+                        ],
+                        [
+                            'code' => 'bright_gold',
+                            'label' => 'Bright Gold',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/bright-gold.png',
+                        ],
+                        [
+                            'code' => 'bright_silver',
+                            'label' => 'Bright Silver',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/bright-silver.png',
+                        ],
+                        [
+                            'code' => 'green_gold',
+                            'label' => 'Green Gold',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/green-gold.png',
+                        ],
+                        [
+                            'code' => 'matte_gold',
+                            'label' => 'Matte Gold',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/matte-gold.png',
+                        ],
+                        [
+                            'code' => 'matte_silver',
+                            'label' => 'Matte Silver',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/matte-silver.png',
+                        ],
+                        [
+                            'code' => 'red_gold',
+                            'label' => 'Red Gold',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/red-gold.png',
+                        ],
+                        [
+                            'code' => 'rose_gold',
+                            'label' => 'Rose Gold',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/rose-gold.png',
+                        ],
+                        [
+                            'code' => 'aged_gold',
+                            'label' => 'Aged Gold',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/aged-gold.png',
+                        ],
+                        [
+                            'code' => 'muted_purple_gold',
+                            'label' => 'Muted Purple Gold',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/muted-purple-gold.png',
+                        ],
+                    ],
                 ),
             ],
         ];

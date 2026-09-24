@@ -14,6 +14,8 @@ final class StickerProductCatalog
 {
     public const CATEGORY_SLUG = 'stickers-and-labels';
 
+    public const RECOMMENDED_QUANTITY = 200;
+
     private const SIZE_SWATCH_IMAGE = '/images/product-options/stickers/square-corner.svg';
 
     /**
@@ -335,7 +337,7 @@ final class StickerProductCatalog
                         'pricing' => [
                             'packageName' => "{$name} pricing",
                             'basePrice' => $basePrice,
-                            'startQuantity' => 50,
+                            'startQuantity' => self::RECOMMENDED_QUANTITY,
                             'paperRates' => [],
                             'unitMultipliers' => self::UNIT_MULTIPLIERS,
                             'area_based' => true,
@@ -353,7 +355,13 @@ final class StickerProductCatalog
             (float) $defaultSize['width'],
             (float) $defaultSize['height'],
         );
-        $startingTotal = (int) round(50 * $basePrice * self::UNIT_MULTIPLIERS['50'] * $defaultArea);
+        $startingQuantity = self::RECOMMENDED_QUANTITY;
+        $startingTotal = (int) round(
+            $startingQuantity
+                * $basePrice
+                * self::UNIT_MULTIPLIERS[(string) $startingQuantity]
+                * $defaultArea,
+        );
 
         return [
             'name' => $name,
@@ -364,7 +372,7 @@ final class StickerProductCatalog
             'bullet_points' => $definition['bullet_points'],
             'meta_description' => $definition['meta_description'],
             'featured_image' => $defaultGallery[0],
-            'price_line' => "50 stickers from \${$startingTotal}",
+            'price_line' => "{$startingQuantity} stickers from \${$startingTotal}",
             'weight' => 0,
             'product_config' => $config,
             'is_active' => true,

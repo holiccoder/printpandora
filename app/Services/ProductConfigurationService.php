@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Support\BusinessCardOptionCatalog;
 use App\Support\ClassicSpecialBusinessCardTexture;
 use App\Support\HardcodedContent;
+use App\Support\PostcardProductImageCatalog;
 use App\Support\SolidQualityBusinessCardGallery;
 use App\Support\StandardQualityBusinessCardGallery;
 use Illuminate\Support\Str;
@@ -713,7 +714,7 @@ class ProductConfigurationService
             ];
         }
 
-        return $options;
+        return BusinessCardOptionCatalog::normalizeOptionalPrintAndDrillingOptions($options);
     }
 
     /**
@@ -1205,6 +1206,30 @@ class ProductConfigurationService
             );
         }
 
+        // The six postcard entries reuse business-card option contracts, but
+        // have their own default 4x3 product artwork. Apply that override
+        // after managed business-card gallery synchronization so the default
+        // image remains stable for every storefront request.
+        if (PostcardProductImageCatalog::isAppliedTo($product)) {
+            $config = PostcardProductImageCatalog::applyToConfig(
+                $config,
+                (string) $product->slug,
+            );
+        }
+
+        $config['options'] = BusinessCardOptionCatalog::normalizeOptionalPrintAndDrillingOptions(
+            is_array($config['options'] ?? null) ? $config['options'] : [],
+        );
+        $config['options'] = BusinessCardOptionCatalog::normalizeSpecialFinishOptions(
+            is_array($config['options'] ?? null) ? $config['options'] : [],
+        );
+        $config['media'] = is_array($config['media'] ?? null) ? $config['media'] : [];
+        $config['media']['gallery_rules'] = BusinessCardOptionCatalog::normalizeSpecialFinishGalleryRules(
+            is_array($config['media']['gallery_rules'] ?? null)
+                ? $config['media']['gallery_rules']
+                : [],
+        );
+
         $options = $this->toStorefrontOptions(
             $config,
             $product,
@@ -1440,6 +1465,9 @@ class ProductConfigurationService
                     BusinessCardOptionCatalog::normalizeSharedSizeSwatches($options, $slug),
                 ),
             );
+            $config['options'] = BusinessCardOptionCatalog::normalizeSpecialFinishOptions(
+                $config['options'],
+            );
         }
 
         $galleries = is_array($legacy['galleries'] ?? null) ? $legacy['galleries'] : [];
@@ -1661,7 +1689,9 @@ class ProductConfigurationService
             ];
         }
 
-        return $this->splitUvPaperFinishOptionGroup($options);
+        return BusinessCardOptionCatalog::normalizeOptionalPrintAndDrillingOptions(
+            $this->splitUvPaperFinishOptionGroup($options),
+        );
     }
 
     /**
@@ -2180,6 +2210,12 @@ class ProductConfigurationService
             $config['options'],
             $product,
         );
+        $config['options'] = BusinessCardOptionCatalog::normalizeOptionalPrintAndDrillingOptions(
+            $config['options'],
+        );
+        $config['options'] = BusinessCardOptionCatalog::normalizeSpecialFinishOptions(
+            $config['options'],
+        );
         $config['media'] = is_array($config['media'] ?? null) ? $config['media'] : [];
         $config['media']['gallery'] = is_array($config['media']['gallery'] ?? null)
             ? array_values($config['media']['gallery'])
@@ -2254,6 +2290,18 @@ class ProductConfigurationService
         if ($this->shouldRemoveBusinessCardNfc($product)) {
             $config = $this->withoutBusinessCardNfc($config);
         }
+
+        $config['options'] = BusinessCardOptionCatalog::normalizeOptionalPrintAndDrillingOptions(
+            is_array($config['options'] ?? null) ? $config['options'] : [],
+        );
+        $config['options'] = BusinessCardOptionCatalog::normalizeSpecialFinishOptions(
+            is_array($config['options'] ?? null) ? $config['options'] : [],
+        );
+        $config['media']['gallery_rules'] = BusinessCardOptionCatalog::normalizeSpecialFinishGalleryRules(
+            is_array($config['media']['gallery_rules'] ?? null)
+                ? $config['media']['gallery_rules']
+                : [],
+        );
 
         return $config;
     }
@@ -2400,8 +2448,7 @@ class ProductConfigurationService
         array $rules,
         array $options,
         ?string $productSlug = null,
-    ): array
-    {
+    ): array {
         $specialFinishValues = data_get($options, 'special_finish.values', []);
 
         if (! is_array($specialFinishValues)) {
@@ -2581,14 +2628,6 @@ class ProductConfigurationService
             ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => $foilSwatches.'muted-purple-gold.png'],
         ];
         $specialFinish = [
-            array_replace(
-                $this->existingOptionValue($options, 'special_finish', 'no_special_finish'),
-                [
-                    'label' => 'No finish',
-                    'description' => 'No special finish, thanks.',
-                    'swatch_image' => '/images/product-options/no-foil.png',
-                ],
-            ),
             ...array_map(
                 fn (array $foil): array => array_replace(
                     $this->existingOptionValue($options, 'special_finish', $foil['code'], $foil),
@@ -2612,11 +2651,6 @@ class ProductConfigurationService
                 ],
             ),
             [
-                [
-                    'code' => 'matte',
-                    'label' => 'Matte',
-                    'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
-                ],
                 ...ClassicSpecialBusinessCardTexture::optionDefinitions(),
             ],
         );
@@ -2625,10 +2659,13 @@ class ProductConfigurationService
             'sizes' => $group('Size', $sizes, 'standard'),
             'corners' => $group('Corners', $corners, 'square'),
             'special_finish' => [
-                ...$group('Special Finish', $specialFinish, 'no_special_finish'),
                 'type' => 'multi_select',
+                'label' => 'Special Finish',
+                'required' => false,
+                'default' => [],
+                'values' => $specialFinish,
             ],
-            'texture' => $group('Texture', $textures, 'matte'),
+            'texture' => $group('Texture', $textures, 'water_ripple_paper'),
         ], (string) $product->slug));
     }
 
@@ -2958,6 +2995,7 @@ class ProductConfigurationService
             '对裱' => 'double_mounting',
             '异形模切' => 'custom_die_cut',
             '凹凸' => 'emboss',
+            'Emboss / Deboss' => 'emboss',
             default => $this->legacyProcessCode($name, $normalizedName),
         };
     }

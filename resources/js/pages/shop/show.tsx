@@ -428,7 +428,8 @@ const businessBlockHrefs = [
 function productCategoryHref(categorySlug: string): string {
     switch (categorySlug) {
         case 'postcards':
-            return '/postcards';
+        case 'cards-and-postcards':
+            return '/cards-and-postcards';
         case 'stickers-and-labels':
         case 'stickers-labels':
             return '/stickers-and-labels';
@@ -730,6 +731,10 @@ export default function ShopShow({
                 : [],
         [usesDynamicOptions, productOptions],
     );
+    const specialFinishGroup = dynamicOptionGroups.find(
+        (group) => group.key === 'special_finish',
+    );
+    const specialFinishRequired = specialFinishGroup?.required === true;
 
     const dynamicOptionDefaults = useMemo<
         Record<string, string | string[]>
@@ -886,7 +891,7 @@ export default function ShopShow({
         () =>
             hasProductOptions && Array.isArray(productOptions.special_finish)
                 ? productOptions.special_finish
-                      .filter((f) => f.name.toLowerCase() !== 'none')
+                      .filter((f) => !isNoSpecialFinishCode(f.code ?? f.name))
                       .map((f) => ({
                           id:
                               f.code ??
@@ -1102,7 +1107,9 @@ export default function ShopShow({
     const [selectedSpecialFinish, setSelectedSpecialFinish] = useState<
         string | null
     >(() => {
-        return specialFinishes.length > 0 ? specialFinishes[0].id : 'none';
+        return specialFinishes.length > 0 && specialFinishRequired
+            ? specialFinishes[0].id
+            : null;
     });
     const [selectedSpecialFinishSides, setSelectedSpecialFinishSides] =
         useState<Record<string, SpecialFinishSide>>({});
@@ -1280,7 +1287,14 @@ export default function ShopShow({
               const selected = selectedDynamicOptions[group.key];
 
               if (group.type === 'multi_select') {
-                  return Array.isArray(selected) && selected.length > 0;
+                  const selectedValues = Array.isArray(selected)
+                      ? selected
+                      : [];
+
+                  return (
+                      (!group.required && selectedValues.length === 0) ||
+                      selectedValues.length > 0
+                  );
               }
 
               if (!group.required && (selected == null || selected === '')) {
@@ -1294,7 +1308,8 @@ export default function ShopShow({
                       selected !== 'custom' ||
                       confirmedCustomSize != null)
               );
-          }) && (!isStickerProduct || stickerPaperArea > 0)
+          }) &&
+          (!isStickerProduct || stickerPaperArea > 0)
         : (sizes.length === 0 ||
               (selectedSize !== 'custom'
                   ? selectedSize != null
@@ -1302,7 +1317,9 @@ export default function ShopShow({
           (finishes.length === 0 || selectedFinish != null) &&
           (cornersList.length === 0 || selectedCorners != null) &&
           (textures.length === 0 || selectedTexture != null) &&
-          (specialFinishes.length === 0 || selectedSpecialFinish != null) &&
+          (specialFinishes.length === 0 ||
+              !specialFinishRequired ||
+              selectedSpecialFinish != null) &&
           (embossingList.length === 0 || selectedEmbossing != null) &&
           (embossingOrSignaturePanelList.length === 0 ||
               selectedEmbossingOrSignaturePanel != null);
@@ -1339,8 +1356,8 @@ export default function ShopShow({
         if (finishes.length > 0) opts['paper_finish'] = finishes[0]?.id;
         if (cornersList.length > 0) opts['corners'] = cornersList[0]?.id;
         if (textures.length > 0) opts['texture'] = textures[0]?.id ?? 'none';
-        if (specialFinishes.length > 0) {
-            opts['special_finish'] = specialFinishes[0]?.id ?? 'none';
+        if (specialFinishes.length > 0 && selectedSpecialFinish) {
+            opts['special_finish'] = selectedSpecialFinish;
         }
         if (embossingList.length > 0)
             opts['embossing'] = embossingList[0]?.id ?? 'none';
@@ -1361,6 +1378,7 @@ export default function ShopShow({
         dynamicOptionGroups,
         dynamicOptionDefaults,
         isStickerProduct,
+        selectedSpecialFinish,
     ]);
 
     const selectedOptions = useMemo<Record<string, string | string[]>>(() => {
@@ -1528,10 +1546,7 @@ export default function ShopShow({
     ]);
 
     const displayImages = useMemo(() => {
-        return getProductThumbnailImages(
-            defaultGallery,
-            isStickerProduct,
-        );
+        return getProductThumbnailImages(defaultGallery, isStickerProduct);
     }, [defaultGallery, isStickerProduct]);
 
     const activeImage = useMemo(() => {
@@ -1792,18 +1807,9 @@ export default function ShopShow({
                 const next = finishSelections.includes(value)
                     ? finishSelections.filter((item) => item !== value)
                     : [...finishSelections, value];
-                const noFinishValue = group.values.find((item) =>
-                    isNoSpecialFinishCode(optionValueCode(item)),
-                );
-
                 return {
                     ...current,
-                    [groupKey]:
-                        next.length > 0
-                            ? next
-                            : noFinishValue
-                              ? [optionValueCode(noFinishValue)]
-                              : [],
+                    [groupKey]: next,
                 };
             }
 
@@ -1919,19 +1925,6 @@ export default function ShopShow({
                 setSelectedFinish(value);
                 setSelectedThumbnail(null);
 
-                // Gloss only allows "no special finish" — reset if needed
-                if (
-                    value === 'gloss' &&
-                    selectedSpecialFinish != null &&
-                    !isNoSpecialFinishCode(selectedSpecialFinish)
-                ) {
-                    setSelectedSpecialFinish(
-                        specialFinishes.find((finish: any) =>
-                            isNoSpecialFinishCode(finish.id),
-                        )?.id ?? 'no_special_finish',
-                    );
-                }
-
                 break;
             case 'corners':
                 setSelectedCorners(value);
@@ -1940,10 +1933,21 @@ export default function ShopShow({
                 setSelectedTexture(value);
                 break;
             case 'special_finish':
-                setSelectedSpecialFinish(value);
+                if (!specialFinishRequired && selectedSpecialFinish === value) {
+                    setSelectedSpecialFinish(null);
+                    setSelectedSpecialFinishSides((current) => {
+                        const next = { ...current };
+                        delete next[value];
+
+                        return next;
+                    });
+                } else {
+                    setSelectedSpecialFinish(value);
+                }
+
                 if (isNoSpecialFinishCode(value)) {
                     setSelectedSpecialFinishSides({});
-                } else {
+                } else if (selectedSpecialFinish !== value) {
                     setSelectedSpecialFinishSides((current) => ({
                         ...current,
                         [value]: current[value] ?? DEFAULT_SPECIAL_FINISH_SIDE,
@@ -2044,7 +2048,8 @@ export default function ShopShow({
         hasAdditionalTurnaroundTime(selectedTurnaroundOptions),
     );
 
-    const showSpecialFinishInSummary = specialFinishes.length > 0;
+    const showSpecialFinishInSummary =
+        specialFinishes.length > 0 && selectedProductSpecialFinish != null;
     const showTextureInSummary = textures.length > 0;
     const showEmbossingInSummary = embossingList.length > 0;
     const showEmbossingOrSignaturePanelInSummary =
@@ -2171,7 +2176,8 @@ export default function ShopShow({
                         <div
                             className="aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-lg bg-neutral-100 transition-all duration-300 hover:opacity-95"
                             onClick={() => {
-                                const index = lightboxImages.indexOf(activeImage);
+                                const index =
+                                    lightboxImages.indexOf(activeImage);
                                 setLightboxIndex(index !== -1 ? index : 0);
                                 setLightboxOpen(true);
                             }}
@@ -2369,7 +2375,8 @@ export default function ShopShow({
                                                         s.id,
                                                     ) && (
                                                         <p className="text-xs text-neutral-500">
-                                                            {s.id === 'custom' &&
+                                                            {s.id ===
+                                                                'custom' &&
                                                             confirmedCustomSize
                                                                 ? `${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}"`
                                                                 : s.dims}
@@ -3775,18 +3782,24 @@ function DynamicOptionGroups({
                                             group.key,
                                             code,
                                         ) &&
-                                        (isCustomSize &&
-                                        active &&
-                                        customSize ? (
-                                            <p className="text-xs text-neutral-500">
-                                                {customSize.width.toFixed(2)}" x{' '}
-                                                {customSize.height.toFixed(2)}"
-                                            </p>
-                                        ) : value.description ? (
-                                            <p className="text-xs text-neutral-500">
-                                                {value.description}
-                                            </p>
-                                        ) : null)}
+                                            (isCustomSize &&
+                                            active &&
+                                            customSize ? (
+                                                <p className="text-xs text-neutral-500">
+                                                    {customSize.width.toFixed(
+                                                        2,
+                                                    )}
+                                                    " x{' '}
+                                                    {customSize.height.toFixed(
+                                                        2,
+                                                    )}
+                                                    "
+                                                </p>
+                                            ) : value.description ? (
+                                                <p className="text-xs text-neutral-500">
+                                                    {value.description}
+                                                </p>
+                                            ) : null)}
                                     </>
                                 );
 
@@ -3933,7 +3946,7 @@ function CottonTextureOptionGroup({
 
     return (
         <OptionGroup label={group.label}>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {Array.from(textureGroups.entries()).map(
                     ([textureCode, texture]) => {
                         const activeValue =
@@ -3990,7 +4003,7 @@ function CottonTextureOptionGroup({
                                     )}
                                 </button>
 
-                                <div className="mt-3 flex flex-wrap gap-2">
+                                <div className="mt-2 flex flex-wrap gap-1">
                                     {texture.values.map((value) => {
                                         const code = optionValueCode(value);
                                         const colorActive =
@@ -4009,7 +4022,7 @@ function CottonTextureOptionGroup({
                                                 onClick={() =>
                                                     onSelect(group.key, code)
                                                 }
-                                                className={`flex size-8 items-center justify-center rounded-full border-2 transition-colors focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:outline-none ${
+                                                className={`flex size-7 items-center justify-center rounded-full border-2 transition-colors focus-visible:ring-2 focus-visible:ring-[#800020] focus-visible:outline-none ${
                                                     colorActive
                                                         ? 'border-[#800020]'
                                                         : 'border-neutral-200 hover:border-neutral-400'
@@ -4017,12 +4030,14 @@ function CottonTextureOptionGroup({
                                             >
                                                 {value.color_swatch_image ? (
                                                     <img
-                                                        src={value.color_swatch_image}
+                                                        src={
+                                                            value.color_swatch_image
+                                                        }
                                                         alt=""
-                                                        className="size-6 rounded-full object-cover"
+                                                        className="size-5 rounded-full object-cover"
                                                     />
                                                 ) : (
-                                                    <span className="size-6 rounded-full bg-neutral-200" />
+                                                    <span className="size-5 rounded-full bg-neutral-200" />
                                                 )}
                                             </button>
                                         );

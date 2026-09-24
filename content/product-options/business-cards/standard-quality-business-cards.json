@@ -273,70 +273,6 @@
     ],
     "special_finish": [
         {
-            "name": "No finish",
-            "code": "no_special_finish",
-            "description": "No special finish, thanks.",
-            "swatch_image": "/images/product-options/no-foil.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
             "name": "Black Gold",
             "code": "black_gold",
             "description": "Black Gold hot foil.",
@@ -1121,8 +1057,7 @@
         {
             "id": "texture-starlight-film",
             "match": {
-                "texture": "starlight_film",
-                "special_finish": "no_special_finish"
+                "texture": "starlight_film"
             },
             "images": [
                 "/images/products/standard-quality-business-cards/texture/starlight-film.png"
@@ -1131,8 +1066,7 @@
         {
             "id": "texture-holographic-film",
             "match": {
-                "texture": "holographic_film",
-                "special_finish": "no_special_finish"
+                "texture": "holographic_film"
             },
             "images": [
                 "/images/products/standard-quality-business-cards/texture/holographic-film.png"
@@ -1141,8 +1075,7 @@
         {
             "id": "texture-soft-touch-film",
             "match": {
-                "texture": "soft_touch_film",
-                "special_finish": "no_special_finish"
+                "texture": "soft_touch_film"
             },
             "images": [
                 "/images/products/standard-quality-business-cards/texture/soft-touch-film.png"
@@ -1151,8 +1084,7 @@
         {
             "id": "3d-uv-single-side",
             "match": {
-                "uv_finish": "single_side_uv",
-                "special_finish": "no_special_finish"
+                "uv_finish": "single_side_uv"
             },
             "images": [
                 "/images/products/standard-quality-business-cards/3d-uv.png"
@@ -1161,8 +1093,7 @@
         {
             "id": "3d-uv-both-sides",
             "match": {
-                "uv_finish": "both_sides_uv",
-                "special_finish": "no_special_finish"
+                "uv_finish": "both_sides_uv"
             },
             "images": [
                 "/images/products/standard-quality-business-cards/3d-uv.png"
@@ -1173,8 +1104,7 @@
             "match": {
                 "sizes": "standard",
                 "corners": "square",
-                "texture": "matte",
-                "special_finish": "no_special_finish"
+                "texture": "matte"
             },
             "images": [
                 "/images/products/standard-quality-business-cards/standard-matte-square.png"
@@ -1185,8 +1115,7 @@
             "match": {
                 "sizes": "standard",
                 "corners": "rounded",
-                "texture": "matte",
-                "special_finish": "no_special_finish"
+                "texture": "matte"
             },
             "images": [
                 "/images/products/standard-quality-business-cards/standard-matte-rounded.png"
@@ -1197,8 +1126,7 @@
             "match": {
                 "sizes": "standard",
                 "corners": "rounded",
-                "texture": "gloss",
-                "special_finish": "no_special_finish"
+                "texture": "gloss"
             },
             "images": [
                 "/images/products/standard-quality-business-cards/standard-gloss-rounded.png"
@@ -1209,8 +1137,7 @@
             "match": {
                 "sizes": "standard",
                 "corners": "square",
-                "texture": "gloss",
-                "special_finish": "no_special_finish"
+                "texture": "gloss"
             },
             "images": [
                 "/images/products/standard-quality-business-cards/standard-gloss-square.png"
@@ -1402,14 +1329,14 @@
                     "id": "original-postcards",
                     "name": "Original Postcards",
                     "image_url": "/images/product-detail/even-more/original-postcards.png",
-                    "href": "/postcards",
+                    "href": "/cards-and-postcards",
                     "link_label": "Original Postcards ›"
                 },
                 {
                     "id": "super-postcards",
                     "name": "Super Postcards",
                     "image_url": "/images/product-detail/even-more/super-postcards.png",
-                    "href": "/postcards",
+                    "href": "/cards-and-postcards",
                     "link_label": "Super Postcards ›"
                 },
                 {

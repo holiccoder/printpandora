@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\ShowcaseCategoryResource;
 use App\Filament\Resources\ShowcaseResource;
 use App\Models\Admin;
 use App\Models\Showcase;
+use App\Models\ShowcaseCategory;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +63,32 @@ class ShowcasesTest extends TestCase
                 ->where('showcases.data.0.id', $showcases->last()->id));
     }
 
+    public function test_showcases_can_be_filtered_by_category_slug(): void
+    {
+        $category = ShowcaseCategory::create([
+            'name' => 'Business cards',
+            'slug' => 'business-cards',
+        ]);
+        $matchingShowcase = Showcase::create([
+            'image_name' => 'business-card-showcase',
+            'image_url' => '/images/showcases/business-card-showcase.webp',
+            'category_id' => $category->id,
+        ]);
+        Showcase::create([
+            'image_name' => 'uncategorized-showcase',
+            'image_url' => '/images/showcases/uncategorized-showcase.webp',
+        ]);
+
+        $this->get('/showcases?category=business-cards')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('showcases')
+                ->where('active_category', 'business-cards')
+                ->where('categories.0.slug', 'business-cards')
+                ->has('showcases.data', 1)
+                ->where('showcases.data.0.id', $matchingShowcase->id));
+    }
+
     public function test_showcase_resource_is_registered_in_the_admin_panel(): void
     {
         Filament::setCurrentPanel('admin');
@@ -68,8 +96,12 @@ class ShowcasesTest extends TestCase
         $this->actingAs(Admin::factory()->create(), 'admin');
 
         $this->assertTrue(Route::has('filament.admin.resources.showcases.index'));
+        $this->assertTrue(Route::has('filament.admin.resources.showcase-categories.index'));
 
         $this->get(ShowcaseResource::getUrl())
+            ->assertOk();
+
+        $this->get(ShowcaseCategoryResource::getUrl())
             ->assertOk();
     }
 }

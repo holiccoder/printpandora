@@ -5,7 +5,6 @@ import { Link } from '@inertiajs/react';
 import {
     ArrowRight,
     ChevronRight,
-    FileText,
     Globe,
     Leaf,
     Pencil,
@@ -14,7 +13,6 @@ import {
     Upload,
 } from 'lucide-react';
 import MoreGoodStuffSection from '@/components/product-detail/more-good-stuff-section';
-import type { RecentPost } from '@/components/recent-posts';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
@@ -40,10 +38,6 @@ const finishHref = '/business-cards';
 const designHref = '/business-cards';
 const designIcons = [Pencil, Upload, Globe];
 const perkIcons = [ShieldCheck, Leaf, Truck];
-
-interface Props {
-    blogPosts: RecentPost[];
-}
 
 /* -------------------------------------------------------------------------- */
 /* Shared section helpers (kept local to the page)                            */
@@ -102,29 +96,11 @@ function ShopLink({
     );
 }
 
-function postExcerpt(body: string, length = 140): string {
-    const text = body.replace(/<[^>]+>/g, '').trim();
-
-    if (text.length <= length) {
-        return text;
-    }
-
-    return `${text.slice(0, length).replace(/\s+\S*$/, '')}…`;
-}
-
-function formatPostDate(iso: string): string {
-    return new Date(iso).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
-}
-
 /* -------------------------------------------------------------------------- */
 /* Page                                                                       */
 /* -------------------------------------------------------------------------- */
 
-export default function BusinessCardsLanding({ blogPosts }: Props) {
+export default function BusinessCardsLanding() {
     const c = useContent('business_cards_landing_page') as any;
     const productDetailContent = useContent('product_detail_page') as any;
     const ACCENT = c.accent_color;
@@ -491,65 +467,7 @@ export default function BusinessCardsLanding({ blogPosts }: Props) {
                 </div>
             </section>
 
-            {/* 8. How to use Business Cards -------------------------------- */}
-            <section className="border-t border-neutral-100 bg-white">
-                <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
-                    <SectionHeader
-                        title={sections.how_to_use.heading}
-                        subtitle={sections.how_to_use.subtitle}
-                        accent={ACCENT}
-                    />
-                    <ul className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-                        {blogPosts.slice(0, 3).map((post) => (
-                            <li key={post.id} className="group">
-                                <Link
-                                    href={`/blog/${post.slug}`}
-                                    className="block overflow-hidden rounded-lg border border-neutral-200 bg-white transition-shadow hover:shadow-md"
-                                >
-                                    {post.featured_image ? (
-                                        <div className="aspect-[4/3] overflow-hidden bg-neutral-100">
-                                            <img
-                                                src={post.featured_image}
-                                                alt={post.title}
-                                                loading="lazy"
-                                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="flex aspect-[4/3] items-center justify-center bg-neutral-100 text-neutral-300">
-                                            <FileText className="size-10" />
-                                        </div>
-                                    )}
-                                    <div className="p-5">
-                                        <span className="inline-block rounded-full bg-[#e6efe9] px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-[#800020] uppercase">
-                                            {post.category.name}
-                                        </span>
-                                        <h3 className="mt-3 text-base leading-snug font-semibold text-neutral-900 group-hover:text-[#800020]">
-                                            {post.title}
-                                        </h3>
-                                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-neutral-600">
-                                            {postExcerpt(post.body)}
-                                        </p>
-                                        <div className="mt-4 flex items-center justify-between gap-3 text-xs text-neutral-500">
-                                            <time>
-                                                {formatPostDate(
-                                                    post.published_at,
-                                                )}
-                                            </time>
-                                            <span className="inline-flex items-center gap-1 font-semibold text-[#800020]">
-                                                Read article
-                                                <ChevronRight className="size-3.5" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </section>
-
-            {/* 9. FAQ ------------------------------------------------------ */}
+            {/* 8. FAQ ------------------------------------------------------ */}
             <section className="border-t border-neutral-100 bg-white">
                 <div className="mx-auto max-w-7xl px-4 py-12 lg:py-16">
                     <h2 className="mb-8 text-2xl font-bold text-neutral-900 sm:text-3xl">

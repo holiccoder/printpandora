@@ -10,6 +10,13 @@ type Showcase = {
     image_url: string;
 };
 
+type ShowcaseCategory = {
+    id: number;
+    name: string;
+    slug: string;
+    showcases_count: number;
+};
+
 type PaginatedShowcases = {
     data: Showcase[];
     current_page: number;
@@ -19,10 +26,16 @@ type PaginatedShowcases = {
 };
 
 type Props = {
+    categories: ShowcaseCategory[];
+    active_category?: string | null;
     showcases: PaginatedShowcases;
 };
 
-export default function Showcases({ showcases }: Props) {
+export default function Showcases({
+    categories,
+    active_category,
+    showcases,
+}: Props) {
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
     const images = showcases.data.map((showcase) => showcase.image_url);
@@ -53,6 +66,43 @@ export default function Showcases({ showcases }: Props) {
                             printed work. Select any image to view it in detail.
                         </p>
                     </header>
+
+                    <nav
+                        aria-label="Showcase categories"
+                        className="mt-10 flex flex-wrap justify-center gap-2"
+                    >
+                        <Link
+                            href="/showcases"
+                            preserveScroll
+                            className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                                !active_category
+                                    ? 'border-[#800020] bg-[#800020] text-white'
+                                    : 'border-neutral-300 bg-white text-neutral-700 hover:border-[#800020] hover:text-[#800020]'
+                            }`}
+                            aria-current={!active_category ? 'page' : undefined}
+                        >
+                            All showcases
+                        </Link>
+                        {categories.map((category) => {
+                            const isActive = active_category === category.slug;
+
+                            return (
+                                <Link
+                                    key={category.id}
+                                    href={`/showcases?category=${encodeURIComponent(category.slug)}`}
+                                    preserveScroll
+                                    className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                                        isActive
+                                            ? 'border-[#800020] bg-[#800020] text-white'
+                                            : 'border-neutral-300 bg-white text-neutral-700 hover:border-[#800020] hover:text-[#800020]'
+                                    }`}
+                                    aria-current={isActive ? 'page' : undefined}
+                                >
+                                    {category.name}
+                                </Link>
+                            );
+                        })}
+                    </nav>
 
                     {showcases.data.length === 0 ? (
                         <div className="mx-auto mt-12 max-w-xl rounded-2xl border border-dashed border-neutral-300 bg-white px-6 py-16 text-center text-neutral-600">

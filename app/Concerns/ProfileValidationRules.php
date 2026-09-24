@@ -3,6 +3,7 @@
 namespace App\Concerns;
 
 use App\Models\User;
+use App\Support\ShippingCountryCatalog;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 
@@ -13,11 +14,40 @@ trait ProfileValidationRules
      *
      * @return array<string, array<int, ValidationRule|array<mixed>|string>>
      */
-    protected function profileRules(?int $userId = null): array
+    protected function profileRules(?int $userId = null, ?string $shippingCountry = null): array
     {
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            ...$this->shippingAddressRules($shippingCountry),
+        ];
+    }
+
+    /**
+     * Get the optional saved shipping address rules.
+     *
+     * @return array<string, array<int, ValidationRule|array<mixed>|string>>
+     */
+    protected function shippingAddressRules(?string $shippingCountry = null): array
+    {
+        $stateCodes = ShippingCountryCatalog::stateCodesFor($shippingCountry);
+        $stateRules = ['nullable', 'string', 'max:255'];
+
+        if ($stateCodes !== []) {
+            $stateRules[] = Rule::in($stateCodes);
+        }
+
+        return [
+            'shipping_address' => ['nullable', 'string', 'max:255'],
+            'shipping_city' => ['nullable', 'string', 'max:255'],
+            'shipping_state' => $stateRules,
+            'shipping_zip' => ['nullable', 'string', 'max:20'],
+            'shipping_country' => [
+                'nullable',
+                'string',
+                'size:2',
+                Rule::in(ShippingCountryCatalog::codes()),
+            ],
         ];
     }
 

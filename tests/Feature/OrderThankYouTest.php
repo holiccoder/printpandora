@@ -27,7 +27,7 @@ class OrderThankYouTest extends TestCase
         $user = User::factory()->create();
         $order = Order::create([
             'user_id' => $user->id,
-            'status' => 'processing',
+            'status' => Order::STATUS_PRODUCTION,
             'payment_method' => 'paypal',
             'payment_status' => 'paid',
             'payment_id' => 'PAYPAL-CAPTURE-1',

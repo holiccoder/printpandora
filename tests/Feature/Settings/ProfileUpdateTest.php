@@ -61,6 +61,52 @@ class ProfileUpdateTest extends TestCase
         $this->assertNotNull($user->refresh()->email_verified_at);
     }
 
+    public function test_user_can_update_their_shipping_address(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->patch(route('profile.update'), [
+                'name' => $user->name,
+                'email' => $user->email,
+                'shipping_address' => '1 Main Street',
+                'shipping_city' => 'Austin',
+                'shipping_state' => 'TX',
+                'shipping_zip' => '78701',
+                'shipping_country' => 'US',
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('profile.edit'));
+
+        $this->assertSame('1 Main Street', $user->refresh()->shipping_address);
+        $this->assertSame('Austin', $user->shipping_city);
+        $this->assertSame('TX', $user->shipping_state);
+        $this->assertSame('78701', $user->shipping_zip);
+        $this->assertSame('US', $user->shipping_country);
+    }
+
+    public function test_shipping_state_must_belong_to_the_selected_country(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->from(route('profile.edit'))
+            ->patch(route('profile.update'), [
+                'name' => $user->name,
+                'email' => $user->email,
+                'shipping_country' => 'CA',
+                'shipping_state' => 'TX',
+            ]);
+
+        $response
+            ->assertSessionHasErrors('shipping_state')
+            ->assertRedirect(route('profile.edit'));
+    }
+
     public function test_user_can_delete_their_account()
     {
         $user = User::factory()->create();

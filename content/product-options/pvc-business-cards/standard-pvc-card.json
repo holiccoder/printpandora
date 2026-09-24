@@ -23,12 +23,6 @@
     ],
     "special_finish": [
         {
-            "code": "no_special_finish",
-            "name": "No finish",
-            "description": "No special finish, thanks.",
-            "swatch_image": "/images/product-options/no-foil.png"
-        },
-        {
             "code": "black_gold",
             "name": "Black Gold",
             "description": "Black Gold hot foil.",
@@ -316,14 +310,14 @@
                     "id": "original-postcards",
                     "name": "Original Postcards",
                     "image_url": "/images/product-detail/even-more/original-postcards.png",
-                    "href": "/postcards",
+                    "href": "/cards-and-postcards",
                     "link_label": "Original Postcards ›"
                 },
                 {
                     "id": "super-postcards",
                     "name": "Super Postcards",
                     "image_url": "/images/product-detail/even-more/super-postcards.png",
-                    "href": "/postcards",
+                    "href": "/cards-and-postcards",
                     "link_label": "Super Postcards ›"
                 },
                 {
@@ -373,12 +367,6 @@
         }
     },
     "print_code_or_signature_stripe": [
-        {
-            "code": "no_print_code_or_signature_stripe",
-            "name": "No print code or signature stripe",
-            "description": "Do not add a print code or signature stripe.",
-            "swatch_image": "/images/product-options/business-cards/swatches/pvc-no-print-code.png"
-        },
         {
             "code": "print_code",
             "name": "Print code",

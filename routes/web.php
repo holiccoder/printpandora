@@ -47,7 +47,8 @@ Route::inertia('/designer-partner-program', 'designer-partner-program')->name('d
 Route::post('/designer-partner-program/applications', [DesignerPartnerApplicationController::class, 'store'])
     ->name('designer-partner-program.applications.store');
 Route::post('/product-designs', [ProductDesignRequestController::class, 'store'])->name('product-designs.store');
-Route::inertia('/postcards', 'postcards')->name('postcards');
+Route::redirect('/postcards', '/cards-and-postcards', 301)->name('postcards.legacy');
+Route::inertia('/cards-and-postcards', 'postcards')->name('cards-and-postcards');
 Route::inertia('/stickers-and-labels', 'stickers-and-labels')->name('stickers-and-labels');
 Route::inertia('/flyers-and-brochures', 'flyers-and-brochures')->name('flyers-and-brochures');
 Route::get('/showcases', [ShowcaseController::class, 'index'])->name('showcases');
@@ -67,6 +68,8 @@ Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback']
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/orders', [DashboardController::class, 'orders'])->name('dashboard.orders');
+    Route::get('dashboard/discount-coupons', [DashboardController::class, 'discountCoupons'])
+        ->name('dashboard.discount-coupons');
     Route::get('dashboard/orders/{id}/invoice', [OrderController::class, 'downloadInvoice'])
         ->whereNumber('id')
         ->name('dashboard.orders.invoice');

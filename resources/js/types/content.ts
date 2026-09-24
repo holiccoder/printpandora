@@ -58,6 +58,11 @@ export interface StickersLabelsMegaMenu {
     promo_cards: PromoCard[];
 }
 
+export interface CardsPostcardsMegaMenu {
+    link_groups: LinkGroup[];
+    promo_cards: PromoCard[];
+}
+
 export interface HeaderContent {
     logo: {
         image_url: string;
@@ -80,6 +85,8 @@ export interface HeaderContent {
         dropdown_profile_href: string;
         dropdown_orders_label: string;
         dropdown_orders_href: string;
+        dropdown_coupons_label: string;
+        dropdown_coupons_href: string;
         dropdown_logout_label: string;
         logged_out_login_label: string;
         logged_out_register_label: string;
@@ -93,6 +100,7 @@ export interface HeaderContent {
     };
     top_navigation: NavLink[];
     business_cards_mega_menu: BusinessCardsMegaMenu;
+    cards_postcards_mega_menu: CardsPostcardsMegaMenu;
     stickers_labels_mega_menu: StickersLabelsMegaMenu;
 }
 

@@ -2,9 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Admin;
-use App\Models\Category;
-use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -47,8 +44,8 @@ class BusinessCardRoutesTest extends TestCase
     public function test_business_card_landing_exposes_size_images_in_requested_order(): void
     {
         $sizeImages = [
-            '/images/business-cards/size/standard.webp',
             '/images/business-cards/size/square.webp',
+            '/images/business-cards/size/standard.webp',
             '/images/business-cards/size/square-premium.webp',
         ];
 
@@ -82,40 +79,13 @@ class BusinessCardRoutesTest extends TestCase
         $this->assertFileExists(public_path(ltrim($shippingImage, '/')));
     }
 
-    public function test_business_card_landing_exposes_the_latest_three_blog_posts(): void
+    public function test_business_card_landing_does_not_expose_blog_posts(): void
     {
-        $admin = Admin::factory()->create();
-        $category = Category::query()->create([
-            'name' => 'Design Tips',
-            'slug' => 'design-tips',
-        ]);
-
-        $createPost = function (string $suffix, int $secondsAgo) use ($admin, $category): Post {
-            return Post::query()->create([
-                'title' => "Business card article {$suffix}",
-                'slug' => "business-card-article-{$suffix}",
-                'body' => '<p>Article body.</p>',
-                'featured_image' => null,
-                'category_id' => $category->id,
-                'admin_id' => $admin->id,
-                'is_published' => true,
-                'published_at' => now()->subSeconds($secondsAgo),
-            ]);
-        };
-
-        $latest = $createPost('latest', 1);
-        $second = $createPost('second', 2);
-        $third = $createPost('third', 3);
-        $createPost('older', 4);
-
         $this->get('/business-cards')
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('shop/business-cards')
-                ->has('blogPosts', 3)
-                ->where('blogPosts.0.id', $latest->id)
-                ->where('blogPosts.1.id', $second->id)
-                ->where('blogPosts.2.id', $third->id));
+                ->missing('blogPosts'));
     }
 
     public function test_public_business_card_path_loads_the_existing_product(): void
@@ -230,5 +200,35 @@ class BusinessCardRoutesTest extends TestCase
                 ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.2.children.0.href', '/business-cards/standard-quality')
                 ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.2.children.1.label', 'Solid Quality Business Cards')
                 ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.2.children.1.href', '/business-cards/solid-quality'));
+    }
+
+    public function test_cards_and_postcards_navigation_uses_the_requested_product_mappings(): void
+    {
+        $this->get('/cards-and-postcards')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('postcards')
+                ->where('content.global_chrome.header.top_navigation.1.label', 'Cards & Postcards')
+                ->where('content.global_chrome.header.top_navigation.1.href', '/cards-and-postcards')
+                ->has('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links', 3)
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.0.label', 'Classic Postcards')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.0.children.0.label', 'Classic Standard Postcards')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.0.children.0.href', '/business-cards/classic-standard')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.0.children.1.label', 'Classic Special Postcards')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.0.children.1.href', '/business-cards/classic-special')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.1.label', 'Super Postcards')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.1.children.0.label', 'Super Standard Postcards')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.1.children.0.href', '/business-cards/super-standard')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.1.children.1.label', 'Super Luxe Postcards')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.1.children.1.href', '/business-cards/super-luxe')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.2.label', 'Quality Postcards')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.2.children.0.label', 'Quality Standard Postcards')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.2.children.0.href', '/business-cards/standard-quality')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.2.children.1.label', 'Quality Solid Postcards')
+                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.2.children.1.href', '/business-cards/solid-quality'));
+
+        $this->get('/postcards')
+            ->assertStatus(301)
+            ->assertRedirect('/cards-and-postcards');
     }
 }

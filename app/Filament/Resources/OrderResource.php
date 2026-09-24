@@ -10,10 +10,13 @@ use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class OrderResource extends Resource
@@ -95,14 +98,7 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('status')
                             ->label('状态')
                             ->required()
-                            ->options([
-                                'pending' => '待付款',
-                                'confirmed' => '已确认',
-                                'processing' => '处理中',
-                                'shipped' => '已发货',
-                                'delivered' => '已送达',
-                                'cancelled' => '已取消',
-                            ]),
+                            ->options(Order::statusOptions()),
                         Forms\Components\Select::make('shipping_method')
                             ->label('运输方式')
                             ->options([
@@ -116,6 +112,10 @@ class OrderResource extends Resource
                         Forms\Components\TextInput::make('shipping_fee')
                             ->label('运费')
                             ->prefix('$')
+                            ->disabled(),
+                        Forms\Components\DateTimePicker::make('shipped_at')
+                            ->label('发货时间')
+                            ->seconds(false)
                             ->disabled(),
                         Forms\Components\TextInput::make('shipping_weight_grams')
                             ->label('包裹重量（克）')
@@ -205,32 +205,221 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('customer_email')->label('电子邮箱')->searchable(),
                 Tables\Columns\TextColumn::make('total')->label('订单总计')->money('USD')->sortable(),
                 Tables\Columns\TextColumn::make('shipping_carrier')->label('承运商')->sortable(),
-                Tables\Columns\SelectColumn::make('status')
+                Tables\Columns\TextColumn::make('tracking_number')->label('快递单号')->searchable(),
+                Tables\Columns\TextColumn::make('status')
                     ->label('状态')
-                    ->options([
-                        'pending' => '待付款',
-                        'confirmed' => '已确认',
-                        'processing' => '处理中',
-                        'shipped' => '已发货',
-                        'delivered' => '已送达',
-                        'cancelled' => '已取消',
-                    ])
+                    ->formatStateUsing(fn (string $state): string => Order::statusOptions()[$state] ?? $state)
+                    ->badge()
+                    ->color(fn (string $state): array => match ($state) {
+                        Order::STATUS_PENDING => Color::Yellow,
+                        Order::STATUS_CONFIRMED => Color::Blue,
+                        Order::STATUS_PENDING_MODIFICATION => Color::Orange,
+                        Order::STATUS_PENDING_PRODUCTION => Color::Violet,
+                        Order::STATUS_PRODUCTION => Color::Purple,
+                        Order::STATUS_PENDING_SHIPMENT => Color::Cyan,
+                        Order::STATUS_SHIPPED => Color::Green,
+                        Order::STATUS_CANCELLED => Color::Red,
+                        default => Color::Gray,
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('items_count')->counts('items')->label('商品件数'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->label('下单时间'),
+                Tables\Columns\TextColumn::make('shipped_at')->dateTime()->sortable()->label('发货时间'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->label('订单状态')
-                    ->options([
-                        'pending' => '待付款',
-                        'confirmed' => '已确认',
-                        'processing' => '处理中',
-                        'shipped' => '已发货',
-                        'delivered' => '已送达',
-                        'cancelled' => '已取消',
-                    ]),
+                    ->options(Order::statusOptions())
+                    ->multiple(),
+                Tables\Filters\Filter::make('order_date')
+                    ->label('下单时间')
+                    ->form([
+                        Forms\Components\DateTimePicker::make('from')
+                            ->label('开始时间')
+                            ->seconds(false),
+                        Forms\Components\DateTimePicker::make('until')
+                            ->label('结束时间')
+                            ->seconds(false),
+                    ])
+                    ->columns(2)
+                    ->query(function (Builder $query, array $data): void {
+                        if (filled($data['from'] ?? null)) {
+                            $query->where('created_at', '>=', $data['from']);
+                        }
+
+                        if (filled($data['until'] ?? null)) {
+                            $query->where('created_at', '<=', $data['until']);
+                        }
+                    })
+                    ->indicateUsing(static function (array $data): array {
+                        $indicators = [];
+
+                        if (filled($data['from'] ?? null)) {
+                            $indicators[] = '下单开始：'.$data['from'];
+                        }
+
+                        if (filled($data['until'] ?? null)) {
+                            $indicators[] = '下单结束：'.$data['until'];
+                        }
+
+                        return $indicators;
+                    }),
+                Tables\Filters\Filter::make('shipped_date')
+                    ->label('发货时间')
+                    ->form([
+                        Forms\Components\DateTimePicker::make('from')
+                            ->label('开始时间')
+                            ->seconds(false),
+                        Forms\Components\DateTimePicker::make('until')
+                            ->label('结束时间')
+                            ->seconds(false),
+                    ])
+                    ->columns(2)
+                    ->query(function (Builder $query, array $data): void {
+                        if (filled($data['from'] ?? null)) {
+                            $query->where('shipped_at', '>=', $data['from']);
+                        }
+
+                        if (filled($data['until'] ?? null)) {
+                            $query->where('shipped_at', '<=', $data['until']);
+                        }
+                    })
+                    ->indicateUsing(static function (array $data): array {
+                        $indicators = [];
+
+                        if (filled($data['from'] ?? null)) {
+                            $indicators[] = '发货开始：'.$data['from'];
+                        }
+
+                        if (filled($data['until'] ?? null)) {
+                            $indicators[] = '发货结束：'.$data['until'];
+                        }
+
+                        return $indicators;
+                    }),
+                Tables\Filters\Filter::make('recipient')
+                    ->label('收件人姓名或邮箱')
+                    ->form([
+                        Forms\Components\TextInput::make('value')
+                            ->label('姓名或邮箱')
+                            ->placeholder('输入收件人姓名或邮箱')
+                            ->maxLength(255),
+                    ])
+                    ->query(function (Builder $query, array $data): void {
+                        $value = trim((string) ($data['value'] ?? ''));
+
+                        if ($value === '') {
+                            return;
+                        }
+
+                        $like = '%'.addcslashes($value, '%_\\').'%';
+
+                        $query->where(function (Builder $query) use ($like): void {
+                            $query
+                                ->where('customer_name', 'like', $like)
+                                ->orWhere('customer_email', 'like', $like);
+                        });
+                    })
+                    ->indicateUsing(static function (array $data): array {
+                        return filled($data['value'] ?? null)
+                            ? ['收件人：'.$data['value']]
+                            : [];
+                    }),
+                Tables\Filters\Filter::make('keyword')
+                    ->label('关键词')
+                    ->form([
+                        Forms\Components\TextInput::make('value')
+                            ->label('订单号或订单名称')
+                            ->placeholder('输入订单号或商品名称')
+                            ->maxLength(255),
+                    ])
+                    ->query(function (Builder $query, array $data): void {
+                        $value = trim((string) ($data['value'] ?? ''));
+
+                        if ($value === '') {
+                            return;
+                        }
+
+                        $like = '%'.addcslashes(ltrim($value, '#'), '%_\\').'%';
+
+                        $query->where(function (Builder $query) use ($like): void {
+                            $query
+                                ->where('orders.id', 'like', $like)
+                                ->orWhereHas('items.product', function (Builder $query) use ($like): void {
+                                    $query->where('products.name', 'like', $like);
+                                });
+                        });
+                    })
+                    ->indicateUsing(static function (array $data): array {
+                        return filled($data['value'] ?? null)
+                            ? ['关键词：'.$data['value']]
+                            : [];
+                    }),
+                Tables\Filters\Filter::make('shipping_tracking')
+                    ->label('物流 / 快递单号')
+                    ->form([
+                        Forms\Components\TextInput::make('value')
+                            ->label('物流或快递单号')
+                            ->placeholder('输入物流公司或快递单号')
+                            ->maxLength(255),
+                    ])
+                    ->query(function (Builder $query, array $data): void {
+                        $value = trim((string) ($data['value'] ?? ''));
+
+                        if ($value === '') {
+                            return;
+                        }
+
+                        $like = '%'.addcslashes($value, '%_\\').'%';
+
+                        $query->where(function (Builder $query) use ($like): void {
+                            foreach ([
+                                'shipping_carrier',
+                                'shipping_method',
+                                'tracking_number',
+                                'fourpx_consignment_no',
+                                'fourpx_tracking_number',
+                                'fourpx_logistics_channel_no',
+                            ] as $column) {
+                                $method = $column === 'shipping_carrier' ? 'where' : 'orWhere';
+                                $query->{$method}($column, 'like', $like);
+                            }
+                        });
+                    })
+                    ->indicateUsing(static function (array $data): array {
+                        return filled($data['value'] ?? null)
+                            ? ['物流 / 快递单号：'.$data['value']]
+                            : [];
+                    }),
+                Tables\Filters\Filter::make('order_number')
+                    ->label('订单号')
+                    ->form([
+                        Forms\Components\TextInput::make('value')
+                            ->label('订单号')
+                            ->numeric()
+                            ->placeholder('输入订单号'),
+                    ])
+                    ->query(function (Builder $query, array $data): void {
+                        $value = ltrim(trim((string) ($data['value'] ?? '')), '#');
+
+                        if ($value !== '') {
+                            $query->whereKey($value);
+                        }
+                    })
+                    ->indicateUsing(static function (array $data): array {
+                        return filled($data['value'] ?? null)
+                            ? ['订单号：'.$data['value']]
+                            : [];
+                    }),
             ])
+            ->filtersLayout(FiltersLayout::AboveContent)
+            ->filtersFormColumns(2)
+            ->filtersTriggerAction(function (Actions\Action $action): Actions\Action {
+                return $action
+                    ->button()
+                    ->label('筛选订单')
+                    ->icon('heroicon-o-funnel');
+            })
             ->actions([
                 static::designAction(),
                 Actions\Action::make('addShippingTracking')
@@ -259,7 +448,7 @@ class OrderResource extends Resource
                         $record->update([
                             'tracking_number' => $data['tracking_number'],
                             'tracking_url' => $data['tracking_url'],
-                            'status' => 'shipped',
+                            'status' => Order::STATUS_SHIPPED,
                         ]);
                     })
                     ->successNotificationTitle('物流信息已保存，订单已标记为已发货'),

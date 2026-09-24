@@ -201,7 +201,6 @@ class BusinessCardFoilPricingTest extends TestCase
                     'special_finish' => [
                         'type' => 'multi_select',
                         'values' => [
-                            ['code' => 'no_special_finish'],
                             ['code' => 'gold_foil'],
                             ['code' => 'silver_foil'],
                             ['code' => 'cold_red_gold'],

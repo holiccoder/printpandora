@@ -319,7 +319,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'standard',
                 paper_finish: 'matte',
                 corners: 'square',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -328,7 +327,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'square',
                 paper_finish: 'matte',
                 corners: 'square',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -337,7 +335,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'standard',
                 paper_finish: 'matte',
                 corners: 'rounded',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -346,7 +343,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'square',
                 paper_finish: 'matte',
                 corners: 'rounded',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -355,7 +351,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'standard',
                 paper_finish: 'gloss',
                 corners: 'square',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -364,7 +359,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'square',
                 paper_finish: 'gloss',
                 corners: 'square',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -373,7 +367,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'standard',
                 paper_finish: 'gloss',
                 corners: 'rounded',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -382,7 +375,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'square',
                 paper_finish: 'gloss',
                 corners: 'rounded',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -391,7 +383,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'standard',
                 uv_finish: 'single_side_uv',
                 corners: 'square',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -400,7 +391,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'standard',
                 uv_finish: 'both_sides_uv',
                 corners: 'square',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -409,7 +399,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'standard',
                 uv_finish: 'single_side_uv',
                 corners: 'rounded',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -418,7 +407,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'standard',
                 uv_finish: 'both_sides_uv',
                 corners: 'rounded',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -427,7 +415,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'square',
                 uv_finish: 'single_side_uv',
                 corners: 'square',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -436,7 +423,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'square',
                 uv_finish: 'both_sides_uv',
                 corners: 'square',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -445,7 +431,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'square',
                 uv_finish: 'single_side_uv',
                 corners: 'rounded',
-                special_finish: 'no_special_finish',
             },
         ],
         [
@@ -454,7 +439,6 @@ test('classic standard galleries map every size, finish, corner, and UV selectio
                 sizes: 'square',
                 uv_finish: 'both_sides_uv',
                 corners: 'rounded',
-                special_finish: 'no_special_finish',
             },
         ],
     ];
@@ -630,39 +614,39 @@ test('standard-quality galleries use the new default and finish artwork', () => 
     const selections = [
         [
             'standard-matte-square',
-            { sizes: 'standard', corners: 'square', texture: 'matte', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'square', texture: 'matte' },
         ],
         [
             'standard-matte-rounded',
-            { sizes: 'standard', corners: 'rounded', texture: 'matte', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'rounded', texture: 'matte' },
         ],
         [
             'standard-gloss-rounded',
-            { sizes: 'standard', corners: 'rounded', texture: 'gloss', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'rounded', texture: 'gloss' },
         ],
         [
             'standard-gloss-square',
-            { sizes: 'standard', corners: 'square', texture: 'gloss', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'square', texture: 'gloss' },
         ],
         [
             '3d-uv-single-side',
-            { sizes: 'standard', corners: 'square', texture: '', uv_finish: 'single_side_uv', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'square', texture: '', uv_finish: 'single_side_uv' },
         ],
         [
             '3d-uv-both-sides',
-            { sizes: 'standard', corners: 'rounded', texture: '', uv_finish: 'both_sides_uv', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'rounded', texture: '', uv_finish: 'both_sides_uv' },
         ],
         [
             'texture-starlight-film',
-            { sizes: 'standard', corners: 'square', texture: 'starlight_film', uv_finish: '', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'square', texture: 'starlight_film', uv_finish: '' },
         ],
         [
             'texture-holographic-film',
-            { sizes: 'standard', corners: 'square', texture: 'holographic_film', uv_finish: '', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'square', texture: 'holographic_film', uv_finish: '' },
         ],
         [
             'texture-soft-touch-film',
-            { sizes: 'standard', corners: 'rounded', texture: 'soft_touch_film', uv_finish: '', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'rounded', texture: 'soft_touch_film', uv_finish: '' },
         ],
     ];
 
@@ -678,7 +662,6 @@ test('standard-quality galleries use the new default and finish artwork', () => 
         corners: 'square',
         texture: 'starlight_film',
         uv_finish: 'single_side_uv',
-        special_finish: 'no_special_finish',
     });
 
     assert.equal(textureWins?.id, 'texture-starlight-film');
@@ -744,35 +727,35 @@ test('solid-quality galleries use the supplied 640g artwork', () => {
     const selections = [
         [
             'standard-matte-square',
-            { sizes: 'standard', corners: 'square', paper_finish: 'matte', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'square', paper_finish: 'matte' },
         ],
         [
             'standard-matte-rounded',
-            { sizes: 'standard', corners: 'rounded', paper_finish: 'matte', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'rounded', paper_finish: 'matte' },
         ],
         [
             'standard-gloss-rounded',
-            { sizes: 'standard', corners: 'rounded', paper_finish: 'gloss', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'rounded', paper_finish: 'gloss' },
         ],
         [
             'standard-starlight-film',
-            { sizes: 'standard', corners: 'square', paper_finish: 'starry_film', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'square', paper_finish: 'starry_film' },
         ],
         [
             'standard-laser-film',
-            { sizes: 'standard', corners: 'square', paper_finish: 'holo_film', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'square', paper_finish: 'holo_film' },
         ],
         [
             'standard-soft-touch-film',
-            { sizes: 'standard', corners: 'square', paper_finish: 'soft_touch_film', special_finish: 'no_special_finish' },
+            { sizes: 'standard', corners: 'square', paper_finish: 'soft_touch_film' },
         ],
         [
             '3d-uv-single-side',
-            { uv_finish: 'single_side_uv', special_finish: 'no_special_finish' },
+            { uv_finish: 'single_side_uv' },
         ],
         [
             '3d-uv-both-sides',
-            { uv_finish: 'both_sides_uv', special_finish: 'no_special_finish' },
+            { uv_finish: 'both_sides_uv' },
         ],
     ];
 

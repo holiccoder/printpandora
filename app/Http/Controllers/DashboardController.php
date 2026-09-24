@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
 use App\Models\Affiliate;
 use App\Models\Order;
+use App\Services\DiscountService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -104,6 +105,28 @@ class DashboardController extends Controller
     }
 
     /**
+     * Show the currently available discount coupons for the signed-in customer.
+     */
+    public function discountCoupons(Request $request, DiscountService $discounts): Response
+    {
+        $coupons = $discounts->availableForCustomer($request->user())
+            ->map(fn ($discountCode) => [
+                'code' => $discountCode->code,
+                'type' => $discountCode->type,
+                'value' => (float) $discountCode->value,
+                'minimum_subtotal' => (float) $discountCode->minimum_subtotal,
+                'starts_at' => $discountCode->starts_at?->toIso8601String(),
+                'ends_at' => $discountCode->ends_at?->toIso8601String(),
+                'first_order_only' => (bool) $discountCode->first_order_only,
+            ])
+            ->values();
+
+        return Inertia::render('dashboard/discount-coupons', [
+            'coupons' => $coupons,
+        ]);
+    }
+
+    /**
      * Profile edit form — same fields as the settings/profile page,
      * but rendered inside the dashboard layout.
      */
@@ -116,6 +139,11 @@ class DashboardController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'email_verified_at' => $user->email_verified_at?->toIso8601String(),
+                'shipping_address' => $user->shipping_address,
+                'shipping_city' => $user->shipping_city,
+                'shipping_state' => $user->shipping_state,
+                'shipping_zip' => $user->shipping_zip,
+                'shipping_country' => $user->shipping_country,
             ],
             'status' => $request->session()->get('status'),
         ]);

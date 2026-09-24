@@ -5,11 +5,16 @@ import {
     LifeBuoy,
     Package,
     ShieldCheck,
+    TicketPercent,
     User as UserIcon,
 } from 'lucide-react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
+import {
+    ORDER_STATUS_COLORS,
+    orderStatusLabel,
+} from '@/lib/order-status';
 
 const ACCENT = '#800020';
 
@@ -68,16 +73,26 @@ export default function Dashboard({
 
             <section className="bg-neutral-50">
                 <div className="mx-auto max-w-7xl px-4 py-10 lg:py-14">
-                    <header className="mb-8">
-                        <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
-                            {String(c.welcome_heading_template).replace(
-                                '{user.name}',
-                                user.name,
-                            )}
-                        </h1>
-                        <p className="mt-2 text-sm text-neutral-600 sm:text-base">
-                            {c.welcome_description}
-                        </p>
+                    <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+                        <div>
+                            <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
+                                {String(c.welcome_heading_template).replace(
+                                    '{user.name}',
+                                    user.name,
+                                )}
+                            </h1>
+                            <p className="mt-2 text-sm text-neutral-600 sm:text-base">
+                                {c.welcome_description}
+                            </p>
+                        </div>
+                        <Link
+                            href="/dashboard/discount-coupons"
+                            className="inline-flex items-center gap-1.5 text-sm font-semibold hover:underline"
+                            style={{ color: ACCENT }}
+                        >
+                            <TicketPercent className="size-4" />
+                            {c.discount_coupons_link}
+                        </Link>
                     </header>
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -433,20 +448,15 @@ function EmptyHint({ children }: { children: React.ReactNode }) {
 }
 
 function StatusPill({ status }: { status: string }) {
-    const map: Record<string, string> = {
-        pending: 'bg-amber-50 text-amber-700',
-        processing: 'bg-blue-50 text-blue-700',
-        shipped: 'bg-indigo-50 text-indigo-700',
-        completed: 'bg-emerald-50 text-emerald-700',
-        cancelled: 'bg-neutral-100 text-neutral-600',
-    };
-    const cls = map[status.toLowerCase()] ?? 'bg-neutral-100 text-neutral-700';
+    const cls =
+        ORDER_STATUS_COLORS[status.toLowerCase()] ??
+        'bg-neutral-100 text-neutral-700';
 
     return (
         <span
-            className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${cls}`}
+            className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${cls}`}
         >
-            {status}
+            {orderStatusLabel(status)}
         </span>
     );
 }

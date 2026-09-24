@@ -40,6 +40,28 @@ class CheckoutPendingOrderTest extends TestCase
         $this->assertSame($order->id, Order::firstOrFail()->id);
     }
 
+    public function test_checkout_prefills_the_saved_profile_shipping_address(): void
+    {
+        [$user] = $this->createCartForUser();
+        $user->update([
+            'shipping_address' => '1 Profile Street',
+            'shipping_city' => 'Austin',
+            'shipping_state' => 'TX',
+            'shipping_zip' => '78701',
+            'shipping_country' => 'US',
+        ]);
+
+        $this->actingAs($user)->get(route('shop.checkout'))->assertOk();
+
+        $order = Order::firstOrFail();
+
+        $this->assertSame('1 Profile Street', $order->shipping_address);
+        $this->assertSame('Austin', $order->shipping_city);
+        $this->assertSame('TX', $order->shipping_state);
+        $this->assertSame('78701', $order->shipping_zip);
+        $this->assertSame('US', $order->shipping_country);
+    }
+
     public function test_paypal_creation_reuses_the_pending_order_from_checkout(): void
     {
         config([

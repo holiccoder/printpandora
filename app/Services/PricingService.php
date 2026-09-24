@@ -840,6 +840,7 @@ class PricingService
             '对裱' => 'double_mounting',
             '异形模切' => 'custom_die_cut',
             '凹凸' => 'emboss',
+            'Emboss / Deboss' => 'emboss',
             default => match ($normalizedName) {
                 'rounded', 'rounded-corners', 'round' => 'rounded_corners',
                 default => $normalizedName,

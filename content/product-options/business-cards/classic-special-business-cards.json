@@ -63,12 +63,6 @@
     ],
     "texture": [
         {
-            "name": "Matte",
-            "code": "matte",
-            "description": "",
-            "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg"
-        },
-        {
             "name": "Water Ripple Paper",
             "code": "water_ripple_paper",
             "description": "",
@@ -106,12 +100,6 @@
         }
     ],
     "special_finish": [
-        {
-            "name": "No finish",
-            "code": "no_special_finish",
-            "description": "No special finish, thanks.",
-            "swatch_image": "/images/product-options/no-foil.png"
-        },
         {
             "name": "Black Gold",
             "code": "black_gold",
@@ -519,8 +507,7 @@
             "match": {
                 "sizes": "Square",
                 "paper_finish": "Gloss",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "corners": "Square"
             },
             "images": [
                 "/images/classic-special-business-cards/default01.png",
@@ -534,8 +521,7 @@
             "match": {
                 "sizes": "Standard",
                 "paper_finish": "Gloss",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "corners": "Square"
             },
             "images": [
                 "/images/classic-special-business-cards/default01.png",
@@ -549,8 +535,7 @@
             "match": {
                 "sizes": "Standard",
                 "paper_finish": "Matte",
-                "corners": "Rounded",
-                "special_finish": "no special finish"
+                "corners": "Rounded"
             },
             "images": [
                 "/images/classic-special-business-cards/default01.png",
@@ -564,8 +549,7 @@
             "match": {
                 "sizes": "Standard",
                 "paper_finish": "Matte",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "corners": "Square"
             },
             "images": [
                 "/images/classic-special-business-cards/default01.png",
@@ -579,8 +563,7 @@
             "match": {
                 "sizes": "Square",
                 "paper_finish": "Matte",
-                "corners": "Square",
-                "special_finish": "no special finish"
+                "corners": "Square"
             },
             "images": [
                 "/images/classic-special-business-cards/default01.png",
@@ -729,14 +712,14 @@
                     "id": "original-postcards",
                     "name": "Original Postcards",
                     "image_url": "/images/product-detail/even-more/original-postcards.png",
-                    "href": "/postcards",
+                    "href": "/cards-and-postcards",
                     "link_label": "Original Postcards ›"
                 },
                 {
                     "id": "super-postcards",
                     "name": "Super Postcards",
                     "image_url": "/images/product-detail/even-more/super-postcards.png",
-                    "href": "/postcards",
+                    "href": "/cards-and-postcards",
                     "link_label": "Super Postcards ›"
                 },
                 {

@@ -631,70 +631,6 @@
     ],
     "special_finish": [
         {
-            "name": "No finish",
-            "code": "no_special_finish",
-            "description": "no special finish, thanks",
-            "swatch_image": "/images/product-options/no-foil.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
             "name": "Black gold",
             "code": "black_gold",
             "description": "Black gold",
@@ -1443,70 +1379,6 @@
     ],
     "print_code": [
         {
-            "name": "no print code",
-            "code": "no_print_code",
-            "description": "no need to print codes",
-            "swatch_image": "/images/product-options/business-cards/swatches/pvc-no-print-code.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
-        {
             "name": "need print code",
             "code": "need_print_code",
             "description": "no need to print codes",
@@ -1572,69 +1444,6 @@
         }
     ],
     "drill": [
-        {
-            "name": "no drilling",
-            "code": "no_drilling",
-            "swatch_image": "/images/product-options/business-cards/swatches/drilling/no-drilling.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        },
         {
             "name": "needs drilling",
             "code": "needs_drilling",
@@ -1739,8 +1548,7 @@
             "match": {
                 "sizes": "standard",
                 "corners": "square",
-                "paper_finish": "matte",
-                "special_finish": "no_special_finish"
+                "paper_finish": "matte"
             },
             "images": [
                 "/images/products/solid-quality-business-cards/standard-matte-square.png"
@@ -1751,8 +1559,7 @@
             "match": {
                 "sizes": "standard",
                 "corners": "rounded",
-                "paper_finish": "matte",
-                "special_finish": "no_special_finish"
+                "paper_finish": "matte"
             },
             "images": [
                 "/images/products/solid-quality-business-cards/standard-matte-rounded.png"
@@ -1763,8 +1570,7 @@
             "match": {
                 "sizes": "standard",
                 "corners": "rounded",
-                "paper_finish": "gloss",
-                "special_finish": "no_special_finish"
+                "paper_finish": "gloss"
             },
             "images": [
                 "/images/products/solid-quality-business-cards/standard-gloss-rounded.png"
@@ -1775,8 +1581,7 @@
             "match": {
                 "sizes": "standard",
                 "corners": "square",
-                "paper_finish": "starry_film",
-                "special_finish": "no_special_finish"
+                "paper_finish": "starry_film"
             },
             "images": [
                 "/images/products/solid-quality-business-cards/texture/starlight-film.png"
@@ -1788,8 +1593,7 @@
             "match": {
                 "sizes": "standard",
                 "corners": "square",
-                "paper_finish": "holo_film",
-                "special_finish": "no_special_finish"
+                "paper_finish": "holo_film"
             },
             "images": [
                 "/images/products/solid-quality-business-cards/texture/laser-film.png"
@@ -1801,8 +1605,7 @@
             "match": {
                 "sizes": "standard",
                 "corners": "square",
-                "paper_finish": "soft_touch_film",
-                "special_finish": "no_special_finish"
+                "paper_finish": "soft_touch_film"
             },
             "images": [
                 "/images/products/solid-quality-business-cards/texture/soft-touch-film.png"
@@ -1893,8 +1696,7 @@
         {
             "id": "3d-uv-single-side",
             "match": {
-                "uv_finish": "single_side_uv",
-                "special_finish": "no_special_finish"
+                "uv_finish": "single_side_uv"
             },
             "images": [
                 "/images/products/classic-solid/user-3d-uv.png"
@@ -1903,8 +1705,7 @@
         {
             "id": "3d-uv-both-sides",
             "match": {
-                "uv_finish": "both_sides_uv",
-                "special_finish": "no_special_finish"
+                "uv_finish": "both_sides_uv"
             },
             "images": [
                 "/images/products/classic-solid/user-3d-uv.png"
@@ -2166,14 +1967,14 @@
                     "id": "original-postcards",
                     "name": "Original Postcards",
                     "image_url": "/images/product-detail/even-more/original-postcards.png",
-                    "href": "/postcards",
+                    "href": "/cards-and-postcards",
                     "link_label": "Original Postcards ›"
                 },
                 {
                     "id": "super-postcards",
                     "name": "Super Postcards",
                     "image_url": "/images/product-detail/even-more/super-postcards.png",
-                    "href": "/postcards",
+                    "href": "/cards-and-postcards",
                     "link_label": "Super Postcards ›"
                 },
                 {

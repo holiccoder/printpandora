@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Support\BusinessCardOptionCatalog;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use JsonException;
@@ -255,6 +256,22 @@ class CatalogSynchronizationService
                 if (array_key_exists($field, $row)) {
                     $attributes[$field] = $this->nullableJsonArray($row[$field], "product {$slug}.{$field}");
                 }
+            }
+
+            if (is_array($attributes['product_config'] ?? null)) {
+                $options = $attributes['product_config']['options'] ?? null;
+
+                if (is_array($options)) {
+                    $attributes['product_config']['options'] = BusinessCardOptionCatalog::normalizeOptionalPrintAndDrillingOptions(
+                        $options,
+                    );
+                }
+            }
+
+            if (is_array($attributes['product_options'] ?? null)) {
+                $attributes['product_options'] = BusinessCardOptionCatalog::normalizeOptionalPrintAndDrillingOptions(
+                    $attributes['product_options'],
+                );
             }
 
             foreach (self::PRODUCT_INTEGER_FIELDS as $field) {

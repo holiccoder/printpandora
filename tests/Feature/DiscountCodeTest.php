@@ -104,7 +104,7 @@ class DiscountCodeTest extends TestCase
         $product = $this->makeProduct();
         Order::create([
             'user_id' => $user->id,
-            'status' => 'processing',
+            'status' => Order::STATUS_PRODUCTION,
             'payment_method' => 'manual',
             'payment_status' => 'paid',
             'total' => 100,

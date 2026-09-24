@@ -235,7 +235,7 @@ HTML,
         // Product categories
         $productCategories = [
             ['name' => 'Business Cards', 'slug' => 'business-cards', 'parent_slug' => null],
-            ['name' => 'Postcards', 'slug' => 'postcards', 'parent_slug' => null],
+            ['name' => 'Cards & Postcards', 'slug' => 'cards-and-postcards', 'parent_slug' => null],
             ['name' => 'Stickers & Labels', 'slug' => 'stickers-and-labels', 'parent_slug' => null],
             ['name' => 'Flyers & Brochures', 'slug' => 'flyers-brochures', 'parent_slug' => null],
             ['name' => 'Cotton Business Cards', 'slug' => 'cotton-business-cards', 'parent_slug' => 'business-cards'],
@@ -361,6 +361,7 @@ HTML,
         $this->call(ClassicStandardBusinessCardOptionsSeeder::class);
         $this->call(ClassicSpecialBusinessCardOptionsSeeder::class);
         $this->call(BusinessCardProductOptionsSeeder::class);
+        $this->call(PostcardProductImageSeeder::class);
         $this->call(StickerProductOptionsSeeder::class);
         $this->call(HelpCenterSeeder::class);
     }

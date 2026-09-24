@@ -68,7 +68,7 @@ class OrderDesignActionTest extends TestCase
         ]);
         $order = Order::create([
             'user_id' => $user->id,
-            'status' => 'processing',
+            'status' => Order::STATUS_PRODUCTION,
             'total' => 25,
             'customer_name' => 'Client',
             'customer_email' => $user->email,

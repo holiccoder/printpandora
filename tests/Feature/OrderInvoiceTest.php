@@ -33,7 +33,7 @@ class OrderInvoiceTest extends TestCase
         DB::transaction(function () use ($order): void {
             $order->update([
                 'payment_status' => 'paid',
-                'status' => 'processing',
+                'status' => Order::STATUS_PRODUCTION,
             ]);
         });
 

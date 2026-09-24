@@ -71,7 +71,6 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
         );
         $this->assertSame(
             [
-                'no_special_finish',
                 'black_gold',
                 'blue_gold',
                 'bright_gold',
@@ -91,8 +90,12 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
             data_get($product->product_config, 'options.special_finish.type'),
         );
         $this->assertSame(
-            'No finish',
-            data_get($product->product_config, 'options.special_finish.values.0.label'),
+            false,
+            data_get($product->product_config, 'options.special_finish.required'),
+        );
+        $this->assertSame(
+            [],
+            data_get($product->product_config, 'options.special_finish.default'),
         );
         $this->assertSame(
             'Custom',

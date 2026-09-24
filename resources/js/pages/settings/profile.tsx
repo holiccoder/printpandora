@@ -4,6 +4,7 @@ import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileCo
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import SEO from '@/components/seo';
+import ShippingAddressFields from '@/components/shipping-address-fields';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -119,6 +120,14 @@ export default function Profile({
                                         )}
                                     </div>
                                 )}
+
+                            <ShippingAddressFields
+                                initialValues={auth.user}
+                                content={c.shipping_address}
+                                errors={
+                                    errors as Record<string, string | undefined>
+                                }
+                            />
 
                             <div className="flex items-center gap-4">
                                 <Button

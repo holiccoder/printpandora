@@ -57,7 +57,7 @@ HTML,
 <ul>
     <li><strong>Pending:</strong> the order has been created and is waiting for payment confirmation or the next fulfillment step.</li>
     <li><strong>Confirmed:</strong> the order has been accepted and is ready for fulfillment.</li>
-    <li><strong>Processing:</strong> the order is being prepared or produced.</li>
+    <li><strong>Production:</strong> the order is being prepared or produced.</li>
     <li><strong>Shipped:</strong> the parcel has left the facility and carrier tracking is available or being added.</li>
     <li><strong>Delivered:</strong> the carrier has recorded delivery.</li>
     <li><strong>Cancelled:</strong> the order will not continue through fulfillment.</li>

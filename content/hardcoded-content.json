@@ -36,6 +36,8 @@
                 "dropdown_profile_href": "/dashboard/profile",
                 "dropdown_orders_label": "Orders",
                 "dropdown_orders_href": "/dashboard/orders",
+                "dropdown_coupons_label": "Discount coupons",
+                "dropdown_coupons_href": "/dashboard/discount-coupons",
                 "dropdown_logout_label": "Log out",
                 "logged_out_login_label": "Log in",
                 "logged_out_register_label": "Register",
@@ -53,8 +55,8 @@
                     "href": "/business-cards"
                 },
                 {
-                    "label": "Postcards",
-                    "href": "/postcards"
+                    "label": "Cards & Postcards",
+                    "href": "/cards-and-postcards"
                 },
                 {
                     "label": "Stickers & Labels",
@@ -275,6 +277,57 @@
                     }
                 ]
             },
+            "cards_postcards_mega_menu": {
+                "link_groups": [
+                    {
+                        "links": [
+                            {
+                                "label": "Classic Postcards",
+                                "href": "/cards-and-postcards",
+                                "children": [
+                                    {
+                                        "label": "Classic Standard Postcards",
+                                        "href": "/business-cards/classic-standard"
+                                    },
+                                    {
+                                        "label": "Classic Special Postcards",
+                                        "href": "/business-cards/classic-special"
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Super Postcards",
+                                "href": "/cards-and-postcards",
+                                "children": [
+                                    {
+                                        "label": "Super Standard Postcards",
+                                        "href": "/business-cards/super-standard"
+                                    },
+                                    {
+                                        "label": "Super Luxe Postcards",
+                                        "href": "/business-cards/super-luxe"
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Quality Postcards",
+                                "href": "/cards-and-postcards",
+                                "children": [
+                                    {
+                                        "label": "Quality Standard Postcards",
+                                        "href": "/business-cards/standard-quality"
+                                    },
+                                    {
+                                        "label": "Quality Solid Postcards",
+                                        "href": "/business-cards/solid-quality"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "promo_cards": []
+            },
             "stickers_labels_mega_menu": {
                 "link_groups": [
                     {
@@ -315,8 +368,8 @@
                     "href": "/business-cards"
                 },
                 {
-                    "label": "Postcards",
-                    "href": "/postcards"
+                    "label": "Cards & Postcards",
+                    "href": "/cards-and-postcards"
                 },
                 {
                     "label": "Stickers and labels",
@@ -641,7 +694,7 @@
                     "headline": "MAIL THAT MAKES\nTHEM SMILE",
                     "subheadline": "Exquisite postcards, thank you notes, and heavy art prints with gorgeous finishes.",
                     "cta_text": "EXPLORE POSTCARDS",
-                    "cta_href": "/postcards",
+                    "cta_href": "/cards-and-postcards",
                     "image_url": "/images/home/homepage-carousel-09.webp",
                     "mobile_image_url": "/images/home/mobile-banners/09-mobile.png",
                     "alt": "Custom business cards arranged in warm natural light",
@@ -1280,7 +1333,7 @@
                             "id": "premium-flyers",
                             "name": "Postcards",
                             "image_url": "/images/product-detail/even-more/postcards.webp",
-                            "href": "/postcards",
+                            "href": "/cards-and-postcards",
                             "link_label": "Postcards →"
                         },
                         {
@@ -1737,12 +1790,12 @@
                     {
                         "name": "Standard",
                         "blurb": "The classic US / EU format for a card that fits every wallet.",
-                        "image_url": "/images/business-cards/size/standard.webp"
+                        "image_url": "/images/business-cards/size/square.webp"
                     },
                     {
                         "name": "Square",
                         "blurb": "A bold square format that stands out from the stack.",
-                        "image_url": "/images/business-cards/size/square.webp"
+                        "image_url": "/images/business-cards/size/standard.webp"
                     },
                     {
                         "name": "Custom",
@@ -2323,7 +2376,7 @@
             },
             {
                 "label": "Shop Postcards",
-                "href": "/postcards"
+                "href": "/cards-and-postcards"
             },
             {
                 "label": "View All Products",
@@ -2343,6 +2396,7 @@
         },
         "welcome_heading_template": "Welcome back, {user.name}",
         "welcome_description": "Manage your orders, profile, shipping address and affiliate program from one place.",
+        "discount_coupons_link": "Discount coupons",
         "cards": {
             "profile": {
                 "title": "Profile",
@@ -2428,11 +2482,11 @@
         "_source_file": "resources/js/pages/dashboard/profile.tsx",
         "seo": {
             "title": "Edit profile",
-            "description": "Update your InkPavo profile name and email address."
+            "description": "Update your InkPavo profile name, email address, and shipping address."
         },
         "back_link": "Back to dashboard",
         "page_heading": "Edit profile",
-        "page_subheading": "Update your name and email address.",
+        "page_subheading": "Update your name, email address, and shipping address.",
         "labels": {
             "name": "Name",
             "email": "Email",
@@ -2445,6 +2499,24 @@
             "password": "At least 8 characters",
             "password_confirmation": "Repeat new password"
         },
+        "shipping_address": {
+            "heading": "Shipping address",
+            "description": "Save your preferred delivery address for faster checkout.",
+            "labels": {
+                "address": "Street address",
+                "city": "City",
+                "state": "State or province",
+                "zip": "ZIP or postal code",
+                "country": "Country"
+            },
+            "placeholders": {
+                "address": "Street address",
+                "city": "City",
+                "state": "Select a state or province",
+                "zip": "ZIP or postal code",
+                "country": "Select a country"
+            }
+        },
         "unverified_email_notice": "Your email address is unverified.",
         "password_help": "Leave the password fields blank to keep your current password.",
         "buttons": {
@@ -2452,6 +2524,45 @@
             "saving": "Saving…"
         },
         "success_inline": "Saved."
+    },
+    "dashboard_discount_coupons_page": {
+        "_source_file": "resources/js/pages/dashboard/discount-coupons.tsx",
+        "seo": {
+            "title": "Discount coupons",
+            "description": "View the discount coupons currently available for your InkPavo account."
+        },
+        "back_link": "Back to dashboard",
+        "page_heading": "Discount coupons",
+        "page_subheading": "Use an available coupon at checkout to save on your next order.",
+        "results_count_singular": "coupon available",
+        "results_count_plural": "coupons available",
+        "filters": {
+            "search_label": "Search",
+            "search_placeholder": "Search by coupon code",
+            "type_label": "Discount type",
+            "type_options": {
+                "all": "All types",
+                "percent": "Percentage",
+                "fixed": "Fixed amount"
+            }
+        },
+        "empty_state": {
+            "no_coupons": "There are no discount coupons available for your account right now.",
+            "no_matches": "No coupons match your current filters."
+        },
+        "card": {
+            "available_label": "Available",
+            "percent_off_label": "off",
+            "fixed_off_label": "off",
+            "minimum_subtotal_label": "Minimum order",
+            "no_minimum_label": "No minimum",
+            "validity_label": "Validity",
+            "valid_until_prefix": "Until",
+            "no_expiry_label": "No expiry",
+            "eligibility_label": "Eligibility",
+            "first_order_label": "First order only",
+            "checkout_hint": "Enter this code during checkout."
+        }
     },
     "shop_orders_index_page": {
         "_source_file": "resources/js/pages/shop/orders/index.tsx",
@@ -2729,11 +2840,11 @@
         "_source_file": "resources/js/pages/settings/profile.tsx",
         "seo": {
             "title": "Profile settings",
-            "description": "Update your InkPavo profile name and email address."
+            "description": "Update your InkPavo profile name, email address, and shipping address."
         },
         "sr_heading": "Profile settings",
         "section_heading": "Profile",
-        "section_description": "Update your name and email address",
+        "section_description": "Update your name, email address, and shipping address",
         "breadcrumb": "Profile settings",
         "labels": {
             "name": "Name",
@@ -2742,6 +2853,24 @@
         "placeholders": {
             "name": "Full name",
             "email": "Email address"
+        },
+        "shipping_address": {
+            "heading": "Shipping address",
+            "description": "Save your preferred delivery address for faster checkout.",
+            "labels": {
+                "address": "Street address",
+                "city": "City",
+                "state": "State or province",
+                "zip": "ZIP or postal code",
+                "country": "Country"
+            },
+            "placeholders": {
+                "address": "Street address",
+                "city": "City",
+                "state": "Select a state or province",
+                "zip": "ZIP or postal code",
+                "country": "Select a country"
+            }
         },
         "unverified_email_prefix": "Your email address is unverified. ",
         "unverified_email_link": "Click here to re-send the verification email.",
@@ -2806,7 +2935,7 @@
     },
     "postcards_page": {
         "_source_file": "resources/js/pages/postcards.tsx",
-        "active_category": "Postcards",
+        "active_category": "Cards & Postcards",
         "accent_color": "#800020",
         "warm_bg": "#FAF7F2",
         "gold": "#C9A96A",
@@ -2833,35 +2962,35 @@
                     "blurb": "The classic mailer size — perfect for promotions, thank-yous, and event invites.",
                     "price_from": "from $29",
                     "image_url": "/images/products/postcards/card.png",
-                    "href": "/postcards"
+                    "href": "/cards-and-postcards"
                 },
                 {
                     "name": "Square 4.72\"",
                     "blurb": "A modern square that stands out in the mail and on display.",
                     "price_from": "from $32",
                     "image_url": "/images/products/postcards/postcard-2.png",
-                    "href": "/postcards"
+                    "href": "/cards-and-postcards"
                 },
                 {
                     "name": "Medium 5\"×7\"",
                     "blurb": "More room for photography and copy — ideal for portfolios and announcements.",
                     "price_from": "from $36",
                     "image_url": "/images/products/postcards/postcard-4.png",
-                    "href": "/postcards"
+                    "href": "/cards-and-postcards"
                 },
                 {
                     "name": "Large 6\"×9\"",
                     "blurb": "Maximum impact for menus, real estate, and campaign pieces.",
                     "price_from": "from $42",
                     "image_url": "/images/products/postcards/vertical-card.png",
-                    "href": "/postcards"
+                    "href": "/cards-and-postcards"
                 },
                 {
                     "name": "Rack Cards",
                     "blurb": "Tall display cards for counters, booths, and brochure racks.",
                     "price_from": "from $34",
                     "image_url": "/images/products/postcards/postcard-1.png",
-                    "href": "/postcards"
+                    "href": "/cards-and-postcards"
                 }
             ]
         },

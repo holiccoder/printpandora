@@ -15,7 +15,7 @@ export function ExploreOtherProducts() {
         },
         {
             title: 'shop postcards',
-            href: '/postcards',
+            href: '/cards-and-postcards',
             image_url: '/images/home/explore-postcards.webp',
         },
         {

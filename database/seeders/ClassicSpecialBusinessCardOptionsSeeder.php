@@ -120,39 +120,27 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
             'special_finish' => [
                 'label' => 'Special Finish',
                 'type' => 'multi_select',
-                'required' => true,
-                'default' => 'no_special_finish',
-                'values' => array_merge(
-                    [
-                        array_replace(
-                            $this->existingValue($existing, 'special_finish', 'no_special_finish', []),
-                            [
-                                'label' => 'No finish',
-                                'description' => 'No special finish, thanks.',
-                                'swatch_image' => '/images/product-options/no-foil.png',
-                            ],
-                        ),
-                    ],
-                    array_map(
-                        fn (array $foil): array => array_replace(
-                            $this->existingValue($existing, 'special_finish', $foil['code'], [
-                                'label' => $foil['label'],
-                            ]),
-                            [
-                                'label' => $foil['label'],
-                                'description' => $foil['label'].' hot foil.',
-                                'swatch_image' => $foil['swatch_image'],
-                            ],
-                        ),
-                        $this->foilDefinitions(),
+                'required' => false,
+                'default' => [],
+                'values' => array_map(
+                    fn (array $foil): array => array_replace(
+                        $this->existingValue($existing, 'special_finish', $foil['code'], [
+                            'label' => $foil['label'],
+                        ]),
+                        [
+                            'label' => $foil['label'],
+                            'description' => $foil['label'].' hot foil.',
+                            'swatch_image' => $foil['swatch_image'],
+                        ],
                     ),
+                    $this->foilDefinitions(),
                 ),
             ],
             'texture' => [
                 'label' => 'Texture',
                 'type' => 'select',
                 'required' => true,
-                'default' => 'matte',
+                'default' => 'water_ripple_paper',
                 'values' => array_map(
                     fn (array $texture): array => array_replace(
                         $this->existingValue($existing, 'texture', $texture['code'], []),
@@ -308,11 +296,6 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
     private function textureDefinitions(): array
     {
         return [
-            [
-                'code' => 'matte',
-                'label' => 'Matte',
-                'swatch_image' => '/images/product-options/business-cards/laminates/matte-526x251.jpg',
-            ],
             ...ClassicSpecialBusinessCardTexture::optionDefinitions(),
         ];
     }

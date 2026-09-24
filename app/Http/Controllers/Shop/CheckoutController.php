@@ -399,7 +399,7 @@ class CheckoutController extends Controller
             case 'confirm_check':
                 $order->update([
                     'payment_status' => 'paid',
-                    'status' => 'processing',
+                    'status' => Order::STATUS_CONFIRMED,
                     'checkout_token' => null,
                 ]);
                 break;
@@ -528,8 +528,8 @@ class CheckoutController extends Controller
                     'checkout_token' => null,
                 ];
 
-                if ($lockedOrder->status === 'pending') {
-                    $updates['status'] = 'processing';
+                if ($lockedOrder->status === Order::STATUS_PENDING) {
+                    $updates['status'] = Order::STATUS_CONFIRMED;
                 }
 
                 if ($captureId && ! $lockedOrder->payment_id) {
@@ -556,8 +556,11 @@ class CheckoutController extends Controller
             }
 
             $updates = ['payment_status' => $paymentStatus];
-            if ($cancel && in_array($lockedOrder->status, ['pending', 'processing'], true)) {
-                $updates['status'] = 'cancelled';
+            if ($cancel && in_array($lockedOrder->status, [
+                Order::STATUS_PENDING,
+                Order::STATUS_CONFIRMED,
+            ], true)) {
+                $updates['status'] = Order::STATUS_CANCELLED;
                 $updates['checkout_token'] = null;
             }
 
@@ -724,7 +727,7 @@ class CheckoutController extends Controller
         }
 
         $shippingMethod = $this->shipping->defaultMethod();
-        $shippingCountry = $this->shipping->defaultCountry();
+        $shippingCountry = $user->shipping_country ?: $this->shipping->defaultCountry();
         $shippingWeightGrams = $this->weights->forCart($cart->all());
         $shipping = $this->shipping->get(
             $shippingMethod,
@@ -748,10 +751,10 @@ class CheckoutController extends Controller
             'customer_name' => (string) $user->name,
             'customer_email' => (string) $user->email,
             'customer_phone' => null,
-            'shipping_address' => null,
-            'shipping_city' => null,
-            'shipping_state' => null,
-            'shipping_zip' => null,
+            'shipping_address' => $user->shipping_address,
+            'shipping_city' => $user->shipping_city,
+            'shipping_state' => $user->shipping_state,
+            'shipping_zip' => $user->shipping_zip,
             'shipping_country' => $shippingCountry,
             'shipping_method' => $shipping['code'],
             'shipping_carrier' => $shipping['carrier'],

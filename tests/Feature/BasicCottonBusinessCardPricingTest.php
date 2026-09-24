@@ -47,7 +47,7 @@ class BasicCottonBusinessCardPricingTest extends TestCase
         $product = $this->makeProduct();
         $pricing = app(PricingService::class);
 
-        foreach (['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut'] as $finish) {
+        foreach (['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut', 'emboss'] as $finish) {
             $this->assertSame(
                 170.0,
                 $pricing->calculate(
@@ -65,6 +65,31 @@ class BasicCottonBusinessCardPricingTest extends TestCase
                 $this->cottonOptions('rounded', ['laser']) + ['quantity' => 200],
             ),
         );
+    }
+
+    public function test_existing_cotton_pricing_gets_the_emboss_process_backfilled(): void
+    {
+        $payload = $this->pricingPayload();
+        $payload['processes'] = array_values(array_filter(
+            $payload['processes'],
+            static fn (array $process): bool => ($process['code'] ?? null) !== 'emboss',
+        ));
+        $product = $this->makeProduct($payload);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_24_000008_update_cotton_thickness_labels_and_emboss_pricing.php',
+        );
+        $migration->up();
+        $product->refresh();
+
+        $processes = data_get($product->product_config, 'pricing.rules.0.pricing.processes');
+        $emboss = collect($processes)->firstWhere('code', 'emboss');
+        $laser = collect($processes)->firstWhere('code', 'laser');
+
+        $this->assertIsArray($emboss);
+        $this->assertIsArray($laser);
+        $this->assertSame($laser['markup'], $emboss['markup']);
+        $this->assertSame($laser['rates'], $emboss['rates']);
     }
 
     public function test_all_cotton_sizes_use_the_same_rule_price(): void
@@ -106,6 +131,7 @@ class BasicCottonBusinessCardPricingTest extends TestCase
                 'edge_coloring',
                 'double_mounting',
                 'custom_die_cut',
+                'emboss',
             ],
             array_column(data_get($options, 'pricing_rules.0.pricing.processes'), 'code'),
         );
@@ -197,9 +223,9 @@ class BasicCottonBusinessCardPricingTest extends TestCase
                     ],
                     'thickness' => [
                         'values' => [
-                            ['code' => '300_360g', 'label' => '300-360g'],
-                            ['code' => '360_450g', 'label' => '360-450g'],
-                            ['code' => '450_700g', 'label' => '450-700g'],
+                            ['code' => '300_360g', 'label' => '15.8-24pt'],
+                            ['code' => '360_450g', 'label' => '24-35.4pt'],
+                            ['code' => '450_700g', 'label' => '35.4-44pt'],
                         ],
                     ],
                     'texture' => [
@@ -218,6 +244,7 @@ class BasicCottonBusinessCardPricingTest extends TestCase
                             ['code' => 'edge_coloring', 'label' => 'Edge Coloring'],
                             ['code' => 'double_mounting', 'label' => 'Double Mounting'],
                             ['code' => 'custom_die_cut', 'label' => 'Custom Die-Cut'],
+                            ['code' => 'emboss', 'label' => 'Emboss / Deboss'],
                         ],
                     ],
                 ],
@@ -294,6 +321,12 @@ class BasicCottonBusinessCardPricingTest extends TestCase
                     ['激光', '滚边', '对裱', '异形模切'],
                     ['laser', 'edge_coloring', 'double_mounting', 'custom_die_cut'],
                 ),
+                [
+                    'name' => 'Emboss / Deboss',
+                    'code' => 'emboss',
+                    'markup' => 1,
+                    'rates' => $specialRates,
+                ],
             ],
         ];
     }

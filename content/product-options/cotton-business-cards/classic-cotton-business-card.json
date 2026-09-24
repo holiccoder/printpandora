@@ -182,14 +182,14 @@
           "id": "original-postcards",
           "name": "Original Postcards",
           "image_url": "/images/product-detail/even-more/original-postcards.png",
-          "href": "/postcards",
+          "href": "/cards-and-postcards",
           "link_label": "Original Postcards ›"
         },
         {
           "id": "super-postcards",
           "name": "Super Postcards",
           "image_url": "/images/product-detail/even-more/super-postcards.png",
-          "href": "/postcards",
+          "href": "/cards-and-postcards",
           "link_label": "Super Postcards ›"
         },
         {

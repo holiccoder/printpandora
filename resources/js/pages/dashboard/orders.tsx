@@ -4,6 +4,10 @@ import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
+import {
+    ORDER_STATUS_COLORS,
+    orderStatusLabel,
+} from '@/lib/order-status';
 
 const ACCENT = '#800020';
 
@@ -232,20 +236,15 @@ function Td({
 }
 
 function StatusPill({ status }: { status: string }) {
-    const map: Record<string, string> = {
-        pending: 'bg-amber-50 text-amber-700',
-        processing: 'bg-blue-50 text-blue-700',
-        shipped: 'bg-indigo-50 text-indigo-700',
-        completed: 'bg-emerald-50 text-emerald-700',
-        cancelled: 'bg-neutral-100 text-neutral-600',
-    };
-    const cls = map[status.toLowerCase()] ?? 'bg-neutral-100 text-neutral-700';
+    const cls =
+        ORDER_STATUS_COLORS[status.toLowerCase()] ??
+        'bg-neutral-100 text-neutral-700';
 
     return (
         <span
-            className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${cls}`}
+            className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${cls}`}
         >
-            {status}
+            {orderStatusLabel(status)}
         </span>
     );
 }
