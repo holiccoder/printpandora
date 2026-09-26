@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\ProductDesignRequest;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -18,6 +19,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class OrderResource extends Resource
 {
@@ -75,6 +77,138 @@ class OrderResource extends Resource
             ->merge($legacyRequests)
             ->sortByDesc('created_at')
             ->values();
+    }
+
+    /**
+     * Return every file submitted with an order, including all example files.
+     * Product-page submissions are included even when they predate the order
+     * association, matching the existing design-request lookup.
+     *
+     * @return array<int, array{
+     *     id: string,
+     *     label: string,
+     *     filename: string,
+     *     url: string|null,
+     *     source: string,
+     *     available: bool
+     * }>
+     */
+    public static function uploadedFilesFor(Order $order): array
+    {
+        $files = [];
+
+        foreach (static::designRequestsFor($order) as $designRequest) {
+            $payload = $designRequest->getAttribute('desgin');
+
+            if (! is_array($payload)) {
+                continue;
+            }
+
+            $requestId = (int) $designRequest->getKey();
+            $mode = (string) data_get($payload, 'mode', 'upload');
+
+            self::addUploadedFile(
+                $files,
+                "product-design-{$requestId}-design",
+                data_get($payload, 'design_path'),
+                $mode === 'canva' ? 'Canva design' : 'Design file',
+                'Product artwork',
+            );
+            self::addUploadedFile(
+                $files,
+                "product-design-{$requestId}-logo",
+                data_get($payload, 'logo_path'),
+                'Company logo',
+                'Product artwork',
+            );
+
+            foreach ((array) data_get($payload, 'example_paths', []) as $index => $path) {
+                self::addUploadedFile(
+                    $files,
+                    "product-design-{$requestId}-example-{$index}",
+                    $path,
+                    'Example '.((int) $index + 1),
+                    'Product artwork',
+                );
+            }
+        }
+
+        $order->loadMissing('designServiceRequests');
+
+        foreach ($order->designServiceRequests as $designRequest) {
+            $requestId = (int) $designRequest->getKey();
+
+            self::addUploadedFile(
+                $files,
+                "design-service-{$requestId}-logo",
+                $designRequest->getAttribute('logo_path'),
+                'Logo',
+                'Design service',
+            );
+
+            foreach ((array) $designRequest->getAttribute('example_paths') as $index => $path) {
+                self::addUploadedFile(
+                    $files,
+                    "design-service-{$requestId}-example-{$index}",
+                    $path,
+                    'Example '.((int) $index + 1),
+                    'Design service',
+                );
+            }
+        }
+
+        return $files;
+    }
+
+    /**
+     * @param  array<int, array{
+     *     id: string,
+     *     label: string,
+     *     filename: string,
+     *     url: string|null,
+     *     source: string,
+     *     available: bool
+     * }>  $files
+     */
+    private static function addUploadedFile(
+        array &$files,
+        string $id,
+        mixed $path,
+        string $label,
+        string $source,
+    ): void {
+        if (! is_string($path) || trim($path) === '') {
+            return;
+        }
+
+        $path = trim($path);
+        $available = Storage::disk('public')->exists($path);
+
+        $files[] = [
+            'id' => $id,
+            'label' => $label,
+            'filename' => basename($path),
+            'url' => $available ? Storage::disk('public')->url($path) : null,
+            'source' => $source,
+            'available' => $available,
+        ];
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                ViewEntry::make('order_detail')
+                    ->view(
+                        'filament.pages.order-detail',
+                        fn (Order $record): array => [
+                            'order' => $record,
+                            'uploadedFiles' => static::uploadedFilesFor($record),
+                        ],
+                    )
+                    ->hiddenLabel()
+                    ->columnSpanFull(),
+            ]);
     }
 
     protected static ?string $model = Order::class;
@@ -421,6 +555,7 @@ class OrderResource extends Resource
                     ->icon('heroicon-o-funnel');
             })
             ->actions([
+                Actions\ViewAction::make(),
                 static::designAction(),
                 Actions\Action::make('addShippingTracking')
                     ->label('填写物流信息')
@@ -464,6 +599,7 @@ class OrderResource extends Resource
     {
         return [
             'index' => Pages\ListOrders::route('/'),
+            'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
