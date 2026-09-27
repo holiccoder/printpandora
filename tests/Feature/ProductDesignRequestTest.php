@@ -35,14 +35,25 @@ class ProductDesignRequestTest extends TestCase
                 'design_service_code' => null,
                 'terms_accepted' => true,
             ], JSON_THROW_ON_ERROR),
-            'design_file' => UploadedFile::fake()->create(
-                'artwork.pdf',
-                1,
-                'application/pdf',
-            ),
-            'logo_file' => UploadedFile::fake()->image('logo.png'),
+            'design_file' => [
+                UploadedFile::fake()->create(
+                    'artwork-front.pdf',
+                    1,
+                    'application/pdf',
+                ),
+                UploadedFile::fake()->create(
+                    'artwork-back.pdf',
+                    1,
+                    'application/pdf',
+                ),
+            ],
+            'logo_file' => [
+                UploadedFile::fake()->image('logo-primary.png'),
+                UploadedFile::fake()->image('logo-alternate.png'),
+            ],
             'example_files' => [
                 UploadedFile::fake()->image('example.png'),
+                UploadedFile::fake()->image('example-2.png'),
             ],
             'return_to' => '/classic-business-cards',
         ])->assertRedirect('/classic-business-cards');
@@ -52,18 +63,25 @@ class ProductDesignRequestTest extends TestCase
         $this->assertSame('product-page', $request->desgin['source']);
         $this->assertSame('upload', $request->desgin['mode']);
         $this->assertSame('client@example.com', $request->desgin['email']);
-        $this->assertNotNull($request->desgin['design_path']);
-        $this->assertStringStartsWith(
-            'product-designs/designs/',
-            $request->desgin['design_path'],
-        );
-        $this->assertNotNull($request->desgin['logo_path']);
-        $this->assertCount(1, $request->desgin['example_paths']);
+        $this->assertIsArray($request->desgin['design_path']);
+        $this->assertCount(2, $request->desgin['design_path']);
+        $this->assertIsArray($request->desgin['logo_path']);
+        $this->assertCount(2, $request->desgin['logo_path']);
+        $this->assertCount(2, $request->desgin['example_paths']);
         $this->assertDatabaseCount('design_service_requests', 0);
 
-        Storage::disk('public')->assertExists($request->desgin['design_path']);
-        Storage::disk('public')->assertExists($request->desgin['logo_path']);
-        Storage::disk('public')->assertExists($request->desgin['example_paths'][0]);
+        foreach ($request->desgin['design_path'] as $path) {
+            Storage::disk('public')->assertExists($path);
+            $this->assertStringStartsWith('product-designs/designs/', $path);
+        }
+
+        foreach ($request->desgin['logo_path'] as $path) {
+            Storage::disk('public')->assertExists($path);
+        }
+
+        foreach ($request->desgin['example_paths'] as $path) {
+            Storage::disk('public')->assertExists($path);
+        }
     }
 
     public function test_canva_form_stores_its_file_without_redirecting_to_design_service_page(): void
@@ -78,16 +96,23 @@ class ProductDesignRequestTest extends TestCase
                 'product_name' => 'Classic Business Cards',
                 'product_slug' => 'classic-business-cards',
             ], JSON_THROW_ON_ERROR),
-            'design_file' => UploadedFile::fake()->image('canva-design.png'),
+            'design_file' => [
+                UploadedFile::fake()->image('canva-front.png'),
+                UploadedFile::fake()->image('canva-back.png'),
+            ],
             'return_to' => '/classic-business-cards',
         ])->assertRedirect('/classic-business-cards');
 
         $request = ProductDesignRequest::query()->firstOrFail();
 
         $this->assertSame('canva', $request->desgin['mode']);
-        $this->assertNotNull($request->desgin['design_path']);
+        $this->assertIsArray($request->desgin['design_path']);
+        $this->assertCount(2, $request->desgin['design_path']);
         $this->assertDatabaseCount('design_service_requests', 0);
-        Storage::disk('public')->assertExists($request->desgin['design_path']);
+
+        foreach ($request->desgin['design_path'] as $path) {
+            Storage::disk('public')->assertExists($path);
+        }
     }
 
     public function test_upload_mode_requires_a_main_design_file(): void
@@ -129,7 +154,7 @@ class ProductDesignRequestTest extends TestCase
             ),
         ]);
 
-        $response->assertSessionHasErrors('design_file');
+        $response->assertSessionHasErrors('design_file.0');
         $this->assertDatabaseCount('product_design_requests', 0);
     }
 

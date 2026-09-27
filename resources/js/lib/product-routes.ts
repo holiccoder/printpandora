@@ -25,11 +25,21 @@ const STICKER_PRODUCT_PATHS: Record<string, string> = {
     'super-stickers': '/stickers/super',
 };
 
+const POSTCARD_PRODUCT_PATHS: Record<string, string> = {
+    'classic-standard-postcards': '/postcards/classic-standard',
+    'classic-special-postcards': '/postcards/classic-special',
+    'super-standard-postcards': '/postcards/super-standard',
+    'super-luxe-postcards': '/postcards/super-luxe',
+    'quality-standard-postcards': '/postcards/quality-standard',
+    'quality-solid-postcards': '/postcards/quality-solid',
+};
+
 export function productHref(slug: string): string {
     const normalizedSlug = slug.replace(/^\/+/, '');
 
     return (
         BUSINESS_CARD_PRODUCT_PATHS[normalizedSlug] ??
+        POSTCARD_PRODUCT_PATHS[normalizedSlug] ??
         STICKER_PRODUCT_PATHS[normalizedSlug] ??
         `/${normalizedSlug}`
     );

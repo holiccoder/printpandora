@@ -8,15 +8,26 @@
             @php
                 $payload = is_array($designRequest->desgin) ? $designRequest->desgin : [];
                 $files = [];
+                $designLabel = data_get($payload, 'mode') === 'canva'
+                    ? 'Canva design'
+                    : 'Design file';
 
                 foreach ([
                     'logo_path' => 'Logo',
-                    'design_path' => 'Canva design',
+                    'design_path' => $designLabel,
                 ] as $pathKey => $label) {
-                    $path = data_get($payload, $pathKey);
+                    $paths = array_values(array_filter(
+                        (array) data_get($payload, $pathKey, []),
+                        static fn ($path): bool => is_string($path) && trim($path) !== '',
+                    ));
 
-                    if (is_string($path) && trim($path) !== '') {
-                        $files[] = ['label' => $label, 'path' => $path];
+                    foreach ($paths as $index => $path) {
+                        $files[] = [
+                            'label' => count($paths) > 1
+                                ? $label.' '.($index + 1)
+                                : $label,
+                            'path' => $path,
+                        ];
                     }
                 }
 

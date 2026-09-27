@@ -111,6 +111,9 @@ Route::get('/business-cards', [BusinessCardsController::class, 'index'])->name('
 Route::get('business-cards/{slug}', [ProductController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('shop.business-card.show');
+Route::get('postcards/{slug}', [ProductController::class, 'show'])
+    ->where('slug', '[a-z0-9-]+')
+    ->name('shop.postcard.show');
 Route::get('stickers/{slug}', [ProductController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('shop.sticker.show');

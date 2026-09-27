@@ -16,6 +16,8 @@ final class StickerProductCatalog
 
     public const RECOMMENDED_QUANTITY = 200;
 
+    public const START_QUANTITY = 50;
+
     private const SIZE_SWATCH_IMAGE = '/images/product-options/stickers/square-corner.svg';
 
     /**
@@ -337,7 +339,8 @@ final class StickerProductCatalog
                         'pricing' => [
                             'packageName' => "{$name} pricing",
                             'basePrice' => $basePrice,
-                            'startQuantity' => self::RECOMMENDED_QUANTITY,
+                            'startQuantity' => self::START_QUANTITY,
+                            'recommendedQuantity' => self::RECOMMENDED_QUANTITY,
                             'paperRates' => [],
                             'unitMultipliers' => self::UNIT_MULTIPLIERS,
                             'area_based' => true,

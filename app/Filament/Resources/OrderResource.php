@@ -107,14 +107,14 @@ class OrderResource extends Resource
             $requestId = (int) $designRequest->getKey();
             $mode = (string) data_get($payload, 'mode', 'upload');
 
-            self::addUploadedFile(
+            self::addUploadedFiles(
                 $files,
                 "product-design-{$requestId}-design",
                 data_get($payload, 'design_path'),
                 $mode === 'canva' ? 'Canva design' : 'Design file',
                 'Product artwork',
             );
-            self::addUploadedFile(
+            self::addUploadedFiles(
                 $files,
                 "product-design-{$requestId}-logo",
                 data_get($payload, 'logo_path'),
@@ -158,6 +158,36 @@ class OrderResource extends Resource
         }
 
         return $files;
+    }
+
+    /**
+     * @param  array<int, array{
+     *     id: string,
+     *     label: string,
+     *     filename: string,
+     *     url: string|null,
+     *     source: string,
+     *     available: bool
+     * }>  $files
+     */
+    private static function addUploadedFiles(
+        array &$files,
+        string $idPrefix,
+        mixed $paths,
+        string $label,
+        string $source,
+    ): void {
+        $paths = array_values((array) $paths);
+
+        foreach ($paths as $index => $path) {
+            self::addUploadedFile(
+                $files,
+                "{$idPrefix}-{$index}",
+                $path,
+                count($paths) > 1 ? $label.' '.($index + 1) : $label,
+                $source,
+            );
+        }
     }
 
     /**

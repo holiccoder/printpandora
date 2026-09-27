@@ -269,6 +269,29 @@ function foilSideMultiplier(
     );
 }
 
+function processSideMultiplier(
+    process: PricingScenario['processes'][number],
+    selectedOptions: Record<string, string | string[]>,
+    sides: Record<string, 'one_side' | 'both_sides'>,
+): number {
+    const code = pricingProcessCode(process);
+
+    if (code === 'uv-finish') {
+        const selected = selectedOptions.uv_finish;
+        const values = Array.isArray(selected) ? selected : [selected ?? ''];
+
+        return values.some((value) =>
+            ['both-sides', 'both-sides-uv'].includes(
+                normalizeOptionValue(value),
+            ),
+        )
+            ? 2
+            : 1;
+    }
+
+    return sides['3d_uv'] === 'both_sides' ? 2 : 1;
+}
+
 function pricingProcessCode(
     process: PricingScenario['processes'][number],
 ): string {
@@ -398,6 +421,34 @@ function processIsSelected(
             ['rounded', 'rounded-corners', 'round'].includes(
                 normalizeOptionValue(value),
             ),
+        );
+    }
+
+    if (code === 'uv-finish') {
+        const values = selectedOptions.uv_finish;
+
+        if (
+            (Array.isArray(values) ? values : [values ?? '']).some((value) =>
+                ['single-side-uv', 'both-sides-uv', 'uv'].includes(
+                    normalizeOptionValue(value),
+                ),
+            )
+        ) {
+            return true;
+        }
+
+        const specialValues = selectedOptions.special_finish;
+
+        return (
+            Array.isArray(specialValues) ? specialValues : [specialValues ?? '']
+        ).some((value) => normalizeOptionValue(value) === 'uv');
+    }
+
+    if (code === '3d-uv') {
+        const values = selectedOptions.special_finish;
+
+        return (Array.isArray(values) ? values : [values ?? '']).some(
+            (value) => normalizeOptionValue(value) === '3d-uv',
         );
     }
 
@@ -570,14 +621,23 @@ export function computeDynamicTiers(
         }
 
         for (const process of selectedProcesses) {
-            const markup = isFoilProcess(process, selectedFoilValues)
-                ? process.markup *
-                  foilSideMultiplier(
-                      selectedFoilValues,
-                      selectedSpecialFinishSides,
-                      process,
-                  )
-                : process.markup;
+            let markup = process.markup;
+
+            if (isFoilProcess(process, selectedFoilValues)) {
+                markup *= foilSideMultiplier(
+                    selectedFoilValues,
+                    selectedSpecialFinishSides,
+                    process,
+                );
+            } else if (
+                ['uv-finish', '3d-uv'].includes(pricingProcessCode(process))
+            ) {
+                markup *= processSideMultiplier(
+                    process,
+                    selectedOptions,
+                    selectedSpecialFinishSides,
+                );
+            }
 
             unit += markup;
             const rate = process.rates[String(qty)] ?? 0;

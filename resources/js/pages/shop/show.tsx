@@ -160,6 +160,7 @@ interface ProductOptionValue {
     color_swatch_image?: string;
     width?: string;
     height?: string;
+    area_sq_m?: string | number;
     min_width?: string;
     max_width?: string;
     min_height?: string;
@@ -190,6 +191,7 @@ interface ProductOptions {
         description?: string;
         width?: string;
         height?: string;
+        area_sq_m?: string | number;
         swatch_image?: string;
         min_width?: string;
         max_width?: string;
@@ -317,6 +319,12 @@ function stickerAreaForSizeValues(
     const value = values.find(
         (candidate) => optionValueCode(candidate) === code,
     );
+
+    const configuredArea = Number(value?.area_sq_m);
+
+    if (Number.isFinite(configuredArea) && configuredArea > 0) {
+        return configuredArea;
+    }
 
     return squareInchesToSquareMetres(
         Number(value?.width),
@@ -944,6 +952,17 @@ export default function ShopShow({
         hasProductOptions &&
         (productOptions.pricing_data != null ||
             (productOptions.pricing_rules?.length ?? 0) > 0);
+    const usesAreaBasedPricing =
+        hasProductOptions &&
+        ([
+            productOptions.pricing_data?.rectangle,
+            productOptions.pricing_data?.uv,
+            productOptions.pricing_data?.square,
+            productOptions.pricing_data?.square_uv,
+        ].some((scenario) => scenario?.area_based === true) ||
+            (productOptions.pricing_rules ?? []).some(
+                (rule) => rule.pricing.area_based === true,
+            ));
 
     const dynamicRecommendedQty = hasDynamicPricing
         ? (productOptions.pricing_data?.rectangle?.recommendedQuantity ??
@@ -968,7 +987,7 @@ export default function ShopShow({
                 }
             }
 
-            if (isStickerProduct) {
+            if (usesAreaBasedPricing) {
                 defaultPricingOptions.paper_area = stickerAreaOptionValue(
                     stickerAreaForSize(
                         dynamicOptionGroups,
@@ -1005,7 +1024,7 @@ export default function ShopShow({
                 }
             }
 
-            if (isStickerProduct) {
+            if (usesAreaBasedPricing) {
                 defaultPricingOptions.paper_area = stickerAreaOptionValue(
                     stickerAreaForSize(
                         dynamicOptionGroups,
@@ -1028,7 +1047,7 @@ export default function ShopShow({
             }
 
             const pricing = productOptions.pricing_rules[0].pricing;
-            const defaultArea = isStickerProduct
+            const defaultArea = usesAreaBasedPricing
                 ? stickerAreaForSize(
                       dynamicOptionGroups,
                       dynamicOptionDefaults.sizes,
@@ -1052,6 +1071,7 @@ export default function ShopShow({
         dynamicOptionGroups,
         hasDynamicPricing,
         isStickerProduct,
+        usesAreaBasedPricing,
         productOptions,
         product.price_line,
     ]);
@@ -1245,7 +1265,7 @@ export default function ShopShow({
     const [hasInteracted, setHasInteracted] = useState(false);
 
     const stickerPaperArea = useMemo(() => {
-        if (!isStickerProduct) {
+        if (!usesAreaBasedPricing) {
             return 0;
         }
 
@@ -1274,11 +1294,11 @@ export default function ShopShow({
     }, [
         confirmedCustomSize,
         dynamicOptionGroups,
-        isStickerProduct,
         productOptions,
         selectedDynamicOptions,
         selectedSize,
         usesDynamicOptions,
+        usesAreaBasedPricing,
     ]);
 
     const hasSubmittedDesign =
@@ -1345,7 +1365,7 @@ export default function ShopShow({
                       confirmedCustomSize != null)
               );
           }) &&
-          (!isStickerProduct || stickerPaperArea > 0)
+          (!usesAreaBasedPricing || stickerPaperArea > 0)
         : (sizes.length === 0 ||
               (selectedSize !== 'custom'
                   ? selectedSize != null
@@ -1376,7 +1396,7 @@ export default function ShopShow({
                 }
             }
 
-            if (isStickerProduct) {
+            if (usesAreaBasedPricing) {
                 opts.paper_area = stickerAreaOptionValue(
                     stickerAreaForSize(
                         dynamicOptionGroups,
@@ -1413,7 +1433,7 @@ export default function ShopShow({
         usesDynamicOptions,
         dynamicOptionGroups,
         dynamicOptionDefaults,
-        isStickerProduct,
+        usesAreaBasedPricing,
         selectedSpecialFinish,
     ]);
 
@@ -1446,7 +1466,7 @@ export default function ShopShow({
                 }
             }
 
-            if (isStickerProduct) {
+            if (usesAreaBasedPricing) {
                 opts.paper_area = stickerAreaOptionValue(stickerPaperArea);
             }
 
@@ -1483,7 +1503,7 @@ export default function ShopShow({
             opts['embossing_or_signature_panel'] =
                 selectedEmbossingOrSignaturePanel;
 
-        if (isStickerProduct) {
+        if (usesAreaBasedPricing) {
             opts.paper_area = stickerAreaOptionValue(stickerPaperArea);
         }
 
@@ -1513,7 +1533,7 @@ export default function ShopShow({
         selectedDynamicOptions,
         dynamicOptionDefaults,
         confirmedCustomSize,
-        isStickerProduct,
+        usesAreaBasedPricing,
         stickerPaperArea,
     ]);
 
@@ -3152,6 +3172,53 @@ export default function ShopShow({
                             </h2>
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                                 <DesignChoice
+                                    title={c.design_cta.options[2].title}
+                                    body={c.design_cta.options[2].body}
+                                    accent={ACCENT}
+                                    submitted={
+                                        submittedDesignModes['design-for-you']
+                                    }
+                                    onClick={() =>
+                                        openDesignModal('design-for-you')
+                                    }
+                                    icon={
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="1.6"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="size-7"
+                                        >
+                                            <path d="M12 3v12" />
+                                            <path d="M7 8l5-5 5 5" />
+                                            <path d="M5 21h14" />
+                                        </svg>
+                                    }
+                                />
+                                <DesignChoice
+                                    title={c.design_cta.options[1].title}
+                                    body={c.design_cta.options[1].body}
+                                    accent={ACCENT}
+                                    submitted={submittedDesignModes.upload}
+                                    onClick={() => openDesignModal('upload')}
+                                    icon={
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="1.6"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="size-7"
+                                        >
+                                            <path d="M3 17l6-6 4 4 8-8" />
+                                            <path d="M17 7h4v4" />
+                                        </svg>
+                                    }
+                                />
+                                <DesignChoice
                                     title={c.design_cta.options[0].title}
                                     body={c.design_cta.options[0].body}
                                     accent={ACCENT}
@@ -3193,53 +3260,6 @@ export default function ShopShow({
                                                 height="5"
                                                 rx="1"
                                             />
-                                        </svg>
-                                    }
-                                />
-                                <DesignChoice
-                                    title={c.design_cta.options[1].title}
-                                    body={c.design_cta.options[1].body}
-                                    accent={ACCENT}
-                                    submitted={submittedDesignModes.upload}
-                                    onClick={() => openDesignModal('upload')}
-                                    icon={
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="1.6"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            className="size-7"
-                                        >
-                                            <path d="M3 17l6-6 4 4 8-8" />
-                                            <path d="M17 7h4v4" />
-                                        </svg>
-                                    }
-                                />
-                                <DesignChoice
-                                    title={c.design_cta.options[2].title}
-                                    body={c.design_cta.options[2].body}
-                                    accent={ACCENT}
-                                    submitted={
-                                        submittedDesignModes['design-for-you']
-                                    }
-                                    onClick={() =>
-                                        openDesignModal('design-for-you')
-                                    }
-                                    icon={
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="1.6"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            className="size-7"
-                                        >
-                                            <path d="M12 3v12" />
-                                            <path d="M7 8l5-5 5 5" />
-                                            <path d="M5 21h14" />
                                         </svg>
                                     }
                                 />
@@ -4437,7 +4457,7 @@ function CanvaDesignModal({
 }) {
     const { setData, post, processing, errors, reset } = useForm<{
         desgin: string;
-        design_file: File | null;
+        design_file: File[];
         return_to: string;
     }>({
         desgin: JSON.stringify({
@@ -4447,7 +4467,7 @@ function CanvaDesignModal({
             product_name: productName ?? null,
             product_slug: productSlug ?? null,
         }),
-        design_file: null,
+        design_file: [],
         return_to: returnTo ?? '',
     });
     const designInputRef = useRef<HTMLInputElement>(null);
@@ -4502,14 +4522,18 @@ function CanvaDesignModal({
                         ref={designInputRef}
                         type="file"
                         accept=".pdf,.png,.jpg,.jpeg,.svg,.ai,.psd"
+                        multiple
                         required
                         onChange={(e) =>
-                            setData('design_file', e.target.files?.[0] ?? null)
+                            setData(
+                                'design_file',
+                                Array.from(e.target.files ?? []),
+                            )
                         }
                     />
-                    {errors.design_file && (
+                    {(errors.design_file ?? errors['design_file.0']) && (
                         <p className="text-sm text-red-600">
-                            {errors.design_file}
+                            {errors.design_file ?? errors['design_file.0']}
                         </p>
                     )}
                     <Button

@@ -122,6 +122,12 @@ class PricingService
                 $options,
                 is_array($sizeGroup) ? $sizeGroup : [],
             );
+        } elseif ($this->configUsesAreaBasedPricing($config)) {
+            $sizeGroup = data_get($config, 'options.sizes', []);
+            $options = $this->normalizeStickerPaperArea(
+                $options,
+                is_array($sizeGroup) ? $sizeGroup : [],
+            );
         }
 
         return $options;
@@ -192,6 +198,12 @@ class PricingService
                 continue;
             }
 
+            $configuredArea = $readPositiveNumber($value['area_sq_m'] ?? null);
+
+            if ($configuredArea !== null) {
+                return $configuredArea;
+            }
+
             $width = $readPositiveNumber($value['width'] ?? null);
             $height = $readPositiveNumber($value['height'] ?? null);
 
@@ -201,6 +213,31 @@ class PricingService
         }
 
         return null;
+    }
+
+    /**
+     * Area-based pricing can be used by products other than stickers when
+     * their canonical pricing rules explicitly opt into it.
+     *
+     * @param  array<string, mixed>  $config
+     */
+    private function configUsesAreaBasedPricing(array $config): bool
+    {
+        $pricing = is_array($config['pricing'] ?? null) ? $config['pricing'] : [];
+
+        foreach (['rules', 'scenarios'] as $key) {
+            foreach (is_array($pricing[$key] ?? null) ? $pricing[$key] : [] as $entry) {
+                $payload = $key === 'rules'
+                    ? (is_array($entry) ? ($entry['pricing'] ?? null) : null)
+                    : $entry;
+
+                if (is_array($payload) && ($payload['area_based'] ?? false) === true) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -481,7 +518,10 @@ class PricingService
         // validated above; only the pricing rule key is normalized here.
         $pricingOptions = $options;
 
-        if (StickerProductCatalog::isStickerProduct((string) $product->slug)) {
+        if (
+            StickerProductCatalog::isStickerProduct((string) $product->slug)
+            || $this->pricingUsesAreaBasedPricing($pricingData, $pricingRules)
+        ) {
             $optionGroups = is_array($productOptions['option_groups'] ?? null)
                 ? $productOptions['option_groups']
                 : [];
@@ -664,6 +704,8 @@ class PricingService
 
             if ($this->isFoilProcess($process, $options)) {
                 $markup *= $this->foilSideMultiplier($options, $process);
+            } elseif ($this->isSideAwareProcess($process)) {
+                $markup *= $this->processSideMultiplier($options, $process);
             }
 
             $unit += $markup;
@@ -688,6 +730,25 @@ class PricingService
         }
 
         return (float) round($quantity * $unit * $paperArea);
+    }
+
+    private function pricingUsesAreaBasedPricing(?array $pricingData, array $pricingRules): bool
+    {
+        foreach ($pricingRules as $rule) {
+            if (is_array($rule) && is_array($rule['pricing'] ?? null)
+                && ($rule['pricing']['area_based'] ?? false) === true
+            ) {
+                return true;
+            }
+        }
+
+        foreach ($pricingData ?? [] as $scenario) {
+            if (is_array($scenario) && ($scenario['area_based'] ?? false) === true) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -757,6 +818,44 @@ class PricingService
 
             foreach ($cornerValues as $cornerValue) {
                 if (in_array($this->normalizeOptionValue($cornerValue), ['rounded', 'rounded_corners', 'round'], true)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if ($code === 'uv_finish') {
+            $values = is_array($options['uv_finish'] ?? null)
+                ? $options['uv_finish']
+                : [$options['uv_finish'] ?? null];
+
+            foreach ($values as $value) {
+                if (in_array($this->normalizeOptionValue($value), ['single_side_uv', 'both_sides_uv', 'uv'], true)) {
+                    return true;
+                }
+            }
+
+            $specialValues = is_array($options['special_finish'] ?? null)
+                ? $options['special_finish']
+                : [$options['special_finish'] ?? null];
+
+            foreach ($specialValues as $value) {
+                if ($this->normalizeOptionValue($value) === 'uv') {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if ($code === '3d_uv') {
+            $values = is_array($options['special_finish'] ?? null)
+                ? $options['special_finish']
+                : [$options['special_finish'] ?? null];
+
+            foreach ($values as $value) {
+                if ($this->normalizeOptionValue($value) === '3d_uv') {
                     return true;
                 }
             }
@@ -1066,6 +1165,8 @@ class PricingService
 
                 if ($this->isFoilProcess($process, $pricingOptions)) {
                     $markup *= $this->foilSideMultiplier($pricingOptions, $process);
+                } elseif ($this->isSideAwareProcess($process)) {
+                    $markup *= $this->processSideMultiplier($pricingOptions, $process);
                 }
 
                 $unit += $markup;
@@ -1087,6 +1188,53 @@ class PricingService
                 'recommended' => $isRecommended,
             ];
         }, $quantities);
+    }
+
+    private function isSideAwareProcess(array $process): bool
+    {
+        return in_array($this->pricingProcessCode($process), ['uv_finish', '3d_uv'], true);
+    }
+
+    /**
+     * UV and 3D UV use the single-side workbook rate. A both-sides
+     * selection doubles only that process markup.
+     *
+     * @param  array<string, mixed>  $options
+     * @param  array<string, mixed>  $process
+     */
+    private function processSideMultiplier(array $options, array $process): int
+    {
+        $code = $this->pricingProcessCode($process);
+
+        if ($code === 'uv_finish') {
+            $values = is_array($options['uv_finish'] ?? null)
+                ? $options['uv_finish']
+                : [$options['uv_finish'] ?? null];
+
+            foreach ($values as $value) {
+                if (in_array($this->normalizeOptionValue($value), ['both_sides', 'both_sides_uv'], true)) {
+                    return 2;
+                }
+            }
+
+            $sideSelection = $options['uv_finish_on_sides'] ?? null;
+        } else {
+            $sideSelection = $options['special_finish_on_sides'] ?? null;
+        }
+
+        if (is_scalar($sideSelection)) {
+            return $this->normalizeOptionValue($sideSelection) === 'both_sides' ? 2 : 1;
+        }
+
+        if (is_array($sideSelection)) {
+            $side = $sideSelection[$code] ?? $sideSelection['3d_uv'] ?? null;
+
+            return is_scalar($side) && $this->normalizeOptionValue($side) === 'both_sides'
+                ? 2
+                : 1;
+        }
+
+        return 1;
     }
 
     /**

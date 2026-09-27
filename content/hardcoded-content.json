@@ -287,11 +287,11 @@
                                 "children": [
                                     {
                                         "label": "Classic Standard Postcards",
-                                        "href": "/business-cards/classic-standard"
+                                        "href": "/postcards/classic-standard"
                                     },
                                     {
                                         "label": "Classic Special Postcards",
-                                        "href": "/business-cards/classic-special"
+                                        "href": "/postcards/classic-special"
                                     }
                                 ]
                             },
@@ -301,11 +301,11 @@
                                 "children": [
                                     {
                                         "label": "Super Standard Postcards",
-                                        "href": "/business-cards/super-standard"
+                                        "href": "/postcards/super-standard"
                                     },
                                     {
                                         "label": "Super Luxe Postcards",
-                                        "href": "/business-cards/super-luxe"
+                                        "href": "/postcards/super-luxe"
                                     }
                                 ]
                             },
@@ -315,11 +315,11 @@
                                 "children": [
                                     {
                                         "label": "Quality Standard Postcards",
-                                        "href": "/business-cards/standard-quality"
+                                        "href": "/postcards/quality-standard"
                                     },
                                     {
                                         "label": "Quality Solid Postcards",
-                                        "href": "/business-cards/solid-quality"
+                                        "href": "/postcards/quality-solid"
                                     }
                                 ]
                             }

@@ -14,6 +14,10 @@ class ProductDesignRequestController extends Controller
 {
     public function store(Request $request): RedirectResponse
     {
+        foreach (['design_file', 'logo_file', 'example_files'] as $field) {
+            $this->normalizeFileField($request, $field);
+        }
+
         $validated = $request->validate([
             'desgin' => ['required', 'json'],
             'return_to' => ['nullable', 'string', 'max:255'],
@@ -62,38 +66,36 @@ class ProductDesignRequestController extends Controller
         $designPayload['source'] = 'product-page';
 
         if ($mode === 'canva') {
-            $designFile = $request->file('design_file');
+            $designPaths = $this->storeFiles(
+                $request->file('design_file', []),
+                'product-designs/canva',
+            );
 
-            if ($designFile instanceof UploadedFile) {
-                $designPayload['design_path'] = $designFile->store(
-                    'product-designs/canva',
-                    'public',
-                );
+            if ($designPaths !== []) {
+                $designPayload['design_path'] = $this->pathValue($designPaths);
             }
         } else {
             if ($mode === 'upload') {
-                $designFile = $request->file('design_file');
+                $designPaths = $this->storeFiles(
+                    $request->file('design_file', []),
+                    'product-designs/designs',
+                );
 
-                if ($designFile instanceof UploadedFile) {
-                    $designPayload['design_path'] = $designFile->store(
-                        'product-designs/designs',
-                        'public',
-                    );
+                if ($designPaths !== []) {
+                    $designPayload['design_path'] = $this->pathValue($designPaths);
                 }
             }
 
-            $logoPath = null;
-            $logoFile = $request->file('logo_file');
-
-            if ($logoFile instanceof UploadedFile) {
-                $logoPath = $logoFile->store('product-designs/logos', 'public');
-            }
+            $logoPaths = $this->storeFiles(
+                $request->file('logo_file', []),
+                'product-designs/logos',
+            );
 
             $examplePaths = [];
             $exampleFiles = $request->file('example_files', []);
 
-            if (is_array($exampleFiles)) {
-                foreach ($exampleFiles as $exampleFile) {
+            foreach ((array) $exampleFiles as $exampleFile) {
+                if ($exampleFile instanceof UploadedFile) {
                     $examplePaths[] = $exampleFile->store(
                         'product-designs/examples',
                         'public',
@@ -101,7 +103,7 @@ class ProductDesignRequestController extends Controller
                 }
             }
 
-            $designPayload['logo_path'] = $logoPath;
+            $designPayload['logo_path'] = $this->pathValue($logoPaths);
             $designPayload['example_paths'] = $examplePaths;
         }
 
@@ -158,15 +160,59 @@ class ProductDesignRequestController extends Controller
             : $ancillaryFileRule;
 
         return [
-            'logo_file' => ['nullable', ...$ancillaryFileRule],
+            'logo_file' => ['nullable', 'array', 'max:10'],
+            'logo_file.*' => $ancillaryFileRule,
             'example_files' => ['nullable', 'array', 'max:10'],
             'example_files.*' => $ancillaryFileRule,
             'design_file' => [
                 in_array($mode, ['canva', 'upload'], true)
                     ? 'required'
                     : 'nullable',
-                ...$designFileRule,
+                'array',
+                'max:10',
             ],
+            'design_file.*' => $designFileRule,
         ];
+    }
+
+    private function normalizeFileField(Request $request, string $field): void
+    {
+        $files = $request->files->get($field);
+
+        if ($files !== null && ! is_array($files)) {
+            $request->files->set($field, [$files]);
+        }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function storeFiles(mixed $files, string $directory): array
+    {
+        $paths = [];
+
+        foreach ((array) $files as $file) {
+            if ($file instanceof UploadedFile) {
+                $paths[] = $file->store($directory, 'public');
+            }
+        }
+
+        return $paths;
+    }
+
+    /**
+     * Preserve the existing single-file payload shape while allowing new
+     * submissions to retain every selected file.
+     *
+     * @param  array<int, string>  $paths
+     * @return array<int, string>|string|null
+     */
+    private function pathValue(array $paths): array|string|null
+    {
+        return match (count($paths)) {
+            0 => null,
+            1 => $paths[0],
+            default => $paths,
+        };
     }
 }

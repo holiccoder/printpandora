@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Support\BusinessCardOptionCatalog;
 use App\Support\ClassicSpecialBusinessCardTexture;
 use App\Support\HardcodedContent;
+use App\Support\PostcardProductCatalog;
 use App\Support\SolidQualityBusinessCardGallery;
 use App\Support\StandardQualityBusinessCardGallery;
 use Illuminate\Support\Str;
@@ -374,13 +375,15 @@ class ProductConfigurationService
             $config = $this->normalizeCanonicalConfig($product->product_config ?? [], $product);
 
             $config['options'] = $this->normalizeProductSpecificOptions($config['options'], $product);
-            $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
-                is_array($config['media']['gallery_rules'] ?? null)
-                    ? $config['media']['gallery_rules']
-                    : [],
-                $config['options'],
-                (string) $product->slug,
-            );
+            if (! PostcardProductCatalog::isPostcardProduct((string) $product->slug)) {
+                $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
+                    is_array($config['media']['gallery_rules'] ?? null)
+                        ? $config['media']['gallery_rules']
+                        : [],
+                    $config['options'],
+                    (string) $product->slug,
+                );
+            }
 
             return $config;
         }
@@ -2102,6 +2105,7 @@ class ProductConfigurationService
                     ?? $scenario['start_quantity']
                 ),
                 'paperRates' => $this->mapToNumericValues($scenario['quantity_discounts_percent'] ?? []),
+                'area_based' => ($scenario['area_based'] ?? false) === true,
                 'processes' => $processes,
             ];
         }
@@ -2133,6 +2137,7 @@ class ProductConfigurationService
                     ?? 0
                 ),
                 'quantity_discounts_percent' => $this->mapToNumericValues($scenario['paperRates'] ?? []),
+                'area_based' => ($scenario['area_based'] ?? false) === true,
                 'processes' => array_values(array_map(function (mixed $process): array {
                     if (! is_array($process)) {
                         return [];
@@ -2248,11 +2253,13 @@ class ProductConfigurationService
         $config['media']['gallery_rules'] = is_array($config['media']['gallery_rules'] ?? null)
             ? array_values($config['media']['gallery_rules'])
             : [];
-        $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
-            $config['media']['gallery_rules'],
-            $config['options'],
-            (string) $product->slug,
-        );
+        if (! PostcardProductCatalog::isPostcardProduct((string) $product->slug)) {
+            $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
+                $config['media']['gallery_rules'],
+                $config['options'],
+                (string) $product->slug,
+            );
+        }
 
         if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {
             $config['media']['gallery_rules'] = BusinessCardOptionCatalog::normalizeCottonGalleryRules(

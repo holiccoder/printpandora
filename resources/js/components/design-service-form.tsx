@@ -53,6 +53,8 @@ interface DesignServiceFormProps {
     productTypeLabel?: string;
 }
 
+type UploadValue = File | File[] | null;
+
 type DesignServiceFormData = {
     email: string;
     business_name: string;
@@ -61,9 +63,9 @@ type DesignServiceFormData = {
     design_service_code: string;
     return_to: string;
     terms_accepted: boolean;
-    logo_file: File | null;
+    logo_file: UploadValue;
     example_files: File[];
-    design_file: File | null;
+    design_file: UploadValue;
 };
 
 export default function DesignServiceForm({
@@ -98,6 +100,13 @@ export default function DesignServiceForm({
     const uploadContent = useContent('upload_files_modal');
     const requiresDesignFile =
         submissionTarget === 'product-design' && productDesignMode === 'upload';
+    const allowsMultipleUploads = submissionTarget === 'product-design';
+    const designFileHelp = allowsMultipleUploads
+        ? 'One or more files, up to 75 MB each.'
+        : uploadContent.file_input_help;
+    const designFileErrorMessage = allowsMultipleUploads
+        ? 'Please select at least one file up to 75 MB each.'
+        : uploadContent.file_input_error;
     const [designServiceError, setDesignServiceError] = useState<string | null>(
         null,
     );
@@ -138,24 +147,32 @@ export default function DesignServiceForm({
     );
 
     const handleLogoChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-        setData('logo_file', event.target.files?.[0] ?? null);
+        const files = Array.from(event.target.files ?? []);
+
+        setData(
+            'logo_file',
+            allowsMultipleUploads ? files : (files[0] ?? null),
+        );
     };
 
     const handleDesignFileChange: ChangeEventHandler<HTMLInputElement> = (
         event,
     ) => {
-        const file = event.target.files?.[0] ?? null;
+        const files = Array.from(event.target.files ?? []);
 
-        if (file && file.size > MAX_DESIGN_FILE_BYTES) {
-            setData('design_file', null);
-            setDesignFileError(uploadContent.file_input_error);
+        if (files.some((file) => file.size > MAX_DESIGN_FILE_BYTES)) {
+            setData('design_file', allowsMultipleUploads ? [] : null);
+            setDesignFileError(designFileErrorMessage);
             event.target.value = '';
 
             return;
         }
 
         setDesignFileError(null);
-        setData('design_file', file);
+        setData(
+            'design_file',
+            allowsMultipleUploads ? files : (files[0] ?? null),
+        );
     };
 
     const handleExamplesChange: ChangeEventHandler<HTMLInputElement> = (
@@ -343,36 +360,39 @@ export default function DesignServiceForm({
             {requiresDesignFile && (
                 <FormRow
                     label={uploadContent.file_input_label}
-                    error={designFileError ?? errors.design_file}
+                    error={
+                        designFileError ??
+                        errors.design_file ??
+                        errors['design_file.0']
+                    }
                 >
                     <div className="space-y-2">
                         <UploadButton
                             inputRef={designInputRef}
                             onChange={handleDesignFileChange}
                             accept={DESIGN_FILE_ACCEPT}
+                            multiple={allowsMultipleUploads}
                             required
                             large
-                            selectedFiles={
-                                data.design_file === null
-                                    ? []
-                                    : [data.design_file]
-                            }
+                            selectedFiles={filesFromUpload(data.design_file)}
                         />
                         <p className="text-xs text-neutral-500">
-                            {uploadContent.file_input_help}
+                            {designFileHelp}
                         </p>
                     </div>
                 </FormRow>
             )}
 
-            <FormRow label="Company logo" error={errors.logo_file}>
+            <FormRow
+                label="Company logo"
+                error={errors.logo_file ?? errors['logo_file.0']}
+            >
                 <div className="space-y-2">
                     <UploadButton
                         inputRef={logoInputRef}
                         onChange={handleLogoChange}
-                        selectedFiles={
-                            data.logo_file === null ? [] : [data.logo_file]
-                        }
+                        multiple={allowsMultipleUploads}
+                        selectedFiles={filesFromUpload(data.logo_file)}
                     />
                     <p className="text-xs text-neutral-500">
                         Vector format preferred (AI, EPS, SVG, PDF).
@@ -481,13 +501,22 @@ export default function DesignServiceForm({
                     !data.terms_accepted ||
                     processing ||
                     (hasDesignServices && !designServiceCode) ||
-                    (requiresDesignFile && !data.design_file)
+                    (requiresDesignFile &&
+                        filesFromUpload(data.design_file).length === 0)
                 }
             >
                 {submitLabel}
             </Button>
         </form>
     );
+}
+
+function filesFromUpload(value: UploadValue): File[] {
+    if (value === null) {
+        return [];
+    }
+
+    return Array.isArray(value) ? value : [value];
 }
 
 function FormRow({
@@ -554,7 +583,7 @@ function UploadButton({
             >
                 <Image className={large ? 'size-8' : 'size-4'} />
                 <span>
-                    {large ? 'Choose a file to upload' : 'UPLOAD FILES'}
+                    {large ? 'Choose file(s) to upload' : 'UPLOAD FILES'}
                 </span>
                 {large && (
                     <span className="text-xs font-normal text-neutral-500">
