@@ -120,8 +120,8 @@ final class BusinessCardOptionCatalog
         'edge_coloring' => '/images/products/cotton/special-finishes/edge-coloring.png',
         'double_mounting' => '/images/products/cotton/special-finishes/double-mounting.png',
         'custom_die_cut' => '/images/products/cotton/special-finishes/custom-die-cut.png',
-        'emboss' => '/images/products/cotton/special-finishes/emboss.png',
-        'deboss' => '/images/products/cotton/special-finishes/deboss.png',
+        'emboss' => '/images/products/cotton/special-finishes/凹凸.png',
+        'deboss' => '/images/products/cotton/special-finishes/凹凸.png',
     ];
 
     /**

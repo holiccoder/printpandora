@@ -758,8 +758,8 @@ class BusinessCardProductOptionsTest extends TestCase
             '/images/products/cotton/special-finishes/edge-coloring.png',
             '/images/products/cotton/special-finishes/double-mounting.png',
             '/images/products/cotton/special-finishes/custom-die-cut.png',
-            '/images/products/cotton/special-finishes/emboss.png',
-            '/images/products/cotton/special-finishes/deboss.png',
+            '/images/products/cotton/special-finishes/凹凸.png',
+            '/images/products/cotton/special-finishes/凹凸.png',
         ];
 
         foreach ($slugs as $slug) {
