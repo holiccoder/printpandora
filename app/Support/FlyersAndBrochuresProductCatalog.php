@@ -17,6 +17,8 @@ final class FlyersAndBrochuresProductCatalog
 
     public const RECOMMENDED_QUANTITY = 200;
 
+    private const MILLIMETRES_PER_INCH = 25.4;
+
     /**
      * @var array<string, string>
      */
@@ -361,8 +363,8 @@ final class FlyersAndBrochuresProductCatalog
                 'description' => '<p>Print vivid flyers and brochures on '.$definition['paper_name'].' with your choice of '.$descriptionChoice.'.</p>',
                 'description_title' => null,
                 'bullet_points' => [
-                    'Five standard sizes from 99 × 210 mm to 210 × 297 mm',
-                    'Custom width and height from 100 × 100 mm to 600 × 600 mm',
+                    'Five standard sizes from 3.90 × 8.27 in to 8.27 × 11.69 in',
+                    'Custom width and height from 3.94 × 3.94 in to 23.62 × 23.62 in',
                     'Full-color printing with consistent fold alignment',
                     'Quantity pricing from 200 pieces',
                 ],
@@ -408,22 +410,28 @@ final class FlyersAndBrochuresProductCatalog
     private static function sizeValues(): array
     {
         $sizes = [
-            ['code' => '105x148', 'label' => '105 × 148 mm', 'width' => 105, 'height' => 148],
-            ['code' => '120x120', 'label' => '120 × 120 mm', 'width' => 120, 'height' => 120],
-            ['code' => '99x210', 'label' => '99 × 210 mm', 'width' => 99, 'height' => 210],
-            ['code' => '148x210', 'label' => '148 × 210 mm', 'width' => 148, 'height' => 210],
-            ['code' => '210x297', 'label' => '210 × 297 mm', 'width' => 210, 'height' => 297],
+            ['code' => '105x148', 'width_mm' => 105, 'height_mm' => 148],
+            ['code' => '120x120', 'width_mm' => 120, 'height_mm' => 120],
+            ['code' => '99x210', 'width_mm' => 99, 'height_mm' => 210],
+            ['code' => '148x210', 'width_mm' => 148, 'height_mm' => 210],
+            ['code' => '210x297', 'width_mm' => 210, 'height_mm' => 297],
         ];
 
         $values = array_map(
             static function (array $size): array {
-                $area = ((float) $size['width'] / 1000) * ((float) $size['height'] / 1000);
+                $width = self::millimetresToInches($size['width_mm']);
+                $height = self::millimetresToInches($size['height_mm']);
+                $label = $width.' × '.$height.' in';
+                $area = ((float) $size['width_mm'] / 1000) * ((float) $size['height_mm'] / 1000);
 
                 return [
-                    ...$size,
-                    'description' => $size['label'],
+                    'code' => $size['code'],
+                    'label' => $label,
+                    'width' => $width,
+                    'height' => $height,
+                    'description' => $label,
                     'area_sq_m' => round($area, 8),
-                    'unit' => 'mm',
+                    'unit' => 'in',
                     'swatch_image' => self::SIZE_SWATCHES[$size['code']],
                 ];
             },
@@ -433,16 +441,20 @@ final class FlyersAndBrochuresProductCatalog
         $values[] = [
             'code' => 'custom',
             'label' => 'Custom',
-            'description' => 'Enter a width and height from 100 × 100 mm to 600 × 600 mm.',
-            'unit' => 'mm',
-            'min_width' => 100,
-            'max_width' => 600,
-            'min_height' => 100,
-            'max_height' => 600,
+            'unit' => 'in',
+            'min_width' => self::millimetresToInches(100),
+            'max_width' => self::millimetresToInches(600),
+            'min_height' => self::millimetresToInches(100),
+            'max_height' => self::millimetresToInches(600),
             'swatch_image' => self::SIZE_SWATCHES['custom'],
         ];
 
         return $values;
+    }
+
+    private static function millimetresToInches(int|float $millimetres): string
+    {
+        return number_format($millimetres / self::MILLIMETRES_PER_INCH, 2, '.', '');
     }
 
     /**

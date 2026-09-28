@@ -21,10 +21,27 @@ class FlyersAndBrochuresProductTest extends TestCase
             $product = Product::query()->where('slug', $slug)->firstOrFail();
             $config = $product->product_config;
 
-            $this->assertSame('mm', data_get($config, 'options.sizes.values.0.unit'));
+            $this->assertSame('in', data_get($config, 'options.sizes.values.0.unit'));
+            $this->assertSame([
+                ['105x148', '4.13', '5.83', '4.13 × 5.83 in'],
+                ['120x120', '4.72', '4.72', '4.72 × 4.72 in'],
+                ['99x210', '3.90', '8.27', '3.90 × 8.27 in'],
+                ['148x210', '5.83', '8.27', '5.83 × 8.27 in'],
+                ['210x297', '8.27', '11.69', '8.27 × 11.69 in'],
+            ], array_map(
+                static fn (array $value): array => [
+                    $value['code'],
+                    $value['width'],
+                    $value['height'],
+                    $value['description'],
+                ],
+                array_slice(data_get($config, 'options.sizes.values'), 0, 5),
+            ));
             $this->assertSame('custom', data_get($config, 'options.sizes.values.5.code'));
-            $this->assertSame(100, data_get($config, 'options.sizes.values.5.min_width'));
-            $this->assertSame(600, data_get($config, 'options.sizes.values.5.max_width'));
+            $this->assertSame('in', data_get($config, 'options.sizes.values.5.unit'));
+            $this->assertSame('3.94', data_get($config, 'options.sizes.values.5.min_width'));
+            $this->assertSame('23.62', data_get($config, 'options.sizes.values.5.max_width'));
+            $this->assertArrayNotHasKey('description', data_get($config, 'options.sizes.values.5'));
             $this->assertCount(4, data_get($config, 'media.gallery'));
 
             foreach (data_get($config, 'media.gallery', []) as $image) {
@@ -110,14 +127,18 @@ class FlyersAndBrochuresProductTest extends TestCase
                 ->where('content.global_chrome.header.flyers_brochures_mega_menu.link_groups.0.links.3.href', '/flyers-and-brochures/super'));
     }
 
-    public function test_area_pricing_uses_millimetres_for_fixed_and_custom_sizes(): void
+    public function test_area_pricing_uses_inches_for_fixed_and_custom_sizes(): void
     {
         $product = Product::query()
             ->where('slug', 'classic-standard-flyers-and-brochures')
             ->firstOrFail();
         $pricing = app(PricingService::class);
         $storefront = app(ProductConfigurationService::class)->storefrontOptions($product);
-        $this->assertSame('mm', data_get($storefront, 'option_groups.0.values.5.unit'));
+        $this->assertSame('in', data_get($storefront, 'option_groups.0.values.5.unit'));
+        $this->assertArrayNotHasKey(
+            'description',
+            data_get($storefront, 'option_groups.0.values.5'),
+        );
 
         $fixed = $pricing->validateOptions($product, [
             'sizes' => '105x148',
@@ -131,21 +152,21 @@ class FlyersAndBrochuresProductTest extends TestCase
 
         $custom = $pricing->validateOptions($product, [
             'sizes' => 'custom',
-            'custom_width' => '100',
-            'custom_height' => '100',
+            'custom_width' => '3.94',
+            'custom_height' => '3.94',
             'paper_finish' => 'matte_lamination',
             'folding' => 'half_fold',
             'quantity' => '200',
         ]);
 
-        $this->assertSame('0.01000000', $custom['paper_area']);
+        $this->assertSame('0.01001521', $custom['paper_area']);
         $this->assertSame(20.0, $pricing->calculate($product->id, $custom));
 
         $this->expectException(ValidationException::class);
         $pricing->validateOptions($product, [
             'sizes' => 'custom',
-            'custom_width' => '99',
-            'custom_height' => '100',
+            'custom_width' => '3.93',
+            'custom_height' => '3.94',
         ]);
     }
 }

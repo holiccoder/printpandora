@@ -98,7 +98,7 @@ export default function Showcases({
                                     }`}
                                     aria-current={isActive ? 'page' : undefined}
                                 >
-                                    {category.name}
+                                    {category.name} ({category.showcases_count})
                                 </Link>
                             );
                         })}

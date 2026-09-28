@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Showcase;
 use App\Models\ShowcaseCategory;
+use App\Services\ProductImageResolver;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ShowcaseController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request, ProductImageResolver $imageResolver): Response
     {
         $categories = ShowcaseCategory::query()
             ->withCount('showcases')
@@ -21,17 +22,28 @@ class ShowcaseController extends Controller
         $activeCategorySlug = $request->query('category');
         $activeCategory = $categories->firstWhere('slug', $activeCategorySlug);
 
+        $showcases = Showcase::query()
+            ->when(
+                $activeCategory,
+                fn ($query) => $query->where('category_id', $activeCategory->getKey()),
+            )
+            ->orderBy('id')
+            ->paginate(16, ['id', 'link', 'image_url', 'category_id'])
+            ->withQueryString();
+
+        $showcases->getCollection()->transform(function (Showcase $showcase) use ($imageResolver): Showcase {
+            $showcase->setAttribute(
+                'image_url',
+                $imageResolver->url($showcase->getRawOriginal('image_url')),
+            );
+
+            return $showcase;
+        });
+
         return Inertia::render('showcases', [
             'categories' => $categories,
             'active_category' => $activeCategory?->slug,
-            'showcases' => Showcase::query()
-                ->when(
-                    $activeCategory,
-                    fn ($query) => $query->where('category_id', $activeCategory->getKey()),
-                )
-                ->orderBy('id')
-                ->paginate(16, ['id', 'link', 'image_url', 'category_id'])
-                ->withQueryString(),
+            'showcases' => $showcases,
         ]);
     }
 }

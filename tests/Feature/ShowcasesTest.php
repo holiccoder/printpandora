@@ -4,13 +4,23 @@ namespace Tests\Feature;
 
 use App\Filament\Resources\ShowcaseCategoryResource;
 use App\Filament\Resources\ShowcaseResource;
+use App\Filament\Resources\ShowcaseResource\Pages\CreateShowcase;
+use App\Filament\Resources\ShowcaseResource\Pages\EditShowcase;
+use App\Jobs\GenerateProductImageWebp;
 use App\Models\Admin;
 use App\Models\Showcase;
 use App\Models\ShowcaseCategory;
+use App\Services\ProductImageResolver;
+use App\Support\ProductImagePolicy;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class ShowcasesTest extends TestCase
@@ -22,23 +32,25 @@ class ShowcasesTest extends TestCase
         $this->get('/showcases')
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
-                ->has('categories', 8)
+                ->has('categories', 7)
                 ->where('categories.0.name', 'Cotton Business Cards')
                 ->where('categories.0.slug', 'cotton-paper-business-cards')
-                ->where('categories.1.name', 'Premium Business Cards')
-                ->where('categories.1.slug', 'premium-business-cards')
-                ->where('categories.2.name', 'Metal Business Cards')
-                ->where('categories.2.slug', 'metal-business-cards')
-                ->where('categories.3.name', 'Stickers & Labels')
-                ->where('categories.3.slug', 'stickers-labels')
-                ->where('categories.4.name', 'Brochures')
-                ->where('categories.4.slug', 'folded-brochures')
-                ->where('categories.5.name', 'Cards & Postcards')
-                ->where('categories.5.slug', 'cards-and-postcards')
-                ->where('categories.6.name', 'Paper Stocks')
-                ->where('categories.6.slug', 'paper-stocks')
-                ->where('categories.7.name', 'Finishes')
-                ->where('categories.7.slug', 'finishing-techniques'));
+                ->where('categories.1.name', 'Metal Business Cards')
+                ->where('categories.1.slug', 'metal-business-cards')
+                ->where('categories.2.name', 'Stickers & Labels')
+                ->where('categories.2.slug', 'stickers-labels')
+                ->where('categories.3.name', 'Brochures')
+                ->where('categories.3.slug', 'folded-brochures')
+                ->where('categories.4.name', 'Cards & Postcards')
+                ->where('categories.4.slug', 'cards-and-postcards')
+                ->where('categories.5.name', 'Paper Stocks')
+                ->where('categories.5.slug', 'paper-stocks')
+                ->where('categories.6.name', 'Finishes')
+                ->where('categories.6.slug', 'finishing-techniques'));
+
+        $this->assertDatabaseMissing('showcase_categories', [
+            'slug' => 'premium-business-cards',
+        ]);
     }
 
     public function test_imported_showcases_are_available_to_the_frontend(): void
@@ -124,6 +136,81 @@ class ShowcasesTest extends TestCase
                 ->where('categories.0.slug', 'business-cards')
                 ->has('showcases.data', 1)
                 ->where('showcases.data.0.id', $matchingShowcase->id));
+    }
+
+    public function test_admin_can_upload_a_showcase_image(): void
+    {
+        Storage::fake('public');
+        Queue::fake();
+
+        Filament::setCurrentPanel('admin');
+        Filament::bootCurrentPanel();
+        $this->actingAs(Admin::factory()->create(), 'admin');
+
+        $category = ShowcaseCategory::create([
+            'name' => 'Uploaded showcases',
+            'slug' => 'uploaded-showcases',
+        ]);
+
+        Livewire::test(CreateShowcase::class)
+            ->fillForm([
+                'image_name' => 'Uploaded showcase',
+                'category_id' => $category->getKey(),
+                'image_url' => UploadedFile::fake()->image('showcase.png', 400, 200),
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $showcase = Showcase::query()->latest('id')->firstOrFail();
+        $path = $showcase->getRawOriginal('image_url');
+
+        $this->assertIsString($path);
+        $this->assertMatchesRegularExpression(
+            '~^'.preg_quote(ProductImagePolicy::ORIGINALS_DIRECTORY, '~').'/showcases/[0-9A-Z]{26}\.png$~',
+            $path,
+        );
+        Storage::disk('public')->assertExists($path);
+        Queue::assertPushed(
+            GenerateProductImageWebp::class,
+            fn (GenerateProductImageWebp $job): bool => $job->sourcePath === $path
+                && $job->webpPath === app(ProductImageResolver::class)->derivativePath($path),
+        );
+
+        $this->get('/showcases?category=uploaded-showcases')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->where('showcases.data.0.id', $showcase->id)
+                ->where('showcases.data.0.image_url', '/storage/'.$path));
+    }
+
+    public function test_existing_showcase_images_are_previewable_in_the_admin_form(): void
+    {
+        Storage::fake('public');
+
+        $showcase = Showcase::create([
+            'image_name' => 'Legacy showcase',
+            'image_url' => '/images/showcases/legacy-showcase.webp',
+        ]);
+
+        Filament::setCurrentPanel('admin');
+        Filament::bootCurrentPanel();
+        $this->actingAs(Admin::factory()->create(), 'admin');
+
+        $component = Livewire::test(EditShowcase::class, [
+            'record' => $showcase->getRouteKey(),
+        ]);
+        $page = $component->instance();
+        $this->assertInstanceOf(EditShowcase::class, $page);
+
+        $form = $page->getSchema('form');
+        $this->assertNotNull($form);
+
+        $field = $form->getComponentByStatePath('image_url');
+        $this->assertInstanceOf(FileUpload::class, $field);
+
+        $preview = array_values($field->getUploadedFiles() ?? [])[0] ?? null;
+
+        $this->assertSame('/images/showcases/legacy-showcase.webp', data_get($preview, 'url'));
     }
 
     public function test_showcase_resource_is_registered_in_the_admin_panel(): void

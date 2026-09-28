@@ -4,13 +4,20 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ShowcaseResource\Pages;
 use App\Models\Showcase;
+use App\Services\ProductImageResolver;
+use App\Services\ProductImageUploadService;
+use App\Support\ProductImagePolicy;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ShowcaseResource extends Resource
 {
@@ -54,11 +61,52 @@ class ShowcaseResource extends Resource
                     ->nullable()
                     ->maxLength(255)
                     ->helperText('此案例的可选链接。'),
-                Forms\Components\TextInput::make('image_url')
-                    ->label('图片地址')
+                FileUpload::make('image_url')
+                    ->label('Showcase image')
+                    ->helperText('Upload a JPEG, PNG, or WebP image (maximum 10 MB).')
+                    ->image()
+                    ->acceptedFileTypes(ProductImagePolicy::ALLOWED_MIME_TYPES)
+                    ->maxSize(10240)
+                    ->disk('public')
+                    ->directory('showcases')
+                    ->visibility('public')
+                    ->fetchFileInformation(false)
                     ->required()
-                    ->maxLength(255)
-                    ->helperText('请输入公开图片 URL，或类似 /images/showcases/example.webp 的路径。'),
+                    ->saveUploadedFileUsing(function (FileUpload $component, TemporaryUploadedFile $file): string {
+                        return app(ProductImageUploadService::class)->store(
+                            $file,
+                            $component->getDirectory() ?? 'showcases',
+                            $component->getDiskName(),
+                            $component->getVisibility(),
+                        );
+                    })
+                    ->getUploadedFileUsing(function (
+                        FileUpload $component,
+                        string $file,
+                        string|array|null $storedFileNames,
+                    ): ?array {
+                        if (Str::startsWith($file, ['http://', 'https://', '//', '/'])) {
+                            return [
+                                'name' => basename((string) parse_url($file, PHP_URL_PATH)),
+                                'size' => 0,
+                                'type' => 'image/*',
+                                'url' => self::resolveImagePath($file),
+                            ];
+                        }
+
+                        $uploadedFile = $component->getUploadedFile($file, $storedFileNames);
+
+                        if ($uploadedFile === null) {
+                            return null;
+                        }
+
+                        $uploadedFile['url'] = self::resolveImagePath($file);
+
+                        return $uploadedFile;
+                    })
+                    ->deleteUploadedFileUsing(static function (string $file): void {
+                        self::deleteUploadedImage($file);
+                    }),
             ]);
     }
 
@@ -68,9 +116,9 @@ class ShowcaseResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')
                     ->label('缩略图')
-                    ->state(fn (Showcase $record): string => str_starts_with($record->image_url, 'http://') || str_starts_with($record->image_url, 'https://')
-                        ? $record->image_url
-                        : url($record->image_url))
+                    ->state(fn (Showcase $record): string => self::absoluteImageUrl(
+                        (string) $record->getRawOriginal('image_url'),
+                    ))
                     ->checkFileExistence(false)
                     ->imageSize(80)
                     ->square(),
@@ -112,5 +160,42 @@ class ShowcaseResource extends Resource
             'create' => Pages\CreateShowcase::route('/create'),
             'edit' => Pages\EditShowcase::route('/{record}/edit'),
         ];
+    }
+
+    private static function resolveImagePath(string $image): string
+    {
+        $resolved = app(ProductImageResolver::class)->url($image);
+
+        return is_string($resolved) ? $resolved : $image;
+    }
+
+    private static function absoluteImageUrl(string $image): string
+    {
+        $resolved = self::resolveImagePath($image);
+
+        return Str::startsWith($resolved, ['http://', 'https://', '//'])
+            ? $resolved
+            : url($resolved);
+    }
+
+    private static function deleteUploadedImage(string $file): void
+    {
+        $file = ltrim(str_replace('\\', '/', $file), '/');
+        $directory = ProductImagePolicy::ORIGINALS_DIRECTORY.'/showcases/';
+
+        if (! Str::startsWith($file, $directory)) {
+            return;
+        }
+
+        $resolver = app(ProductImageResolver::class);
+        $webpPath = $resolver->derivativePath($file);
+        $paths = [$file];
+
+        if ($webpPath !== null) {
+            $paths[] = $webpPath;
+            $paths[] = $resolver->failureMarkerPath($webpPath);
+        }
+
+        Storage::disk('public')->delete($paths);
     }
 }

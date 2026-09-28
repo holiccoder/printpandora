@@ -12,3 +12,10 @@ test('showcase cards fill their media frame without vertical letterboxing', () =
     assert.match(source, /h-full w-full object-cover/);
     assert.doesNotMatch(source, /h-full w-full object-contain/);
 });
+
+test('showcase category pills display their image counts', () => {
+    assert.match(
+        source,
+        /\{category\.name\} \(\{category\.showcases_count\}\)/,
+    );
+});
