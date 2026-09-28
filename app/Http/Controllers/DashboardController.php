@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
 use App\Models\Affiliate;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Notifications\CustomerNotification;
 use App\Services\DiscountService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
@@ -78,19 +80,26 @@ class DashboardController extends Controller
     }
 
     /**
-     * Full orders list — descending by creation date, paginated.
+     * Full orders list — filterable by status, descending by creation date, paginated.
      */
     public function orders(Request $request): Response
     {
+        $status = $request->query('status');
+        $status = is_string($status) && array_key_exists($status, Order::statusOptions())
+            ? $status
+            : null;
+
         $orders = Order::with('items.product')
             ->where('user_id', $request->user()->id)
+            ->when($status !== null, function (Builder $query) use ($status): void {
+                $query->where('status', $status);
+            })
             ->latest()
             ->paginate(15)
+            ->withQueryString()
             ->through(fn (Order $order) => [
                 'id' => $order->id,
                 'status' => $order->status,
-                'payment_status' => $order->payment_status,
-                'payment_method' => $order->payment_method,
                 'tracking_number' => $order->tracking_number,
                 'tracking_url' => $order->tracking_url,
                 'invoice_url' => $order->payment_status === 'paid'
@@ -98,11 +107,19 @@ class DashboardController extends Controller
                     : null,
                 'total' => (float) $order->total,
                 'item_count' => $order->items->sum('quantity'),
+                'product_names' => $order->items
+                    ->map(fn (OrderItem $item): ?string => $item->product?->name)
+                    ->filter()
+                    ->values()
+                    ->all(),
+                'notes' => $order->notes,
                 'created_at' => $order->created_at?->toIso8601String(),
             ]);
 
         return Inertia::render('dashboard/orders', [
             'orders' => $orders,
+            'statusOptions' => Order::statusOptions(),
+            'selectedStatus' => $status,
         ]);
     }
 

@@ -2500,12 +2500,16 @@
         "table_headers": {
             "order": "Order",
             "date": "Date",
-            "items": "Items",
+            "products": "Products",
             "status": "Status",
             "tracking": "Tracking",
-            "payment": "Payment",
+            "note": "Order note",
             "total": "Total",
             "actions": "Actions"
+        },
+        "status_filter": {
+            "label": "Filter orders by status",
+            "all": "All statuses"
         },
         "view_link": "View",
         "invoice_link": "Download invoice",

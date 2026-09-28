@@ -4,23 +4,20 @@ import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
-import {
-    ORDER_STATUS_COLORS,
-    orderStatusLabel,
-} from '@/lib/order-status';
+import { ORDER_STATUS_COLORS, orderStatusLabel } from '@/lib/order-status';
 
 const ACCENT = '#800020';
 
 type Order = {
     id: number;
     status: string;
-    payment_status: string;
-    payment_method: string | null;
     tracking_number: string | null;
     tracking_url: string | null;
     invoice_url: string | null;
     total: number;
     item_count: number;
+    product_names: string[];
+    notes: string | null;
     created_at: string | null;
 };
 
@@ -37,10 +34,23 @@ type PaginatedOrders = {
 
 type Props = {
     orders: PaginatedOrders;
+    statusOptions: Record<string, string>;
+    selectedStatus: string | null;
 };
 
-export default function DashboardOrders({ orders }: Props) {
+export default function DashboardOrders({
+    orders,
+    statusOptions,
+    selectedStatus,
+}: Props) {
     const c = useContent('dashboard_orders_page') as any;
+    const statusTabs = [
+        { value: null, label: c.status_filter.all },
+        ...Object.entries(statusOptions).map(([value, label]) => ({
+            value,
+            label,
+        })),
+    ];
 
     return (
         <StorefrontLayout>
@@ -69,6 +79,38 @@ export default function DashboardOrders({ orders }: Props) {
                         </Link>
                     </header>
 
+                    <nav
+                        aria-label={c.status_filter.label}
+                        className="mb-6 overflow-x-auto rounded-lg border border-neutral-200 bg-white shadow-sm"
+                    >
+                        <div className="flex min-w-max">
+                            {statusTabs.map((tab) => {
+                                const isActive = selectedStatus === tab.value;
+                                const href = tab.value
+                                    ? `/dashboard/orders?status=${encodeURIComponent(tab.value)}`
+                                    : '/dashboard/orders';
+
+                                return (
+                                    <Link
+                                        key={tab.value ?? 'all'}
+                                        href={href}
+                                        preserveScroll
+                                        className={`border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
+                                            isActive
+                                                ? 'border-[#800020] text-[#800020]'
+                                                : 'border-transparent text-neutral-600 hover:border-neutral-300 hover:text-neutral-900'
+                                        }`}
+                                        aria-current={
+                                            isActive ? 'page' : undefined
+                                        }
+                                    >
+                                        {tab.label}
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </nav>
+
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm">
                         {orders.data.length === 0 ? (
                             <div className="px-6 py-12 text-center text-sm text-neutral-600">
@@ -89,10 +131,10 @@ export default function DashboardOrders({ orders }: Props) {
                                         <tr>
                                             <Th>{c.table_headers.order}</Th>
                                             <Th>{c.table_headers.date}</Th>
-                                            <Th>{c.table_headers.items}</Th>
+                                            <Th>{c.table_headers.products}</Th>
                                             <Th>{c.table_headers.status}</Th>
                                             <Th>{c.table_headers.tracking}</Th>
-                                            <Th>{c.table_headers.payment}</Th>
+                                            <Th>{c.table_headers.note}</Th>
                                             <Th className="text-right">
                                                 {c.table_headers.total}
                                             </Th>
@@ -117,8 +159,29 @@ export default function DashboardOrders({ orders }: Props) {
                                                           ).toLocaleDateString()
                                                         : '—'}
                                                 </Td>
-                                                <Td className="text-neutral-600">
-                                                    {order.item_count}
+                                                <Td className="max-w-sm min-w-56 text-neutral-600">
+                                                    {order.product_names
+                                                        .length > 0 ? (
+                                                        <ul className="space-y-1">
+                                                            {order.product_names.map(
+                                                                (
+                                                                    name,
+                                                                    index,
+                                                                ) => (
+                                                                    <li
+                                                                        key={`${name}-${index}`}
+                                                                        className="break-words"
+                                                                    >
+                                                                        {name}
+                                                                    </li>
+                                                                ),
+                                                            )}
+                                                        </ul>
+                                                    ) : (
+                                                        <span className="text-neutral-400">
+                                                            —
+                                                        </span>
+                                                    )}
                                                 </Td>
                                                 <Td>
                                                     <StatusPill
@@ -160,11 +223,12 @@ export default function DashboardOrders({ orders }: Props) {
                                                         </span>
                                                     )}
                                                 </Td>
-                                                <Td className="text-neutral-600 capitalize">
-                                                    {order.payment_status}
-                                                    {order.payment_method
-                                                        ? ` · ${order.payment_method}`
-                                                        : ''}
+                                                <Td className="max-w-xs break-words whitespace-pre-wrap text-neutral-600">
+                                                    {order.notes || (
+                                                        <span className="text-neutral-400">
+                                                            —
+                                                        </span>
+                                                    )}
                                                 </Td>
                                                 <Td className="text-right font-semibold text-neutral-900">
                                                     ${order.total.toFixed(2)}
