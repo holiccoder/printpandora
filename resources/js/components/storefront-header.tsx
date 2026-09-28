@@ -1,5 +1,6 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import {
+    Bell,
     ChevronDown,
     ChevronRight,
     FileText,
@@ -85,6 +86,7 @@ type GlobalCart = {
 type HeaderPageProps = {
     auth?: { user?: { name?: string } | null };
     global_cart?: GlobalCart;
+    customer_notifications?: { unread_count?: number };
 };
 
 const ACTIVE_GREEN = 'text-[#800020]';
@@ -99,9 +101,13 @@ export function StorefrontHeader({
     const chrome = useContent('global_chrome');
     const h = chrome.header;
     const page = usePage();
-    const { auth, global_cart: globalCart } =
-        page.props as unknown as HeaderPageProps;
+    const {
+        auth,
+        global_cart: globalCart,
+        customer_notifications: customerNotifications,
+    } = page.props as unknown as HeaderPageProps;
     const user = auth?.user;
+    const unreadNotificationCount = customerNotifications?.unread_count ?? 0;
     const [megaMenuTop, setMegaMenuTop] = useState(
         DEFAULT_STICKY_HEADER_BOTTOM,
     );
@@ -214,6 +220,26 @@ export function StorefrontHeader({
                 };
             }
 
+            if (nav.label === 'Flyers & Brochures') {
+                const flyersBrochures = h.flyers_brochures_mega_menu;
+
+                return {
+                    label: nav.label,
+                    href: nav.href,
+                    mega: {
+                        groups: flyersBrochures.link_groups.map((g) => ({
+                            links: g.links.map((l) => ({
+                                ...l,
+                                children: l.children as MegaLink[] | undefined,
+                            })),
+                        })),
+                        promos: flyersBrochures.promo_cards as PromoBlock[],
+                    },
+                    compactDropdown: true,
+                    nestedDropdown: true,
+                };
+            }
+
             return { label: nav.label, href: nav.href };
         },
     );
@@ -278,6 +304,23 @@ export function StorefrontHeader({
                             <Search className="size-5 opacity-80" />
                         </Link>
 
+                        {user && (
+                            <Link
+                                href="/dashboard/notifications"
+                                aria-label="Notifications"
+                                className="relative inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-100"
+                            >
+                                <Bell className="size-5 opacity-80" />
+                                {unreadNotificationCount > 0 && (
+                                    <span className="absolute top-0.5 right-0.5 flex min-w-4 translate-x-1/4 -translate-y-1/4 items-center justify-center rounded-full bg-[#800020] px-1 text-[10px] leading-4 font-bold text-white">
+                                        {unreadNotificationCount > 99
+                                            ? '99+'
+                                            : unreadNotificationCount}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
+
                         {/* auth buttons — desktop */}
                         {user ? (
                             <DropdownMenu>
@@ -334,6 +377,23 @@ export function StorefrontHeader({
                                         >
                                             <Package className="mr-2 size-4" />
                                             {h.auth.dropdown_orders_label}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href="/dashboard/notifications"
+                                            className="cursor-pointer"
+                                        >
+                                            <Bell className="mr-2 size-4" />
+                                            Notifications
+                                            {unreadNotificationCount > 0 && (
+                                                <span className="ml-auto rounded-full bg-[#800020] px-1.5 py-0.5 text-[10px] font-bold text-white">
+                                                    {unreadNotificationCount >
+                                                    99
+                                                        ? '99+'
+                                                        : unreadNotificationCount}
+                                                </span>
+                                            )}
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>

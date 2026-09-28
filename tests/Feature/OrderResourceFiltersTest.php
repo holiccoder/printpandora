@@ -39,13 +39,11 @@ class OrderResourceFiltersTest extends TestCase
 
         $this->assertSame([
             'pending',
+            'pending_review',
+            'pending_confirmation',
             'confirmed',
-            'pending_modification',
-            'pending_production',
             'production',
-            'pending_shipment',
             'shipped',
-            'cancelled',
         ], array_keys(Order::statusOptions()));
     }
 

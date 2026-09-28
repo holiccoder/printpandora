@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\OrderPaid;
+use App\Services\CustomerNotificationService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,19 +21,29 @@ class Order extends Model
 {
     public const STATUS_PENDING = 'pending';
 
+    public const STATUS_PENDING_PAYMENT = self::STATUS_PENDING;
+
+    public const STATUS_PENDING_REVIEW = 'pending_review';
+
+    public const STATUS_PENDING_CONFIRMATION = 'pending_confirmation';
+
     public const STATUS_CONFIRMED = 'confirmed';
-
-    public const STATUS_PENDING_MODIFICATION = 'pending_modification';
-
-    public const STATUS_PENDING_PRODUCTION = 'pending_production';
 
     public const STATUS_PRODUCTION = 'production';
 
-    public const STATUS_PENDING_SHIPMENT = 'pending_shipment';
-
     public const STATUS_SHIPPED = 'shipped';
 
-    public const STATUS_CANCELLED = 'cancelled';
+    /**
+     * Backwards-compatible aliases for integrations that still reference the
+     * previous workflow constants. New code should use the six statuses above.
+     */
+    public const STATUS_PENDING_MODIFICATION = self::STATUS_PENDING_REVIEW;
+
+    public const STATUS_PENDING_PRODUCTION = self::STATUS_PENDING_CONFIRMATION;
+
+    public const STATUS_PENDING_SHIPMENT = self::STATUS_PRODUCTION;
+
+    public const STATUS_CANCELLED = self::STATUS_PENDING_REVIEW;
 
     /**
      * @return array<string, string>
@@ -41,14 +52,17 @@ class Order extends Model
     {
         return [
             self::STATUS_PENDING => '待付款',
+            self::STATUS_PENDING_REVIEW => '待审核',
+            self::STATUS_PENDING_CONFIRMATION => '待确认',
             self::STATUS_CONFIRMED => '已确认',
-            self::STATUS_PENDING_MODIFICATION => '待修改',
-            self::STATUS_PENDING_PRODUCTION => '待生产',
             self::STATUS_PRODUCTION => '生产中',
-            self::STATUS_PENDING_SHIPMENT => '待发货',
             self::STATUS_SHIPPED => '已发货',
-            self::STATUS_CANCELLED => '已取消',
         ];
+    }
+
+    public static function statusLabel(string $status): string
+    {
+        return self::statusOptions()[$status] ?? $status;
     }
 
     protected static function booted(): void
@@ -62,6 +76,23 @@ class Order extends Model
         static::updated(function (Order $order): void {
             if ($order->wasChanged('payment_status') && $order->payment_status === 'paid') {
                 OrderPaid::dispatch($order);
+            }
+
+            $wasSubmitted = $order->wasChanged('checkout_token')
+                && filled($order->getRawOriginal('checkout_token'))
+                && blank($order->checkout_token);
+
+            if ($wasSubmitted) {
+                app(CustomerNotificationService::class)->orderPlaced($order);
+
+                return;
+            }
+
+            if ($order->wasChanged('status')) {
+                app(CustomerNotificationService::class)->orderStatusChanged(
+                    $order,
+                    $order->getRawOriginal('status'),
+                );
             }
         });
     }

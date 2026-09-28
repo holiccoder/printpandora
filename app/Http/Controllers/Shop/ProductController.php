@@ -8,6 +8,7 @@ use App\Services\ProductConfigurationService;
 use App\Services\ProductImageService;
 use App\Services\ShippingService;
 use App\Support\BusinessCardRoutes;
+use App\Support\FlyersAndBrochuresProductCatalog;
 use App\Support\PostcardProductCatalog;
 use App\Support\StickerProductCatalog;
 use Inertia\Inertia;
@@ -24,6 +25,7 @@ class ProductController extends Controller
         $productSlug = match (true) {
             request()->routeIs('shop.sticker.show') => StickerProductCatalog::productSlugForSegment($slug) ?? $slug,
             request()->routeIs('shop.postcard.show') => PostcardProductCatalog::productSlugForSegment($slug) ?? $slug,
+            request()->routeIs('shop.flyer.show') => FlyersAndBrochuresProductCatalog::productSlugForSegment($slug) ?? $slug,
             default => BusinessCardRoutes::productSlugForSegment($slug) ?? $slug,
         };
         $product = Product::with('category')
@@ -44,7 +46,8 @@ class ProductController extends Controller
         if (request()->routeIs('shop.show')) {
             $canonicalPath = BusinessCardRoutes::pathForProductSlug($productSlug)
                 ?? PostcardProductCatalog::pathForProductSlug($productSlug)
-                ?? StickerProductCatalog::pathForProductSlug($productSlug);
+                ?? StickerProductCatalog::pathForProductSlug($productSlug)
+                ?? FlyersAndBrochuresProductCatalog::pathForProductSlug($productSlug);
 
             if ($canonicalPath !== null) {
                 return redirect()->to($canonicalPath, 301);

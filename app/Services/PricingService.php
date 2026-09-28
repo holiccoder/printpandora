@@ -78,6 +78,7 @@ class PricingService
 
             $bounds = $this->customSizeBounds(is_array($customSizeValue) ? $customSizeValue : []);
             $errors = [];
+            $unitLabel = $bounds['unit'] === 'mm' ? 'mm' : 'inches';
             $dimensions = [
                 'custom_width' => '',
                 'custom_height' => '',
@@ -91,7 +92,7 @@ class PricingService
                 $range = number_format($minimum, 2, '.', '').' and '.number_format($maximum, 2, '.', '');
 
                 if (! is_numeric($value) || ! is_finite((float) $value)) {
-                    $errors["options.{$key}"] = "Enter a {$dimension} between {$range} inches.";
+                    $errors["options.{$key}"] = "Enter a {$dimension} between {$range} {$unitLabel}.";
 
                     continue;
                 }
@@ -99,7 +100,7 @@ class PricingService
                 $numericValue = (float) $value;
 
                 if ($numericValue < $minimum || $numericValue > $maximum) {
-                    $errors["options.{$key}"] = "The {$dimension} must be between {$range} inches.";
+                    $errors["options.{$key}"] = "The {$dimension} must be between {$range} {$unitLabel}.";
 
                     continue;
                 }
@@ -121,6 +122,7 @@ class PricingService
             $options = $this->normalizeStickerPaperArea(
                 $options,
                 is_array($sizeGroup) ? $sizeGroup : [],
+                true,
             );
         } elseif ($this->configUsesAreaBasedPricing($config)) {
             $sizeGroup = data_get($config, 'options.sizes', []);
@@ -140,13 +142,18 @@ class PricingService
      * @param  array<string, mixed>  $sizeGroup
      * @return array<string, mixed>
      */
-    private function normalizeStickerPaperArea(array $options, array $sizeGroup): array
-    {
+    private function normalizeStickerPaperArea(
+        array $options,
+        array $sizeGroup,
+        bool $isStickerProduct = false,
+    ): array {
         $area = $this->stickerPaperArea($sizeGroup, $options);
 
         if ($area === null || $area <= 0) {
             throw ValidationException::withMessages([
-                'options.sizes' => 'Select a valid sticker size.',
+                'options.sizes' => $isStickerProduct
+                    ? 'Select a valid sticker size.'
+                    : 'Select a valid size.',
             ]);
         }
 
@@ -178,9 +185,15 @@ class PricingService
         if ($sizeCode === 'custom') {
             $width = $readPositiveNumber($options['custom_width'] ?? null);
             $height = $readPositiveNumber($options['custom_height'] ?? null);
+            $values = is_array($sizeGroup['values'] ?? null) ? $sizeGroup['values'] : [];
+            $customValue = collect($values)->first(
+                fn (mixed $value): bool => is_array($value)
+                    && $this->normalizeOptionValue($value['code'] ?? '') === 'custom',
+            );
+            $unit = is_array($customValue) ? (string) ($customValue['unit'] ?? 'in') : 'in';
 
             return $width !== null && $height !== null
-                ? StickerProductCatalog::areaInSquareMetres($width, $height)
+                ? $this->areaInSquareMetres($width, $height, $unit)
                 : null;
         }
 
@@ -208,7 +221,7 @@ class PricingService
             $height = $readPositiveNumber($value['height'] ?? null);
 
             return $width !== null && $height !== null
-                ? StickerProductCatalog::areaInSquareMetres($width, $height)
+                ? $this->areaInSquareMetres($width, $height, (string) ($value['unit'] ?? 'in'))
                 : null;
         }
 
@@ -447,7 +460,7 @@ class PricingService
 
     /**
      * @param  array<string, mixed>  $customValue
-     * @return array<string, array{min: float, max: float}>
+     * @return array{unit: string, width: array{min: float, max: float}, height: array{min: float, max: float}}
      */
     private function customSizeBounds(array $customValue): array
     {
@@ -458,6 +471,7 @@ class PricingService
         };
 
         return [
+            'unit' => strtolower((string) ($customValue['unit'] ?? 'in')) === 'mm' ? 'mm' : 'in',
             'width' => [
                 'min' => $read($customValue, 'min_width', 2.1),
                 'max' => $read($customValue, 'max_width', 3.5),
@@ -467,6 +481,15 @@ class PricingService
                 'max' => $read($customValue, 'max_height', 3.5),
             ],
         ];
+    }
+
+    private function areaInSquareMetres(float $width, float $height, string $unit = 'in'): float
+    {
+        if (strtolower($unit) === 'mm') {
+            return ($width / 1000) * ($height / 1000);
+        }
+
+        return StickerProductCatalog::areaInSquareMetres($width, $height);
     }
 
     /**
@@ -1429,6 +1452,7 @@ class PricingService
                 'rose_gold',
                 'aged_gold',
                 'muted_purple_gold',
+                'laser_silver',
             ], true);
     }
 }

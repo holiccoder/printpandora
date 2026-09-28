@@ -72,6 +72,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard/orders', [DashboardController::class, 'orders'])->name('dashboard.orders');
     Route::get('dashboard/discount-coupons', [DashboardController::class, 'discountCoupons'])
         ->name('dashboard.discount-coupons');
+    Route::get('dashboard/notifications', [DashboardController::class, 'notifications'])
+        ->name('dashboard.notifications');
+    Route::patch('dashboard/notifications/{id}/read', [DashboardController::class, 'markNotificationRead'])
+        ->name('dashboard.notifications.read');
+    Route::post('dashboard/notifications/read-all', [DashboardController::class, 'markAllNotificationsRead'])
+        ->name('dashboard.notifications.read-all');
     Route::get('dashboard/orders/{id}/invoice', [OrderController::class, 'downloadInvoice'])
         ->whereNumber('id')
         ->name('dashboard.orders.invoice');
@@ -119,6 +125,9 @@ Route::get('postcards/{slug}', [ProductController::class, 'show'])
 Route::get('stickers/{slug}', [ProductController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('shop.sticker.show');
+Route::get('flyers-and-brochures/{slug}', [ProductController::class, 'show'])
+    ->where('slug', '[a-z0-9-]+')
+    ->name('shop.flyer.show');
 
 // Referral
 Route::get('ref/{code}', [ReferralController::class, 'show'])->name('referral.show');

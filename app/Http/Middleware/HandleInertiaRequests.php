@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Post;
+use App\Notifications\CustomerNotification;
 use App\Services\Cart;
 use App\Services\ProductImageResolver;
 use App\Support\HardcodedContent;
@@ -56,6 +57,9 @@ class HandleInertiaRequests extends Middleware
             'content' => fn () => app(HardcodedContent::class)->all(),
             // Keep the global storefront drawer in sync with the session cart.
             'global_cart' => fn () => app(Cart::class)->drawerPayload(),
+            // The storefront header uses this lightweight summary to expose
+            // unread customer notifications without loading the full inbox.
+            'customer_notifications' => fn (): array => $this->customerNotificationSummary($request),
             // The Blog mega menu is rendered from the same latest published
             // posts that power the storefront's blog surfaces. Keep this
             // payload compact because it is shared with every Inertia page.
@@ -114,5 +118,23 @@ class HandleInertiaRequests extends Middleware
         return mb_strlen($text) > $length
             ? mb_substr($text, 0, $length - 3).'...'
             : $text;
+    }
+
+    /**
+     * @return array{unread_count: int}
+     */
+    private function customerNotificationSummary(Request $request): array
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            return ['unread_count' => 0];
+        }
+
+        return [
+            'unread_count' => $user->unreadNotifications()
+                ->where('type', CustomerNotification::class)
+                ->count(),
+        ];
     }
 }

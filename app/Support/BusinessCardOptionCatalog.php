@@ -4,6 +4,12 @@ namespace App\Support;
 
 final class BusinessCardOptionCatalog
 {
+    public const LASER_SILVER_HOT_FOIL_CODE = 'laser_silver';
+
+    public const LASER_SILVER_HOT_FOIL_LABEL = '镭射银';
+
+    public const LASER_SILVER_HOT_FOIL_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/laser-silver.png';
+
     public const STANDARD_SIZE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/standard-size.webp';
 
     public const SQUARE_SIZE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/square-size.webp';
@@ -1053,6 +1059,90 @@ final class BusinessCardOptionCatalog
     }
 
     /**
+     * Add the shared Laser Silver hot-foil value to every existing hot-foil
+     * group, including legacy flat option payloads and option_groups.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    public static function normalizeHotFoilOptions(array $options): array
+    {
+        foreach (['special_finish', 'hot_foil'] as $groupKey) {
+            if (is_array($options[$groupKey] ?? null)) {
+                $options[$groupKey] = self::appendLaserSilverHotFoil(
+                    $options[$groupKey],
+                );
+            }
+        }
+
+        if (is_array($options['option_groups'] ?? null)) {
+            foreach ($options['option_groups'] as $index => $group) {
+                if (! is_array($group) || ! in_array($group['key'] ?? null, ['special_finish', 'hot_foil'], true)) {
+                    continue;
+                }
+
+                $options['option_groups'][$index] = self::appendLaserSilverHotFoil(
+                    $group,
+                );
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * @param  array<string|int, mixed>  $group
+     * @return array<string|int, mixed>
+     */
+    private static function appendLaserSilverHotFoil(array $group): array
+    {
+        $isCanonicalGroup = array_key_exists('values', $group);
+        $values = $isCanonicalGroup ? ($group['values'] ?? null) : $group;
+
+        if (! is_array($values) || $values === [] || ! self::hasFoilValues($values)) {
+            return $group;
+        }
+
+        foreach ($values as $value) {
+            if (is_array($value) && ($value['code'] ?? null) === self::LASER_SILVER_HOT_FOIL_CODE) {
+                return $group;
+            }
+        }
+
+        $value = [
+            'code' => self::LASER_SILVER_HOT_FOIL_CODE,
+            'description' => self::LASER_SILVER_HOT_FOIL_LABEL.' hot foil.',
+            'swatch_image' => self::LASER_SILVER_HOT_FOIL_SWATCH_IMAGE,
+        ];
+
+        $usesLabel = $isCanonicalGroup;
+
+        if (! $usesLabel) {
+            foreach ($values as $existingValue) {
+                if (is_array($existingValue) && array_key_exists('label', $existingValue)) {
+                    $usesLabel = true;
+
+                    break;
+                }
+            }
+        }
+
+        $value[$usesLabel ? 'label' : 'name'] = self::LASER_SILVER_HOT_FOIL_LABEL;
+        $values[] = $value;
+
+        if ($isCanonicalGroup) {
+            $group['values'] = array_values($values);
+            $group['type'] = 'multi_select';
+            $group['required'] = false;
+            $group['default'] = [];
+        } else {
+            $group = array_values($values);
+        }
+
+        return $group;
+    }
+
+    /**
      * Return whether a legacy option value represents the removed sentinel.
      */
     public static function isNoSpecialFinishValue(mixed $value): bool
@@ -1781,6 +1871,7 @@ final class BusinessCardOptionCatalog
             ['code' => 'rose_gold', 'label' => 'Rose Gold', 'swatch_image' => $swatches.'rose-gold.png'],
             ['code' => 'aged_gold', 'label' => 'Aged Gold', 'swatch_image' => $swatches.'aged-gold.png'],
             ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => $swatches.'muted-purple-gold.png'],
+            ['code' => self::LASER_SILVER_HOT_FOIL_CODE, 'label' => self::LASER_SILVER_HOT_FOIL_LABEL, 'swatch_image' => self::LASER_SILVER_HOT_FOIL_SWATCH_IMAGE],
         ];
 
         return array_map(

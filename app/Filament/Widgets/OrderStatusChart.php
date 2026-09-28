@@ -30,13 +30,11 @@ class OrderStatusChart extends ChartWidget
 
         $colors = [
             'pending' => '#f59e0b',
+            'pending_review' => '#f97316',
+            'pending_confirmation' => '#a855f7',
             'confirmed' => '#3b82f6',
-            'pending_modification' => '#f97316',
-            'pending_production' => '#a855f7',
             'production' => '#6366f1',
-            'pending_shipment' => '#14b8a6',
             'shipped' => '#8b5cf6',
-            'cancelled' => '#ef4444',
         ];
 
         $labels = [];

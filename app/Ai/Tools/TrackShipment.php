@@ -58,7 +58,7 @@ class TrackShipment implements Tool
 
     protected function describe(Order $order): string
     {
-        $lines = ["Order #{$order->id} — status: {$order->status}"];
+        $lines = ["Order #{$order->id} — status: ".Order::statusLabel($order->status)];
 
         if ($order->tracking_number) {
             $lines[] = "Tracking number: {$order->tracking_number}";

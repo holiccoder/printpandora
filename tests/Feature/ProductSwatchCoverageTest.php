@@ -324,6 +324,43 @@ class ProductSwatchCoverageTest extends TestCase
         }
     }
 
+    public function test_all_cotton_business_cards_use_the_shared_emboss_deboss_primary(): void
+    {
+        $slugs = [
+            'basic-cotton-business-card',
+            'classic-cotton-business-card',
+            'premium-cotton-business-card',
+            'luxe-cotton-business-card',
+            'grand-cotton-business-card',
+        ];
+        $expectedPrimary = '/images/products/cotton/special-finishes/'.'凹凸.png';
+
+        foreach ($slugs as $slug) {
+            $payload = json_decode(
+                File::get(base_path("content/product-options/cotton-business-cards/{$slug}.json")),
+                true,
+                512,
+                JSON_THROW_ON_ERROR,
+            );
+            $rules = BusinessCardOptionCatalog::normalizeCottonGalleryRules(
+                is_array($payload['galleries'] ?? null) ? $payload['galleries'] : [],
+            );
+
+            foreach (['emboss', 'deboss'] as $code) {
+                $rule = collect($rules)->first(
+                    fn (mixed $candidate): bool => data_get($candidate, 'match.special_finish') === $code,
+                );
+
+                $this->assertIsArray($rule, "{$slug} should have a {$code} gallery rule.");
+                $this->assertSame(
+                    $expectedPrimary,
+                    data_get($rule, 'primary'),
+                    "{$slug} {$code} should use the shared cotton primary image.",
+                );
+            }
+        }
+    }
+
     public function test_cotton_hot_foil_swatches_have_complete_assets(): void
     {
         $slugs = [
@@ -346,6 +383,7 @@ class ProductSwatchCoverageTest extends TestCase
             'rose_gold',
             'aged_gold',
             'muted_purple_gold',
+            'laser_silver',
         ];
 
         foreach ($slugs as $slug) {

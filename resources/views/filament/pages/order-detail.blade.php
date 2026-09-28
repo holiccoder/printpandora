@@ -1,14 +1,17 @@
 @php
+    $orderStatusOptions = \App\Models\Order::statusOptions();
     $statusSteps = [
-        ['key' => 'pending', 'label' => 'Pending', 'description' => 'Payment pending', 'icon' => 'heroicon-o-credit-card'],
-        ['key' => 'confirmed', 'label' => 'Confirmed', 'description' => 'Payment confirmed', 'icon' => 'heroicon-o-shield-check'],
-        ['key' => 'pending_modification', 'label' => 'Pending modification', 'description' => 'Changes can be requested', 'icon' => 'heroicon-o-pencil-square'],
-        ['key' => 'pending_production', 'label' => 'Pending production', 'description' => 'Design approved', 'icon' => 'heroicon-o-lock-closed'],
-        ['key' => 'production', 'label' => 'Production', 'description' => 'Being made', 'icon' => 'heroicon-o-cog-6-tooth'],
-        ['key' => 'pending_shipment', 'label' => 'Pending shipment', 'description' => 'Preparing to ship', 'icon' => 'heroicon-o-archive-box'],
-        ['key' => 'shipped', 'label' => 'Shipped', 'description' => 'On its way', 'icon' => 'heroicon-o-truck'],
-        ['key' => 'cancelled', 'label' => 'Cancelled', 'description' => 'Order cancelled', 'icon' => 'heroicon-o-x-circle'],
+        ['key' => \App\Models\Order::STATUS_PENDING, 'description' => 'Payment is pending', 'icon' => 'heroicon-o-credit-card'],
+        ['key' => \App\Models\Order::STATUS_PENDING_REVIEW, 'description' => 'Waiting for review', 'icon' => 'heroicon-o-magnifying-glass'],
+        ['key' => \App\Models\Order::STATUS_PENDING_CONFIRMATION, 'description' => 'Waiting for confirmation', 'icon' => 'heroicon-o-question-mark-circle'],
+        ['key' => \App\Models\Order::STATUS_CONFIRMED, 'description' => 'Order confirmed', 'icon' => 'heroicon-o-shield-check'],
+        ['key' => \App\Models\Order::STATUS_PRODUCTION, 'description' => 'Being made', 'icon' => 'heroicon-o-cog-6-tooth'],
+        ['key' => \App\Models\Order::STATUS_SHIPPED, 'description' => 'On its way', 'icon' => 'heroicon-o-truck'],
     ];
+    $statusSteps = array_map(
+        static fn (array $step): array => [...$step, 'label' => $orderStatusOptions[$step['key']] ?? $step['key']],
+        $statusSteps,
+    );
     $statusIndex = array_search($order->status, array_column($statusSteps, 'key'), true);
     $statusIndex = $statusIndex === false ? 0 : $statusIndex;
     $statusLabel = $statusSteps[$statusIndex]['label'] ?? \Illuminate\Support\Str::headline((string) $order->status);
@@ -16,10 +19,11 @@
         ? ($statusIndex / (count($statusSteps) - 1)) * 87.5
         : 0;
     $statusMessages = [
-        'pending_modification' => 'This order can still be revised. Contact support if the customer needs to request a change.',
-        'pending_production' => 'The design is confirmed and the order details are now locked for production.',
+        'pending_review' => 'The order has been submitted and is waiting for an administrator review.',
+        'pending_confirmation' => 'The order is waiting for the customer or administrator to confirm the final details.',
+        'confirmed' => 'The order details are confirmed and ready for production.',
         'production' => 'The order is currently being produced.',
-        'pending_shipment' => 'Production is complete and the order is waiting to be handed to the carrier.',
+        'shipped' => 'The order has been handed to the carrier.',
     ];
     $money = static fn (mixed $value): string => number_format((float) $value, 2);
     $formatOptionValue = static function (mixed $value) use (&$formatOptionValue): string {
@@ -50,7 +54,7 @@
                 Placed {{ $order->created_at?->format('M j, Y, g:i A') ?? '—' }}
             </p>
         </div>
-        <span class="inline-flex w-fit items-center rounded-full px-3 py-1.5 text-sm font-semibold {{ $order->status === 'cancelled' ? 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300' : 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300' }}">
+        <span class="inline-flex w-fit items-center rounded-full bg-primary-50 px-3 py-1.5 text-sm font-semibold text-primary-700 dark:bg-primary-950 dark:text-primary-300">
             {{ $statusLabel }}
         </span>
     </div>
@@ -69,7 +73,7 @@
             <div class="relative min-w-[900px]">
                 <div class="absolute top-5 right-[6.25%] left-[6.25%] h-0.5 bg-gray-200 dark:bg-gray-700"></div>
                 <div
-                    class="absolute top-5 left-[6.25%] h-0.5 {{ $order->status === 'cancelled' ? 'bg-red-500' : 'bg-primary-600' }}"
+                    class="absolute top-5 left-[6.25%] h-0.5 bg-primary-600"
                     style="width: {{ $progressWidth }}%;"
                 ></div>
 
@@ -78,15 +82,13 @@
                         @php
                             $isComplete = $index < $statusIndex;
                             $isCurrent = $index === $statusIndex;
-                            $isCancelled = $isCurrent && $order->status === 'cancelled';
                             $stepIcon = $isComplete ? 'heroicon-o-check' : $step['icon'];
                         @endphp
                         <div class="flex min-w-0 flex-1 flex-col items-center text-center">
                             <span @class([
                                 'relative z-10 flex size-10 items-center justify-center rounded-full border-2 bg-white dark:bg-gray-900',
                                 'border-primary-600 bg-primary-600 text-white dark:border-primary-500 dark:bg-primary-500' => $isComplete,
-                                'border-primary-600 bg-primary-600 text-white ring-4 ring-primary-600/15 dark:border-primary-500 dark:bg-primary-500' => $isCurrent && ! $isCancelled,
-                                'border-red-500 bg-red-500 text-white ring-4 ring-red-500/15' => $isCancelled,
+                                'border-primary-600 bg-primary-600 text-white ring-4 ring-primary-600/15 dark:border-primary-500 dark:bg-primary-500' => $isCurrent,
                                 'border-gray-300 text-gray-400 dark:border-gray-700 dark:text-gray-600' => ! $isComplete && ! $isCurrent,
                             ])>
                                 <x-filament::icon :icon="$stepIcon" class="size-4" />

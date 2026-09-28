@@ -75,7 +75,7 @@ class ProductConfigurationServiceTest extends TestCase
         $this->assertSame([], data_get($state, 'pricing.quantity_price_table'));
         $this->assertSame([], data_get($state, 'pricing.rules'));
         $this->assertCount(5, $state['options']);
-        $this->assertCount(28, $state['media']['gallery_rules']);
+        $this->assertCount(30, $state['media']['gallery_rules']);
         $this->assertSame([], $state['faq']);
         $this->assertArrayNotHasKey('detail_sections', $state);
     }
@@ -793,5 +793,85 @@ class ProductConfigurationServiceTest extends TestCase
         $this->assertSame('product-galleries/matte.jpg', data_get($saved->product_config, 'media.gallery_rules.0.primary'));
         $this->assertSame('Matte pricing', data_get($saved->product_config, 'pricing.rules.0.pricing.packageName'));
         $this->assertTrue(data_get($saved->product_config, 'detail_sections.keep'));
+    }
+
+    public function test_shared_foil_primary_images_apply_to_eligible_cards_but_not_pvc_or_metal(): void
+    {
+        $eligible = new Product([
+            'name' => 'Standard Quality Business Cards',
+            'slug' => 'standard-quality-business-cards',
+            'product_config' => [
+                'options' => [
+                    'special_finish' => [
+                        'values' => [
+                            ['code' => 'bright_gold', 'label' => 'Bright Gold'],
+                            ['code' => 'cold_bright_gold', 'label' => 'Cold Bright Gold'],
+                        ],
+                    ],
+                ],
+                'media' => [
+                    'gallery_rules' => [],
+                ],
+            ],
+        ]);
+
+        $eligibleConfig = app(ProductConfigurationService::class)->canonicalConfig($eligible);
+        $eligibleRules = collect(data_get($eligibleConfig, 'media.gallery_rules', []));
+
+        $this->assertSame(
+            '/images/products/classic-solid/user-hot-bright-gold.png',
+            data_get($eligibleRules->first(fn (mixed $rule): bool => data_get($rule, 'match.special_finish') === 'bright_gold'), 'primary'),
+        );
+        $this->assertSame(
+            '/images/products/standard-quality-business-cards/cold-foil/cold-bright-gold.png',
+            data_get($eligibleRules->first(fn (mixed $rule): bool => data_get($rule, 'match.special_finish') === 'cold_bright_gold'), 'primary'),
+        );
+
+        foreach ([
+            [
+                'slug' => 'standard-pvc-card',
+                'primary' => '/images/products/pvc/pvc-01.jpg',
+            ],
+            [
+                'slug' => 'classic-metal-business-cards',
+                'primary' => '/images/products/metal/classic-metal-business-cards-01.png',
+            ],
+        ] as $excluded) {
+            $product = new Product([
+                'name' => $excluded['slug'],
+                'slug' => $excluded['slug'],
+                'product_config' => [
+                    'options' => [
+                        'special_finish' => [
+                            'values' => [
+                                ['code' => 'bright_gold', 'label' => 'Bright Gold'],
+                            ],
+                        ],
+                    ],
+                    'media' => [
+                        'gallery_rules' => [[
+                            'id' => 'existing-foil-rule',
+                            'match' => ['special_finish' => 'bright_gold'],
+                            'images' => [$excluded['primary']],
+                            'primary' => $excluded['primary'],
+                        ]],
+                    ],
+                ],
+            ]);
+
+            $config = app(ProductConfigurationService::class)->canonicalConfig($product);
+            $rules = collect(data_get($config, 'media.gallery_rules', []));
+
+            $this->assertSame(
+                $excluded['primary'],
+                data_get($rules->firstWhere('id', 'existing-foil-rule'), 'primary'),
+            );
+            $this->assertFalse(
+                $rules->contains(fn (mixed $rule): bool => str_contains(
+                    (string) data_get($rule, 'primary'),
+                    '/images/products/classic-solid/user-',
+                )),
+            );
+        }
     }
 }

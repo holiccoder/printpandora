@@ -132,6 +132,7 @@ const HOT_FOIL_OPTION_CODES = new Set([
     'rose-gold',
     'aged-gold',
     'muted-purple-gold',
+    'laser-silver',
 ]);
 
 function selectedFinishCodes(

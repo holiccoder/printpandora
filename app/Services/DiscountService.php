@@ -272,7 +272,6 @@ class DiscountService
                 fn ($query) => $query->where('id', '<>', $currentOrderId),
             )
             ->whereNull('checkout_token')
-            ->where('status', '<>', 'cancelled')
             ->exists();
     }
 }

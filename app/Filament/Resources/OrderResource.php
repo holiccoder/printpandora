@@ -376,13 +376,11 @@ class OrderResource extends Resource
                     ->badge()
                     ->color(fn (string $state): array => match ($state) {
                         Order::STATUS_PENDING => Color::Yellow,
+                        Order::STATUS_PENDING_REVIEW => Color::Orange,
+                        Order::STATUS_PENDING_CONFIRMATION => Color::Violet,
                         Order::STATUS_CONFIRMED => Color::Blue,
-                        Order::STATUS_PENDING_MODIFICATION => Color::Orange,
-                        Order::STATUS_PENDING_PRODUCTION => Color::Violet,
                         Order::STATUS_PRODUCTION => Color::Purple,
-                        Order::STATUS_PENDING_SHIPMENT => Color::Cyan,
                         Order::STATUS_SHIPPED => Color::Green,
-                        Order::STATUS_CANCELLED => Color::Red,
                         default => Color::Gray,
                     })
                     ->sortable(),

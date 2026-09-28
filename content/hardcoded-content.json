@@ -328,6 +328,45 @@
                 ],
                 "promo_cards": []
             },
+            "flyers_brochures_mega_menu": {
+                "link_groups": [
+                    {
+                        "links": [
+                            {
+                                "label": "Classic Flyers and Brochures",
+                                "href": "/flyers-and-brochures",
+                                "children": [
+                                    {
+                                        "label": "Classic Standard Flyers and Brochures",
+                                        "href": "/flyers-and-brochures/classic-standard"
+                                    },
+                                    {
+                                        "label": "Classic Super Flyers and Brochures",
+                                        "href": "/flyers-and-brochures/classic-super"
+                                    },
+                                    {
+                                        "label": "Classic Luxe Flyers and Brochures",
+                                        "href": "/flyers-and-brochures/classic-luxe"
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Quality Flyers and Brochures",
+                                "href": "/flyers-and-brochures/quality"
+                            },
+                            {
+                                "label": "Special Flyers and Brochures",
+                                "href": "/flyers-and-brochures/special"
+                            },
+                            {
+                                "label": "Super Flyers and Brochures",
+                                "href": "/flyers-and-brochures/super"
+                            }
+                        ]
+                    }
+                ],
+                "promo_cards": []
+            },
             "stickers_labels_mega_menu": {
                 "link_groups": [
                     {

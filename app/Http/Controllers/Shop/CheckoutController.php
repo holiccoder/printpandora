@@ -409,7 +409,7 @@ class CheckoutController extends Controller
             case 'system_fail':
                 $order->update([
                     'payment_status' => 'failed',
-                    'status' => 'cancelled',
+                    'status' => Order::STATUS_PENDING,
                     'checkout_token' => null,
                 ]);
                 break;
@@ -558,9 +558,9 @@ class CheckoutController extends Controller
             $updates = ['payment_status' => $paymentStatus];
             if ($cancel && in_array($lockedOrder->status, [
                 Order::STATUS_PENDING,
-                Order::STATUS_CONFIRMED,
+                Order::STATUS_PENDING_REVIEW,
             ], true)) {
-                $updates['status'] = Order::STATUS_CANCELLED;
+                $updates['status'] = Order::STATUS_PENDING;
                 $updates['checkout_token'] = null;
             }
 

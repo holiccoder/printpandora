@@ -34,6 +34,16 @@ const POSTCARD_PRODUCT_PATHS: Record<string, string> = {
     'quality-solid-postcards': '/postcards/quality-solid',
 };
 
+const FLYER_PRODUCT_PATHS: Record<string, string> = {
+    'classic-standard-flyers-and-brochures':
+        '/flyers-and-brochures/classic-standard',
+    'classic-super-flyers-and-brochures': '/flyers-and-brochures/classic-super',
+    'classic-luxe-flyers-and-brochures': '/flyers-and-brochures/classic-luxe',
+    'quality-flyers-and-brochures': '/flyers-and-brochures/quality',
+    'special-flyers-and-brochures': '/flyers-and-brochures/special',
+    'super-flyers-and-brochures': '/flyers-and-brochures/super',
+};
+
 export function productHref(slug: string): string {
     const normalizedSlug = slug.replace(/^\/+/, '');
 
@@ -41,6 +51,7 @@ export function productHref(slug: string): string {
         BUSINESS_CARD_PRODUCT_PATHS[normalizedSlug] ??
         POSTCARD_PRODUCT_PATHS[normalizedSlug] ??
         STICKER_PRODUCT_PATHS[normalizedSlug] ??
+        FLYER_PRODUCT_PATHS[normalizedSlug] ??
         `/${normalizedSlug}`
     );
 }

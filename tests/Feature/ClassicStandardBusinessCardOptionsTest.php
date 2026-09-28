@@ -82,6 +82,7 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
                 'rose_gold',
                 'aged_gold',
                 'muted_purple_gold',
+                'laser_silver',
             ],
             data_get($product->product_config, 'options.special_finish.values.*.code'),
         );

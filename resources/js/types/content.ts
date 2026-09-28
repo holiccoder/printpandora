@@ -63,6 +63,11 @@ export interface CardsPostcardsMegaMenu {
     promo_cards: PromoCard[];
 }
 
+export interface FlyersBrochuresMegaMenu {
+    link_groups: LinkGroup[];
+    promo_cards: PromoCard[];
+}
+
 export interface HeaderContent {
     logo: {
         image_url: string;
@@ -102,6 +107,7 @@ export interface HeaderContent {
     business_cards_mega_menu: BusinessCardsMegaMenu;
     cards_postcards_mega_menu: CardsPostcardsMegaMenu;
     stickers_labels_mega_menu: StickersLabelsMegaMenu;
+    flyers_brochures_mega_menu: FlyersBrochuresMegaMenu;
 }
 
 export interface FooterLegalLink {

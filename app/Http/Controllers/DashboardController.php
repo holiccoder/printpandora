@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
 use App\Models\Affiliate;
 use App\Models\Order;
+use App\Notifications\CustomerNotification;
 use App\Services\DiscountService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -127,6 +129,56 @@ class DashboardController extends Controller
     }
 
     /**
+     * Show the signed-in customer's system and administrator notifications.
+     */
+    public function notifications(Request $request): Response
+    {
+        $notifications = $request->user()
+            ->notifications()
+            ->where('type', CustomerNotification::class)
+            ->latest()
+            ->paginate(20)
+            ->through(fn (DatabaseNotification $notification): array => $this->notificationPayload($notification));
+
+        return Inertia::render('dashboard/notifications', [
+            'notifications' => $notifications,
+            'unreadCount' => $request->user()
+                ->unreadNotifications()
+                ->where('type', CustomerNotification::class)
+                ->count(),
+        ]);
+    }
+
+    /**
+     * Mark one of the current customer's notifications as read.
+     */
+    public function markNotificationRead(Request $request, string $id): RedirectResponse
+    {
+        $notification = $request->user()
+            ->notifications()
+            ->where('type', CustomerNotification::class)
+            ->whereKey($id)
+            ->firstOrFail();
+
+        $notification->markAsRead();
+
+        return back();
+    }
+
+    /**
+     * Mark every system and administrator notification as read.
+     */
+    public function markAllNotificationsRead(Request $request): RedirectResponse
+    {
+        $request->user()
+            ->unreadNotifications()
+            ->where('type', CustomerNotification::class)
+            ->update(['read_at' => now()]);
+
+        return back();
+    }
+
+    /**
      * Profile edit form — same fields as the settings/profile page,
      * but rendered inside the dashboard layout.
      */
@@ -180,5 +232,26 @@ class DashboardController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
 
         return to_route('dashboard.profile');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function notificationPayload(DatabaseNotification $notification): array
+    {
+        $data = $notification->data;
+        $actionUrl = data_get($data, 'action_url');
+
+        return [
+            'id' => (string) $notification->getKey(),
+            'category' => (string) data_get($data, 'category', CustomerNotification::CATEGORY_SYSTEM),
+            'type' => (string) data_get($data, 'type', data_get($data, 'category', CustomerNotification::CATEGORY_SYSTEM)),
+            'title' => (string) data_get($data, 'title', 'Notification'),
+            'body' => (string) data_get($data, 'body', ''),
+            'action_url' => is_string($actionUrl) && $actionUrl !== '' ? $actionUrl : null,
+            'order_id' => data_get($data, 'order_id'),
+            'read_at' => $notification->read_at?->toIso8601String(),
+            'created_at' => $notification->created_at?->toIso8601String(),
+        ];
     }
 }

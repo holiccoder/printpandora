@@ -218,6 +218,11 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                             'label' => 'Muted Purple Gold',
                             'swatch_image' => '/images/product-options/business-cards/swatches/muted-purple-gold.png',
                         ],
+                        [
+                            'code' => 'laser_silver',
+                            'label' => '镭射银',
+                            'swatch_image' => '/images/product-options/business-cards/swatches/laser-silver.png',
+                        ],
                     ],
                 ),
             ],

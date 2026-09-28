@@ -38,6 +38,7 @@ class ProductConfigurationService
         'thickness' => 'Thickness',
         'texture' => 'Texture',
         'paper_finish' => 'Paper Finish',
+        'folding' => 'Folding',
         'uv_finish' => 'UV',
         'special_finish' => 'Special Finish',
         'hot_foil' => 'Hot Foil',
@@ -59,9 +60,10 @@ class ProductConfigurationService
         'thickness' => 3,
         'texture' => 4,
         'paper_finish' => 5,
-        'uv_finish' => 6,
-        'special_finish' => 7,
-        'hot_foil' => 8,
+        'folding' => 6,
+        'uv_finish' => 7,
+        'special_finish' => 8,
+        'hot_foil' => 9,
     ];
 
     private const UV_FINISH_SWATCH_IMAGE = '/images/product-options/uv-swatch.png';
@@ -89,8 +91,8 @@ class ProductConfigurationService
     ];
 
     /**
-     * Foil option images are shared across business-card products. The
-     * source artwork lives with the classic solid card product, but the
+     * Foil option images are shared across eligible business-card products.
+     * The source artwork lives with the classic solid card product, but the
      * storefront should show the same primary image wherever the same foil
      * option is available.
      *
@@ -106,6 +108,9 @@ class ProductConfigurationService
         'matte_silver' => '/images/products/classic-solid/user-hot-matte-silver.png',
         'red_gold' => '/images/products/classic-solid/user-hot-red-gold.png',
         'rose_gold' => '/images/products/classic-solid/user-hot-rose-gold.png',
+        'aged_gold' => '/images/products/classic-solid/user-hot-aged-gold.png',
+        'muted_purple_gold' => '/images/products/classic-solid/user-hot-muted-purple-gold.png',
+        'laser_silver' => '/images/products/classic-solid/user-hot-laser-silver.png',
         'cold_matte_gold' => '/images/products/classic-solid/user-cold-matte-gold.png',
         'cold_matte_silver' => '/images/products/classic-solid/user-cold-matte-silver.png',
         'cold_bright_gold' => '/images/products/classic-solid/user-cold-bright-gold.png',
@@ -113,6 +118,21 @@ class ProductConfigurationService
         'cold_red_gold' => '/images/products/classic-solid/user-cold-red-gold.png',
         'cold_green_gold' => '/images/products/classic-solid/user-cold-green-gold.png',
         'cold_blue_gold' => '/images/products/classic-solid/user-cold-blue-gold.png',
+    ];
+
+    /**
+     * PVC and metal business cards keep their product-specific gallery
+     * behavior and must never receive the shared foil artwork.
+     *
+     * @var list<string>
+     */
+    private const BUSINESS_CARD_FOIL_IMAGE_EXCLUSIONS = [
+        'basic-pvc-card',
+        'standard-pvc-card',
+        'premium-pvc-card',
+        'classic-metal-business-cards',
+        'premium-metal-business-cards',
+        'luxe-metal-business-cards',
     ];
 
     /**
@@ -384,6 +404,13 @@ class ProductConfigurationService
                     (string) $product->slug,
                 );
             }
+            $config['media']['gallery_rules'] = $this->withSharedLaserSilverFoilGalleryRule(
+                is_array($config['media']['gallery_rules'] ?? null)
+                    ? $config['media']['gallery_rules']
+                    : [],
+                $config['options'],
+                (string) $product->slug,
+            );
 
             return $config;
         }
@@ -693,6 +720,7 @@ class ProductConfigurationService
                     'min_height',
                     'max_height',
                     'area_sq_m',
+                    'unit',
                     'thickness_code',
                     'texture_code',
                     'texture_label',
@@ -1237,11 +1265,24 @@ class ProductConfigurationService
         $config['options'] = BusinessCardOptionCatalog::normalizeSpecialFinishOptions(
             is_array($config['options'] ?? null) ? $config['options'] : [],
         );
+        $config['options'] = BusinessCardOptionCatalog::normalizeHotFoilOptions(
+            is_array($config['options'] ?? null) ? $config['options'] : [],
+        );
         $config['media'] = is_array($config['media'] ?? null) ? $config['media'] : [];
         $config['media']['gallery_rules'] = BusinessCardOptionCatalog::normalizeSpecialFinishGalleryRules(
             is_array($config['media']['gallery_rules'] ?? null)
                 ? $config['media']['gallery_rules']
                 : [],
+        );
+        $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
+            $config['media']['gallery_rules'],
+            is_array($config['options'] ?? null) ? $config['options'] : [],
+            (string) $product->slug,
+        );
+        $config['media']['gallery_rules'] = $this->withSharedLaserSilverFoilGalleryRule(
+            $config['media']['gallery_rules'],
+            is_array($config['options'] ?? null) ? $config['options'] : [],
+            (string) $product->slug,
         );
 
         $options = $this->toStorefrontOptions(
@@ -1851,6 +1892,7 @@ class ProductConfigurationService
                     'min_height',
                     'max_height',
                     'area_sq_m',
+                    'unit',
                     'thickness_code',
                     'texture_code',
                     'texture_label',
@@ -2246,6 +2288,9 @@ class ProductConfigurationService
         $config['options'] = BusinessCardOptionCatalog::normalizeSpecialFinishOptions(
             $config['options'],
         );
+        $config['options'] = BusinessCardOptionCatalog::normalizeHotFoilOptions(
+            $config['options'],
+        );
         $config['media'] = is_array($config['media'] ?? null) ? $config['media'] : [];
         $config['media']['gallery'] = is_array($config['media']['gallery'] ?? null)
             ? array_values($config['media']['gallery'])
@@ -2333,6 +2378,11 @@ class ProductConfigurationService
             is_array($config['media']['gallery_rules'] ?? null)
                 ? $config['media']['gallery_rules']
                 : [],
+        );
+        $config['media']['gallery_rules'] = $this->withSharedLaserSilverFoilGalleryRule(
+            $config['media']['gallery_rules'],
+            is_array($config['options'] ?? null) ? $config['options'] : [],
+            (string) $product->slug,
         );
 
         return $config;
@@ -2481,10 +2531,21 @@ class ProductConfigurationService
         array $options,
         ?string $productSlug = null,
     ): array {
+        if (
+            $productSlug === null
+            || ! BusinessCardOptionCatalog::isBusinessCardProduct($productSlug)
+            || in_array($productSlug, self::BUSINESS_CARD_FOIL_IMAGE_EXCLUSIONS, true)
+        ) {
+            return array_values(array_filter($rules, is_array(...)));
+        }
+
         $availableCodes = [];
 
         foreach (['special_finish', 'hot_foil'] as $groupKey) {
-            $values = data_get($options, "{$groupKey}.values", []);
+            $group = $options[$groupKey] ?? null;
+            $values = is_array($group) && array_key_exists('values', $group)
+                ? $group['values']
+                : $group;
 
             if (! is_array($values)) {
                 continue;
@@ -2554,6 +2615,100 @@ class ProductConfigurationService
         ));
 
         return [...$remainingRules, ...$sharedRules];
+    }
+
+    /**
+     * Add the supplied Laser Silver primary artwork wherever shared foil
+     * artwork is allowed. This also covers postcard and legacy product
+     * configurations whose existing foil gallery rules are product-specific;
+     * PVC and metal exclusions remain intact.
+     *
+     * @param  array<int, mixed>  $rules
+     * @param  array<string, mixed>  $options
+     * @return array<int, array<string, mixed>>
+     */
+    private function withSharedLaserSilverFoilGalleryRule(
+        array $rules,
+        array $options,
+        ?string $productSlug = null,
+    ): array {
+        if (
+            $productSlug === null
+            || in_array($productSlug, self::BUSINESS_CARD_FOIL_IMAGE_EXCLUSIONS, true)
+        ) {
+            return array_values(array_filter($rules, is_array(...)));
+        }
+
+        $availableGroups = [];
+
+        foreach (['special_finish', 'hot_foil'] as $groupKey) {
+            $group = $options[$groupKey] ?? null;
+            $values = is_array($group) && array_key_exists('values', $group)
+                ? $group['values']
+                : $group;
+
+            if (! is_array($values)) {
+                continue;
+            }
+
+            foreach ($values as $value) {
+                if (
+                    is_array($value)
+                    && $this->normalizedRuleValue($value['code'] ?? null)
+                        === BusinessCardOptionCatalog::LASER_SILVER_HOT_FOIL_CODE
+                ) {
+                    $availableGroups[] = $groupKey;
+
+                    break;
+                }
+            }
+        }
+
+        if ($availableGroups === []) {
+            return array_values(array_filter($rules, is_array(...)));
+        }
+
+        $image = self::SHARED_BUSINESS_CARD_FOIL_IMAGES[
+            BusinessCardOptionCatalog::LASER_SILVER_HOT_FOIL_CODE
+        ];
+        $remainingRules = array_values(array_filter(
+            $rules,
+            function (mixed $rule) use ($availableGroups): bool {
+                if (! is_array($rule)) {
+                    return false;
+                }
+
+                $match = $rule['match'] ?? [];
+
+                if (! is_array($match)) {
+                    return true;
+                }
+
+                foreach ($availableGroups as $groupKey) {
+                    if (
+                        $this->normalizedRuleValue($match[$groupKey] ?? null)
+                        === BusinessCardOptionCatalog::LASER_SILVER_HOT_FOIL_CODE
+                    ) {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
+        ));
+
+        foreach ($availableGroups as $groupKey) {
+            $remainingRules[] = [
+                'id' => $groupKey === 'special_finish'
+                    ? 'shared-foil-laser_silver'
+                    : 'shared-foil-'.$groupKey.'-laser_silver',
+                'match' => [$groupKey => BusinessCardOptionCatalog::LASER_SILVER_HOT_FOIL_CODE],
+                'images' => [$image],
+                'primary' => $image,
+            ];
+        }
+
+        return $remainingRules;
     }
 
     /**
@@ -2672,6 +2827,7 @@ class ProductConfigurationService
             ['code' => 'rose_gold', 'label' => 'Rose Gold', 'swatch_image' => $foilSwatches.'rose-gold.png'],
             ['code' => 'aged_gold', 'label' => 'Aged Gold', 'swatch_image' => $foilSwatches.'aged-gold.png'],
             ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => $foilSwatches.'muted-purple-gold.png'],
+            ['code' => 'laser_silver', 'label' => '镭射银', 'swatch_image' => $foilSwatches.'laser-silver.png'],
         ];
         $specialFinish = [
             ...array_map(

@@ -896,6 +896,7 @@ class BusinessCardProductOptionsTest extends TestCase
                     'rose_gold',
                     'aged_gold',
                     'muted_purple_gold',
+                    'laser_silver',
                 ],
                 data_get($options, 'hot_foil.values.*.code'),
             );
@@ -916,12 +917,13 @@ class BusinessCardProductOptionsTest extends TestCase
                     '/images/product-options/business-cards/swatches/rose-gold.png',
                     '/images/product-options/business-cards/swatches/aged-gold.png',
                     '/images/product-options/business-cards/swatches/muted-purple-gold.png',
+                    '/images/product-options/business-cards/swatches/laser-silver.png',
                 ],
                 data_get($options, 'hot_foil.values.*.swatch_image'),
             );
             $this->assertSame($gallery, data_get($product->product_config, 'media.gallery'));
             $this->assertSame($gallery[0], $product->featured_image);
-            $this->assertCount(64, data_get($product->product_config, 'media.gallery_rules'));
+            $this->assertCount(67, data_get($product->product_config, 'media.gallery_rules'));
             $specialFinishRules = collect(data_get($product->product_config, 'media.gallery_rules', []))
                 ->filter(fn (mixed $rule): bool => is_array($rule) && array_key_exists('special_finish', $rule['match'] ?? []))
                 ->values();
@@ -947,8 +949,28 @@ class BusinessCardProductOptionsTest extends TestCase
                     'matte_silver',
                     'red_gold',
                     'rose_gold',
+                    'aged_gold',
+                    'muted_purple_gold',
+                    'laser_silver',
                 ],
                 $hotFoilRules->pluck('match.hot_foil')->all(),
+            );
+            $this->assertSame(
+                [
+                    '/images/products/classic-solid/user-hot-black-gold.png',
+                    '/images/products/classic-solid/user-hot-blue-gold.png',
+                    '/images/products/classic-solid/user-hot-bright-gold.png',
+                    '/images/products/classic-solid/user-hot-bright-silver.png',
+                    '/images/products/classic-solid/user-hot-green-gold.png',
+                    '/images/products/classic-solid/user-hot-matte-gold.png',
+                    '/images/products/classic-solid/user-hot-matte-silver.png',
+                    '/images/products/classic-solid/user-hot-red-gold.png',
+                    '/images/products/classic-solid/user-hot-rose-gold.png',
+                    '/images/products/classic-solid/user-hot-aged-gold.png',
+                    '/images/products/classic-solid/user-hot-muted-purple-gold.png',
+                    '/images/products/classic-solid/user-hot-laser-silver.png',
+                ],
+                $hotFoilRules->pluck('primary')->all(),
             );
             $this->assertSame(
                 ['corners' => 'rounded'],
@@ -1048,6 +1070,7 @@ class BusinessCardProductOptionsTest extends TestCase
                 'rose_gold',
                 'aged_gold',
                 'muted_purple_gold',
+                'laser_silver',
             ],
             array_column(data_get($options, 'option_groups.5.values', []), 'code'),
         );
@@ -1138,6 +1161,7 @@ class BusinessCardProductOptionsTest extends TestCase
                 'rose_gold',
                 'aged_gold',
                 'muted_purple_gold',
+                'laser_silver',
             ],
             data_get($config, 'options.special_finish.values.*.code'),
         );
@@ -1148,7 +1172,7 @@ class BusinessCardProductOptionsTest extends TestCase
         $this->assertSame('Keep this design spec', data_get($config, 'detail_sections.design_specifications.heading'));
 
         $rules = data_get($config, 'media.gallery_rules');
-        $this->assertCount(18, $rules);
+        $this->assertCount(21, $rules);
         $this->assertSame(
             ['sizes' => 'standard', 'texture' => 'inkpavo_j4'],
             data_get($rules, '4.match'),
@@ -1288,6 +1312,7 @@ class BusinessCardProductOptionsTest extends TestCase
                 'rose_gold',
                 'aged_gold',
                 'muted_purple_gold',
+                'laser_silver',
             ],
             data_get($config, 'options.special_finish.values.*.code'),
         );
@@ -1310,7 +1335,7 @@ class BusinessCardProductOptionsTest extends TestCase
             ],
             data_get($config, 'options.texture.values.*.swatch_image'),
         );
-        $this->assertCount(42, $rules);
+        $this->assertCount(45, $rules);
         $this->assertSame(
             ['sizes' => 'standard', 'corners' => 'rounded', 'texture' => 'j5_pearlescent_paper'],
             data_get($rules, '10.match'),

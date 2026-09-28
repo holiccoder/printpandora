@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Services\ProductImageService;
 use App\Support\BusinessCardRoutes;
+use App\Support\FlyersAndBrochuresProductCatalog;
 use App\Support\PostcardProductCatalog;
 use App\Support\StickerProductCatalog;
 use Illuminate\Database\Eloquent\Builder;
@@ -83,6 +84,7 @@ class SearchController extends Controller
         return BusinessCardRoutes::pathForProductSlug($slug)
             ?? PostcardProductCatalog::pathForProductSlug($slug)
             ?? StickerProductCatalog::pathForProductSlug($slug)
+            ?? FlyersAndBrochuresProductCatalog::pathForProductSlug($slug)
             ?? '/'.ltrim($slug, '/');
     }
 

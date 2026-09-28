@@ -364,6 +364,7 @@ HTML,
         $this->call(PostcardProductSeeder::class);
         $this->call(BusinessCardQuantityRecommendationSeeder::class);
         $this->call(StickerProductOptionsSeeder::class);
+        $this->call(FlyersAndBrochuresProductSeeder::class);
         $this->call(HelpCenterSeeder::class);
     }
 }

@@ -98,6 +98,8 @@ const HOT_FOIL_CODES = new Set([
     'rose gold',
     'aged gold',
     'muted purple gold',
+    'laser silver',
+    '镭射银',
 ]);
 
 type SpecialFinishSide = 'one_side' | 'both_sides';
@@ -120,9 +122,10 @@ const OPTION_GROUP_ORDER: Record<string, number> = {
     thickness: 3,
     texture: 4,
     paper_finish: 5,
-    uv_finish: 6,
-    special_finish: 7,
-    hot_foil: 8,
+    folding: 6,
+    uv_finish: 7,
+    special_finish: 8,
+    hot_foil: 9,
 };
 
 const OPTION_GROUP_FALLBACK_ORDER = Object.keys(OPTION_GROUP_ORDER).length + 1;
@@ -165,6 +168,7 @@ interface ProductOptionValue {
     max_width?: string;
     min_height?: string;
     max_height?: string;
+    unit?: string;
     thickness_code?: string;
     texture_code?: string;
     texture_label?: string;
@@ -197,13 +201,14 @@ interface ProductOptions {
         max_width?: string;
         min_height?: string;
         max_height?: string;
+        unit?: string;
     }>;
     paper_finish?: Array<{
         code?: string;
         name: string;
         description: string;
-        added_price: string;
-        swatch_image: string;
+        added_price?: string;
+        swatch_image?: string;
     }>;
     corners?: Array<{
         code?: string;
@@ -257,6 +262,7 @@ interface CustomSizeLimits {
     maxWidth: number;
     minHeight: number;
     maxHeight: number;
+    unit: 'in' | 'mm';
 }
 
 const DEFAULT_CUSTOM_SIZE_LIMITS: CustomSizeLimits = {
@@ -264,12 +270,13 @@ const DEFAULT_CUSTOM_SIZE_LIMITS: CustomSizeLimits = {
     maxWidth: CUSTOM_SIZE_MAX,
     minHeight: CUSTOM_SIZE_MIN,
     maxHeight: CUSTOM_SIZE_MAX,
+    unit: 'in',
 };
 
 function customSizeLimitsForValue(
     value?: Pick<
         ProductOptionValue,
-        'min_width' | 'max_width' | 'min_height' | 'max_height'
+        'min_width' | 'max_width' | 'min_height' | 'max_height' | 'unit'
     >,
 ): CustomSizeLimits {
     const read = (candidate: string | undefined, fallback: number) => {
@@ -289,6 +296,7 @@ function customSizeLimitsForValue(
             value?.max_height,
             DEFAULT_CUSTOM_SIZE_LIMITS.maxHeight,
         ),
+        unit: value?.unit?.toLowerCase() === 'mm' ? 'mm' : 'in',
     };
 }
 
@@ -326,9 +334,10 @@ function stickerAreaForSizeValues(
         return configuredArea;
     }
 
-    return squareInchesToSquareMetres(
+    return areaForDimensions(
         Number(value?.width),
         Number(value?.height),
+        value?.unit,
     );
 }
 
@@ -342,8 +351,48 @@ function stickerAreaForSize(
     );
 }
 
-function stickerAreaForCustomSize(width: number, height: number): number {
-    return squareInchesToSquareMetres(width, height);
+function squareMillimetresToSquareMetres(
+    widthMillimetres: number,
+    heightMillimetres: number,
+): number {
+    if (
+        !Number.isFinite(widthMillimetres) ||
+        !Number.isFinite(heightMillimetres) ||
+        widthMillimetres <= 0 ||
+        heightMillimetres <= 0
+    ) {
+        return 0;
+    }
+
+    return (widthMillimetres / 1000) * (heightMillimetres / 1000);
+}
+
+function areaForDimensions(
+    width: number,
+    height: number,
+    unit?: string,
+): number {
+    return unit?.toLowerCase() === 'mm'
+        ? squareMillimetresToSquareMetres(width, height)
+        : squareInchesToSquareMetres(width, height);
+}
+
+function stickerAreaForCustomSize(
+    width: number,
+    height: number,
+    unit: 'in' | 'mm' = 'in',
+): number {
+    return areaForDimensions(width, height, unit);
+}
+
+function customSizeDisplay(
+    width: number,
+    height: number,
+    unit: 'in' | 'mm',
+): string {
+    return unit === 'mm'
+        ? `${width.toFixed(2)} × ${height.toFixed(2)} mm`
+        : `${width.toFixed(2)}" x ${height.toFixed(2)}"`;
 }
 
 function formatStickerArea(area: number): string {
@@ -751,6 +800,15 @@ export default function ShopShow({
         product.slug.includes('business-card') ||
         product.category?.slug.includes('business-card');
     const isStickerProduct = isStickerProductSlug(product.slug);
+    const isFlyerProduct =
+        product.category?.slug === 'flyers-brochures' ||
+        product.slug.includes('flyer') ||
+        product.slug.includes('brochure');
+    const productUnitLabel = isFlyerProduct
+        ? 'flyers'
+        : isStickerProduct
+          ? 'stickers'
+          : 'cards';
     const ACCENT = c.accent_color;
 
     const galleryThumbs: string[] = c.gallery_thumb_image_urls;
@@ -853,14 +911,20 @@ export default function ShopShow({
                       label: s.name.charAt(0).toUpperCase() + s.name.slice(1),
                       dims: isCustom
                           ? (s.description ??
-                            `W ${formatSizeLimit(customSizeLimits.minWidth)}-${formatSizeLimit(customSizeLimits.maxWidth)} in × H ${formatSizeLimit(customSizeLimits.minHeight)}-${formatSizeLimit(customSizeLimits.maxHeight)} in`)
+                            `W ${formatSizeLimit(customSizeLimits.minWidth)}-${formatSizeLimit(customSizeLimits.maxWidth)} ${customSizeLimits.unit} × H ${formatSizeLimit(customSizeLimits.minHeight)}-${formatSizeLimit(customSizeLimits.maxHeight)} ${customSizeLimits.unit}`)
                           : s.width && s.height
-                            ? `${s.width}" x ${s.height}"`
+                            ? s.unit?.toLowerCase() === 'mm'
+                                ? `${s.width} × ${s.height} mm`
+                                : `${s.width}" x ${s.height}"`
                             : '',
-                      swatch: sizeSwatchFor(
-                          id,
-                          sizeSwatches[s.name.toLowerCase()] ?? s.swatch_image,
-                      ),
+                      swatch: isBusinessCardProduct
+                          ? sizeSwatchFor(
+                                id,
+                                sizeSwatches[s.name.toLowerCase()] ??
+                                    s.swatch_image,
+                            )
+                          : (s.swatch_image ??
+                            sizeSwatches[s.name.toLowerCase()]),
                   };
               })
             : c.configurator_options.sizes.map((s: any) => ({
@@ -872,6 +936,7 @@ export default function ShopShow({
         productOptions,
         c.configurator_options.sizes,
         product.slug,
+        isBusinessCardProduct,
         customSizeLimits,
     ]);
 
@@ -1009,7 +1074,7 @@ export default function ShopShow({
             )[0];
 
             if (firstTier) {
-                return `${firstTier.qty} ${isStickerProduct ? 'stickers' : 'cards'} from $${firstTier.currentPrice}`;
+                return `${firstTier.qty} ${productUnitLabel} from $${firstTier.currentPrice}`;
             }
         }
 
@@ -1043,7 +1108,7 @@ export default function ShopShow({
             )[0];
 
             if (firstTier) {
-                return `${firstTier.qty} ${isStickerProduct ? 'stickers' : 'cards'} from $${firstTier.currentPrice}`;
+                return `${firstTier.qty} ${productUnitLabel} from $${firstTier.currentPrice}`;
             }
 
             const pricing = productOptions.pricing_rules[0].pricing;
@@ -1062,7 +1127,7 @@ export default function ShopShow({
                     defaultArea,
             );
 
-            return `${pricing.startQuantity} ${isStickerProduct ? 'stickers' : 'cards'} from $${total}`;
+            return `${pricing.startQuantity} ${productUnitLabel} from $${total}`;
         }
 
         return product.price_line ?? undefined;
@@ -1070,7 +1135,7 @@ export default function ShopShow({
         dynamicOptionDefaults,
         dynamicOptionGroups,
         hasDynamicPricing,
-        isStickerProduct,
+        productUnitLabel,
         usesAreaBasedPricing,
         productOptions,
         product.price_line,
@@ -1278,6 +1343,7 @@ export default function ShopShow({
                 ? stickerAreaForCustomSize(
                       confirmedCustomSize.width,
                       confirmedCustomSize.height,
+                      customSizeLimits.unit,
                   )
                 : 0;
         }
@@ -1297,6 +1363,7 @@ export default function ShopShow({
         productOptions,
         selectedDynamicOptions,
         selectedSize,
+        customSizeLimits.unit,
         usesDynamicOptions,
         usesAreaBasedPricing,
     ]);
@@ -1956,7 +2023,7 @@ export default function ShopShow({
             height > customSizeLimits.maxHeight
         ) {
             setCustomSizeError(
-                `Enter a width between ${formatSizeLimit(customSizeLimits.minWidth)} and ${formatSizeLimit(customSizeLimits.maxWidth)} inches and a height between ${formatSizeLimit(customSizeLimits.minHeight)} and ${formatSizeLimit(customSizeLimits.maxHeight)} inches.`,
+                `Enter a width between ${formatSizeLimit(customSizeLimits.minWidth)} and ${formatSizeLimit(customSizeLimits.maxWidth)} ${customSizeLimits.unit} and a height between ${formatSizeLimit(customSizeLimits.minHeight)} and ${formatSizeLimit(customSizeLimits.maxHeight)} ${customSizeLimits.unit}.`,
             );
 
             return;
@@ -2042,7 +2109,7 @@ export default function ShopShow({
 
     const sizeLabel =
         selectedSize === 'custom' && confirmedCustomSize
-            ? `Custom (${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}")`
+            ? `Custom (${customSizeDisplay(confirmedCustomSize.width, confirmedCustomSize.height, customSizeLimits.unit)})`
             : (sizes.find((s: any) => s.id === selectedSize)?.label ?? '');
     const finishLabel =
         finishes.find((f: any) => f.id === selectedFinish)?.label ?? '';
@@ -2393,6 +2460,9 @@ export default function ShopShow({
                                 onSelect={selectDynamicOption}
                                 customSize={confirmedCustomSize}
                                 onCustomSizeSelect={openCustomSizeModal}
+                                useBusinessCardSizeSwatches={
+                                    isBusinessCardProduct
+                                }
                                 showSpecialFinishSides={!isCottonBusinessCards}
                                 showHotFoilSides={true}
                                 specialFinishSides={selectedSpecialFinishSides}
@@ -2428,7 +2498,7 @@ export default function ShopShow({
                                                     label={
                                                         s.id === 'custom' &&
                                                         confirmedCustomSize
-                                                            ? `${s.label} (${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}")`
+                                                            ? `${s.label} (${customSizeDisplay(confirmedCustomSize.width, confirmedCustomSize.height, customSizeLimits.unit)})`
                                                             : s.label
                                                     }
                                                 >
@@ -2459,7 +2529,11 @@ export default function ShopShow({
                                                             {s.id ===
                                                                 'custom' &&
                                                             confirmedCustomSize
-                                                                ? `${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}"`
+                                                                ? customSizeDisplay(
+                                                                      confirmedCustomSize.width,
+                                                                      confirmedCustomSize.height,
+                                                                      customSizeLimits.unit,
+                                                                  )
                                                                 : s.dims}
                                                         </p>
                                                     )}
@@ -3022,7 +3096,7 @@ export default function ShopShow({
                                                                 value,
                                                             ) === 'custom' &&
                                                             confirmedCustomSize
-                                                                ? `Custom (${confirmedCustomSize.width.toFixed(2)}" x ${confirmedCustomSize.height.toFixed(2)}")`
+                                                                ? `Custom (${customSizeDisplay(confirmedCustomSize.width, confirmedCustomSize.height, customSizeLimits.unit)})`
                                                                 : value.name,
                                                         );
 
@@ -3372,6 +3446,7 @@ export default function ShopShow({
                             maxWidth={customSizeLimits.maxWidth}
                             minHeight={customSizeLimits.minHeight}
                             maxHeight={customSizeLimits.maxHeight}
+                            unit={customSizeLimits.unit}
                             error={customSizeError}
                             onWidthChange={setCustomWidth}
                             onHeightChange={setCustomHeight}
@@ -3689,6 +3764,7 @@ function DynamicOptionGroups({
     onSelect,
     customSize,
     onCustomSizeSelect,
+    useBusinessCardSizeSwatches,
     showSpecialFinishSides,
     showHotFoilSides,
     specialFinishSides,
@@ -3699,6 +3775,7 @@ function DynamicOptionGroups({
     onSelect: (groupKey: string, value: string) => void;
     customSize?: { width: number; height: number } | null;
     onCustomSizeSelect?: () => void;
+    useBusinessCardSizeSwatches: boolean;
     showSpecialFinishSides: boolean;
     showHotFoilSides: boolean;
     specialFinishSides: Record<string, SpecialFinishSide>;
@@ -3843,10 +3920,12 @@ function DynamicOptionGroups({
                                         ? (cornerSwatchFor(code) ??
                                           value.swatch_image)
                                         : group.key === 'sizes'
-                                          ? sizeSwatchFor(
-                                                code,
-                                                value.swatch_image,
-                                            )
+                                          ? useBusinessCardSizeSwatches
+                                              ? sizeSwatchFor(
+                                                    code,
+                                                    value.swatch_image,
+                                                )
+                                              : value.swatch_image
                                           : value.swatch_image;
                                 const isCustomSize =
                                     group.key === 'sizes' && code === 'custom';
@@ -3902,14 +3981,14 @@ function DynamicOptionGroups({
                                             active &&
                                             customSize ? (
                                                 <p className="text-xs text-neutral-500">
-                                                    {customSize.width.toFixed(
-                                                        2,
+                                                    {customSizeDisplay(
+                                                        customSize.width,
+                                                        customSize.height,
+                                                        value.unit?.toLowerCase() ===
+                                                            'mm'
+                                                            ? 'mm'
+                                                            : 'in',
                                                     )}
-                                                    " x{' '}
-                                                    {customSize.height.toFixed(
-                                                        2,
-                                                    )}
-                                                    "
                                                 </p>
                                             ) : value.description ? (
                                                 <p className="text-xs text-neutral-500">
@@ -3965,7 +4044,7 @@ function DynamicOptionGroups({
                                         onClick={handleSelect}
                                         label={
                                             isCustomSize && active && customSize
-                                                ? `${value.name} (${customSize.width.toFixed(2)}" x ${customSize.height.toFixed(2)}")`
+                                                ? `${value.name} (${customSizeDisplay(customSize.width, customSize.height, value.unit?.toLowerCase() === 'mm' ? 'mm' : 'in')})`
                                                 : value.name
                                         }
                                     >
@@ -4383,6 +4462,7 @@ function CustomSizeModal({
     maxWidth,
     minHeight,
     maxHeight,
+    unit,
     error,
     onWidthChange,
     onHeightChange,
@@ -4396,6 +4476,7 @@ function CustomSizeModal({
     maxWidth: number;
     minHeight: number;
     maxHeight: number;
+    unit: 'in' | 'mm';
     error: string | null;
     onWidthChange: (value: string) => void;
     onHeightChange: (value: string) => void;
@@ -4405,13 +4486,13 @@ function CustomSizeModal({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Enter a custom card size</DialogTitle>
+                    <DialogTitle>Enter a custom size</DialogTitle>
                     <DialogDescription>
-                        Enter the width and height in inches. Width must be
+                        Enter the width and height in {unit}. Width must be
                         between {formatSizeLimit(minWidth)} and{' '}
-                        {formatSizeLimit(maxWidth)} inches; height must be
+                        {formatSizeLimit(maxWidth)} {unit}; height must be
                         between {formatSizeLimit(minHeight)} and{' '}
-                        {formatSizeLimit(maxHeight)} inches.
+                        {formatSizeLimit(maxHeight)} {unit}.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -4424,7 +4505,7 @@ function CustomSizeModal({
                 >
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <label className="space-y-1.5 text-sm font-medium text-neutral-900">
-                            Width (in)
+                            Width ({unit})
                             <Input
                                 type="number"
                                 inputMode="decimal"
@@ -4440,7 +4521,7 @@ function CustomSizeModal({
                             />
                         </label>
                         <label className="space-y-1.5 text-sm font-medium text-neutral-900">
-                            Height (in)
+                            Height ({unit})
                             <Input
                                 type="number"
                                 inputMode="decimal"

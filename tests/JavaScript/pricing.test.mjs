@@ -252,6 +252,13 @@ test('hot foil colors can be selected from the independent hot_foil group', () =
         )[0].currentPrice,
         50,
     );
+    assert.equal(
+        foilTiersFor(
+            { hot_foil: ['laser_silver'] },
+            { laser_silver: 'both_sides' },
+        )[0].currentPrice,
+        50,
+    );
 });
 
 const multiFoilRuleScenario = {
