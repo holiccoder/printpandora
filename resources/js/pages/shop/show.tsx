@@ -2405,7 +2405,10 @@ export default function ShopShow({
                         {!usesDynamicOptions &&
                             sizes.length > 0 &&
                             !isCottonBusinessCards && (
-                                <OptionGroup label={c.configurator_labels.size}>
+                                <OptionGroup
+                                    label={c.configurator_labels.size}
+                                    required
+                                >
                                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                         {sizes.map((s: any) => {
                                             const shape =
@@ -2468,7 +2471,10 @@ export default function ShopShow({
                             )}
 
                         {!usesDynamicOptions && cornersList.length > 0 && (
-                            <OptionGroup label={c.configurator_labels.corners}>
+                            <OptionGroup
+                                label={c.configurator_labels.corners}
+                                required
+                            >
                                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                     {cornersList.map((cn: any) => (
                                         <CornerChoiceCard
@@ -2489,7 +2495,7 @@ export default function ShopShow({
                         )}
 
                         {!usesDynamicOptions && textures.length > 0 && (
-                            <OptionGroup label="Texture">
+                            <OptionGroup label="Texture" required>
                                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                     {textures.map((t: any) => (
                                         <ChoiceTile
@@ -2525,6 +2531,7 @@ export default function ShopShow({
                         {!usesDynamicOptions && !isCottonBusinessCards && (
                             <OptionGroup
                                 label={c.configurator_labels.paper_finish}
+                                required
                             >
                                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                     {finishes.map((f: any) => (
@@ -2561,6 +2568,20 @@ export default function ShopShow({
                                         <div className="mb-3 flex items-center justify-between border-b border-neutral-100 pb-2">
                                             <span className="text-sm font-bold text-neutral-900">
                                                 Special Finish
+                                                {specialFinishRequired && (
+                                                    <>
+                                                        <span
+                                                            aria-hidden="true"
+                                                            className="ml-1 text-red-600"
+                                                        >
+                                                            *
+                                                        </span>
+                                                        <span className="sr-only">
+                                                            {' '}
+                                                            (required)
+                                                        </span>
+                                                    </>
+                                                )}
                                             </span>
                                             <div className="flex rounded-md bg-neutral-100 p-0.5">
                                                 <button
@@ -2744,7 +2765,7 @@ export default function ShopShow({
                             )}
 
                         {!usesDynamicOptions && embossingList.length > 0 && (
-                            <OptionGroup label="Embossing">
+                            <OptionGroup label="Embossing" required>
                                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                     {embossingList.map((e: any) => (
                                         <ChoiceTile
@@ -2777,7 +2798,10 @@ export default function ShopShow({
 
                         {!usesDynamicOptions &&
                             embossingOrSignaturePanelList.length > 0 && (
-                                <OptionGroup label="Embossing or Signature Panel">
+                                <OptionGroup
+                                    label="Embossing or Signature Panel"
+                                    required
+                                >
                                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                                         {embossingOrSignaturePanelList.map(
                                             (e: any) => (
@@ -2820,7 +2844,10 @@ export default function ShopShow({
                                 </OptionGroup>
                             )}
 
-                        <OptionGroup label={c.configurator_labels.quantity}>
+                        <OptionGroup
+                            label={c.configurator_labels.quantity}
+                            required
+                        >
                             <div className="overflow-x-auto rounded-md border border-neutral-200">
                                 <table className="w-full min-w-[32rem] text-sm sm:min-w-0">
                                     <thead>
@@ -3750,7 +3777,11 @@ function DynamicOptionGroups({
                 }
 
                 return (
-                    <OptionGroup key={group.key} label={group.label}>
+                    <OptionGroup
+                        key={group.key}
+                        label={group.label}
+                        required={group.required}
+                    >
                         {isFoilGroup && group.type === 'multi_select' && (
                             <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-neutral-100 pb-2">
                                 <span className="text-sm font-semibold text-neutral-700">
@@ -3963,7 +3994,7 @@ function ThicknessOptionGroup({
     const selectedCode = typeof selectedValue === 'string' ? selectedValue : '';
 
     return (
-        <OptionGroup label={group.label}>
+        <OptionGroup label={group.label} required={group.required}>
             <div
                 className="grid grid-cols-1 gap-3 sm:grid-cols-3"
                 role="radiogroup"
@@ -4033,7 +4064,7 @@ function CottonTextureOptionGroup({
     const selectedCode = typeof selectedValue === 'string' ? selectedValue : '';
 
     return (
-        <OptionGroup label={group.label}>
+        <OptionGroup label={group.label} required={group.required}>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {Array.from(textureGroups.entries()).map(
                     ([textureCode, texture]) => {
@@ -4142,15 +4173,25 @@ function CottonTextureOptionGroup({
 
 function OptionGroup({
     label,
+    required = true,
     children,
 }: {
     label: string;
+    required?: boolean;
     children: React.ReactNode;
 }) {
     return (
         <fieldset className="mt-6">
             <legend className="mb-3 text-base font-bold text-neutral-900">
                 {label}
+                {required && (
+                    <>
+                        <span aria-hidden="true" className="ml-1 text-red-600">
+                            *
+                        </span>
+                        <span className="sr-only"> (required)</span>
+                    </>
+                )}
             </legend>
             {children}
         </fieldset>

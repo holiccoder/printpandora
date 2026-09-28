@@ -20,6 +20,8 @@ class OrderWeightService
      *
      * Product weight is stored as GSM, so a card's weight is its area in
      * square metres multiplied by the product weight and line quantity.
+     * Products with a fixed shipping weight already include their parcel
+     * packaging and bypass the GSM calculation.
      *
      * @param  array<string, array<string, mixed>>  $cart
      */
@@ -41,6 +43,7 @@ class OrderWeightService
             ->keyBy('id');
 
         $productWeight = 0.0;
+        $hasFixedShippingWeight = false;
 
         foreach ($cart as $item) {
             $product = $products->get((int) ($item['product_id'] ?? 0));
@@ -50,6 +53,8 @@ class OrderWeightService
             }
 
             $options = is_array($item['options'] ?? null) ? $item['options'] : [];
+            $hasFixedShippingWeight = $hasFixedShippingWeight
+                || $product->shipping_weight_grams !== null;
 
             $productWeight += $this->forLine(
                 $product,
@@ -58,7 +63,9 @@ class OrderWeightService
             );
         }
 
-        return $this->withPackageWeight($productWeight);
+        return $hasFixedShippingWeight
+            ? round(max(0.0, $productWeight), 4)
+            : $this->withPackageWeight($productWeight);
     }
 
     public function forOrder(Order $order): float
@@ -66,6 +73,7 @@ class OrderWeightService
         $order->loadMissing('items.product');
 
         $productWeight = 0.0;
+        $hasFixedShippingWeight = false;
 
         foreach ($order->items as $item) {
             if (! $item->product) {
@@ -74,6 +82,8 @@ class OrderWeightService
 
             $rawOptions = $item->getAttribute('options');
             $options = is_array($rawOptions) ? $rawOptions : [];
+            $hasFixedShippingWeight = $hasFixedShippingWeight
+                || $item->product->shipping_weight_grams !== null;
 
             $productWeight += $this->forLine(
                 $item->product,
@@ -82,7 +92,9 @@ class OrderWeightService
             );
         }
 
-        return $this->withPackageWeight($productWeight);
+        return $hasFixedShippingWeight
+            ? round(max(0.0, $productWeight), 4)
+            : $this->withPackageWeight($productWeight);
     }
 
     public function packageWeightGrams(): int
@@ -139,6 +151,10 @@ class OrderWeightService
 
         if ($quantity <= 0) {
             return 0.0;
+        }
+
+        if ($product->shipping_weight_grams !== null) {
+            return max(0.0, (float) $product->shipping_weight_grams) * $quantity;
         }
 
         return $this->cardAreaSquareMeters($options)

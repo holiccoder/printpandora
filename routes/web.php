@@ -13,6 +13,7 @@ use App\Http\Controllers\HelpController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductDesignRequestController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Shop\CartController;
 use App\Http\Controllers\Shop\CheckoutController;
 use App\Http\Controllers\Shop\OrderController;
@@ -52,6 +53,7 @@ Route::inertia('/cards-and-postcards', 'postcards')->name('cards-and-postcards')
 Route::inertia('/stickers-and-labels', 'stickers-and-labels')->name('stickers-and-labels');
 Route::inertia('/flyers-and-brochures', 'flyers-and-brochures')->name('flyers-and-brochures');
 Route::get('/showcases', [ShowcaseController::class, 'index'])->name('showcases');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 // Contact
 Route::get('/contact-us', [ContactController::class, 'create'])->name('contact.create');
@@ -124,6 +126,8 @@ Route::get('ref/{code}', [ReferralController::class, 'show'])->name('referral.sh
 // Cart
 Route::get('cart', [CartController::class, 'index'])->name('shop.cart');
 Route::post('cart/add', [CartController::class, 'add'])->name('shop.cart.add');
+Route::post('cart/add/free-sample-pack', [CartController::class, 'addFreeSamplePack'])
+    ->name('shop.cart.add.free-sample-pack');
 Route::delete('cart/remove', [CartController::class, 'remove'])->name('shop.cart.remove');
 Route::post('cart/discount', [CartController::class, 'applyDiscount'])->name('shop.cart.discount.apply');
 Route::delete('cart/discount', [CartController::class, 'removeDiscount'])->name('shop.cart.discount.remove');

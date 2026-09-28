@@ -1,12 +1,6 @@
 import { Link } from '@inertiajs/react';
-import {
-    ArrowRight,
-    Check,
-    ShoppingCart,
-    Star,
-    ShieldCheck,
-    Mail,
-} from 'lucide-react';
+import { ArrowRight, Check, Mail, Star } from 'lucide-react';
+import FreeSamplePackCartButton from '@/components/free-sample-pack-cart-button';
 import SEO from '@/components/seo';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
@@ -117,13 +111,9 @@ export default function FreeSamplePack() {
                         </p>
 
                         <div className="mt-8 flex flex-wrap items-center gap-4">
-                            <Link
-                                href="/cart"
-                                className="inline-flex items-center gap-2 rounded-md bg-primary px-8 py-4 text-sm font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-md"
-                            >
-                                <ShoppingCart className="size-4" />
+                            <FreeSamplePackCartButton className="inline-flex items-center gap-2 rounded-md bg-primary px-8 py-4 text-sm font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-md">
                                 Add Free Sample Pack to Cart
-                            </Link>
+                            </FreeSamplePackCartButton>
                             <Link
                                 href="/sample-packs"
                                 className="inline-flex items-center gap-1.5 text-sm font-bold transition-all hover:translate-x-1"

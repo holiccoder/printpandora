@@ -1,7 +1,8 @@
 import { Link } from '@inertiajs/react';
-import { ArrowRight, ShoppingCart } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import FreeSamplePackCartButton from '@/components/free-sample-pack-cart-button';
 import SEO from '@/components/seo';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
@@ -75,13 +76,9 @@ const faqColumns = [
 
 function AddToCartButton() {
     return (
-        <Link
-            href="/cart"
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-8 py-3 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-md"
-        >
-            <ShoppingCart className="size-4" />
+        <FreeSamplePackCartButton className="inline-flex items-center gap-2 rounded-md bg-primary px-8 py-3 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-md">
             Add to cart
-        </Link>
+        </FreeSamplePackCartButton>
     );
 }
 

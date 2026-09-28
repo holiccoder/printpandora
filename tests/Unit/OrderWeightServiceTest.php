@@ -78,4 +78,17 @@ class OrderWeightServiceTest extends TestCase
         );
         $this->assertSame(251, app(OrderWeightService::class)->wholeGrams($weight));
     }
+
+    public function test_fixed_shipping_weight_products_bypass_card_area_calculation(): void
+    {
+        $product = new Product([
+            'weight' => 700,
+            'shipping_weight_grams' => 500,
+        ]);
+
+        $this->assertSame(
+            500.0,
+            app(OrderWeightService::class)->forLine($product, [], 1),
+        );
+    }
 }

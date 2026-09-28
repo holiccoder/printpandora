@@ -17,6 +17,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string|null $featured_image
  * @property string|null $slug
  * @property int $weight
+ * @property int|null $shipping_weight_grams
  * @property-read ProductCategory|null $category
  */
 class Product extends Model implements HasMedia
@@ -37,6 +38,7 @@ class Product extends Model implements HasMedia
         'slug',
         'featured_image',
         'product_category_id',
+        'shipping_weight_grams',
         'is_active',
     ];
 
@@ -48,6 +50,7 @@ class Product extends Model implements HasMedia
             'product_config' => 'array',
             'is_active' => 'boolean',
             'weight' => 'integer',
+            'shipping_weight_grams' => 'integer',
         ];
     }
 

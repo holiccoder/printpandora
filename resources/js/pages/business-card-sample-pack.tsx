@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
-import { ArrowRight, Check, ShoppingCart } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
+import FreeSamplePackCartButton from '@/components/free-sample-pack-cart-button';
 import SEO from '@/components/seo';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
@@ -121,13 +122,9 @@ export default function BusinessCardSamplePack() {
                             just bring the curiosity.
                         </p>
                         <div className="mt-8 flex flex-wrap items-center gap-4">
-                            <Link
-                                href="/cart"
-                                className="inline-flex items-center gap-2 rounded-md bg-primary px-8 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
-                            >
-                                <ShoppingCart className="size-4" />
+                            <FreeSamplePackCartButton className="inline-flex items-center gap-2 rounded-md bg-primary px-8 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90">
                                 Add free sample pack to cart
-                            </Link>
+                            </FreeSamplePackCartButton>
                             <Link
                                 href="/sample-packs"
                                 className="inline-flex items-center gap-1 text-sm font-bold"

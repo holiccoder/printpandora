@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Services\Cart;
 use App\Services\DiscountException;
 use App\Services\PricingService;
+use App\Support\FreeSamplePackProduct;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -54,6 +55,22 @@ class CartController extends Controller
         }
 
         return redirect('/cart')->with('success', 'Added to cart');
+    }
+
+    public function addFreeSamplePack(Request $request, Cart $cart)
+    {
+        $product = FreeSamplePackProduct::resolve();
+        $itemKey = $cart->add($product->id);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'count' => $cart->count(),
+                'item_key' => $itemKey,
+                'message' => 'Added to cart',
+            ]);
+        }
+
+        return redirect()->route('shop.cart')->with('success', 'Free sample pack added to cart');
     }
 
     public function remove(Request $request, Cart $cart)

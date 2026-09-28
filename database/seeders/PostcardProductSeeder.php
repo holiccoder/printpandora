@@ -209,6 +209,12 @@ class PostcardProductSeeder extends Seeder
         $specialValues = is_array($specialFinish['values'] ?? null)
             ? $specialFinish['values']
             : [];
+        $removedCodes = ['3d_uv', 'custom_die_cut'];
+        $specialValues = array_values(array_filter(
+            $specialValues,
+            static fn (mixed $value): bool => ! is_array($value)
+                || ! in_array(strtolower((string) ($value['code'] ?? '')), $removedCodes, true),
+        ));
         $existingCodes = array_values(array_filter(array_map(
             static fn (mixed $value): string => is_array($value)
                 ? strtolower((string) ($value['code'] ?? ''))
@@ -258,16 +264,6 @@ class PostcardProductSeeder extends Seeder
                 'label' => 'Cold Matte Silver',
                 'description' => 'Elegant cold silver foil.',
                 'swatch_image' => '/images/product-options/business-cards/swatches/cold/matte-silver.png',
-            ],
-            [
-                'code' => '3d_uv',
-                'label' => '3D UV',
-                'description' => 'Raised 3D UV detail for a tactile finish.',
-            ],
-            [
-                'code' => 'custom_die_cut',
-                'label' => 'Custom Die-Cut',
-                'description' => 'Cut the postcard to a custom shape.',
             ],
         ] as $value) {
             if (! in_array($value['code'], $existingCodes, true)) {
