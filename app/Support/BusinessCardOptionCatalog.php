@@ -1144,7 +1144,9 @@ final class BusinessCardOptionCatalog
             return $group;
         }
 
-        foreach ($values as $value) {
+        $hasLaserSilver = false;
+
+        foreach ($values as $index => $value) {
             if (
                 (is_array($value) && ($value['code'] ?? null) === self::LASER_SILVER_HOT_FOIL_CODE)
                 || (
@@ -1152,8 +1154,38 @@ final class BusinessCardOptionCatalog
                     && self::normalizeOptionToken($value) === self::LASER_SILVER_HOT_FOIL_CODE
                 )
             ) {
-                return $group;
+                $hasLaserSilver = true;
+
+                if (is_array($value)) {
+                    if (array_key_exists('label', $value)) {
+                        $value['label'] = self::LASER_SILVER_HOT_FOIL_LABEL;
+                    }
+
+                    if (array_key_exists('name', $value)) {
+                        $value['name'] = self::LASER_SILVER_HOT_FOIL_LABEL;
+                    }
+
+                    if (! array_key_exists('label', $value) && ! array_key_exists('name', $value)) {
+                        $value[$isCanonicalGroup ? 'label' : 'name'] = self::LASER_SILVER_HOT_FOIL_LABEL;
+                    }
+
+                    if (array_key_exists('description', $value)) {
+                        $value['description'] = self::LASER_SILVER_HOT_FOIL_LABEL.' hot foil.';
+                    }
+
+                    $values[$index] = $value;
+                }
             }
+        }
+
+        if ($hasLaserSilver) {
+            if ($isCanonicalGroup) {
+                $group['values'] = array_values($values);
+            } else {
+                $group = array_values($values);
+            }
+
+            return $group;
         }
 
         $value = [

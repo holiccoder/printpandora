@@ -925,4 +925,28 @@ class ProductConfigurationServiceTest extends TestCase
             data_get($normalized, 'cold_only.values.*.code'),
         );
     }
+
+    public function test_existing_laser_silver_values_are_translated_to_english(): void
+    {
+        $legacyLabel = json_decode('"\\u956d\\u5c04\\u94f6"', true, 512, JSON_THROW_ON_ERROR);
+
+        $normalized = BusinessCardOptionCatalog::normalizeHotFoilOptions([
+            'special_finish' => [
+                'values' => [
+                    [
+                        'code' => 'laser_silver',
+                        'name' => $legacyLabel,
+                        'label' => $legacyLabel,
+                        'description' => $legacyLabel.' hot foil.',
+                    ],
+                ],
+            ],
+        ]);
+
+        $value = data_get($normalized, 'special_finish.values.0');
+
+        $this->assertSame('laser silver', $value['name']);
+        $this->assertSame('laser silver', $value['label']);
+        $this->assertSame('laser silver hot foil.', $value['description']);
+    }
 }
