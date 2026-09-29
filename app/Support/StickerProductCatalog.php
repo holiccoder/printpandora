@@ -168,7 +168,7 @@ final class StickerProductCatalog
                 'bullet_points' => [
                     'Square-corner or die-cut shapes',
                     'Six practical paper materials',
-                    'Six rectangular sizes from 1 x 2 in to 4 x 6 in',
+                    'Six rectangular sizes from 1 x 2 in to 4 x 6 in, plus custom sizing',
                 ],
                 'meta_description' => 'Classic custom stickers in coated, kraft, Avery, and writable paper stocks.',
                 'base_price' => 10.0,
@@ -194,7 +194,7 @@ final class StickerProductCatalog
                 'bullet_points' => [
                     'Square-corner or die-cut shapes',
                     'Eight textured and specialty paper materials',
-                    'Six rectangular sizes from 1 x 2 in to 4 x 6 in',
+                    'Six rectangular sizes from 1 x 2 in to 4 x 6 in, plus custom sizing',
                 ],
                 'meta_description' => 'Premium custom stickers in textured, pearl, cotton-fiber, and specialty paper stocks.',
                 'base_price' => 14.0,
@@ -222,7 +222,7 @@ final class StickerProductCatalog
                 'bullet_points' => [
                     'Square-corner or die-cut shapes',
                     'Six metallic, synthetic, and transparent materials',
-                    'Six rectangular sizes from 1 x 2 in to 4 x 6 in',
+                    'Six rectangular sizes from 1 x 2 in to 4 x 6 in, plus custom sizing',
                 ],
                 'meta_description' => 'Super custom stickers in gold-sprinkled, metallic, synthetic PP, and transparent stocks.',
                 'base_price' => 18.0,
@@ -423,6 +423,16 @@ final class StickerProductCatalog
                 'width' => '6.00',
                 'height' => '4.00',
                 'swatch_image' => self::SIZE_SWATCH_BASE.'/4-x-6-in.webp',
+            ],
+            [
+                'code' => 'custom',
+                'label' => 'Custom Size',
+                'description' => '18 x 18 mm minimum; up to 430 x 301 mm.',
+                'min_width' => '0.71',
+                'max_width' => '16.93',
+                'min_height' => '0.71',
+                'max_height' => '11.85',
+                'swatch_image' => self::SIZE_SWATCH_BASE.'/custom-size.webp',
             ],
         ];
 

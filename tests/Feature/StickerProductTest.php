@@ -37,7 +37,7 @@ class StickerProductTest extends TestCase
             ])->count(),
         );
 
-        $expectedSizeCodes = ['1x2', '1x2_8', '1_5x5_5', '2x3', '3x4', '4x6'];
+        $expectedSizeCodes = ['1x2', '1x2_8', '1_5x5_5', '2x3', '3x4', '4x6', 'custom'];
         $expectedSizeLabels = [
             '1 x 2 in',
             '1 x 2.8 in',
@@ -45,6 +45,7 @@ class StickerProductTest extends TestCase
             '2 x 3 in',
             '3 x 4 in',
             '4 x 6 in',
+            'Custom Size',
         ];
         $expectedSizeSwatches = [
             '/images/product-options/stickers/size-swatches/1-x-2-in.webp',
@@ -53,6 +54,7 @@ class StickerProductTest extends TestCase
             '/images/product-options/stickers/size-swatches/2-x-3-in.webp',
             '/images/product-options/stickers/size-swatches/3-x-4-in.webp',
             '/images/product-options/stickers/size-swatches/4-x-6-in.webp',
+            '/images/product-options/stickers/size-swatches/custom-size.webp',
         ];
 
         foreach (['classic-stickers', 'premium-stickers', 'super-stickers'] as $slug) {
@@ -130,6 +132,11 @@ class StickerProductTest extends TestCase
         $this->assertSame(0.00129032, $sizes[0]['area_sq_m']);
         $this->assertSame('1 x 2 in', $sizes[0]['name']);
         $this->assertSame('4 x 6 in', $sizes[5]['name']);
+        $this->assertSame('Custom Size', $sizes[6]['name']);
+        $this->assertSame('0.71', $sizes[6]['min_width']);
+        $this->assertSame('16.93', $sizes[6]['max_width']);
+        $this->assertSame('0.71', $sizes[6]['min_height']);
+        $this->assertSame('11.85', $sizes[6]['max_height']);
         $this->assertSame(7, count($options['galleries']));
         $this->assertSame(
             [
@@ -208,7 +215,7 @@ class StickerProductTest extends TestCase
         }
     }
 
-    public function test_sticker_sizes_are_required_and_custom_sizes_are_removed(): void
+    public function test_sticker_sizes_are_required_and_custom_sizes_are_supported(): void
     {
         $product = Product::where('slug', 'classic-stickers')->firstOrFail();
         $pricing = app(PricingService::class);
@@ -216,7 +223,6 @@ class StickerProductTest extends TestCase
         foreach ([
             [],
             ['sizes' => 'unknown'],
-            ['sizes' => 'custom'],
             ['sizes' => '2x2'],
         ] as $options) {
             try {
@@ -231,5 +237,15 @@ class StickerProductTest extends TestCase
             '0.00129032',
             $pricing->validateOptions($product, ['sizes' => '1x2'])['paper_area'],
         );
+
+        $customOptions = $pricing->validateOptions($product, [
+            'sizes' => 'custom',
+            'custom_width' => '2',
+            'custom_height' => '3',
+        ]);
+
+        $this->assertSame('2.00', $customOptions['custom_width']);
+        $this->assertSame('3.00', $customOptions['custom_height']);
+        $this->assertSame('0.00387096', $customOptions['paper_area']);
     }
 }
