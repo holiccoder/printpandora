@@ -350,7 +350,9 @@ final class StickerProductCatalog
                 ],
             ],
             'faq' => self::FAQ_ITEMS,
-            'detail_sections' => [],
+            'detail_sections' => [
+                'design_specifications' => PrintDesignSpecifications::businessCards(),
+            ],
         ];
 
         $defaultSize = self::sizeValues()[0];

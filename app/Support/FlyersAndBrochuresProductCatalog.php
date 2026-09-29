@@ -383,7 +383,9 @@ final class FlyersAndBrochuresProductCatalog
             ],
             'pricing' => $pricing,
             'faq' => [],
-            'detail_sections' => [],
+            'detail_sections' => [
+                'design_specifications' => PrintDesignSpecifications::businessCards(),
+            ],
         ];
 
         return [

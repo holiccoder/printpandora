@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Services\PricingService;
 use App\Services\ProductConfigurationService;
 use App\Support\FlyersAndBrochuresProductCatalog;
+use App\Support\PrintDesignSpecifications;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -14,6 +15,18 @@ use Tests\TestCase;
 class FlyersAndBrochuresProductTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_all_flyer_products_include_design_specifications(): void
+    {
+        foreach (FlyersAndBrochuresProductCatalog::slugs() as $slug) {
+            $product = Product::query()->where('slug', $slug)->firstOrFail();
+
+            $this->assertSame(
+                PrintDesignSpecifications::businessCards(),
+                data_get($product->product_config, 'detail_sections.design_specifications'),
+            );
+        }
+    }
 
     public function test_all_flyer_products_are_seeded_with_the_requested_options(): void
     {
@@ -109,7 +122,11 @@ class FlyersAndBrochuresProductTest extends TestCase
                 ->where('product.slug', 'classic-standard-flyers-and-brochures')
                 ->where('productOptions.option_groups.0.key', 'sizes')
                 ->where('productOptions.option_groups.1.key', 'paper_finish')
-                ->where('productOptions.option_groups.2.key', 'folding'));
+                ->where('productOptions.option_groups.2.key', 'folding')
+                ->where(
+                    'productOptions.detail_sections.design_specifications.heading',
+                    'Design Specifications',
+                ));
 
         $this->get('/classic-standard-flyers-and-brochures')
             ->assertStatus(301)

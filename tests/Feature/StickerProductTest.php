@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Product;
 use App\Services\PricingService;
 use App\Services\ProductConfigurationService;
+use App\Support\PrintDesignSpecifications;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
@@ -12,6 +13,18 @@ use Tests\TestCase;
 class StickerProductTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_all_sticker_products_include_design_specifications(): void
+    {
+        foreach (['classic-stickers', 'premium-stickers', 'super-stickers'] as $slug) {
+            $product = Product::query()->where('slug', $slug)->firstOrFail();
+
+            $this->assertSame(
+                PrintDesignSpecifications::businessCards(),
+                data_get($product->product_config, 'detail_sections.design_specifications'),
+            );
+        }
+    }
 
     public function test_sticker_products_are_created_with_the_requested_option_contract(): void
     {
@@ -92,7 +105,11 @@ class StickerProductTest extends TestCase
                 ->assertOk()
                 ->assertInertia(fn ($page) => $page
                     ->component('shop/show')
-                    ->where('product.slug', $slug));
+                    ->where('product.slug', $slug)
+                    ->where(
+                        'productOptions.detail_sections.design_specifications.heading',
+                        'Design Specifications',
+                    ));
         }
 
         $this->get('/classic-stickers')->assertStatus(301)->assertRedirect('/stickers/classic');
