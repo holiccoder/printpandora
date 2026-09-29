@@ -2620,8 +2620,9 @@ class ProductConfigurationService
     /**
      * Add the supplied Laser Silver primary artwork wherever shared foil
      * artwork is allowed. This also covers postcard and legacy product
-     * configurations whose existing foil gallery rules are product-specific;
-     * PVC and metal exclusions remain intact.
+     * configurations whose existing foil gallery rules are product-specific.
+     * The rule is keyed to the actual hot-foil option, so products without
+     * that option remain unchanged even when they use product-specific media.
      *
      * @param  array<int, mixed>  $rules
      * @param  array<string, mixed>  $options
@@ -2632,10 +2633,7 @@ class ProductConfigurationService
         array $options,
         ?string $productSlug = null,
     ): array {
-        if (
-            $productSlug === null
-            || in_array($productSlug, self::BUSINESS_CARD_FOIL_IMAGE_EXCLUSIONS, true)
-        ) {
+        if ($productSlug === null) {
             return array_values(array_filter($rules, is_array(...)));
         }
 
@@ -2827,7 +2825,7 @@ class ProductConfigurationService
             ['code' => 'rose_gold', 'label' => 'Rose Gold', 'swatch_image' => $foilSwatches.'rose-gold.png'],
             ['code' => 'aged_gold', 'label' => 'Aged Gold', 'swatch_image' => $foilSwatches.'aged-gold.png'],
             ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => $foilSwatches.'muted-purple-gold.png'],
-            ['code' => 'laser_silver', 'label' => '镭射银', 'swatch_image' => $foilSwatches.'laser-silver.png'],
+            ['code' => 'laser_silver', 'label' => 'laser silver', 'swatch_image' => $foilSwatches.'laser-silver.png'],
         ];
         $specialFinish = [
             ...array_map(

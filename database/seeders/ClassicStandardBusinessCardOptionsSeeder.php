@@ -220,7 +220,7 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                         ],
                         [
                             'code' => 'laser_silver',
-                            'label' => '镭射银',
+                            'label' => 'laser silver',
                             'swatch_image' => '/images/product-options/business-cards/swatches/laser-silver.png',
                         ],
                     ],

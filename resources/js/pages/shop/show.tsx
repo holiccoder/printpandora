@@ -99,7 +99,6 @@ const HOT_FOIL_CODES = new Set([
     'aged gold',
     'muted purple gold',
     'laser silver',
-    '镭射银',
 ]);
 
 type SpecialFinishSide = 'one_side' | 'both_sides';

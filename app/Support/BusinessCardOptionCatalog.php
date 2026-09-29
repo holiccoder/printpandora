@@ -6,7 +6,7 @@ final class BusinessCardOptionCatalog
 {
     public const LASER_SILVER_HOT_FOIL_CODE = 'laser_silver';
 
-    public const LASER_SILVER_HOT_FOIL_LABEL = '镭射银';
+    public const LASER_SILVER_HOT_FOIL_LABEL = 'laser silver';
 
     public const LASER_SILVER_HOT_FOIL_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/laser-silver.png';
 
@@ -19,6 +19,29 @@ final class BusinessCardOptionCatalog
     public const CUSTOM_SIZE_DESCRIPTION = 'max range: 2.1 - 3.5 inches';
 
     public const COTTON_CUSTOM_SIZE_DESCRIPTION = 'Width 0.70-3.54 in; height 0.70-2.13 in.';
+
+    /**
+     * Codes used by legacy and canonical products for hot-foil choices.
+     *
+     * @var list<string>
+     */
+    private const HOT_FOIL_CODES = [
+        'black_gold',
+        'blue_gold',
+        'bright_gold',
+        'bright_silver',
+        'green_gold',
+        'matte_gold',
+        'matte_silver',
+        'red_gold',
+        'rose_gold',
+        'aged_gold',
+        'muted_purple_gold',
+        'gold_foil',
+        'silver_foil',
+        'hot_foil',
+        self::LASER_SILVER_HOT_FOIL_CODE,
+    ];
 
     public const CLASSIC_STANDARD_STANDARD_SIZE_DESCRIPTION = '2.0 x 3.5 inches';
 
@@ -1071,18 +1094,26 @@ final class BusinessCardOptionCatalog
             if (is_array($options[$groupKey] ?? null)) {
                 $options[$groupKey] = self::appendLaserSilverHotFoil(
                     $options[$groupKey],
+                    $groupKey === 'hot_foil',
                 );
             }
         }
 
         if (is_array($options['option_groups'] ?? null)) {
             foreach ($options['option_groups'] as $index => $group) {
-                if (! is_array($group) || ! in_array($group['key'] ?? null, ['special_finish', 'hot_foil'], true)) {
+                if (! is_array($group)) {
+                    continue;
+                }
+
+                $groupKey = $group['key'] ?? $group['row_key'] ?? null;
+
+                if (! in_array($groupKey, ['special_finish', 'hot_foil'], true)) {
                     continue;
                 }
 
                 $options['option_groups'][$index] = self::appendLaserSilverHotFoil(
                     $group,
+                    $groupKey === 'hot_foil',
                 );
             }
         }
@@ -1094,17 +1125,33 @@ final class BusinessCardOptionCatalog
      * @param  array<string|int, mixed>  $group
      * @return array<string|int, mixed>
      */
-    private static function appendLaserSilverHotFoil(array $group): array
-    {
+    private static function appendLaserSilverHotFoil(
+        array $group,
+        bool $isHotFoilGroup = false,
+    ): array {
         $isCanonicalGroup = array_key_exists('values', $group);
         $values = $isCanonicalGroup ? ($group['values'] ?? null) : $group;
 
-        if (! is_array($values) || $values === [] || ! self::hasFoilValues($values)) {
+        if (! is_array($values)) {
+            return $group;
+        }
+
+        if (
+            ! $isHotFoilGroup
+            && ! self::hasHotFoilValues($values)
+            && ! self::hasHotFoilGroupMetadata($group)
+        ) {
             return $group;
         }
 
         foreach ($values as $value) {
-            if (is_array($value) && ($value['code'] ?? null) === self::LASER_SILVER_HOT_FOIL_CODE) {
+            if (
+                (is_array($value) && ($value['code'] ?? null) === self::LASER_SILVER_HOT_FOIL_CODE)
+                || (
+                    is_scalar($value)
+                    && self::normalizeOptionToken($value) === self::LASER_SILVER_HOT_FOIL_CODE
+                )
+            ) {
                 return $group;
             }
         }
@@ -1140,6 +1187,77 @@ final class BusinessCardOptionCatalog
         }
 
         return $group;
+    }
+
+    /**
+     * Return whether a group contains a hot-foil value. Cold foil is kept out
+     * so a cold-only special-finish group does not receive a hot-foil color.
+     *
+     * @param  array<int|string, mixed>  $values
+     */
+    private static function hasHotFoilValues(array $values): bool
+    {
+        foreach ($values as $value) {
+            $parts = is_array($value)
+                ? [
+                    (string) ($value['code'] ?? ''),
+                    (string) ($value['name'] ?? ''),
+                    (string) ($value['label'] ?? ''),
+                    (string) ($value['description'] ?? ''),
+                ]
+                : [(string) $value];
+            $text = strtolower(implode(' ', array_filter($parts)));
+            $code = is_array($value)
+                ? self::normalizeOptionToken($value['code'] ?? null)
+                : self::normalizeOptionToken($value);
+
+            if (in_array($code, self::HOT_FOIL_CODES, true)) {
+                return true;
+            }
+
+            $isColdFoil = str_contains($text, 'cold foil')
+                || str_contains($text, 'cold_foil')
+                || str_contains($text, 'coldfoil')
+                || str_contains($text, '冷烫');
+
+            if (
+                str_contains($text, 'hot foil')
+                || str_contains($text, 'hot_foil')
+                || str_contains($text, 'hotfoil')
+                || str_contains($text, '热烫')
+                || str_contains($text, '烫金')
+                || str_contains($text, '烫银')
+                || (str_contains($text, 'foil') && ! $isColdFoil)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Some canonical payloads name the group "Hot Foil" but have not yet
+     * populated its values. Treat that metadata as enough to add the shared
+     * value, while leaving a generic "Special Finish" group untouched.
+     *
+     * @param  array<string|int, mixed>  $group
+     */
+    private static function hasHotFoilGroupMetadata(array $group): bool
+    {
+        $text = strtolower(implode(' ', array_filter([
+            (string) ($group['key'] ?? ''),
+            (string) ($group['label'] ?? ''),
+            (string) ($group['name'] ?? ''),
+            (string) ($group['description'] ?? ''),
+        ])));
+
+        return str_contains($text, 'hot foil')
+            || str_contains($text, 'hot_foil')
+            || str_contains($text, 'hotfoil')
+            || str_contains($text, '热烫')
+            || str_contains($text, '烫金')
+            || str_contains($text, '烫银');
     }
 
     /**
@@ -1283,9 +1401,11 @@ final class BusinessCardOptionCatalog
         }
         unset($group);
 
-        return self::normalizeSpecialFinishOptions(
-            self::normalizeOptionalPrintAndDrillingOptions(
-                self::normalizeSharedSwatchImages($normalized),
+        return self::normalizeHotFoilOptions(
+            self::normalizeSpecialFinishOptions(
+                self::normalizeOptionalPrintAndDrillingOptions(
+                    self::normalizeSharedSwatchImages($normalized),
+                ),
             ),
         );
     }
@@ -1856,8 +1976,7 @@ final class BusinessCardOptionCatalog
     private static function hotFoilValues(
         array $options,
         string $groupKey = 'special_finish',
-    ): array
-    {
+    ): array {
         $swatches = '/images/product-options/business-cards/swatches/';
         $foils = [
             ['code' => 'black_gold', 'label' => 'Black Gold', 'swatch_image' => $swatches.'black-gold.png'],

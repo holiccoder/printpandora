@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductConfigurationService;
+use App\Support\BusinessCardOptionCatalog;
 use App\Support\ProductImagePolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -75,7 +76,7 @@ class ProductConfigurationServiceTest extends TestCase
         $this->assertSame([], data_get($state, 'pricing.quantity_price_table'));
         $this->assertSame([], data_get($state, 'pricing.rules'));
         $this->assertCount(5, $state['options']);
-        $this->assertCount(30, $state['media']['gallery_rules']);
+        $this->assertCount(31, $state['media']['gallery_rules']);
         $this->assertSame([], $state['faq']);
         $this->assertArrayNotHasKey('detail_sections', $state);
     }
@@ -795,7 +796,7 @@ class ProductConfigurationServiceTest extends TestCase
         $this->assertTrue(data_get($saved->product_config, 'detail_sections.keep'));
     }
 
-    public function test_shared_foil_primary_images_apply_to_eligible_cards_but_not_pvc_or_metal(): void
+    public function test_shared_foil_primary_images_apply_to_eligible_cards_and_laser_silver_covers_hot_foil_products(): void
     {
         $eligible = new Product([
             'name' => 'Standard Quality Business Cards',
@@ -866,12 +867,62 @@ class ProductConfigurationServiceTest extends TestCase
                 $excluded['primary'],
                 data_get($rules->firstWhere('id', 'existing-foil-rule'), 'primary'),
             );
-            $this->assertFalse(
-                $rules->contains(fn (mixed $rule): bool => str_contains(
-                    (string) data_get($rule, 'primary'),
-                    '/images/products/classic-solid/user-',
-                )),
-            );
+
+            if ($excluded['slug'] === 'standard-pvc-card') {
+                $laserRule = $rules->firstWhere('id', 'shared-foil-laser_silver');
+
+                $this->assertSame(
+                    ['special_finish' => 'laser_silver'],
+                    data_get($laserRule, 'match'),
+                );
+                $this->assertSame(
+                    '/images/products/classic-solid/user-hot-laser-silver.png',
+                    data_get($laserRule, 'images.0'),
+                );
+                $this->assertSame(
+                    '/images/products/classic-solid/user-hot-laser-silver.png',
+                    data_get($laserRule, 'primary'),
+                );
+            } else {
+                $this->assertFalse(
+                    $rules->contains(fn (mixed $rule): bool => str_contains(
+                        (string) data_get($rule, 'primary'),
+                        '/images/products/classic-solid/user-',
+                    )),
+                );
+            }
         }
+    }
+
+    public function test_laser_silver_is_added_to_legacy_hot_foil_groups_and_not_cold_only_groups(): void
+    {
+        $normalized = BusinessCardOptionCatalog::normalizeHotFoilOptions([
+            'special_finish' => [
+                'values' => [
+                    ['code' => 'bright_gold'],
+                ],
+            ],
+            'cold_only' => [
+                'values' => [
+                    ['code' => 'cold_bright_gold', 'description' => 'Cold Bright Gold foil.'],
+                ],
+            ],
+            'hot_foil' => [
+                'values' => [],
+            ],
+        ]);
+
+        $this->assertSame(
+            ['bright_gold', 'laser_silver'],
+            data_get($normalized, 'special_finish.values.*.code'),
+        );
+        $this->assertSame(
+            ['laser_silver'],
+            data_get($normalized, 'hot_foil.values.*.code'),
+        );
+        $this->assertSame(
+            ['cold_bright_gold'],
+            data_get($normalized, 'cold_only.values.*.code'),
+        );
     }
 }
