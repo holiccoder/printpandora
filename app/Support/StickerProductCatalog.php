@@ -18,9 +18,9 @@ final class StickerProductCatalog
 
     public const START_QUANTITY = 50;
 
-    private const SIZE_SWATCH_IMAGE = '/images/product-options/stickers/square-corner.svg';
-
     private const SHAPE_SWATCH_BASE = '/images/product-options/stickers/shapes';
+
+    private const SIZE_SWATCH_BASE = '/images/product-options/stickers/size-swatches';
 
     /**
      * Public route segments keyed by the internal product slugs.
@@ -168,8 +168,7 @@ final class StickerProductCatalog
                 'bullet_points' => [
                     'Square-corner or die-cut shapes',
                     'Six practical paper materials',
-                    '2 x 2 in through 5 x 5 in standard sizes',
-                    'Custom sizes available',
+                    'Six rectangular sizes from 1 x 2 in to 4 x 6 in',
                 ],
                 'meta_description' => 'Classic custom stickers in coated, kraft, Avery, and writable paper stocks.',
                 'base_price' => 10.0,
@@ -195,8 +194,7 @@ final class StickerProductCatalog
                 'bullet_points' => [
                     'Square-corner or die-cut shapes',
                     'Eight textured and specialty paper materials',
-                    '2 x 2 in through 5 x 5 in standard sizes',
-                    'Custom sizes available',
+                    'Six rectangular sizes from 1 x 2 in to 4 x 6 in',
                 ],
                 'meta_description' => 'Premium custom stickers in textured, pearl, cotton-fiber, and specialty paper stocks.',
                 'base_price' => 14.0,
@@ -224,8 +222,7 @@ final class StickerProductCatalog
                 'bullet_points' => [
                     'Square-corner or die-cut shapes',
                     'Six metallic, synthetic, and transparent materials',
-                    '2 x 2 in through 5 x 5 in standard sizes',
-                    'Custom sizes available',
+                    'Six rectangular sizes from 1 x 2 in to 4 x 6 in',
                 ],
                 'meta_description' => 'Super custom stickers in gold-sprinkled, metallic, synthetic PP, and transparent stocks.',
                 'base_price' => 18.0,
@@ -276,7 +273,7 @@ final class StickerProductCatalog
                     'label' => 'Size',
                     'type' => 'select',
                     'required' => true,
-                    'default' => '2x2',
+                    'default' => '1x2',
                     'values' => self::sizeValues(),
                 ],
                 'shape' => [
@@ -376,50 +373,56 @@ final class StickerProductCatalog
     /**
      * @return list<array<string, mixed>>
      */
-    private static function sizeValues(): array
+    public static function sizeValues(): array
     {
         $sizes = [
             [
-                'code' => '2x2',
-                'label' => '2 x 2 in',
-                'description' => '2 x 2 inches',
+                'code' => '1x2',
+                'label' => '1 x 2 in',
+                'description' => '1 x 2 inches',
                 'width' => '2.00',
-                'height' => '2.00',
-                'swatch_image' => self::SIZE_SWATCH_IMAGE,
+                'height' => '1.00',
+                'swatch_image' => self::SIZE_SWATCH_BASE.'/1-x-2-in.webp',
             ],
             [
-                'code' => '3x3',
-                'label' => '3 x 3 in',
-                'description' => '3 x 3 inches',
+                'code' => '1x2_8',
+                'label' => '1 x 2.8 in',
+                'description' => '1 x 2.8 inches',
+                'width' => '2.80',
+                'height' => '1.00',
+                'swatch_image' => self::SIZE_SWATCH_BASE.'/1-x-2-8-in.webp',
+            ],
+            [
+                'code' => '1_5x5_5',
+                'label' => '1.5 x 5.5 in',
+                'description' => '1.5 x 5.5 inches',
+                'width' => '5.50',
+                'height' => '1.50',
+                'swatch_image' => self::SIZE_SWATCH_BASE.'/1-5-x-5-5-in.webp',
+            ],
+            [
+                'code' => '2x3',
+                'label' => '2 x 3 in',
+                'description' => '2 x 3 inches',
                 'width' => '3.00',
-                'height' => '3.00',
-                'swatch_image' => self::SIZE_SWATCH_IMAGE,
+                'height' => '2.00',
+                'swatch_image' => self::SIZE_SWATCH_BASE.'/2-x-3-in.webp',
             ],
             [
-                'code' => '4x4',
-                'label' => '4 x 4 in',
-                'description' => '4 x 4 inches',
+                'code' => '3x4',
+                'label' => '3 x 4 in',
+                'description' => '3 x 4 inches',
                 'width' => '4.00',
+                'height' => '3.00',
+                'swatch_image' => self::SIZE_SWATCH_BASE.'/3-x-4-in.webp',
+            ],
+            [
+                'code' => '4x6',
+                'label' => '4 x 6 in',
+                'description' => '4 x 6 inches',
+                'width' => '6.00',
                 'height' => '4.00',
-                'swatch_image' => self::SIZE_SWATCH_IMAGE,
-            ],
-            [
-                'code' => '5x5',
-                'label' => '5 x 5 in',
-                'description' => '5 x 5 inches',
-                'width' => '5.00',
-                'height' => '5.00',
-                'swatch_image' => self::SIZE_SWATCH_IMAGE,
-            ],
-            [
-                'code' => 'custom',
-                'label' => 'Custom Size',
-                'description' => '18 x 18 mm minimum; up to 430 x 301 mm.',
-                'min_width' => '0.71',
-                'max_width' => '16.93',
-                'min_height' => '0.71',
-                'max_height' => '11.85',
-                'swatch_image' => self::SIZE_SWATCH_IMAGE,
+                'swatch_image' => self::SIZE_SWATCH_BASE.'/4-x-6-in.webp',
             ],
         ];
 
