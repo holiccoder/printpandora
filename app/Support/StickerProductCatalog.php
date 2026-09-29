@@ -20,6 +20,8 @@ final class StickerProductCatalog
 
     private const SIZE_SWATCH_IMAGE = '/images/product-options/stickers/square-corner.svg';
 
+    private const SHAPE_SWATCH_BASE = '/images/product-options/stickers/shapes';
+
     /**
      * Public route segments keyed by the internal product slugs.
      *
@@ -282,20 +284,7 @@ final class StickerProductCatalog
                     'type' => 'select',
                     'required' => true,
                     'default' => 'square_corner',
-                    'values' => [
-                        [
-                            'code' => 'square_corner',
-                            'label' => 'Square Corner',
-                            'description' => 'Clean square corners.',
-                            'swatch_image' => '/images/product-options/stickers/square-corner.svg',
-                        ],
-                        [
-                            'code' => 'die_cut',
-                            'label' => 'Die Cut',
-                            'description' => 'Cut to the outline of your artwork.',
-                            'swatch_image' => '/images/product-options/stickers/die-cut.svg',
-                        ],
-                    ],
+                    'values' => self::shapeValues(),
                 ],
                 'material' => [
                     'label' => 'Material',
@@ -444,5 +433,38 @@ final class StickerProductCatalog
 
             return $size;
         }, $sizes);
+    }
+
+    /**
+     * @return list<array{code: string, label: string, description: string, swatch_image: string}>
+     */
+    public static function shapeValues(): array
+    {
+        return [
+            [
+                'code' => 'die_cut',
+                'label' => 'Any Shape',
+                'description' => 'Cut to any custom outline of your artwork.',
+                'swatch_image' => self::SHAPE_SWATCH_BASE.'/any-shape.png',
+            ],
+            [
+                'code' => 'round',
+                'label' => 'Round',
+                'description' => 'A clean circular sticker shape.',
+                'swatch_image' => self::SHAPE_SWATCH_BASE.'/round.png',
+            ],
+            [
+                'code' => 'rounded_corner',
+                'label' => 'Rounded Corner',
+                'description' => 'A rectangle with softly rounded corners.',
+                'swatch_image' => self::SHAPE_SWATCH_BASE.'/rounded-corner.png',
+            ],
+            [
+                'code' => 'square_corner',
+                'label' => 'Square Corner',
+                'description' => 'A rectangle with clean square corners.',
+                'swatch_image' => self::SHAPE_SWATCH_BASE.'/square-corner.png',
+            ],
+        ];
     }
 }

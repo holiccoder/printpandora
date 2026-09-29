@@ -37,17 +37,36 @@ class StickerProductTest extends TestCase
             ])->count(),
         );
 
-        $product = Product::where('slug', 'premium-stickers')->firstOrFail();
-        $config = $product->product_config;
-
         $this->assertSame(
             ['2x2', '3x3', '4x4', '5x5', 'custom'],
-            data_get($config, 'options.sizes.values.*.code'),
+            data_get(
+                Product::where('slug', 'premium-stickers')->firstOrFail()->product_config,
+                'options.sizes.values.*.code',
+            ),
         );
-        $this->assertSame(
-            ['square_corner', 'die_cut'],
-            data_get($config, 'options.shape.values.*.code'),
-        );
+
+        $expectedShapeCodes = ['die_cut', 'round', 'rounded_corner', 'square_corner'];
+        $expectedShapeSwatches = [
+            '/images/product-options/stickers/shapes/any-shape.png',
+            '/images/product-options/stickers/shapes/round.png',
+            '/images/product-options/stickers/shapes/rounded-corner.png',
+            '/images/product-options/stickers/shapes/square-corner.png',
+        ];
+
+        foreach (['classic-stickers', 'premium-stickers', 'super-stickers'] as $slug) {
+            $config = Product::where('slug', $slug)->firstOrFail()->product_config;
+
+            $this->assertSame(
+                $expectedShapeCodes,
+                data_get($config, 'options.shape.values.*.code'),
+            );
+            $this->assertSame(
+                $expectedShapeSwatches,
+                data_get($config, 'options.shape.values.*.swatch_image'),
+            );
+        }
+
+        $config = Product::where('slug', 'premium-stickers')->firstOrFail()->product_config;
         $this->assertSame(
             [
                 'off_white_grass_scented',
@@ -91,10 +110,21 @@ class StickerProductTest extends TestCase
         $this->assertNotNull($options);
         $sizes = collect($options['option_groups'])
             ->firstWhere('key', 'sizes')['values'];
+        $shapes = collect($options['option_groups'])
+            ->firstWhere('key', 'shape')['values'];
 
         $this->assertSame(0.00258064, $sizes[0]['area_sq_m']);
         $this->assertSame('18 x 18 mm minimum; up to 430 x 301 mm.', $sizes[4]['description']);
         $this->assertSame(7, count($options['galleries']));
+        $this->assertSame(
+            [
+                '/images/product-options/stickers/shapes/any-shape.png',
+                '/images/product-options/stickers/shapes/round.png',
+                '/images/product-options/stickers/shapes/rounded-corner.png',
+                '/images/product-options/stickers/shapes/square-corner.png',
+            ],
+            array_column($shapes, 'swatch_image'),
+        );
 
         foreach ([
             '/stickers/classic' => 'classic-stickers',
