@@ -127,6 +127,36 @@ final class StickerProductCatalog
     }
 
     /**
+     * @return array<string, string>
+     */
+    public static function freeSampleSection(): array
+    {
+        return [
+            'heading' => 'Free sample',
+            'body' => 'New to InkPavo? See our full print range in all the possible variations of shape, paper stock & finishes for free.',
+            'cta_label' => 'Get your sample pack',
+            'cta_href' => '/free-sample-pack',
+            'image_url' => '/images/home/sample-pack-banner.png',
+            'image_alt' => 'Person in a denim jacket pulling a yellow card from a white sample pack folder on a light wood tabletop',
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function stickerTemplatesSection(): array
+    {
+        return [
+            'heading' => 'Vinyl Rectangular Sticker templates',
+            'body' => 'You can use our design templates just as they are. Or adjust them to suit your style.',
+            'cta_label' => 'Browse Vinyl Rectangular Sticker templates >',
+            'cta_href' => '/design-templates/vinyl-rectangular-stickers',
+            'image_url' => '/images/product-detail/stickers/vinyl-rectangular-sticker-templates.webp',
+            'image_alt' => 'A flat-lay of colorful vinyl rectangular sticker templates, labels, and sample designs.',
+        ];
+    }
+
+    /**
      * @return list<array<string, mixed>>
      */
     public static function definitions(): array
@@ -338,6 +368,8 @@ final class StickerProductCatalog
             'faq' => self::FAQ_ITEMS,
             'detail_sections' => [
                 'design_specifications' => PrintDesignSpecifications::businessCards(),
+                'free_sample' => self::freeSampleSection(),
+                'sticker_templates' => self::stickerTemplatesSection(),
             ],
         ];
 
@@ -455,16 +487,10 @@ final class StickerProductCatalog
     {
         return [
             [
-                'code' => 'die_cut',
-                'label' => 'Any Shape',
-                'description' => 'Cut to any custom outline of your artwork.',
-                'swatch_image' => self::SHAPE_SWATCH_BASE.'/any-shape.png',
-            ],
-            [
-                'code' => 'round',
-                'label' => 'Round',
-                'description' => 'A clean circular sticker shape.',
-                'swatch_image' => self::SHAPE_SWATCH_BASE.'/round.png',
+                'code' => 'square_corner',
+                'label' => 'Square Corner',
+                'description' => 'A rectangle with clean square corners.',
+                'swatch_image' => self::SHAPE_SWATCH_BASE.'/square-corner.png',
             ],
             [
                 'code' => 'rounded_corner',
@@ -473,10 +499,16 @@ final class StickerProductCatalog
                 'swatch_image' => self::SHAPE_SWATCH_BASE.'/rounded-corner.png',
             ],
             [
-                'code' => 'square_corner',
-                'label' => 'Square Corner',
-                'description' => 'A rectangle with clean square corners.',
-                'swatch_image' => self::SHAPE_SWATCH_BASE.'/square-corner.png',
+                'code' => 'round',
+                'label' => 'Round',
+                'description' => 'A clean circular sticker shape.',
+                'swatch_image' => self::SHAPE_SWATCH_BASE.'/round.png',
+            ],
+            [
+                'code' => 'die_cut',
+                'label' => 'Any Shape',
+                'description' => 'Cut to any custom outline of your artwork.',
+                'swatch_image' => self::SHAPE_SWATCH_BASE.'/any-shape.png',
             ],
         ];
     }

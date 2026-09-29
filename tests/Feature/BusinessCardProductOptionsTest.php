@@ -549,7 +549,7 @@ class BusinessCardProductOptionsTest extends TestCase
                 'Matte',
                 'Gloss',
                 'Starlight Film',
-                'Soft-Touch Film',
+                'Soft-Touch',
                 'Laser Film',
             ],
             data_get($config, 'options.paper_finish.values.*.label'),

@@ -8,6 +8,10 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Notifications\CustomerNotification;
 use App\Services\DiscountService;
+use App\Services\OrderFileService;
+use App\Services\OrderWeightService;
+use App\Services\ProductImageService;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -82,45 +86,223 @@ class DashboardController extends Controller
     /**
      * Full orders list — filterable by status, descending by creation date, paginated.
      */
-    public function orders(Request $request): Response
-    {
+    public function orders(
+        Request $request,
+        OrderFileService $orderFiles,
+        OrderWeightService $weights,
+    ): Response {
         $status = $request->query('status');
         $status = is_string($status) && array_key_exists($status, Order::statusOptions())
             ? $status
             : null;
 
-        $orders = Order::with('items.product')
+        $filters = [
+            'order_time_start' => $this->dateFilter($request, 'order_time_start', 'order_start_date'),
+            'order_time_end' => $this->dateFilter($request, 'order_time_end', 'order_end_date'),
+            'keyword' => $this->stringFilter($request->query('keyword')),
+            'shipping_number' => $this->stringFilter($request->query('shipping_number')),
+        ];
+
+        $orders = Order::with([
+            'items.product',
+            'designServiceRequests',
+            'productDesignRequests',
+        ])
             ->where('user_id', $request->user()->id)
             ->when($status !== null, function (Builder $query) use ($status): void {
                 $query->where('status', $status);
             })
+            ->when($filters['order_time_start'] !== '', function (Builder $query) use ($filters): void {
+                $query->whereDate('created_at', '>=', $filters['order_time_start']);
+            })
+            ->when($filters['order_time_end'] !== '', function (Builder $query) use ($filters): void {
+                $query->whereDate('created_at', '<=', $filters['order_time_end']);
+            })
+            ->when($filters['keyword'] !== '', function (Builder $query) use ($filters): void {
+                $keyword = $filters['keyword'];
+                $orderId = ltrim($keyword, '#');
+                $productLike = '%'.$keyword.'%';
+
+                $query->where(function (Builder $query) use ($orderId, $productLike): void {
+                    if (ctype_digit($orderId)) {
+                        $query->whereKey((int) $orderId)
+                            ->orWhereHas('items.product', function (Builder $productQuery) use ($productLike): void {
+                                $productQuery->where('name', 'like', $productLike);
+                            });
+
+                        return;
+                    }
+
+                    $query->whereHas('items.product', function (Builder $productQuery) use ($productLike): void {
+                        $productQuery->where('name', 'like', $productLike);
+                    });
+                });
+            })
+            ->when($filters['shipping_number'] !== '', function (Builder $query) use ($filters): void {
+                $shippingLike = '%'.$filters['shipping_number'].'%';
+
+                $query->where(function (Builder $query) use ($shippingLike): void {
+                    $query->where('tracking_number', 'like', $shippingLike)
+                        ->orWhere('fourpx_ref_no', 'like', $shippingLike)
+                        ->orWhere('fourpx_consignment_no', 'like', $shippingLike)
+                        ->orWhere('fourpx_tracking_number', 'like', $shippingLike);
+                });
+            })
             ->latest()
             ->paginate(15)
             ->withQueryString()
-            ->through(fn (Order $order) => [
-                'id' => $order->id,
-                'status' => $order->status,
-                'tracking_number' => $order->tracking_number,
-                'tracking_url' => $order->tracking_url,
-                'invoice_url' => $order->payment_status === 'paid'
-                    ? route('dashboard.orders.invoice', ['id' => $order->id])
-                    : null,
-                'total' => (float) $order->total,
-                'item_count' => $order->items->sum('quantity'),
-                'product_names' => $order->items
-                    ->map(fn (OrderItem $item): ?string => $item->product?->name)
-                    ->filter()
-                    ->values()
-                    ->all(),
-                'notes' => $order->notes,
-                'created_at' => $order->created_at?->toIso8601String(),
-            ]);
+            ->through(function (Order $order) use ($orderFiles, $weights): array {
+                return [
+                    'id' => $order->id,
+                    'status' => $order->status,
+                    'tracking_number' => $order->tracking_number,
+                    'tracking_url' => $order->tracking_url,
+                    'invoice_url' => $order->payment_status === 'paid'
+                        ? route('dashboard.orders.invoice', ['id' => $order->id])
+                        : null,
+                    'total' => (float) $order->total,
+                    'item_count' => $order->items->sum('quantity'),
+                    'weight' => $order->shipping_weight_grams
+                        ?: $weights->wholeGrams($weights->forOrder($order)),
+                    'product_names' => $order->items
+                        ->map(fn (OrderItem $item): ?string => $item->product?->name)
+                        ->filter()
+                        ->values()
+                        ->all(),
+                    'products' => $order->items
+                        ->map(function (OrderItem $item): ?array {
+                            if (! $item->product) {
+                                return null;
+                            }
+
+                            $options = is_array($item->options) ? $item->options : [];
+
+                            return [
+                                'name' => $item->product->name,
+                                'options' => collect($options)
+                                    ->reject(static fn (mixed $value, string|int $key): bool => $key === 'design_service_request_id'
+                                        || $value === null
+                                        || $value === ''
+                                        || $value === [])
+                                    ->all(),
+                                'weight' => $item->product->weight,
+                            ];
+                        })
+                        ->filter()
+                        ->values()
+                        ->all(),
+                    'notes' => $order->notes,
+                    'created_at' => $order->created_at?->toIso8601String(),
+                    ...$orderFiles->forOrder($order),
+                ];
+            });
 
         return Inertia::render('dashboard/orders', [
             'orders' => $orders,
             'statusOptions' => Order::statusOptions(),
             'selectedStatus' => $status,
+            'filters' => $filters,
         ]);
+    }
+
+    /**
+     * Show one of the signed-in customer's orders inside the dashboard.
+     */
+    public function showOrder(
+        Request $request,
+        int $id,
+        OrderFileService $orderFiles,
+        ProductImageService $productImages,
+    ): Response {
+        $order = Order::with([
+            'items.product',
+            'discountRedemption',
+            'designServiceRequests',
+            'productDesignRequests',
+        ])
+            ->where('user_id', $request->user()->id)
+            ->findOrFail($id);
+
+        return Inertia::render('dashboard/order-show', [
+            'order' => [
+                'id' => $order->id,
+                'status' => $order->status,
+                'total' => (float) $order->total,
+                'created_at' => $order->created_at?->toIso8601String(),
+                'notes' => $order->notes,
+                'coupon_code' => $order->discountRedemption?->code,
+                'items' => $order->items->map(function (OrderItem $item) use ($productImages): array {
+                    $product = $item->product;
+
+                    return [
+                        'id' => $item->id,
+                        'quantity' => (int) $item->quantity,
+                        'unit_price' => (float) $item->unit_price,
+                        'subtotal' => (float) $item->subtotal,
+                        'options' => collect(is_array($item->options) ? $item->options : [])
+                            ->reject(static fn (mixed $value, string|int $key): bool => $key === 'design_service_request_id'
+                                || $value === null
+                                || $value === ''
+                                || $value === [])
+                            ->all(),
+                        'product' => $product ? [
+                            'id' => $product->id,
+                            'name' => $product->name,
+                            'slug' => $product->slug,
+                            'featured_image' => $productImages->featuredImageUrl($product),
+                        ] : null,
+                    ];
+                })->values()->all(),
+                'files' => $orderFiles->forOrder($order),
+                'contact' => [
+                    'name' => $order->customer_name,
+                    'email' => $order->customer_email,
+                    'phone' => $order->customer_phone,
+                ],
+                'address' => [
+                    'line' => $order->shipping_address,
+                    'city' => $order->shipping_city,
+                    'state' => $order->shipping_state,
+                    'zip' => $order->shipping_zip,
+                    'country' => $order->shipping_country,
+                ],
+                'shipping' => [
+                    'carrier' => $order->shipping_carrier,
+                    'method' => $order->shipping_method,
+                    'expenses' => (float) $order->shipping_fee,
+                    'number' => $order->tracking_number
+                        ?: $order->fourpx_tracking_number
+                        ?: $order->fourpx_consignment_no
+                        ?: $order->fourpx_ref_no,
+                    'tracking_link' => $order->tracking_url,
+                ],
+                'invoice_url' => $order->payment_status === 'paid'
+                    ? route('dashboard.orders.invoice', ['id' => $order->id])
+                    : null,
+            ],
+        ]);
+    }
+
+    private function stringFilter(mixed $value): string
+    {
+        return is_string($value) ? trim($value) : '';
+    }
+
+    private function dateFilter(Request $request, string $key, string $alias): string
+    {
+        $value = $request->query($key, $request->query($alias));
+
+        if (! is_string($value) || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            return '';
+        }
+
+        try {
+            $date = CarbonImmutable::createFromFormat('!Y-m-d', $value);
+        } catch (\Throwable) {
+            return '';
+        }
+
+        return $date instanceof CarbonImmutable ? $date->format('Y-m-d') : '';
     }
 
     /**

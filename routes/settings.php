@@ -33,5 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('settings/affiliate', [AffiliateController::class, 'edit'])
         ->name('affiliate.edit');
     Route::post('settings/affiliate', [AffiliateController::class, 'store'])->name('affiliate.store');
+    Route::put('settings/affiliate/withdraw-method', [AffiliateController::class, 'saveWithdrawMethod'])
+        ->name('affiliate.withdraw-method.update');
     Route::post('settings/affiliate/payout', [AffiliateController::class, 'requestPayout'])->name('affiliate.payout.request');
 });

@@ -1292,9 +1292,45 @@ class ProductConfigurationService
         );
         $options['show_gang_run_printing'] = $this->supportsGangRunPrinting($product);
 
+        $options = $this->withSharedBusinessCardDetailSections($options, $product);
+
         return $this->withResolvedStorefrontImages(
-            $this->withSharedBusinessCardDetailSections($options, $product),
+            $this->withSharedMoreGoodStuffSection($options),
         );
+    }
+
+    /**
+     * Make the shared cross-sell section available on every product page
+     * that does not already define one. Business-card pages are handled
+     * separately because their complete shared detail-section contract is
+     * applied above.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private function withSharedMoreGoodStuffSection(array $options): array
+    {
+        $details = is_array($options['detail_sections'] ?? null)
+            ? $options['detail_sections']
+            : [];
+
+        if (is_array($details['more_good_stuff'] ?? null)) {
+            return $options;
+        }
+
+        $shared = $this->content->section(
+            'product_detail_page.shared_detail_sections.business_cards.more_good_stuff',
+            [],
+        );
+
+        if (! is_array($shared)) {
+            return $options;
+        }
+
+        $details['more_good_stuff'] = $shared;
+        $options['detail_sections'] = $details;
+
+        return $options;
     }
 
     /**

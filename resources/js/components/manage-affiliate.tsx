@@ -38,6 +38,8 @@ type AffiliateData = {
     referral_code: string;
     commission_rate: number;
     status: string;
+    payment_method: string;
+    payment_details: string | null;
     total_earnings: number;
     paid_earnings: number;
     pending_earnings: number;
@@ -65,8 +67,8 @@ export default function ManageAffiliate({
     const joinForm = useForm({});
     const payoutForm = useForm({
         amount: '',
-        payment_method: 'paypal',
-        payment_details: '',
+        payment_method: affiliate?.payment_method ?? 'paypal',
+        payment_details: affiliate?.payment_details ?? '',
     });
 
     const copyLink = () => {
@@ -83,8 +85,14 @@ export default function ManageAffiliate({
         payoutForm.post('/settings/affiliate/payout', {
             onSuccess: () => {
                 setShowPayoutForm(false);
-                payoutForm.reset();
+                payoutForm.setData('amount', '');
             },
+        });
+    };
+
+    const saveWithdrawMethod = () => {
+        payoutForm.put('/settings/affiliate/withdraw-method', {
+            preserveScroll: true,
         });
     };
 
@@ -254,6 +262,16 @@ export default function ManageAffiliate({
                         )}
                     </div>
 
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={saveWithdrawMethod}
+                        disabled={payoutForm.processing}
+                    >
+                        {payoutForm.processing && <Spinner />}
+                        Save method
+                    </Button>
+
                     {affiliate.pending_earnings >= 10 ? (
                         !showPayoutForm ? (
                             <div className="space-y-3">
@@ -302,7 +320,7 @@ export default function ManageAffiliate({
                                         variant="ghost"
                                         onClick={() => {
                                             setShowPayoutForm(false);
-                                            payoutForm.reset();
+                                            payoutForm.setData('amount', '');
                                         }}
                                     >
                                         Cancel

@@ -14,6 +14,8 @@ class Affiliate extends Model
         'referral_code',
         'commission_rate',
         'status',
+        'payment_method',
+        'payment_details',
         'total_earnings',
         'paid_earnings',
     ];

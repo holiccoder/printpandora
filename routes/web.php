@@ -70,6 +70,9 @@ Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback']
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/orders', [DashboardController::class, 'orders'])->name('dashboard.orders');
+    Route::get('dashboard/orders/{id}', [DashboardController::class, 'showOrder'])
+        ->whereNumber('id')
+        ->name('dashboard.orders.show');
     Route::get('dashboard/discount-coupons', [DashboardController::class, 'discountCoupons'])
         ->name('dashboard.discount-coupons');
     Route::get('dashboard/notifications', [DashboardController::class, 'notifications'])
@@ -81,6 +84,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard/orders/{id}/invoice', [OrderController::class, 'downloadInvoice'])
         ->whereNumber('id')
         ->name('dashboard.orders.invoice');
+    Route::get('dashboard/orders/{id}/files/{file}', [OrderController::class, 'downloadOrderFile'])
+        ->whereNumber('id')
+        ->where('file', '[A-Za-z0-9_-]+')
+        ->name('dashboard.orders.file');
     Route::get('dashboard/profile', [DashboardController::class, 'profile'])->name('dashboard.profile');
     Route::patch('dashboard/profile', [DashboardController::class, 'updateProfile'])->name('dashboard.profile.update');
 });

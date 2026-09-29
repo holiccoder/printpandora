@@ -62,25 +62,34 @@ class FlyersAndBrochuresProductTest extends TestCase
             }
         }
 
-        $classicFinishes = data_get(
-            Product::query()->where('slug', 'classic-standard-flyers-and-brochures')->firstOrFail()->product_config,
-            'options.paper_finish.values',
-        );
-
-        $this->assertSame(
-            ['Matte Lamination', 'Gloss Lamination', 'Gloss Varnish', 'Soft-Touch Lamination'],
-            array_column($classicFinishes, 'label'),
-        );
-        $classicFinishSwatches = [
-            '/images/product-options/flyers-and-brochures/paper-finishes/matte-lamination.png',
-            '/images/product-options/flyers-and-brochures/paper-finishes/gloss-lamination.png',
-            '/images/product-options/flyers-and-brochures/paper-finishes/gloss-varnish.png',
-            '/images/product-options/flyers-and-brochures/paper-finishes/soft-touch-lamination.png',
+        $expectedFinishLabels = [
+            'Gloss Varnish',
         ];
-        $this->assertSame($classicFinishSwatches, array_column($classicFinishes, 'swatch_image'));
+        $expectedFinishSwatches = array_column(
+            data_get(
+                FlyersAndBrochuresProductCatalog::definition('classic-standard-flyers-and-brochures'),
+                'product_config.options.paper_finish.values',
+                [],
+            ),
+            'swatch_image',
+        );
+        foreach (['classic-standard-flyers-and-brochures'] as $slug) {
+            $product = Product::query()->where('slug', $slug)->firstOrFail();
+            $finishes = data_get($product->product_config, 'options.paper_finish.values');
 
-        foreach ($classicFinishSwatches as $swatch) {
-            $this->assertFileExists(public_path(ltrim($swatch, '/')));
+            $this->assertSame($expectedFinishLabels, array_column($finishes, 'label'));
+            $this->assertSame(['gloss_varnish'], array_column($finishes, 'code'));
+            $this->assertSame('gloss_varnish', data_get($product->product_config, 'options.paper_finish.default'));
+
+            foreach ($expectedFinishSwatches as $swatch) {
+                $this->assertFileExists(public_path(ltrim($swatch, '/')));
+            }
+
+            $storefrontOptions = app(ProductConfigurationService::class)->storefrontOptions($product);
+            $this->assertContains(
+                'paper_finish',
+                array_column($storefrontOptions['option_groups'] ?? [], 'key'),
+            );
         }
 
         foreach ([
@@ -159,7 +168,7 @@ class FlyersAndBrochuresProductTest extends TestCase
 
         $fixed = $pricing->validateOptions($product, [
             'sizes' => '105x148',
-            'paper_finish' => 'matte_lamination',
+            'paper_finish' => 'gloss_varnish',
             'folding' => 'half_fold',
             'quantity' => '200',
         ]);
@@ -171,7 +180,7 @@ class FlyersAndBrochuresProductTest extends TestCase
             'sizes' => 'custom',
             'custom_width' => '3.94',
             'custom_height' => '3.94',
-            'paper_finish' => 'matte_lamination',
+            'paper_finish' => 'gloss_varnish',
             'folding' => 'half_fold',
             'quantity' => '200',
         ]);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Shop;
 use App\Http\Controllers\Controller;
 use App\Models\DesignServiceRequest;
 use App\Models\Order;
+use App\Services\OrderFileService;
 use App\Services\OrderInvoiceService;
 use App\Services\ShippingService;
 use Carbon\CarbonImmutable;
@@ -65,6 +66,27 @@ class OrderController extends Controller
         return Storage::disk('public')->download(
             $path,
             $this->designServiceDownloadName($path, $attachment),
+        );
+    }
+
+    public function downloadOrderFile(
+        Request $request,
+        int $id,
+        string $file,
+        OrderFileService $orderFiles,
+    ): Response {
+        $order = Order::query()
+            ->where('user_id', $request->user()->id)
+            ->findOrFail($id);
+        $resolvedFile = $orderFiles->resolve($order, $file);
+
+        if ($resolvedFile === null) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download(
+            $resolvedFile['path'],
+            $resolvedFile['filename'],
         );
     }
 

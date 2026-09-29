@@ -46,4 +46,36 @@ class AffiliateSettingsTest extends TestCase
             'payment_method' => 'paypal',
         ]);
     }
+
+    public function test_affiliates_can_save_their_withdrawal_method_without_requesting_a_payout(): void
+    {
+        $user = User::factory()->create();
+        Affiliate::create([
+            'user_id' => $user->id,
+            'referral_code' => 'SAVEMETHOD',
+            'commission_rate' => 10,
+            'status' => 'active',
+            'total_earnings' => 0,
+            'paid_earnings' => 0,
+        ]);
+
+        $this->actingAs($user)
+            ->put(route('affiliate.withdraw-method.update'), [
+                'payment_method' => 'paypal',
+                'payment_details' => 'affiliate@example.com',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('affiliates', [
+            'user_id' => $user->id,
+            'payment_method' => 'paypal',
+            'payment_details' => 'affiliate@example.com',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('affiliate.edit'))
+            ->assertInertia(fn ($page) => $page
+                ->where('affiliate.payment_method', 'paypal')
+                ->where('affiliate.payment_details', 'affiliate@example.com'));
+    }
 }

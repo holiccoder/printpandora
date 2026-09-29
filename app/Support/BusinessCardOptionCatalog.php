@@ -2084,7 +2084,7 @@ final class BusinessCardOptionCatalog
             ],
             ['code' => 'starlight_film', 'label' => 'Starlight Film', 'description' => ''],
             ['code' => 'holographic_film', 'label' => 'Holographic Film', 'description' => ''],
-            ['code' => 'soft_touch_film', 'label' => 'Soft-Touch Film', 'description' => ''],
+            ['code' => 'soft_touch_film', 'label' => 'Soft-Touch', 'description' => ''],
         ];
 
         return array_map(

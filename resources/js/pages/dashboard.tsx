@@ -10,11 +10,8 @@ import {
 } from 'lucide-react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
-import StorefrontLayout from '@/layouts/storefront-layout';
-import {
-    ORDER_STATUS_COLORS,
-    orderStatusLabel,
-} from '@/lib/order-status';
+import DashboardLayout from '@/layouts/dashboard-layout';
+import { ORDER_STATUS_COLORS, orderStatusLabel } from '@/lib/order-status';
 
 const ACCENT = '#800020';
 
@@ -68,52 +65,45 @@ export default function Dashboard({
     const c = useContent('dashboard_index_page') as any;
 
     return (
-        <StorefrontLayout>
+        <DashboardLayout>
             <SEO title={c.seo.title} description={c.seo.description} />
 
-            <section className="bg-neutral-50">
-                <div className="mx-auto max-w-7xl px-4 py-10 lg:py-14">
-                    <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
-                        <div>
-                            <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
-                                {String(c.welcome_heading_template).replace(
-                                    '{user.name}',
-                                    user.name,
-                                )}
-                            </h1>
-                            <p className="mt-2 text-sm text-neutral-600 sm:text-base">
-                                {c.welcome_description}
-                            </p>
-                        </div>
-                        <Link
-                            href="/dashboard/discount-coupons"
-                            className="inline-flex items-center gap-1.5 text-sm font-semibold hover:underline"
-                            style={{ color: ACCENT }}
-                        >
-                            <TicketPercent className="size-4" />
-                            {c.discount_coupons_link}
-                        </Link>
-                    </header>
-
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                        <ProfileCard
-                            user={user}
-                            shippingAddress={shippingAddress}
-                            c={c.cards.profile}
-                        />
-                        <RecentOrdersCard
-                            orders={recentOrders}
-                            c={c.cards.recent_orders}
-                        />
-                        <SupportTicketsCard c={c.cards.support_tickets} />
-                        <AffiliateCard
-                            affiliate={affiliate}
-                            c={c.cards.affiliate}
-                        />
-                    </div>
+            <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
+                        {String(c.welcome_heading_template).replace(
+                            '{user.name}',
+                            user.name,
+                        )}
+                    </h1>
+                    <p className="mt-2 text-sm text-neutral-600 sm:text-base">
+                        {c.welcome_description}
+                    </p>
                 </div>
-            </section>
-        </StorefrontLayout>
+                <Link
+                    href="/dashboard/discount-coupons"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold hover:underline"
+                    style={{ color: ACCENT }}
+                >
+                    <TicketPercent className="size-4" />
+                    {c.discount_coupons_link}
+                </Link>
+            </header>
+
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <ProfileCard
+                    user={user}
+                    shippingAddress={shippingAddress}
+                    c={c.cards.profile}
+                />
+                <RecentOrdersCard
+                    orders={recentOrders}
+                    c={c.cards.recent_orders}
+                />
+                <SupportTicketsCard c={c.cards.support_tickets} />
+                <AffiliateCard affiliate={affiliate} c={c.cards.affiliate} />
+            </div>
+        </DashboardLayout>
     );
 }
 
@@ -256,32 +246,34 @@ function RecentOrdersCard({ orders, c }: { orders: RecentOrder[]; c: any }) {
             ) : (
                 <ul className="divide-y divide-neutral-100">
                     {orders.map((order) => (
-                        <li
-                            key={order.id}
-                            className="flex items-center justify-between py-3"
-                        >
-                            <div>
-                                <p className="text-sm font-semibold text-neutral-900">
-                                    {c.order_label_prefix}
-                                    {order.id}
-                                </p>
-                                <p className="text-xs text-neutral-500">
-                                    {order.created_at &&
-                                        new Date(
-                                            order.created_at,
-                                        ).toLocaleDateString()}{' '}
-                                    · {order.item_count}{' '}
-                                    {order.item_count === 1
-                                        ? c.item_singular
-                                        : c.item_plural}
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <StatusPill status={order.status} />
-                                <span className="text-sm font-semibold text-neutral-900">
-                                    ${order.total.toFixed(2)}
-                                </span>
-                            </div>
+                        <li key={order.id} className="group">
+                            <Link
+                                href={`/dashboard/orders/${order.id}`}
+                                className="flex items-center justify-between gap-3 py-3 hover:bg-neutral-50"
+                            >
+                                <div>
+                                    <p className="text-sm font-semibold text-neutral-900">
+                                        {c.order_label_prefix}
+                                        {order.id}
+                                    </p>
+                                    <p className="text-xs text-neutral-500">
+                                        {order.created_at &&
+                                            new Date(
+                                                order.created_at,
+                                            ).toLocaleDateString()}{' '}
+                                        · {order.item_count}{' '}
+                                        {order.item_count === 1
+                                            ? c.item_singular
+                                            : c.item_plural}
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <StatusPill status={order.status} />
+                                    <span className="text-sm font-semibold text-neutral-900">
+                                        ${order.total.toFixed(2)}
+                                    </span>
+                                </div>
+                            </Link>
                         </li>
                     ))}
                 </ul>

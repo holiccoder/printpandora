@@ -33,6 +33,15 @@ export interface DesignServiceBannerContent {
     image_alt: string;
 }
 
+export interface PromotionalBannerContent {
+    heading: string;
+    body: string;
+    cta_label: string;
+    cta_href: string;
+    image_url: string;
+    image_alt: string;
+}
+
 export interface PaperStockItem {
     id: string;
     name: string;
@@ -82,6 +91,8 @@ export interface ProductFeatureCardContent {
 export interface ProductDetailSections {
     feature_cards?: ProductFeatureCardContent[];
     design_specifications?: DesignSpecificationContent;
+    free_sample?: PromotionalBannerContent;
+    sticker_templates?: PromotionalBannerContent;
     design_service_banner?: DesignServiceBannerContent;
     paper_stocks?: PaperStockContent;
     more_good_stuff?: MoreGoodStuffContent;

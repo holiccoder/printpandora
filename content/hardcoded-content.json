@@ -2427,6 +2427,20 @@
             }
         ]
     },
+    "dashboard_navigation": {
+        "_source_file": "resources/js/layouts/dashboard-layout.tsx",
+        "title": "My account",
+        "aria_label": "User dashboard navigation",
+        "links": {
+            "overview": "Dashboard",
+            "orders": "My orders",
+            "notifications": "Notifications",
+            "discount_coupons": "Discount coupons",
+            "support_tickets": "Support tickets",
+            "affiliate": "Affiliate program",
+            "profile": "Edit profile"
+        }
+    },
     "dashboard_index_page": {
         "_source_file": "resources/js/pages/dashboard.tsx",
         "seo": {
@@ -2499,11 +2513,14 @@
         "empty_state_suffix": ".",
         "table_headers": {
             "order": "Order",
-            "date": "Date",
-            "products": "Products",
-            "status": "Status",
+              "date": "Date",
+              "products": "Products",
+              "options": "Options",
+              "weight": "Weight",
+              "status": "Status",
             "tracking": "Tracking",
             "note": "Order note",
+            "file_downloads": "File downloads",
             "total": "Total",
             "actions": "Actions"
         },
@@ -2511,8 +2528,34 @@
             "label": "Filter orders by status",
             "all": "All statuses"
         },
+        "filters": {
+            "title": "Filter orders",
+            "order_time": "Order time",
+            "start_date": "Start date",
+            "end_date": "End date",
+            "keyword": "Keyword",
+            "keyword_placeholder": "Order ID or product name",
+            "shipping_number": "Shipping number",
+            "shipping_number_placeholder": "Enter shipping number",
+            "apply": "Apply filters",
+            "reset": "Reset"
+        },
         "view_link": "View",
         "invoice_link": "Download invoice",
+        "file_downloads_link": "View files",
+        "file_downloads_modal": {
+            "title": "Files for order",
+            "description": "Download the files associated with this order.",
+            "uploaded_files": "File under review",
+            "awaiting_confirmation": "Files awaiting confirmation",
+            "confirmed_files": "Confirmed files",
+            "file_name": "File name",
+            "size": "Size",
+            "date": "Date and time",
+            "download": "Download",
+            "unavailable": "Unavailable",
+            "empty": "No files in this section."
+        },
         "tracking_link": "Track package",
         "pagination": {
             "showing": "Showing",
@@ -2520,6 +2563,61 @@
             "prev": "Prev",
             "next": "Next"
         }
+    },
+    "dashboard_order_show_page": {
+        "_source_file": "resources/js/pages/dashboard/order-show.tsx",
+        "seo_title_prefix": "Order #",
+        "seo_description": "View the details and progress of your InkPavo order.",
+        "back_link": "Back to my orders",
+        "page_heading_prefix": "Order #",
+        "placed_on_prefix": "Placed",
+        "current_stage": "Current stage",
+        "completed": "Completed",
+        "upcoming": "Upcoming",
+        "steps": {
+            "pending": "Pending payment",
+            "pending_review": "Files under review",
+            "pending_confirmation": "Files awaiting confirmation",
+            "confirmed": "Order confirmed",
+            "production": "In production",
+            "shipped": "Shipped"
+        },
+        "sections": {
+            "order_information": "Order information",
+            "design_files": "Design files",
+            "address_contact": "Address and contact",
+            "shipping": "Shipping"
+        },
+        "labels": {
+            "quantity": "Quantity",
+            "product_options": "Product options",
+            "order_note": "Order note",
+            "coupon_code": "Coupon code",
+            "order_total": "Order total",
+            "contact": "Contact information",
+            "address": "Customer address",
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "carrier": "Shipping carrier",
+            "shipping_expenses": "Shipping expenses",
+            "shipping_number": "Shipping number",
+            "tracking_link": "Tracking link",
+            "shipping_method": "Shipping method"
+        },
+        "file_sections": {
+            "uploaded_files": "Files under review",
+            "awaiting_confirmation": "Files awaiting confirmation",
+            "confirmed_files": "Confirmed files"
+        },
+        "download": "Download",
+        "unavailable": "Unavailable",
+        "no_files": "No files in this stage.",
+        "no_options": "No additional product options.",
+        "no_note": "No order note added.",
+        "no_coupon": "No coupon used.",
+        "not_available": "Not available yet",
+        "invoice_link": "Download invoice"
     },
     "dashboard_profile_page": {
         "_source_file": "resources/js/pages/dashboard/profile.tsx",

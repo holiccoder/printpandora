@@ -1213,7 +1213,7 @@ class BusinessCardProductUpdatesMigrationTest extends TestCase
         );
         $this->assertArrayNotHasKey('texture', $product->product_config['options']);
         $this->assertSame(
-            ['Matte', 'Gloss', 'Starlight Film', 'Soft-Touch Film', 'Laser Film'],
+            ['Matte', 'Gloss', 'Starlight Film', 'Soft-Touch', 'Laser Film'],
             data_get($product->product_config, 'options.paper_finish.values.*.label'),
         );
         $this->assertSame(

@@ -132,9 +132,12 @@ const OPTION_GROUP_FALLBACK_ORDER = Object.keys(OPTION_GROUP_ORDER).length + 1;
 import DesignSpecificationsSection from '@/components/product-detail/design-specifications-section';
 import DesignServiceBanner from '@/components/product-detail/design-service-banner';
 import PaperStockComparisonSection from '@/components/product-detail/paper-stock-comparison-section';
+import PostcardSizeShowcaseSection from '@/components/product-detail/postcard-size-showcase-section';
 import MoreGoodStuffSection from '@/components/product-detail/more-good-stuff-section';
 import ProductFaqSection from '@/components/product-detail/product-faq-section';
+import StickerTemplatesSection from '@/components/product-detail/sticker-templates-section';
 import LightboxGallery from '@/components/product-detail/lightbox-gallery';
+import SamplePackBanner from '@/components/sample-pack-banner';
 import type {
     ProductDetailSections,
     ProductFeatureCardContent,
@@ -799,6 +802,10 @@ export default function ShopShow({
         product.slug.includes('business-card') ||
         product.category?.slug.includes('business-card');
     const isStickerProduct = isStickerProductSlug(product.slug);
+    const isPostcardProduct =
+        product.category?.slug === 'cards-and-postcards' ||
+        product.category?.slug === 'postcards' ||
+        product.slug.endsWith('-postcards');
     const isFlyerProduct =
         product.category?.slug === 'flyers-brochures' ||
         product.slug.includes('flyer') ||
@@ -3492,6 +3499,20 @@ export default function ShopShow({
                             }
                         />
                     )}
+                    {productOptions.detail_sections.free_sample && (
+                        <section className="bg-[#f9f8f6] py-12 lg:py-16">
+                            <div className="product-detail-container mx-auto max-w-7xl px-4">
+                                <SamplePackBanner className="rounded-2xl" />
+                            </div>
+                        </section>
+                    )}
+                    {productOptions.detail_sections.sticker_templates && (
+                        <StickerTemplatesSection
+                            content={
+                                productOptions.detail_sections.sticker_templates
+                            }
+                        />
+                    )}
                     {productOptions.detail_sections.design_service_banner && (
                         <DesignServiceBanner
                             content={
@@ -3500,12 +3521,16 @@ export default function ShopShow({
                             }
                         />
                     )}
-                    {productOptions.detail_sections.paper_stocks && (
-                        <PaperStockComparisonSection
-                            content={
-                                productOptions.detail_sections.paper_stocks
-                            }
-                        />
+                    {isPostcardProduct ? (
+                        <PostcardSizeShowcaseSection />
+                    ) : (
+                        productOptions.detail_sections.paper_stocks && (
+                            <PaperStockComparisonSection
+                                content={
+                                    productOptions.detail_sections.paper_stocks
+                                }
+                            />
+                        )
                     )}
                     {productOptions.detail_sections.more_good_stuff && (
                         <MoreGoodStuffSection
@@ -4371,7 +4396,7 @@ function SpecialFinishChoiceTile({
                             aria-pressed={finishSide === option.value}
                             disabled={disabled}
                             onClick={() => onFinishSideChange(option.value)}
-                            className={`pointer-events-auto flex min-w-0 flex-1 items-center justify-center border px-2 py-1 text-center text-[10px] leading-tight font-semibold shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                            className={`pointer-events-auto flex min-w-0 flex-1 items-center justify-center border px-1 py-1 text-center text-[10px] leading-tight font-bold tracking-tight whitespace-nowrap uppercase shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                                 finishSide === option.value
                                     ? 'border-primary bg-primary text-primary-foreground hover:bg-[#800020]'
                                     : 'border-white/80 bg-white/90 text-neutral-800 backdrop-blur-sm hover:bg-white'

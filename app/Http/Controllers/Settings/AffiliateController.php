@@ -31,6 +31,8 @@ class AffiliateController extends Controller
                 'referral_code' => $affiliate->referral_code,
                 'commission_rate' => (float) $affiliate->commission_rate,
                 'status' => $affiliate->status,
+                'payment_method' => $affiliate->payment_method,
+                'payment_details' => $affiliate->payment_details,
                 'total_earnings' => (float) $affiliate->total_earnings,
                 'paid_earnings' => (float) $affiliate->paid_earnings,
                 'pending_earnings' => $affiliate->pendingEarnings(),
@@ -114,5 +116,19 @@ class AffiliateController extends Controller
         ]);
 
         return back()->with('success', 'Payout request submitted successfully.');
+    }
+
+    public function saveWithdrawMethod(Request $request): RedirectResponse
+    {
+        $affiliate = Affiliate::where('user_id', $request->user()->id)->firstOrFail();
+
+        $validated = $request->validate([
+            'payment_method' => 'required|string|in:paypal',
+            'payment_details' => 'required|email|max:255',
+        ]);
+
+        $affiliate->update($validated);
+
+        return back()->with('success', 'Withdrawal method saved successfully.');
     }
 }

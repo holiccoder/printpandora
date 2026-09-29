@@ -1,10 +1,10 @@
 export const ORDER_STATUS_LABELS: Record<string, string> = {
-    pending: '待付款',
-    pending_review: '待审核',
-    pending_confirmation: '待确认',
-    confirmed: '已确认',
-    production: '生产中',
-    shipped: '已发货',
+    pending: 'Pending Payment',
+    pending_review: 'Pending Review',
+    pending_confirmation: 'Pending Confirmation',
+    confirmed: 'Confirmed',
+    production: 'In Production',
+    shipped: 'Shipped',
 };
 
 export const ORDER_STATUS_COLORS: Record<string, string> = {

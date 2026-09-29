@@ -402,7 +402,7 @@ final class SolidQualityBusinessCardGallery
             'matte' => 'Matte',
             'gloss' => 'Gloss',
             'starry_film' => 'Starlight Film',
-            'soft_touch_film' => 'Soft-Touch Film',
+            'soft_touch_film' => 'Soft-Touch',
             'holo_film' => 'Laser Film',
         ];
 

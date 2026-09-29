@@ -536,6 +536,67 @@ class ProductConfigurationServiceTest extends TestCase
         );
     }
 
+    public function test_product_pages_receive_shared_more_good_stuff_when_the_section_is_missing(): void
+    {
+        foreach (['cards-and-postcards', 'stickers-and-labels', 'flyers-brochures'] as $categorySlug) {
+            $product = new Product([
+                'name' => 'Test '.$categorySlug,
+                'slug' => 'test-'.$categorySlug,
+                'product_config' => [
+                    'detail_sections' => [
+                        'design_specifications' => [
+                            'heading' => 'Keep product specifications',
+                        ],
+                    ],
+                ],
+            ]);
+            $product->setRelation('category', new ProductCategory(['slug' => $categorySlug]));
+
+            $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+
+            $this->assertSame(
+                'Even more good stuff',
+                data_get($options, 'detail_sections.more_good_stuff.heading'),
+                $categorySlug,
+            );
+            $this->assertCount(
+                4,
+                data_get($options, 'detail_sections.more_good_stuff.items'),
+                $categorySlug,
+            );
+            $this->assertSame(
+                'Keep product specifications',
+                data_get($options, 'detail_sections.design_specifications.heading'),
+                $categorySlug,
+            );
+        }
+    }
+
+    public function test_product_specific_more_good_stuff_is_preserved(): void
+    {
+        $product = new Product([
+            'name' => 'Configured sticker product',
+            'slug' => 'configured-sticker-product',
+            'product_config' => [
+                'detail_sections' => [
+                    'more_good_stuff' => [
+                        'heading' => 'Product-specific cross-sell',
+                        'items' => [],
+                    ],
+                ],
+            ],
+        ]);
+        $product->setRelation('category', new ProductCategory(['slug' => 'stickers-and-labels']));
+
+        $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+
+        $this->assertSame(
+            'Product-specific cross-sell',
+            data_get($options, 'detail_sections.more_good_stuff.heading'),
+        );
+        $this->assertSame([], data_get($options, 'detail_sections.more_good_stuff.items'));
+    }
+
     public function test_review_modal_gang_run_feature_is_limited_to_classic_and_pvc_products(): void
     {
         $businessCards = new ProductCategory(['slug' => 'business-cards']);

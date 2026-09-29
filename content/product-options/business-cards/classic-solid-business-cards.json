@@ -157,7 +157,7 @@
     ],
     "paper_finish": [
         {
-            "name": "Matte Lamination",
+            "name": "Matte",
             "code": "matte",
             "description": "With a smooth feel. Shine-free so no glare.",
             "swatch_image": "/images/product-options/business-cards/laminates/matte-526x251.jpg",
@@ -221,7 +221,7 @@
             ]
         },
         {
-            "name": "Gloss Lamination",
+            "name": "Gloss",
             "code": "gloss",
             "description": "Eye-catchingly shiny. Makes color photos pop.",
             "swatch_image": "/images/product-options/business-cards/laminates/gloss-526x251.jpg",
@@ -349,7 +349,7 @@
             ]
         },
         {
-            "name": "Soft-Touch Lamination",
+            "name": "Soft-Touch",
             "code": "soft_touch_film",
             "description": "Velvety, soft tactile premium laminate",
             "swatch_image": "/images/product-options/business-cards/swatches/quality/soft-touch-film.png",

@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Services\PricingService;
 use App\Services\ProductConfigurationService;
 use App\Support\PrintDesignSpecifications;
+use App\Support\StickerProductCatalog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
@@ -22,6 +23,25 @@ class StickerProductTest extends TestCase
             $this->assertSame(
                 PrintDesignSpecifications::businessCards(),
                 data_get($product->product_config, 'detail_sections.design_specifications'),
+            );
+        }
+    }
+
+    public function test_all_sticker_products_include_the_requested_promotion_sections(): void
+    {
+        foreach (['classic-stickers', 'premium-stickers', 'super-stickers'] as $slug) {
+            $sections = data_get(
+                Product::query()->where('slug', $slug)->firstOrFail()->product_config,
+                'detail_sections',
+            );
+
+            $this->assertSame(
+                StickerProductCatalog::freeSampleSection(),
+                $sections['free_sample'] ?? null,
+            );
+            $this->assertSame(
+                StickerProductCatalog::stickerTemplatesSection(),
+                $sections['sticker_templates'] ?? null,
             );
         }
     }
@@ -65,12 +85,12 @@ class StickerProductTest extends TestCase
             $this->assertSame($expectedSizeSwatches, data_get($config, 'options.sizes.values.*.swatch_image'));
         }
 
-        $expectedShapeCodes = ['die_cut', 'round', 'rounded_corner', 'square_corner'];
+        $expectedShapeCodes = ['square_corner', 'rounded_corner', 'round', 'die_cut'];
         $expectedShapeSwatches = [
-            '/images/product-options/stickers/shapes/any-shape.png',
-            '/images/product-options/stickers/shapes/round.png',
-            '/images/product-options/stickers/shapes/rounded-corner.png',
             '/images/product-options/stickers/shapes/square-corner.png',
+            '/images/product-options/stickers/shapes/rounded-corner.png',
+            '/images/product-options/stickers/shapes/round.png',
+            '/images/product-options/stickers/shapes/any-shape.png',
         ];
 
         foreach (['classic-stickers', 'premium-stickers', 'super-stickers'] as $slug) {
@@ -140,10 +160,10 @@ class StickerProductTest extends TestCase
         $this->assertSame(7, count($options['galleries']));
         $this->assertSame(
             [
-                '/images/product-options/stickers/shapes/any-shape.png',
-                '/images/product-options/stickers/shapes/round.png',
-                '/images/product-options/stickers/shapes/rounded-corner.png',
                 '/images/product-options/stickers/shapes/square-corner.png',
+                '/images/product-options/stickers/shapes/rounded-corner.png',
+                '/images/product-options/stickers/shapes/round.png',
+                '/images/product-options/stickers/shapes/any-shape.png',
             ],
             array_column($shapes, 'swatch_image'),
         );

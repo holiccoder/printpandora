@@ -79,14 +79,56 @@ export default function BusinessCardDesignService() {
                 </div>
             </section>
 
-            {/* 2. Terms & Notes + Form -------------------------------------- */}
+            {/* 2. Design Process + Form ------------------------------------- */}
             <section
                 id="design-form"
                 className="scroll-mt-20 border-t border-neutral-100"
                 style={{ backgroundColor: WARM_BG }}
             >
-                <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 lg:py-16">
+                <div className="mx-auto grid max-w-7xl items-start gap-10 px-4 py-12 lg:grid-cols-2 lg:gap-12 lg:py-16">
                     <div>
+                        <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
+                            {c.process_heading}
+                        </h2>
+                        <ol className="mt-6 space-y-4">
+                            {c.process_steps.map((step: string, i: number) => (
+                                <li key={i} className="flex gap-4">
+                                    <span
+                                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                                        style={{ backgroundColor: ACCENT }}
+                                    >
+                                        {i + 1}
+                                    </span>
+                                    <p className="text-sm leading-relaxed text-neutral-700">
+                                        {step}
+                                    </p>
+                                </li>
+                            ))}
+                        </ol>
+
+                        <div className="mt-10 border-t border-neutral-200 pt-10">
+                            <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
+                                {c.notes_heading}
+                            </h2>
+                            <ol className="mt-6 space-y-4">
+                                {notes.map((note: string, i: number) => (
+                                    <li key={i} className="flex gap-4">
+                                        <span
+                                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                                            style={{ backgroundColor: ACCENT }}
+                                        >
+                                            {i + 1}
+                                        </span>
+                                        <p className="text-sm leading-relaxed text-neutral-700">
+                                            {note}
+                                        </p>
+                                    </li>
+                                ))}
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div className="space-y-10">
                         {/* Choose a Design Service Section */}
                         <div className="space-y-6">
                             <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
@@ -143,72 +185,27 @@ export default function BusinessCardDesignService() {
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
-                        <h2 className="text-xl font-bold text-neutral-900 sm:text-2xl">
-                            {c.form_heading}
-                        </h2>
-                        <p className="mt-2 text-sm text-neutral-600">
-                            {c.form_description}
-                        </p>
-                        <DesignServiceForm
-                            productOptions={c.form_product_options}
-                            submitLabel={c.form_submit_label}
-                            className="mt-6"
-                            designServices={DESIGN_SERVICES}
-                            designServiceCode={selectedService}
-                            onDesignServiceCodeChange={setSelectedService}
-                            designServicesHeading="Choose a design service"
-                            designServicesRequiredError="Please choose a design service."
-                            returnTo="/checkout"
-                            hideDesignServices
-                        />
-                    </div>
-                </div>
-            </section>
-            {/* 3. Design Process -------------------------------------------- */}
-            <section className="border-t border-neutral-100 bg-white">
-                <div className="mx-auto grid max-w-7xl items-start gap-10 px-4 py-12 lg:grid-cols-2 lg:gap-12 lg:py-16">
-                    <div>
-                        <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
-                            {c.process_heading}
-                        </h2>
-                        <ol className="mt-6 space-y-4">
-                            {c.process_steps.map((step: string, i: number) => (
-                                <li key={i} className="flex gap-4">
-                                    <span
-                                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-                                        style={{ backgroundColor: ACCENT }}
-                                    >
-                                        {i + 1}
-                                    </span>
-                                    <p className="text-sm leading-relaxed text-neutral-700">
-                                        {step}
-                                    </p>
-                                </li>
-                            ))}
-                        </ol>
-                    </div>
-                    <div>
-                        <h2 className="font-serif text-2xl font-bold text-[#800020] sm:text-3xl">
-                            {c.notes_heading}
-                        </h2>
-                        <ol className="mt-6 space-y-4">
-                            {notes.map((note: string, i: number) => (
-                                <li key={i} className="flex gap-4">
-                                    <span
-                                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-                                        style={{ backgroundColor: ACCENT }}
-                                    >
-                                        {i + 1}
-                                    </span>
-                                    <p className="text-sm leading-relaxed text-neutral-700">
-                                        {note}
-                                    </p>
-                                </li>
-                            ))}
-                        </ol>
+                        <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
+                            <h2 className="text-xl font-bold text-neutral-900 sm:text-2xl">
+                                {c.form_heading}
+                            </h2>
+                            <p className="mt-2 text-sm text-neutral-600">
+                                {c.form_description}
+                            </p>
+                            <DesignServiceForm
+                                productOptions={c.form_product_options}
+                                submitLabel={c.form_submit_label}
+                                className="mt-6"
+                                designServices={DESIGN_SERVICES}
+                                designServiceCode={selectedService}
+                                onDesignServiceCodeChange={setSelectedService}
+                                designServicesHeading="Choose a design service"
+                                designServicesRequiredError="Please choose a design service."
+                                returnTo="/checkout"
+                                hideDesignServices
+                            />
+                        </div>
                     </div>
                 </div>
             </section>

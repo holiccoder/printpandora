@@ -80,7 +80,10 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                             'matte',
                             '/images/product-options/business-cards/laminates/matte-526x251.jpg',
                         ),
-                        ['description' => 'With a smooth feel. Shine-free so no glare.'],
+                        [
+                            'label' => 'Matte',
+                            'description' => 'With a smooth feel. Shine-free so no glare.',
+                        ],
                     ),
                     array_replace(
                         $this->withSwatch(
@@ -89,7 +92,10 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                             'gloss',
                             '/images/product-options/business-cards/laminates/gloss-526x251.jpg',
                         ),
-                        ['description' => 'Eye-catchingly shiny. Makes color photos pop.'],
+                        [
+                            'label' => 'Gloss',
+                            'description' => 'Eye-catchingly shiny. Makes color photos pop.',
+                        ],
                     ),
                 ],
             ],

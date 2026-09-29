@@ -60,6 +60,16 @@ final class FlyersAndBrochuresProductCatalog
     ];
 
     /**
+     * @var array<string, string>
+     */
+    private const PAPER_FINISH_SWATCHES = [
+        'matte_lamination' => '/images/product-options/flyers-and-brochures/paper-finishes/铜版纸亚膜.png',
+        'gloss_lamination' => '/images/product-options/flyers-and-brochures/paper-finishes/铜版纸光膜.png',
+        'gloss_varnish' => '/images/product-options/flyers-and-brochures/paper-finishes/铜版纸光油.png',
+        'soft_touch_lamination' => '/images/product-options/flyers-and-brochures/paper-finishes/铜版纸触感膜.png',
+    ];
+
+    /**
      * @var array<string, array{label: string, description: string, image: string}>
      */
     private const FOLDING_VALUES = [
@@ -112,7 +122,7 @@ final class FlyersAndBrochuresProductCatalog
             'paper_name' => '157g Coated Paper',
             'paper_name_source' => '157g铜版纸',
             'unit_price' => 1.5,
-            'finish' => 'classic',
+            'finish' => 'gloss_varnish',
             'foldings' => [
                 'half_fold',
                 'three_panel_accordion_fold',
@@ -327,7 +337,7 @@ final class FlyersAndBrochuresProductCatalog
             ],
         ];
 
-        if (count($finishValues) > 1) {
+        if ($finishValues !== []) {
             $options['paper_finish'] = [
                 'label' => 'Paper Finish',
                 'type' => 'select',
@@ -344,7 +354,7 @@ final class FlyersAndBrochuresProductCatalog
             'default' => $definition['foldings'][0],
             'values' => self::foldingValues($definition['foldings']),
         ];
-        $descriptionChoice = count($finishValues) > 1
+        $descriptionChoice = $finishValues !== []
             ? 'standard size, paper finish, and folding style'
             : 'standard size and folding style';
         $startingTotal = (int) round(
@@ -464,40 +474,42 @@ final class FlyersAndBrochuresProductCatalog
      */
     private static function finishValues(string $finish): array
     {
-        if ($finish !== 'classic') {
-            return [[
-                'code' => 'none',
-                'label' => 'None',
-                'description' => 'No additional finish.',
-            ]];
+        if ($finish === 'none') {
+            return [];
         }
 
-        return [
+        $values = [
             [
                 'code' => 'matte_lamination',
-                'label' => 'Matte Lamination',
+                'label' => 'Matte',
                 'description' => 'A low-sheen protective matte film.',
-                'swatch_image' => '/images/product-options/flyers-and-brochures/paper-finishes/matte-lamination.png',
+                'swatch_image' => self::PAPER_FINISH_SWATCHES['matte_lamination'],
             ],
             [
                 'code' => 'gloss_lamination',
-                'label' => 'Gloss Lamination',
+                'label' => 'Gloss',
                 'description' => 'A bright, reflective protective film.',
-                'swatch_image' => '/images/product-options/flyers-and-brochures/paper-finishes/gloss-lamination.png',
+                'swatch_image' => self::PAPER_FINISH_SWATCHES['gloss_lamination'],
             ],
             [
                 'code' => 'gloss_varnish',
                 'label' => 'Gloss Varnish',
                 'description' => 'A clear glossy coating that enhances color.',
-                'swatch_image' => '/images/product-options/flyers-and-brochures/paper-finishes/gloss-varnish.png',
+                'swatch_image' => self::PAPER_FINISH_SWATCHES['gloss_varnish'],
             ],
             [
                 'code' => 'soft_touch_lamination',
-                'label' => 'Soft-Touch Lamination',
+                'label' => 'Soft-Touch',
                 'description' => 'A smooth, velvety protective film.',
-                'swatch_image' => '/images/product-options/flyers-and-brochures/paper-finishes/soft-touch-lamination.png',
+                'swatch_image' => self::PAPER_FINISH_SWATCHES['soft_touch_lamination'],
             ],
         ];
+
+        if ($finish === 'gloss_varnish') {
+            return [$values[2]];
+        }
+
+        return $values;
     }
 
     /**
