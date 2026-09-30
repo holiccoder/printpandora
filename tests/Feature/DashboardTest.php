@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class DashboardTest extends TestCase
@@ -47,5 +49,24 @@ class DashboardTest extends TestCase
 
         $this->assertSame('1 Main Street', $user->refresh()->shipping_address);
         $this->assertSame('US', $user->shipping_country);
+    }
+
+    public function test_dashboard_profile_email_changes_send_a_verification_link(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->patch(route('dashboard.profile.update'), [
+                'name' => $user->name,
+                'email' => 'new-email@example.com',
+            ])
+            ->assertSessionHas('status', 'verification-link-sent')
+            ->assertRedirect(route('dashboard.profile'));
+
+        $this->assertSame('new-email@example.com', $user->refresh()->email);
+        $this->assertNull($user->email_verified_at);
+        Notification::assertSentTo($user, VerifyEmail::class);
     }
 }

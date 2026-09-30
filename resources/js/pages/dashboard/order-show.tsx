@@ -10,7 +10,10 @@ import {
     Phone,
     Truck,
 } from 'lucide-react';
+import { useState } from 'react';
 import type { ReactNode } from 'react';
+import OrderFilesModal from '@/components/order-files-modal';
+import type { OrderFileSections } from '@/components/order-files-modal';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import DashboardLayout from '@/layouts/dashboard-layout';
@@ -21,6 +24,7 @@ const ACCENT = '#800020';
 const ORDER_STEPS = [
     'pending',
     'pending_review',
+    'needs_reupload',
     'pending_confirmation',
     'confirmed',
     'production',
@@ -62,10 +66,14 @@ type Props = {
         coupon_code: string | null;
         items: OrderItem[];
         files: {
-            uploaded_files: OrderFile[];
-            awaiting_confirmation: OrderFile[];
-            confirmed_files: OrderFile[];
+            uploaded_files: OrderFileSections['uploaded_files'];
+            awaiting_confirmation: OrderFileSections['awaiting_confirmation'];
+            confirmed_files: OrderFileSections['confirmed_files'];
         };
+        can_manage_files: boolean;
+        can_confirm_files: boolean;
+        file_upload_url: string;
+        file_confirm_url: string;
         contact: {
             name: string | null;
             email: string | null;
@@ -91,6 +99,19 @@ type Props = {
 
 export default function DashboardOrderShow({ order }: Props) {
     const c = useContent('dashboard_order_show_page') as any;
+    const [filesOpen, setFilesOpen] = useState(false);
+    const awaitingFileSignature = order.files.awaiting_confirmation
+        .map((file) => file.id)
+        .join('|');
+    const fileReviewKey = `${order.id}:${order.status}:${awaitingFileSignature}`;
+    const [filesViewed, setFilesViewed] = useState({
+        key: fileReviewKey,
+        value: order.can_confirm_files,
+    });
+    const hasViewedCurrentFiles =
+        filesViewed.key === fileReviewKey
+            ? filesViewed.value
+            : order.can_confirm_files;
 
     return (
         <DashboardLayout>
@@ -183,12 +204,19 @@ export default function DashboardOrderShow({ order }: Props) {
                     title={c.sections.design_files}
                     icon={<Files className="size-5" />}
                 >
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 px-5 py-4">
+                        <p className="text-sm text-neutral-600">
+                            {c.file_sections.description}
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => setFilesOpen(true)}
+                            className="text-sm font-semibold text-[#800020] hover:underline"
+                        >
+                            {fileActionLabel(order.status, c)}
+                        </button>
+                    </div>
                     <div className="divide-y divide-neutral-100">
-                        <FileRow
-                            title={c.file_sections.uploaded_files}
-                            files={order.files.uploaded_files}
-                            c={c}
-                        />
                         <FileRow
                             title={c.file_sections.awaiting_confirmation}
                             files={order.files.awaiting_confirmation}
@@ -201,6 +229,32 @@ export default function DashboardOrderShow({ order }: Props) {
                         />
                     </div>
                 </Section>
+
+                <OrderFilesModal
+                    orderId={order.id}
+                    files={order.files}
+                    open={filesOpen}
+                    onOpenChange={setFilesOpen}
+                    content={c.file_downloads_modal}
+                    canManage={order.can_manage_files}
+                    canConfirm={
+                        order.can_confirm_files || hasViewedCurrentFiles
+                    }
+                    isPendingConfirmation={
+                        order.status === 'pending_confirmation'
+                    }
+                    showConfirmButton={[
+                        'pending',
+                        'pending_review',
+                        'needs_reupload',
+                        'pending_confirmation',
+                    ].includes(order.status)}
+                    onFileDownloaded={() =>
+                        setFilesViewed({ key: fileReviewKey, value: true })
+                    }
+                    uploadUrl={order.file_upload_url}
+                    confirmUrl={order.file_confirm_url}
+                />
 
                 <Section
                     title={c.sections.address_contact}
@@ -330,7 +384,7 @@ function OrderProgress({ status, c }: { status: string; c: any }) {
                 </h2>
                 <StatusPill status={status} />
             </div>
-            <ol className="grid gap-4 md:grid-cols-6 md:gap-0">
+            <ol className="grid gap-4 md:grid-cols-7 md:gap-0">
                 {ORDER_STEPS.map((step, index) => {
                     const complete = index < currentIndex;
                     const active = index === currentIndex;
@@ -589,6 +643,15 @@ function StatusPill({ status }: { status: string }) {
 
 function formatCurrency(value: number): string {
     return `$${value.toFixed(2)}`;
+}
+
+function fileActionLabel(status: string, c: any): string {
+    return (
+        c.file_action_labels?.[status] ??
+        c.file_action_labels?.default ??
+        c.file_downloads_link ??
+        'View files'
+    );
 }
 
 function formatDate(value: string | null): string {

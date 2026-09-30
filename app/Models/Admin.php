@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
@@ -28,16 +29,30 @@ use Illuminate\Support\Carbon;
 class Admin extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<AdminFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * Authorize which admins can access the Filament panel in production.
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $this->roles()
+            ->where('guard_name', $this->getDefaultGuardName())
+            ->exists()
+            || $this->permissions()
+                ->where('guard_name', $this->getDefaultGuardName())
+                ->exists();
     }
 
+    /**
+     * Dashboard staff accounts always use the dedicated admin guard.
+     */
+    public function getDefaultGuardName(): string
+    {
+        return 'admin';
+    }
+
+    /** @return HasMany<Post, $this> */
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);

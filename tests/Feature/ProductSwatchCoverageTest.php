@@ -311,7 +311,7 @@ class ProductSwatchCoverageTest extends TestCase
             '/images/products/cotton/special-finishes/double-mounting.png',
             '/images/products/cotton/special-finishes/custom-die-cut.png',
             '/images/products/cotton/special-finishes/凹凸.png',
-            '/images/products/cotton/special-finishes/凹凸.png',
+            '/images/products/cotton/special-finishes/deboss.png',
         ];
 
         foreach ($expectedPrimaryImages as $image) {
@@ -324,7 +324,7 @@ class ProductSwatchCoverageTest extends TestCase
         }
     }
 
-    public function test_all_cotton_business_cards_use_the_shared_emboss_deboss_primary(): void
+    public function test_all_cotton_business_cards_use_their_emboss_and_deboss_primaries(): void
     {
         $slugs = [
             'basic-cotton-business-card',
@@ -333,8 +333,6 @@ class ProductSwatchCoverageTest extends TestCase
             'luxe-cotton-business-card',
             'grand-cotton-business-card',
         ];
-        $expectedPrimary = '/images/products/cotton/special-finishes/'.'凹凸.png';
-
         foreach ($slugs as $slug) {
             $payload = json_decode(
                 File::get(base_path("content/product-options/cotton-business-cards/{$slug}.json")),
@@ -353,9 +351,11 @@ class ProductSwatchCoverageTest extends TestCase
 
                 $this->assertIsArray($rule, "{$slug} should have a {$code} gallery rule.");
                 $this->assertSame(
-                    $expectedPrimary,
+                    $code === 'emboss'
+                        ? '/images/products/cotton/special-finishes/'.'凹凸.png'
+                        : '/images/products/cotton/special-finishes/deboss.png',
                     data_get($rule, 'primary'),
-                    "{$slug} {$code} should use the shared cotton primary image.",
+                    "{$slug} {$code} should use its cotton primary image.",
                 );
             }
         }

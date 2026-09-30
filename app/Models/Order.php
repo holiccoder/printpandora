@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * @property-read Collection<int, OrderItem> $items
@@ -24,6 +25,8 @@ class Order extends Model
     public const STATUS_PENDING_PAYMENT = self::STATUS_PENDING;
 
     public const STATUS_PENDING_REVIEW = 'pending_review';
+
+    public const STATUS_NEEDS_REUPLOAD = 'needs_reupload';
 
     public const STATUS_PENDING_CONFIRMATION = 'pending_confirmation';
 
@@ -53,6 +56,7 @@ class Order extends Model
         return [
             self::STATUS_PENDING => '待付款',
             self::STATUS_PENDING_REVIEW => '待审核',
+            self::STATUS_NEEDS_REUPLOAD => '需重新上传文件',
             self::STATUS_PENDING_CONFIRMATION => '待确认',
             self::STATUS_CONFIRMED => '已确认',
             self::STATUS_PRODUCTION => '生产中',
@@ -69,7 +73,7 @@ class Order extends Model
     {
         static::saving(function (Order $order): void {
             if ($order->status === self::STATUS_SHIPPED && $order->shipped_at === null) {
-                $order->shipped_at = now();
+                $order->setAttribute('shipped_at', now());
             }
         });
 
@@ -93,6 +97,18 @@ class Order extends Model
                     $order,
                     $order->getRawOriginal('status'),
                 );
+
+                if (Schema::hasTable('order_file_audits')) {
+                    OrderFileAudit::create([
+                        'order_id' => $order->getKey(),
+                        'actor_type' => 'system',
+                        'action' => 'status_changed',
+                        'metadata' => [
+                            'from' => $order->getRawOriginal('status'),
+                            'to' => $order->status,
+                        ],
+                    ]);
+                }
             }
         });
     }
@@ -179,6 +195,22 @@ class Order extends Model
     public function productDesignRequests(): HasMany
     {
         return $this->hasMany(ProductDesignRequest::class);
+    }
+
+    /**
+     * @return HasMany<OrderFile, $this>
+     */
+    public function files(): HasMany
+    {
+        return $this->hasMany(OrderFile::class);
+    }
+
+    /**
+     * @return HasMany<OrderFileAudit, $this>
+     */
+    public function fileAudits(): HasMany
+    {
+        return $this->hasMany(OrderFileAudit::class);
     }
 
     /**

@@ -409,7 +409,7 @@ class ProductConfigurationServiceTest extends TestCase
             array_slice(data_get($options, 'detail_sections.more_good_stuff.items.*.name'), 1),
         );
         $this->assertSame(
-            ['/stickers-and-labels', '/cards-and-postcards', '/flyers-and-brochures'],
+            ['/stickers-and-labels', '/postcards/classic-standard', '/flyers-and-brochures'],
             array_slice(data_get($options, 'detail_sections.more_good_stuff.items.*.href'), 1),
         );
         $this->assertSame(

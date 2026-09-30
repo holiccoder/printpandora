@@ -113,13 +113,22 @@ class FlyersAndBrochuresProductTest extends TestCase
                 'options.folding.values',
             ),
         );
-        $this->assertCount(
-            1,
-            data_get(
-                Product::query()->where('slug', 'quality-flyers-and-brochures')->firstOrFail()->product_config,
-                'options.folding.values',
-            ),
-        );
+        foreach ([
+            'quality-flyers-and-brochures',
+            'special-flyers-and-brochures',
+            'super-flyers-and-brochures',
+        ] as $slug) {
+            $this->assertSame(
+                ['half_fold', 'three_panel_accordion_fold', 'three_panel_roll_fold'],
+                array_column(
+                    data_get(
+                        Product::query()->where('slug', $slug)->firstOrFail()->product_config,
+                        'options.folding.values',
+                    ),
+                    'code',
+                ),
+            );
+        }
     }
 
     public function test_flyer_routes_and_header_menu_use_the_requested_paths(): void

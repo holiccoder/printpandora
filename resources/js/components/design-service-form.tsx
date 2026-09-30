@@ -51,12 +51,14 @@ interface DesignServiceFormProps {
     productName?: string;
     productSlug?: string;
     productTypeLabel?: string;
+    hideDesignBriefFields?: boolean;
 }
 
 type UploadValue = File | File[] | null;
 
 type DesignServiceFormData = {
     email: string;
+    order_name: string;
     business_name: string;
     card_info: string;
     business_card_type: string;
@@ -91,6 +93,7 @@ export default function DesignServiceForm({
     productName,
     productSlug,
     productTypeLabel,
+    hideDesignBriefFields = false,
 }: DesignServiceFormProps) {
     const flashSuccess = (
         usePage().props.flash as { success?: string } | undefined
@@ -118,6 +121,7 @@ export default function DesignServiceForm({
     const { data, setData, post, processing, errors, reset, transform } =
         useForm<DesignServiceFormData>({
             email: '',
+            order_name: '',
             business_name: '',
             card_info: '',
             design_service_code: '',
@@ -229,6 +233,7 @@ export default function DesignServiceForm({
                         product_name: productName ?? null,
                         product_slug: productSlug ?? null,
                         email: normalizedData.email,
+                        order_name: normalizedData.order_name || null,
                         business_name: normalizedData.business_name,
                         card_info: normalizedData.card_info,
                         business_card_type: normalizedData.business_card_type,
@@ -357,6 +362,18 @@ export default function DesignServiceForm({
                 />
             </FormRow>
 
+            {submissionTarget === 'product-design' && (
+                <FormRow label="Order name" error={errors.order_name}>
+                    <Input
+                        id="ds-order-name"
+                        placeholder="e.g. Spring campaign"
+                        maxLength={255}
+                        value={data.order_name}
+                        onChange={(e) => setData('order_name', e.target.value)}
+                    />
+                </FormRow>
+            )}
+
             {requiresDesignFile && (
                 <FormRow
                     label={uploadContent.file_input_label}
@@ -383,49 +400,63 @@ export default function DesignServiceForm({
                 </FormRow>
             )}
 
-            <FormRow
-                label="Company logo"
-                error={errors.logo_file ?? errors['logo_file.0']}
-            >
-                <div className="space-y-2">
-                    <UploadButton
-                        inputRef={logoInputRef}
-                        onChange={handleLogoChange}
-                        multiple={allowsMultipleUploads}
-                        selectedFiles={filesFromUpload(data.logo_file)}
-                    />
-                    <p className="text-xs text-neutral-500">
-                        Vector format preferred (AI, EPS, SVG, PDF).
-                    </p>
-                </div>
-            </FormRow>
+            {!hideDesignBriefFields && (
+                <>
+                    <FormRow
+                        label="Company logo"
+                        error={errors.logo_file ?? errors['logo_file.0']}
+                    >
+                        <div className="space-y-2">
+                            <UploadButton
+                                inputRef={logoInputRef}
+                                onChange={handleLogoChange}
+                                multiple={allowsMultipleUploads}
+                                selectedFiles={filesFromUpload(data.logo_file)}
+                            />
+                            <p className="text-xs text-neutral-500">
+                                Vector format preferred (AI, EPS, SVG, PDF).
+                            </p>
+                        </div>
+                    </FormRow>
 
-            <FormRow label="Name of your business" error={errors.business_name}>
-                <Input
-                    id="ds-business"
-                    placeholder="Your business name"
-                    required
-                    value={data.business_name}
-                    onChange={(e) => setData('business_name', e.target.value)}
-                />
-            </FormRow>
+                    <FormRow
+                        label="Name of your business"
+                        error={errors.business_name}
+                    >
+                        <Input
+                            id="ds-business"
+                            placeholder="Your business name"
+                            required
+                            value={data.business_name}
+                            onChange={(e) =>
+                                setData('business_name', e.target.value)
+                            }
+                        />
+                    </FormRow>
 
-            <FormRow label="Information on the card" error={errors.card_info}>
-                <div className="space-y-2">
-                    <textarea
-                        id="ds-info"
-                        rows={4}
-                        placeholder="Name, title, contact information, address, website etc."
-                        className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                        value={data.card_info}
-                        onChange={(e) => setData('card_info', e.target.value)}
-                    />
-                    <p className="text-xs text-neutral-500">
-                        Name, title, contact information, address, website etc
-                        you want to have on the card.
-                    </p>
-                </div>
-            </FormRow>
+                    <FormRow
+                        label="Information on the card"
+                        error={errors.card_info}
+                    >
+                        <div className="space-y-2">
+                            <textarea
+                                id="ds-info"
+                                rows={4}
+                                placeholder="Name, title, contact information, address, website etc."
+                                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                                value={data.card_info}
+                                onChange={(e) =>
+                                    setData('card_info', e.target.value)
+                                }
+                            />
+                            <p className="text-xs text-neutral-500">
+                                Name, title, contact information, address,
+                                website etc you want to have on the card.
+                            </p>
+                        </div>
+                    </FormRow>
+                </>
+            )}
 
             <FormRow
                 label={productTypeLabel ?? 'Business card type'}
@@ -455,17 +486,19 @@ export default function DesignServiceForm({
                 </Select>
             </FormRow>
 
-            <FormRow
-                label="Business card examples you like"
-                error={errors.example_files ?? errors['example_files.0']}
-            >
-                <UploadButton
-                    inputRef={examplesInputRef}
-                    onChange={handleExamplesChange}
-                    multiple
-                    selectedFiles={data.example_files}
-                />
-            </FormRow>
+            {!hideDesignBriefFields && (
+                <FormRow
+                    label="Business card examples you like"
+                    error={errors.example_files ?? errors['example_files.0']}
+                >
+                    <UploadButton
+                        inputRef={examplesInputRef}
+                        onChange={handleExamplesChange}
+                        multiple
+                        selectedFiles={data.example_files}
+                    />
+                </FormRow>
+            )}
 
             <div className="flex items-start gap-3 rounded-md border border-neutral-200 bg-neutral-50 p-4">
                 <Checkbox

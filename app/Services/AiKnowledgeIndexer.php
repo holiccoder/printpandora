@@ -23,7 +23,6 @@ class AiKnowledgeIndexer
         'about_page',
         'product_detail_page',
         'business_cards_landing_page',
-        'postcards_page',
         'stickers_page',
         'flyers_page',
         'sample_pack_page',

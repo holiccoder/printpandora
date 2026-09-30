@@ -22,6 +22,8 @@ class LetterpressBlogSeeder extends Seeder
                 'email' => 'admin@admin.com',
                 'password' => Hash::make('password'),
             ]);
+
+            $admin->assignRole('super_admin');
         }
 
         $categoryIds = [];

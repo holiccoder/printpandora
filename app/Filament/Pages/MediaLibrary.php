@@ -6,6 +6,7 @@ use App\Services\MediaLibraryCatalog;
 use App\Services\MediaUsageService;
 use App\Services\ProductImageUploadService;
 use App\Support\ProductImagePolicy;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -26,6 +27,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class MediaLibrary extends Page implements HasForms
 {
+    use HasPageShield;
     use InteractsWithForms;
     use WithPagination;
 

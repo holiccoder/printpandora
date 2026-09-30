@@ -490,7 +490,7 @@ function productCategoryHref(categorySlug: string): string {
     switch (categorySlug) {
         case 'postcards':
         case 'cards-and-postcards':
-            return '/cards-and-postcards';
+            return '/postcards/classic-standard';
         case 'stickers-and-labels':
         case 'stickers-labels':
             return '/stickers-and-labels';
@@ -3409,6 +3409,7 @@ export default function ShopShow({
                             productId={product.id}
                             productName={product.name}
                             productSlug={product.slug}
+                            hideDesignBriefFields
                             returnTo={pageUrl}
                             onSubmitted={() => markDesignSubmitted('upload')}
                         />
@@ -3555,7 +3556,12 @@ export default function ShopShow({
                     }
                 }}
             >
-                <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
+                <DialogContent
+                    className={cn(
+                        'max-h-[90vh] overflow-y-auto',
+                        showGangRunPrinting ? 'sm:max-w-5xl' : 'sm:max-w-3xl',
+                    )}
+                >
                     <DialogHeader>
                         <DialogTitle>Review before checkout</DialogTitle>
                         <DialogDescription>
@@ -4601,21 +4607,26 @@ function CanvaDesignModal({
     productSlug?: string;
     returnTo?: string;
 }) {
-    const { setData, post, processing, errors, reset } = useForm<{
-        desgin: string;
-        design_file: File[];
-        return_to: string;
-    }>({
-        desgin: JSON.stringify({
-            source: 'product-page',
-            mode: 'canva',
-            product_id: productId ?? null,
-            product_name: productName ?? null,
-            product_slug: productSlug ?? null,
-        }),
-        design_file: [],
-        return_to: returnTo ?? '',
-    });
+    const { data, setData, post, processing, errors, reset, transform } =
+        useForm<{
+            desgin: string;
+            email: string;
+            order_name: string;
+            design_file: File[];
+            return_to: string;
+        }>({
+            desgin: JSON.stringify({
+                source: 'product-page',
+                mode: 'canva',
+                product_id: productId ?? null,
+                product_name: productName ?? null,
+                product_slug: productSlug ?? null,
+            }),
+            email: '',
+            order_name: '',
+            design_file: [],
+            return_to: returnTo ?? '',
+        });
     const designInputRef = useRef<HTMLInputElement>(null);
 
     return (
@@ -4643,6 +4654,19 @@ function CanvaDesignModal({
                     className="mt-2 space-y-3"
                     onSubmit={(e) => {
                         e.preventDefault();
+                        transform((formData) => ({
+                            desgin: JSON.stringify({
+                                source: 'product-page',
+                                mode: 'canva',
+                                product_id: productId ?? null,
+                                product_name: productName ?? null,
+                                product_slug: productSlug ?? null,
+                                email: formData.email,
+                                order_name: formData.order_name || null,
+                            }),
+                            design_file: formData.design_file,
+                            return_to: formData.return_to,
+                        }));
                         post('/product-designs', {
                             forceFormData: true,
                             preserveScroll: true,
@@ -4664,6 +4688,27 @@ function CanvaDesignModal({
                     <h3 className="text-sm font-bold text-neutral-900">
                         Upload your Canva design file
                     </h3>
+                    <label className="space-y-1.5 text-sm font-medium text-neutral-900">
+                        Your primary contact email
+                        <Input
+                            type="email"
+                            placeholder="you@example.com"
+                            required
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                        />
+                    </label>
+                    <label className="space-y-1.5 text-sm font-medium text-neutral-900">
+                        Order name
+                        <Input
+                            placeholder="e.g. Spring campaign"
+                            maxLength={255}
+                            value={data.order_name}
+                            onChange={(e) =>
+                                setData('order_name', e.target.value)
+                            }
+                        />
+                    </label>
                     <Input
                         ref={designInputRef}
                         type="file"

@@ -1,12 +1,13 @@
 @php
     $orderStatusOptions = \App\Models\Order::statusOptions();
     $statusSteps = [
-        ['key' => \App\Models\Order::STATUS_PENDING, 'description' => 'Payment is pending', 'icon' => 'heroicon-o-credit-card'],
-        ['key' => \App\Models\Order::STATUS_PENDING_REVIEW, 'description' => 'Waiting for review', 'icon' => 'heroicon-o-magnifying-glass'],
-        ['key' => \App\Models\Order::STATUS_PENDING_CONFIRMATION, 'description' => 'Waiting for confirmation', 'icon' => 'heroicon-o-question-mark-circle'],
-        ['key' => \App\Models\Order::STATUS_CONFIRMED, 'description' => 'Order confirmed', 'icon' => 'heroicon-o-shield-check'],
-        ['key' => \App\Models\Order::STATUS_PRODUCTION, 'description' => 'Being made', 'icon' => 'heroicon-o-cog-6-tooth'],
-        ['key' => \App\Models\Order::STATUS_SHIPPED, 'description' => 'On its way', 'icon' => 'heroicon-o-truck'],
+        ['key' => \App\Models\Order::STATUS_PENDING, 'description' => '等待付款', 'icon' => 'heroicon-o-credit-card'],
+        ['key' => \App\Models\Order::STATUS_PENDING_REVIEW, 'description' => '等待审核', 'icon' => 'heroicon-o-magnifying-glass'],
+        ['key' => \App\Models\Order::STATUS_NEEDS_REUPLOAD, 'description' => '客户需要重新上传文件', 'icon' => 'heroicon-o-arrow-up-tray'],
+        ['key' => \App\Models\Order::STATUS_PENDING_CONFIRMATION, 'description' => '等待确认', 'icon' => 'heroicon-o-question-mark-circle'],
+        ['key' => \App\Models\Order::STATUS_CONFIRMED, 'description' => '订单已确认', 'icon' => 'heroicon-o-shield-check'],
+        ['key' => \App\Models\Order::STATUS_PRODUCTION, 'description' => '正在生产', 'icon' => 'heroicon-o-cog-6-tooth'],
+        ['key' => \App\Models\Order::STATUS_SHIPPED, 'description' => '运输中', 'icon' => 'heroicon-o-truck'],
     ];
     $statusSteps = array_map(
         static fn (array $step): array => [...$step, 'label' => $orderStatusOptions[$step['key']] ?? $step['key']],
@@ -19,12 +20,60 @@
         ? ($statusIndex / (count($statusSteps) - 1)) * 87.5
         : 0;
     $statusMessages = [
-        'pending_review' => 'The order has been submitted and is waiting for an administrator review.',
-        'pending_confirmation' => 'The order is waiting for the customer or administrator to confirm the final details.',
-        'confirmed' => 'The order details are confirmed and ready for production.',
-        'production' => 'The order is currently being produced.',
-        'shipped' => 'The order has been handed to the carrier.',
+        'pending_review' => '订单已提交，正在等待管理员审核。',
+        'needs_reupload' => '管理员已要求客户重新上传文件。',
+        'pending_confirmation' => '订单正在等待客户或管理员确认最终信息。',
+        'confirmed' => '订单信息已确认，可以进入生产。',
+        'production' => '订单正在生产中。',
+        'shipped' => '订单已交给承运商配送。',
     ];
+    $paymentStatusLabels = [
+        'paid' => '已付款',
+        'pending' => '待付款',
+        'failed' => '支付失败',
+        'refunded' => '已退款',
+        'reversed' => '已撤销',
+    ];
+    $paymentStatusLabel = $paymentStatusLabels[(string) $order->payment_status]
+        ?? ($order->payment_status ? (string) $order->payment_status : '待付款');
+    $shippingMethodLabels = [
+        'standard' => '标准运输',
+        'dhl_express' => 'DHL 快速运输',
+    ];
+    $shippingMethodLabel = $shippingMethodLabels[(string) $order->shipping_method]
+        ?? ((string) $order->shipping_method ?: '未指定');
+    $optionLabels = [
+        'sizes' => '尺寸',
+        'size' => '尺寸',
+        'shape' => '形状',
+        'material' => '材质',
+        'corners' => '圆角',
+        'corner' => '圆角',
+        'thickness' => '厚度',
+        'texture' => '纹理',
+        'paper' => '纸张',
+        'paper_finish' => '纸张表面处理',
+        'finish' => '表面处理',
+        'folding' => '折叠方式',
+        'uv_finish' => 'UV 工艺',
+        'special_finish' => '特殊工艺',
+        'hot_foil' => '烫金',
+        'cold_foil' => '冷烫金',
+        'print_code' => '印刷代码',
+        'print_code_or_magnetic_stripe' => '印刷代码或磁条',
+        'print_sides' => '印刷面',
+        'drill' => '打孔',
+        'quantity' => '数量',
+        'custom_width' => '自定义宽度',
+        'custom_height' => '自定义高度',
+        'width' => '宽度',
+        'height' => '高度',
+    ];
+    $formatOptionLabel = static function (mixed $key) use ($optionLabels): string {
+        $normalizedKey = strtolower(str_replace([' ', '-'], '_', (string) $key));
+
+        return $optionLabels[$normalizedKey] ?? \Illuminate\Support\Str::headline($normalizedKey);
+    };
     $money = static fn (mixed $value): string => number_format((float) $value, 2);
     $formatOptionValue = static function (mixed $value) use (&$formatOptionValue): string {
         if (is_array($value)) {
@@ -34,7 +83,7 @@
         }
 
         if (is_bool($value)) {
-            return $value ? 'Yes' : 'No';
+            return $value ? '是' : '否';
         }
 
         return \Illuminate\Support\Str::headline(str_replace(['_', '-'], ' ', (string) $value));
@@ -45,13 +94,13 @@
     <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary-600 dark:text-primary-400">
-                Custom order detail
+                自定义订单详情
             </p>
             <h2 class="mt-1 text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
-                Order #{{ $order->id }}
+                订单 #{{ $order->id }}
             </h2>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Placed {{ $order->created_at?->format('M j, Y, g:i A') ?? '—' }}
+                下单时间：{{ $order->created_at?->format('Y-m-d H:i') ?? '—' }}
             </p>
         </div>
         <span class="inline-flex w-fit items-center rounded-full bg-primary-50 px-3 py-1.5 text-sm font-semibold text-primary-700 dark:bg-primary-950 dark:text-primary-300">
@@ -63,10 +112,10 @@
         <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary-600 dark:text-primary-400">01</p>
-                <h3 class="mt-1 text-lg font-semibold text-gray-950 dark:text-white">Order status</h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Follow the order from payment through delivery.</p>
+                <h3 class="mt-1 text-lg font-semibold text-gray-950 dark:text-white">订单状态</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">跟踪订单从付款到配送的进度。</p>
             </div>
-            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Current: {{ $statusLabel }}</span>
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">当前状态：{{ $statusLabel }}</span>
         </div>
 
         <div class="relative mt-8 overflow-x-auto pb-2">
@@ -124,21 +173,21 @@
     <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary-600 dark:text-primary-400">02</p>
-            <h3 class="mt-1 text-lg font-semibold text-gray-950 dark:text-white">Order details</h3>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Products, selected options, and the customer’s order note.</p>
+            <h3 class="mt-1 text-lg font-semibold text-gray-950 dark:text-white">订单详情</h3>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">商品、已选选项和客户的订单备注。</p>
         </div>
 
         <dl class="mt-6 grid gap-4 border-y border-gray-100 py-5 sm:grid-cols-3 dark:border-gray-800">
             <div>
-                <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Order ID</dt>
+                <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">订单编号</dt>
                 <dd class="mt-1 text-sm font-medium text-gray-950 dark:text-white">#{{ $order->id }}</dd>
             </div>
             <div>
-                <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Payment status</dt>
-                <dd class="mt-1 text-sm font-medium text-gray-950 dark:text-white">{{ $order->payment_status === 'paid' ? 'Payment confirmed' : \Illuminate\Support\Str::headline((string) ($order->payment_status ?: 'Pending')) }}</dd>
+                <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">支付状态</dt>
+                <dd class="mt-1 text-sm font-medium text-gray-950 dark:text-white">{{ $paymentStatusLabel }}</dd>
             </div>
             <div>
-                <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Order total</dt>
+                <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">订单总计</dt>
                 <dd class="mt-1 text-sm font-semibold text-primary-700 dark:text-primary-300">${{ $money($order->total) }}</dd>
             </div>
         </dl>
@@ -158,20 +207,20 @@
                             @endif
                         </div>
                         <div class="min-w-0 flex-1">
-                            <h4 class="font-semibold text-gray-950 dark:text-white">{{ $item->product?->name ?? 'Product unavailable' }}</h4>
-                            <p class="mt-1 text-sm text-gray-500">Quantity: {{ $item->quantity }}</p>
-                            <p class="mt-2 text-xs text-gray-500">${{ $money($item->unit_price) }} each</p>
+                            <h4 class="font-semibold text-gray-950 dark:text-white">{{ $item->product?->name ?? '产品不可用' }}</h4>
+                            <p class="mt-1 text-sm text-gray-500">数量：{{ $item->quantity }}</p>
+                            <p class="mt-2 text-xs text-gray-500">单价：${{ $money($item->unit_price) }}</p>
                         </div>
                         <p class="shrink-0 text-sm font-semibold text-gray-950 dark:text-white">${{ $money($item->subtotal) }}</p>
                     </div>
 
                     @if ($options->isNotEmpty())
                         <div class="mt-5 border-t border-gray-200 pt-4 dark:border-gray-800">
-                            <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Selected options</p>
+                            <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">已选选项</p>
                             <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
                                 @foreach ($options as $key => $value)
                                     <div>
-                                        <dt class="text-xs text-gray-500">{{ \Illuminate\Support\Str::headline(str_replace(['_', '-'], ' ', (string) $key)) }}</dt>
+                                        <dt class="text-xs text-gray-500">{{ $formatOptionLabel($key) }}</dt>
                                         <dd class="mt-0.5 text-sm font-medium text-gray-900 dark:text-gray-100">{{ $formatOptionValue($value) }}</dd>
                                     </div>
                                 @endforeach
@@ -180,24 +229,24 @@
                     @endif
                 </article>
             @empty
-                <p class="rounded-lg border border-dashed border-gray-300 px-4 py-5 text-sm text-gray-500 dark:border-gray-700">No order items found.</p>
+                <p class="rounded-lg border border-dashed border-gray-300 px-4 py-5 text-sm text-gray-500 dark:border-gray-700">暂无订单商品。</p>
             @endforelse
         </div>
 
         <div class="mt-5 flex flex-col gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:items-start dark:border-gray-800">
             <div class="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
                 <x-filament::icon icon="heroicon-o-clipboard-document-list" class="size-4 text-primary-600" />
-                Order note
+                订单备注
             </div>
-            <p class="whitespace-pre-wrap text-sm leading-6 text-gray-500 sm:ml-auto sm:max-w-3xl sm:text-right">{{ $order->notes ?: 'No order note was added.' }}</p>
+            <p class="whitespace-pre-wrap text-sm leading-6 text-gray-500 sm:ml-auto sm:max-w-3xl sm:text-right">{{ $order->notes ?: '未添加订单备注。' }}</p>
         </div>
     </section>
 
     <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary-600 dark:text-primary-400">03</p>
-            <h3 class="mt-1 text-lg font-semibold text-gray-950 dark:text-white">Uploaded files</h3>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Every artwork, logo, and reference file attached to this order.</p>
+            <h3 class="mt-1 text-lg font-semibold text-gray-950 dark:text-white">已上传文件</h3>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">此订单附带的所有设计稿、标志和参考文件。</p>
         </div>
 
         @if (count($uploadedFiles) > 0)
@@ -226,7 +275,7 @@
                             @if ($file['available'] && $file['url'])
                                 <x-filament::icon icon="heroicon-o-arrow-down-tray" class="size-4 shrink-0 text-gray-400 transition group-hover:text-primary-600" />
                             @else
-                                <span class="shrink-0 text-[11px] text-gray-400">Unavailable</span>
+                                <span class="shrink-0 text-[11px] text-gray-400">不可用</span>
                             @endif
                     @if ($file['available'] && $file['url'])
                         </a>
@@ -238,7 +287,7 @@
         @else
             <div class="mt-6 flex items-center gap-3 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-4 py-5 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-950/50">
                 <x-filament::icon icon="heroicon-o-document-text" class="size-5 text-gray-400" />
-                No files were uploaded with this order.
+                此订单尚未上传文件。
             </div>
         @endif
     </section>
@@ -246,8 +295,8 @@
     <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-6">
         <div>
             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary-600 dark:text-primary-400">04</p>
-            <h3 class="mt-1 text-lg font-semibold text-gray-950 dark:text-white">Customer details</h3>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Customer contact information, address, and shipping details.</p>
+            <h3 class="mt-1 text-lg font-semibold text-gray-950 dark:text-white">客户信息</h3>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">客户联系方式、地址和配送信息。</p>
         </div>
 
         <div class="mt-6 grid gap-4 lg:grid-cols-2">
@@ -256,20 +305,20 @@
                     <span class="flex size-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-950 dark:text-primary-300">
                         <x-filament::icon icon="heroicon-o-user" class="size-4" />
                     </span>
-                    <h4 class="font-semibold text-gray-950 dark:text-white">Customer</h4>
+                    <h4 class="font-semibold text-gray-950 dark:text-white">客户</h4>
                 </div>
                 <dl class="space-y-3">
                     <div>
-                        <dt class="text-xs text-gray-500">Name</dt>
+                        <dt class="text-xs text-gray-500">姓名</dt>
                         <dd class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $order->customer_name }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-gray-500">Email</dt>
+                        <dt class="text-xs text-gray-500">电子邮箱</dt>
                         <dd class="break-words text-sm font-medium text-gray-900 dark:text-gray-100">{{ $order->customer_email }}</dd>
                     </div>
                     @if ($order->customer_phone)
                         <div>
-                            <dt class="text-xs text-gray-500">Phone</dt>
+                            <dt class="text-xs text-gray-500">电话</dt>
                             <dd class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $order->customer_phone }}</dd>
                         </div>
                     @endif
@@ -281,7 +330,7 @@
                     <span class="flex size-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-950 dark:text-primary-300">
                         <x-filament::icon icon="heroicon-o-map-pin" class="size-4" />
                     </span>
-                    <h4 class="font-semibold text-gray-950 dark:text-white">Delivery address</h4>
+                    <h4 class="font-semibold text-gray-950 dark:text-white">收件地址</h4>
                 </div>
                 <address class="text-sm leading-6 text-gray-600 not-italic dark:text-gray-300">
                     <p class="font-medium text-gray-900 dark:text-gray-100">{{ $order->shipping_address }}</p>
@@ -295,19 +344,19 @@
                     <span class="flex size-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-950 dark:text-primary-300">
                         <x-filament::icon icon="heroicon-o-truck" class="size-4" />
                     </span>
-                    <h4 class="font-semibold text-gray-950 dark:text-white">Shipping details</h4>
+                    <h4 class="font-semibold text-gray-950 dark:text-white">配送信息</h4>
                 </div>
                 <dl class="grid gap-4 sm:grid-cols-3">
                     <div>
-                        <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Shipping method</dt>
-                        <dd class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">{{ $order->shipping_method === 'dhl_express' ? 'DHL Express' : \Illuminate\Support\Str::headline((string) $order->shipping_method) }}</dd>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">配送方式</dt>
+                        <dd class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">{{ $shippingMethodLabel }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Carrier</dt>
-                        <dd class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">{{ $order->shipping_carrier ?: 'Not assigned' }}</dd>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">承运商</dt>
+                        <dd class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">{{ $order->shipping_carrier ?: '未分配' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Shipping fee</dt>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">运费</dt>
                         <dd class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">${{ $money($order->shipping_fee) }}</dd>
                     </div>
                 </dl>
@@ -315,12 +364,12 @@
                 @if ($order->tracking_number || $order->tracking_url)
                     <div class="mt-5 flex flex-col justify-between gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center dark:border-gray-800">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Tracking number</p>
-                            <p class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">{{ $order->tracking_number ?: 'Not available yet' }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">快递单号</p>
+                            <p class="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">{{ $order->tracking_number ?: '暂无' }}</p>
                         </div>
                         @if ($order->tracking_url)
                             <a href="{{ $order->tracking_url }}" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600 hover:underline dark:text-primary-300">
-                                Track package
+                                查询物流
                                 <x-filament::icon icon="heroicon-o-arrow-top-right-on-square" class="size-4" />
                             </a>
                         @endif

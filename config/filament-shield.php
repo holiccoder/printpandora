@@ -1,0 +1,99 @@
+<?php
+
+use App\Filament\Pages\Dashboard as AdminDashboard;
+use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
+use Filament\Pages\Dashboard as FilamentDashboard;
+use Filament\Widgets\AccountWidget;
+use Filament\Widgets\FilamentInfoWidget;
+
+return [
+    'shield_resource' => [
+        'slug' => 'roles',
+        'show_model_path' => false,
+        'cluster' => null,
+        'tabs' => [
+            'pages' => true,
+            'widgets' => false,
+            'resources' => true,
+            'custom_permissions' => false,
+        ],
+    ],
+
+    'tenant_model' => null,
+    'auth_provider_model' => 'App\\Models\\Admin',
+
+    'super_admin' => [
+        'enabled' => true,
+        'name' => 'super_admin',
+        'define_via_gate' => true,
+        'intercept_gate' => 'before',
+    ],
+
+    'panel_user' => [
+        'enabled' => true,
+        'name' => 'panel_user',
+    ],
+
+    'permissions' => [
+        'separator' => ':',
+        'case' => 'pascal',
+        'generate' => true,
+        'format_custom_permission_keys' => true,
+    ],
+
+    'localization' => [
+        'enabled' => true,
+        'key' => 'filament-shield::filament-shield.resource_permission_prefixes_labels',
+    ],
+
+    'policies' => [
+        'path' => app_path('Policies'),
+        'merge' => true,
+        'generate' => true,
+        'methods' => [
+            'viewAny', 'view', 'create', 'update', 'delete', 'deleteAny', 'restore',
+            'forceDelete', 'forceDeleteAny', 'restoreAny', 'replicate', 'reorder',
+        ],
+        'single_parameter_methods' => [
+            'viewAny', 'create', 'deleteAny', 'forceDeleteAny', 'restoreAny', 'reorder',
+        ],
+    ],
+
+    'resources' => [
+        'subject' => 'model',
+        'manage' => [
+            RoleResource::class => [
+                'viewAny', 'view', 'create', 'update', 'delete',
+            ],
+        ],
+        'exclude' => [],
+    ],
+
+    'pages' => [
+        'subject' => 'class',
+        'prefix' => 'view',
+        'exclude' => [
+            FilamentDashboard::class,
+            AdminDashboard::class,
+        ],
+    ],
+
+    'widgets' => [
+        'subject' => 'class',
+        'prefix' => 'view',
+        'exclude' => [
+            AccountWidget::class,
+            FilamentInfoWidget::class,
+        ],
+    ],
+
+    'custom_permissions' => [],
+
+    'discovery' => [
+        'discover_all_resources' => false,
+        'discover_all_widgets' => false,
+        'discover_all_pages' => false,
+    ],
+
+    'register_role_policy' => true,
+];

@@ -179,7 +179,11 @@ final class FlyersAndBrochuresProductCatalog
             'paper_name_source' => '240g珠光纸',
             'unit_price' => 2.0,
             'finish' => 'none',
-            'foldings' => ['half_fold'],
+            'foldings' => [
+                'half_fold',
+                'three_panel_accordion_fold',
+                'three_panel_roll_fold',
+            ],
             'gallery' => [
                 '/images/products/flyers-and-brochures/quality/01.png',
                 '/images/products/flyers-and-brochures/quality/02.png',
@@ -193,7 +197,11 @@ final class FlyersAndBrochuresProductCatalog
             'paper_name_source' => '250g白卡纸',
             'unit_price' => 1.8,
             'finish' => 'none',
-            'foldings' => ['half_fold'],
+            'foldings' => [
+                'half_fold',
+                'three_panel_accordion_fold',
+                'three_panel_roll_fold',
+            ],
             'gallery' => [
                 '/images/products/flyers-and-brochures/special/01.png',
                 '/images/products/flyers-and-brochures/special/02.png',
@@ -207,7 +215,11 @@ final class FlyersAndBrochuresProductCatalog
             'paper_name_source' => '300g美兰典雅超白',
             'unit_price' => 2.8,
             'finish' => 'none',
-            'foldings' => ['half_fold'],
+            'foldings' => [
+                'half_fold',
+                'three_panel_accordion_fold',
+                'three_panel_roll_fold',
+            ],
             'gallery' => [
                 '/images/products/flyers-and-brochures/super/01.png',
                 '/images/products/flyers-and-brochures/super/02.png',

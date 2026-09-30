@@ -2,11 +2,14 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use App\Filament\Widgets\GoogleAnalyticsChart;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Pages\Page;
 
 class Traffic extends Page
 {
+    use HasPageShield;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
 
     protected string $view = 'filament.pages.traffic';

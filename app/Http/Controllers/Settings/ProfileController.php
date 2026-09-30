@@ -39,17 +39,32 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $user->fill($request->validated());
+        $emailChanged = $user->isDirty('email');
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($emailChanged) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
+        if ($emailChanged) {
+            $user->sendEmailVerificationNotification();
+        }
 
-        return to_route('profile.edit');
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => $emailChanged
+                ? __('A verification link has been sent to your new email address.')
+                : __('Profile updated.'),
+        ]);
+
+        $response = to_route('profile.edit');
+
+        return $emailChanged
+            ? $response->with('status', 'verification-link-sent')
+            : $response;
     }
 
     /**

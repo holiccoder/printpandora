@@ -7,6 +7,7 @@ use App\Services\ProductImageUploadService;
 use App\Services\SiteSettingsService;
 use App\Support\HardcodedContent;
 use App\Support\ProductImagePolicy;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
@@ -30,7 +31,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
  */
 class Settings extends Page implements HasForms
 {
-    use InteractsWithForms;
+    use HasPageShield, InteractsWithForms;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 

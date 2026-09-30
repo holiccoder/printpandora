@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Settings\PasswordUpdateRequest;
 use App\Http\Requests\Settings\TwoFactorAuthenticationRequest;
+use App\Models\User;
+use App\Notifications\PasswordChangeNotification;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
@@ -20,7 +22,7 @@ class SecurityController extends Controller
     {
         $props = [
             'canManageTwoFactor' => Features::canManageTwoFactorAuthentication(),
-            'passwordRules' => Password::defaults()->toPasswordRulesString(),
+            'status' => $request->session()->get('status'),
         ];
 
         if (Features::canManageTwoFactorAuthentication()) {
@@ -34,16 +36,26 @@ class SecurityController extends Controller
     }
 
     /**
-     * Update the user's password.
+     * Send a password change link to the authenticated user's email address.
      */
-    public function update(PasswordUpdateRequest $request): RedirectResponse
+    public function requestPasswordReset(Request $request): RedirectResponse
     {
-        $request->user()->update([
-            'password' => $request->password,
-        ]);
+        $user = $request->user();
+        abort_unless($user instanceof User, 403);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Password updated.')]);
+        $status = Password::broker(config('fortify.passwords'))->sendResetLink(
+            ['email' => $user->email],
+            function (User $user, string $token): string {
+                $user->notify(new PasswordChangeNotification($token));
 
-        return back();
+                return Password::RESET_LINK_SENT;
+            },
+        );
+
+        if ($status !== Password::RESET_LINK_SENT) {
+            return back()->withErrors(['password' => __($status)]);
+        }
+
+        return back()->with('status', 'password-reset-link-sent');
     }
 }

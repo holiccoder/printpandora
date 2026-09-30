@@ -46,10 +46,20 @@ class ProductDesignRequestController extends Controller
 
         $mode = (string) $validatedDesign['mode'];
 
-        if ($mode !== 'canva') {
+        if ($mode === 'canva') {
             Validator::make($designPayload, [
+                'email' => ['nullable', 'email', 'max:255'],
+                'order_name' => ['nullable', 'string', 'max:255'],
+            ])->validate();
+        } else {
+            $designDetailsRules = [
                 'email' => ['required', 'email', 'max:255'],
-                'business_name' => ['required', 'string', 'max:255'],
+                'order_name' => ['nullable', 'string', 'max:255'],
+                'business_name' => [
+                    $mode === 'design-for-you' ? 'required' : 'nullable',
+                    'string',
+                    'max:255',
+                ],
                 'card_info' => ['nullable', 'string', 'max:5000'],
                 'business_card_type' => ['required', 'string', 'max:255'],
                 'design_service_code' => [
@@ -58,7 +68,9 @@ class ProductDesignRequestController extends Controller
                     Rule::in(array_keys(DesignServiceRequest::DESIGN_SERVICE_FEES)),
                 ],
                 'terms_accepted' => ['required', 'boolean', 'accepted'],
-            ])->validate();
+            ];
+
+            Validator::make($designPayload, $designDetailsRules)->validate();
         }
 
         $request->validate($this->fileRules($mode));

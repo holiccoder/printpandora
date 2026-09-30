@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.4",
+        "bezhansalleh/filament-shield": "^4.3",
         "cryptomus/api-php-sdk": "^1.0",
         "dompdf/dompdf": "^3.1.6",
         "filament/filament": "*",

@@ -95,6 +95,8 @@ class ProductDesignRequestTest extends TestCase
                 'product_id' => 42,
                 'product_name' => 'Classic Business Cards',
                 'product_slug' => 'classic-business-cards',
+                'email' => 'client@example.com',
+                'order_name' => 'Canva spring campaign',
             ], JSON_THROW_ON_ERROR),
             'design_file' => [
                 UploadedFile::fake()->image('canva-front.png'),
@@ -106,6 +108,8 @@ class ProductDesignRequestTest extends TestCase
         $request = ProductDesignRequest::query()->firstOrFail();
 
         $this->assertSame('canva', $request->desgin['mode']);
+        $this->assertSame('client@example.com', $request->desgin['email']);
+        $this->assertSame('Canva spring campaign', $request->desgin['order_name']);
         $this->assertIsArray($request->desgin['design_path']);
         $this->assertCount(2, $request->desgin['design_path']);
         $this->assertDatabaseCount('design_service_requests', 0);
@@ -113,6 +117,36 @@ class ProductDesignRequestTest extends TestCase
         foreach ($request->desgin['design_path'] as $path) {
             Storage::disk('public')->assertExists($path);
         }
+    }
+
+    public function test_upload_mode_does_not_require_design_brief_fields(): void
+    {
+        Storage::fake('public');
+
+        $this->post(route('product-designs.store'), [
+            'desgin' => json_encode([
+                'source' => 'product-page',
+                'mode' => 'upload',
+                'product_name' => 'Classic Business Cards',
+                'product_slug' => 'classic-business-cards',
+                'email' => 'client@example.com',
+                'order_name' => 'Upload spring campaign',
+                'business_card_type' => 'Classic Business Cards',
+                'terms_accepted' => true,
+            ], JSON_THROW_ON_ERROR),
+            'design_file' => UploadedFile::fake()->create(
+                'artwork.pdf',
+                1,
+                'application/pdf',
+            ),
+        ])->assertRedirect();
+
+        $request = ProductDesignRequest::query()->firstOrFail();
+
+        $this->assertSame('upload', $request->desgin['mode']);
+        $this->assertSame('client@example.com', $request->desgin['email']);
+        $this->assertSame('Upload spring campaign', $request->desgin['order_name']);
+        $this->assertDatabaseCount('design_service_requests', 0);
     }
 
     public function test_upload_mode_requires_a_main_design_file(): void

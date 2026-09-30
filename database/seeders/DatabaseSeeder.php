@@ -41,6 +41,10 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
+        $admin->assignRole('super_admin');
+
+        $this->call(ShieldSeeder::class);
+
         $categories = [
             ['name' => 'Getting Started', 'slug' => 'getting-started'],
             ['name' => 'Design Tips', 'slug' => 'design-tips'],
@@ -366,5 +370,6 @@ HTML,
         $this->call(StickerProductOptionsSeeder::class);
         $this->call(FlyersAndBrochuresProductSeeder::class);
         $this->call(HelpCenterSeeder::class);
+        $this->call(TestCustomerSeeder::class);
     }
 }

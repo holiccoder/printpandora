@@ -78,7 +78,7 @@ class OrderController extends Controller
         $order = Order::query()
             ->where('user_id', $request->user()->id)
             ->findOrFail($id);
-        $resolvedFile = $orderFiles->resolve($order, $file);
+        $resolvedFile = $orderFiles->resolve($order, $file, $request->user());
 
         if ($resolvedFile === null) {
             abort(404);

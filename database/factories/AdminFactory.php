@@ -34,4 +34,11 @@ class AdminFactory extends Factory
             'remember_token' => Str::random(10),
         ];
     }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Admin $admin): void {
+            $admin->assignRole('super_admin');
+        });
+    }
 }

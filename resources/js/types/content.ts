@@ -53,12 +53,12 @@ export interface BusinessCardsMegaMenu {
     promo_cards: PromoCard[];
 }
 
-export interface StickersLabelsMegaMenu {
+export interface CardsPostcardsMegaMenu {
     link_groups: LinkGroup[];
     promo_cards: PromoCard[];
 }
 
-export interface CardsPostcardsMegaMenu {
+export interface StickersLabelsMegaMenu {
     link_groups: LinkGroup[];
     promo_cards: PromoCard[];
 }

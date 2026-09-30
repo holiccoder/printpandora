@@ -3,15 +3,17 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
+use App\Models\Admin;
 use App\Models\Order;
 use App\Models\ProductDesignRequest;
+use App\Services\OrderFileService;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Infolists\Components\ViewEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
@@ -23,23 +25,143 @@ use Illuminate\Support\Facades\Storage;
 
 class OrderResource extends Resource
 {
-    public static function designAction(): Actions\Action
+    public static function fileAction(): Actions\Action
     {
-        return Actions\Action::make('design')
-            ->label('设计')
-            ->icon('heroicon-o-paint-brush')
+        return Actions\Action::make('files')
+            ->label(fn (Order $record): string => match ($record->status) {
+                Order::STATUS_PENDING_REVIEW => '文件待审核',
+                Order::STATUS_NEEDS_REUPLOAD => '文件需重传',
+                Order::STATUS_PENDING_CONFIRMATION => '文件待确认',
+                Order::STATUS_CONFIRMED => '文件已确认',
+                default => '查看文件',
+            })
+            ->icon('heroicon-o-document-arrow-down')
             ->color('gray')
-            ->modalHeading(fn (Order $record): string => "Design for order #{$record->id}")
-            ->modalContent(fn (Order $record): View => view(
-                'filament.pages.order-design-modal',
-                [
-                    'order' => $record,
-                    'designRequests' => static::designRequestsFor($record),
-                ],
-            ))
+            ->modalHeading(fn (Order $record): string => "订单 #{$record->id} 的文件")
+            ->modalWidth(Width::SevenExtraLarge)
             ->modalSubmitAction(false)
-            ->modalCancelActionLabel('Close')
-            ->modalWidth(Width::SevenExtraLarge);
+            ->modalCancelActionLabel('关闭')
+            ->registerModalActions([
+                Actions\Action::make('upload')
+                    ->label('上传文件')
+                    ->icon('heroicon-o-arrow-up-tray')
+                    ->modalHeading('上传文件')
+                    ->modalSubmitActionLabel('上传')
+                    ->form([
+                        Forms\Components\FileUpload::make('files')
+                            ->label('文件')
+                            ->multiple()
+                            ->required()
+                            ->storeFiles(false)
+                            ->maxFiles(20)
+                            ->maxSize(76800)
+                            ->acceptedFileTypes([
+                                'image/jpeg',
+                                'image/png',
+                                'image/webp',
+                                'image/tiff',
+                                'application/pdf',
+                                'image/svg+xml',
+                                'application/postscript',
+                                'application/illustrator',
+                                'image/vnd.adobe.photoshop',
+                            ])
+                            ->helperText('支持 JPG、PNG、WEBP、PDF、SVG、AI、EPS、PSD、TIFF；每个文件最大 75 MB。'),
+                    ])
+                    ->action(function (Order $record, array $data): void {
+                        $admin = auth('admin')->user();
+                        app(OrderFileService::class)->upload(
+                            $record,
+                            (array) ($data['files'] ?? []),
+                            'admin',
+                            $admin,
+                        );
+
+                        app(OrderFileService::class)->submitForConfirmation($record, $admin);
+
+                        Notification::make()
+                            ->success()
+                            ->title('文件已上传，订单已进入待客户确认')
+                            ->send();
+                    }),
+                Actions\Action::make('confirmForCustomer')
+                    ->label('替客户确认')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('替客户确认')
+                    ->modalDescription('确认后订单状态将变为已确认，并进入后续生产流程。')
+                    ->modalSubmitActionLabel('确认')
+                    ->modalCancelActionLabel('取消')
+                    ->action(function (Order $record): void {
+                        $admin = auth('admin')->user();
+                        abort_unless($admin instanceof Admin, 403);
+
+                        app(OrderFileService::class)->confirmForAdmin($record, $admin);
+
+                        Notification::make()
+                            ->success()
+                            ->title('订单已替客户确认')
+                            ->send();
+                    }),
+                Actions\Action::make('rejectReview')
+                    ->label('审核不通过')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->modalHeading('审核不通过')
+                    ->modalSubmitActionLabel('提交')
+                    ->modalCancelActionLabel('取消')
+                    ->form([
+                        Forms\Components\Textarea::make('reason')
+                            ->label('审核不通过的理由')
+                            ->required()
+                            ->maxLength(2000)
+                            ->rows(4),
+                    ])
+                    ->action(function (Order $record, array $data): void {
+                        $admin = auth('admin')->user();
+                        abort_unless($admin instanceof Admin, 403);
+
+                        app(OrderFileService::class)->rejectForReupload(
+                            $record,
+                            $admin,
+                            (string) ($data['reason'] ?? ''),
+                        );
+
+                        Notification::make()
+                            ->success()
+                            ->title('已要求客户重新上传文件')
+                            ->send();
+                    }),
+                Actions\Action::make('deleteFile')
+                    ->label('删除文件')
+                    ->requiresConfirmation()
+                    ->modalHeading('删除文件')
+                    ->modalDescription('该文件将被永久删除，且无法恢复。')
+                    ->modalSubmitActionLabel('确认删除')
+                    ->modalCancelActionLabel('取消')
+                    ->color('danger')
+                    ->action(function (Order $record, array $arguments): void {
+                        app(OrderFileService::class)->delete(
+                            $record,
+                            (string) ($arguments['file'] ?? ''),
+                            auth('admin')->user(),
+                        );
+
+                        Notification::make()
+                            ->success()
+                            ->title('文件已删除')
+                            ->send();
+                    }),
+            ])
+            ->modalContent(fn (Actions\Action $action, Order $record): View => view(
+                'filament.pages.order-files-modal',
+                [
+                    'action' => $action,
+                    'order' => $record,
+                    'files' => app(OrderFileService::class)->forOrder($record, 'admin'),
+                ],
+            ));
     }
 
     /**
@@ -111,15 +233,15 @@ class OrderResource extends Resource
                 $files,
                 "product-design-{$requestId}-design",
                 data_get($payload, 'design_path'),
-                $mode === 'canva' ? 'Canva design' : 'Design file',
-                'Product artwork',
+                $mode === 'canva' ? 'Canva 设计稿' : '设计文件',
+                '产品设计文件',
             );
             self::addUploadedFiles(
                 $files,
                 "product-design-{$requestId}-logo",
                 data_get($payload, 'logo_path'),
-                'Company logo',
-                'Product artwork',
+                '公司标志',
+                '产品设计文件',
             );
 
             foreach ((array) data_get($payload, 'example_paths', []) as $index => $path) {
@@ -127,8 +249,8 @@ class OrderResource extends Resource
                     $files,
                     "product-design-{$requestId}-example-{$index}",
                     $path,
-                    'Example '.((int) $index + 1),
-                    'Product artwork',
+                    '示例 '.((int) $index + 1),
+                    '产品设计文件',
                 );
             }
         }
@@ -142,8 +264,8 @@ class OrderResource extends Resource
                 $files,
                 "design-service-{$requestId}-logo",
                 $designRequest->getAttribute('logo_path'),
-                'Logo',
-                'Design service',
+                '公司标志',
+                '设计服务',
             );
 
             foreach ((array) $designRequest->getAttribute('example_paths') as $index => $path) {
@@ -151,8 +273,8 @@ class OrderResource extends Resource
                     $files,
                     "design-service-{$requestId}-example-{$index}",
                     $path,
-                    'Example '.((int) $index + 1),
-                    'Design service',
+                    '示例 '.((int) $index + 1),
+                    '设计服务',
                 );
             }
         }
@@ -262,12 +384,23 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('status')
                             ->label('状态')
                             ->required()
-                            ->options(Order::statusOptions()),
+                            ->options(Order::statusOptions())
+                            ->disableOptionWhen(
+                                fn (string $value, Order $record): bool => match ($value) {
+                                    Order::STATUS_CONFIRMED => $record->status !== Order::STATUS_CONFIRMED,
+                                    Order::STATUS_PRODUCTION => ! in_array($record->status, [
+                                        Order::STATUS_CONFIRMED,
+                                        Order::STATUS_PRODUCTION,
+                                        Order::STATUS_SHIPPED,
+                                    ], true),
+                                    default => false,
+                                },
+                            ),
                         Forms\Components\Select::make('shipping_method')
                             ->label('运输方式')
                             ->options([
                                 'standard' => '标准运输',
-                                'dhl_express' => '快速运输（DHL Express）',
+                                'dhl_express' => 'DHL 快速运输',
                             ])
                             ->disabled(),
                         Forms\Components\TextInput::make('shipping_carrier')
@@ -368,21 +501,28 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('customer_name')->label('客户姓名')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('customer_email')->label('电子邮箱')->searchable(),
                 Tables\Columns\TextColumn::make('total')->label('订单总计')->money('USD')->sortable(),
+                Tables\Columns\TextColumn::make('shipping_weight_grams')
+                    ->label('订单重量（克）')
+                    ->numeric()
+                    ->sortable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('shipping_carrier')->label('承运商')->sortable(),
                 Tables\Columns\TextColumn::make('tracking_number')->label('快递单号')->searchable(),
-                Tables\Columns\TextColumn::make('status')
+                Tables\Columns\SelectColumn::make('status')
                     ->label('状态')
-                    ->formatStateUsing(fn (string $state): string => Order::statusOptions()[$state] ?? $state)
-                    ->badge()
-                    ->color(fn (string $state): array => match ($state) {
-                        Order::STATUS_PENDING => Color::Yellow,
-                        Order::STATUS_PENDING_REVIEW => Color::Orange,
-                        Order::STATUS_PENDING_CONFIRMATION => Color::Violet,
-                        Order::STATUS_CONFIRMED => Color::Blue,
-                        Order::STATUS_PRODUCTION => Color::Purple,
-                        Order::STATUS_SHIPPED => Color::Green,
-                        default => Color::Gray,
-                    })
+                    ->options(Order::statusOptions())
+                    ->selectablePlaceholder(false)
+                    ->disableOptionWhen(
+                        fn (string $value, Order $record): bool => match ($value) {
+                            Order::STATUS_CONFIRMED => $record->status !== Order::STATUS_CONFIRMED,
+                            Order::STATUS_PRODUCTION => ! in_array($record->status, [
+                                Order::STATUS_CONFIRMED,
+                                Order::STATUS_PRODUCTION,
+                                Order::STATUS_SHIPPED,
+                            ], true),
+                            default => false,
+                        },
+                    )
                     ->sortable(),
                 Tables\Columns\TextColumn::make('items_count')->counts('items')->label('商品件数'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->label('下单时间'),
@@ -583,8 +723,8 @@ class OrderResource extends Resource
                     ->icon('heroicon-o-funnel');
             })
             ->actions([
-                Actions\ViewAction::make(),
-                static::designAction(),
+                Actions\ViewAction::make()->label('查看'),
+                static::fileAction(),
                 Actions\Action::make('addShippingTracking')
                     ->label('填写物流信息')
                     ->icon('heroicon-o-truck')
@@ -615,10 +755,10 @@ class OrderResource extends Resource
                         ]);
                     })
                     ->successNotificationTitle('物流信息已保存，订单已标记为已发货'),
-                Actions\EditAction::make(),
+                Actions\EditAction::make()->label('编辑'),
             ])
             ->bulkActions([
-                Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make()->label('批量删除'),
             ])
             ->defaultSort('created_at', 'desc');
     }

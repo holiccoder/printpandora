@@ -4,13 +4,16 @@ namespace App\Providers;
 
 use App\Events\OrderPaid;
 use App\Listeners\GenerateOrderInvoice;
+use App\Models\Admin;
 use App\Support\HardcodedContent;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Carbon\CarbonImmutable;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -32,6 +35,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        // Register Shield's generated policies for the Filament admin panel.
+        FilamentShield::enforcePolicies();
+
+        Gate::before(function (mixed $user): ?bool {
+            return $user instanceof Admin && $user->hasRole('super_admin')
+                ? true
+                : null;
+        });
 
         Event::listen(OrderPaid::class, GenerateOrderInvoice::class);
 

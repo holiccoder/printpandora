@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AdminAiChatController;
+use App\Http\Controllers\Admin\OrderFileController as AdminOrderFileController;
 use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\Auth\PasswordChangeController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BusinessCardsController;
@@ -17,11 +19,13 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Shop\CartController;
 use App\Http\Controllers\Shop\CheckoutController;
 use App\Http\Controllers\Shop\OrderController;
+use App\Http\Controllers\Shop\OrderFileController;
 use App\Http\Controllers\Shop\ProductController;
 use App\Http\Controllers\Shop\TicketController;
 use App\Http\Controllers\ShowcaseController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Laravel\Fortify\Http\Controllers\NewPasswordController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -48,8 +52,8 @@ Route::inertia('/designer-partner-program', 'designer-partner-program')->name('d
 Route::post('/designer-partner-program/applications', [DesignerPartnerApplicationController::class, 'store'])
     ->name('designer-partner-program.applications.store');
 Route::post('/product-designs', [ProductDesignRequestController::class, 'store'])->name('product-designs.store');
-Route::redirect('/postcards', '/cards-and-postcards', 301)->name('postcards.legacy');
-Route::inertia('/cards-and-postcards', 'postcards')->name('cards-and-postcards');
+Route::redirect('/postcards', '/postcards/classic-standard', 301)->name('postcards.legacy');
+Route::redirect('/cards-and-postcards', '/postcards/classic-standard', 301)->name('cards-and-postcards.legacy');
 Route::inertia('/stickers-and-labels', 'stickers-and-labels')->name('stickers-and-labels');
 Route::inertia('/flyers-and-brochures', 'flyers-and-brochures')->name('flyers-and-brochures');
 Route::get('/showcases', [ShowcaseController::class, 'index'])->name('showcases');
@@ -66,6 +70,16 @@ Route::get('auth/{provider}/redirect', [SocialAuthController::class, 'redirect']
 Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback'])
     ->whereIn('provider', ['google', 'facebook'])
     ->name('social.callback');
+
+// Password change links sent from an authenticated account must remain usable
+// while that account is signed in. Fortify's public reset routes intentionally
+// use the guest middleware, so these dedicated routes render and submit the
+// same token-based reset flow without that middleware.
+Route::get('change-password/{token}', [PasswordChangeController::class, 'create'])
+    ->name('password.change');
+Route::post('change-password', [NewPasswordController::class, 'store'])
+    ->middleware('throttle:6,1')
+    ->name('password.change.update');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -88,8 +102,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->whereNumber('id')
         ->where('file', '[A-Za-z0-9_-]+')
         ->name('dashboard.orders.file');
+    Route::post('dashboard/orders/{id}/files', [OrderFileController::class, 'upload'])
+        ->whereNumber('id')
+        ->name('dashboard.orders.files.upload');
+    Route::delete('dashboard/orders/{id}/files/{file}', [OrderFileController::class, 'destroy'])
+        ->whereNumber('id')
+        ->where('file', '[A-Za-z0-9_-]+')
+        ->name('dashboard.orders.files.destroy');
+    Route::post('dashboard/orders/{id}/files/confirm', [OrderFileController::class, 'confirm'])
+        ->whereNumber('id')
+        ->name('dashboard.orders.files.confirm');
     Route::get('dashboard/profile', [DashboardController::class, 'profile'])->name('dashboard.profile');
     Route::patch('dashboard/profile', [DashboardController::class, 'updateProfile'])->name('dashboard.profile.update');
+});
+
+Route::middleware('auth:admin')->group(function () {
+    Route::get('admin/orders/{id}/files/{file}', [AdminOrderFileController::class, 'download'])
+        ->whereNumber('id')
+        ->where('file', '[A-Za-z0-9_-]+')
+        ->name('admin.orders.file');
+    Route::get('admin/orders/{id}/files.zip', [AdminOrderFileController::class, 'downloadZip'])
+        ->whereNumber('id')
+        ->name('admin.orders.files.zip');
 });
 
 // Sitemap

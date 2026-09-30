@@ -20,7 +20,7 @@ const POSTCARD_SIZE_ITEMS: PostcardSizeShowcaseItem[] = [
         ctaText: 'Start making',
         aspectRatio: '6 / 4',
         imageUrl: '/images/products/postcards/card.png',
-        href: '/cards-and-postcards#series',
+        href: '/postcards/classic-standard',
     },
     {
         id: 'square',
@@ -30,7 +30,7 @@ const POSTCARD_SIZE_ITEMS: PostcardSizeShowcaseItem[] = [
         ctaText: 'Shop Square Postcards',
         aspectRatio: '1 / 1',
         imageUrl: '/images/products/postcards/postcard-2.png',
-        href: '/cards-and-postcards#series',
+        href: '/postcards/classic-special',
     },
     {
         id: 'rack',
@@ -40,7 +40,7 @@ const POSTCARD_SIZE_ITEMS: PostcardSizeShowcaseItem[] = [
         ctaText: 'Shop Rack Cards',
         aspectRatio: '3.67 / 8.5',
         imageUrl: '/images/products/postcards/postcard-1.png',
-        href: '/cards-and-postcards#series',
+        href: '/postcards/super-standard',
     },
     {
         id: 'half-page',
@@ -50,7 +50,7 @@ const POSTCARD_SIZE_ITEMS: PostcardSizeShowcaseItem[] = [
         ctaText: 'Shop Half Page Postcards',
         aspectRatio: '8.5 / 5.5',
         imageUrl: '/images/products/postcards/postcard-4.png',
-        href: '/cards-and-postcards#series',
+        href: '/postcards/super-luxe',
     },
     {
         id: 'small',
@@ -60,7 +60,7 @@ const POSTCARD_SIZE_ITEMS: PostcardSizeShowcaseItem[] = [
         ctaText: 'Shop Small Postcards',
         aspectRatio: '5.83 / 4.13',
         imageUrl: '/images/products/postcards/classic-standard-postcards.png',
-        href: '/cards-and-postcards#series',
+        href: '/postcards/classic-standard',
     },
     {
         id: 'medium',
@@ -70,7 +70,7 @@ const POSTCARD_SIZE_ITEMS: PostcardSizeShowcaseItem[] = [
         ctaText: 'Shop Medium Postcards',
         aspectRatio: '7 / 5',
         imageUrl: '/images/products/postcards/quality-standard-postcards.png',
-        href: '/cards-and-postcards#series',
+        href: '/postcards/quality-standard',
     },
     {
         id: 'large',
@@ -80,7 +80,7 @@ const POSTCARD_SIZE_ITEMS: PostcardSizeShowcaseItem[] = [
         ctaText: 'Shop Large Postcards',
         aspectRatio: '9 / 6',
         imageUrl: '/images/products/postcards/super-standard-postcards.png',
-        href: '/cards-and-postcards#series',
+        href: '/postcards/super-standard',
     },
 ];
 

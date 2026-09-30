@@ -24,6 +24,10 @@ type Order = {
     products?: OrderedProduct[];
     notes: string | null;
     created_at: string | null;
+    can_manage_files: boolean;
+    can_confirm_files: boolean;
+    file_upload_url: string;
+    file_confirm_url: string;
     uploaded_files: OrderFileSections['uploaded_files'];
     awaiting_confirmation: OrderFileSections['awaiting_confirmation'];
     confirmed_files: OrderFileSections['confirmed_files'];
@@ -299,7 +303,10 @@ export default function DashboardOrders({
                                                     color: ACCENT,
                                                 }}
                                             >
-                                                {c.file_downloads_link}{' '}
+                                                {fileActionLabel(
+                                                    order.status,
+                                                    c,
+                                                )}{' '}
                                                 <Download className="size-3.5" />
                                             </button>
                                         </Td>
@@ -360,9 +367,38 @@ export default function DashboardOrders({
                         }
                     }}
                     content={c.file_downloads_modal}
+                    canManage={openOrder.can_manage_files}
+                    canConfirm={openOrder.can_confirm_files}
+                    isPendingConfirmation={
+                        openOrder.status === 'pending_confirmation'
+                    }
+                    showConfirmButton={[
+                        'pending',
+                        'pending_review',
+                        'needs_reupload',
+                        'pending_confirmation',
+                    ].includes(openOrder.status)}
+                    onFileDownloaded={() =>
+                        setOpenOrder((current) =>
+                            current
+                                ? { ...current, can_confirm_files: true }
+                                : current,
+                        )
+                    }
+                    uploadUrl={openOrder.file_upload_url}
+                    confirmUrl={openOrder.file_confirm_url}
                 />
             )}
         </DashboardLayout>
+    );
+}
+
+function fileActionLabel(status: string, c: any): string {
+    return (
+        c.file_action_labels?.[status] ??
+        c.file_action_labels?.default ??
+        c.file_downloads_link ??
+        'View files'
     );
 }
 

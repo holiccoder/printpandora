@@ -1,12 +1,14 @@
 // Content (labels/placeholders/headings) sourced from `content/hardcoded-content.json` via useContent('dashboard_profile_page').
 import { Form, Link } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
+import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
 import InputError from '@/components/input-error';
 import SEO from '@/components/seo';
 import ShippingAddressFields from '@/components/shipping-address-fields';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useContent } from '@/hooks/use-content';
 import DashboardLayout from '@/layouts/dashboard-layout';
 
@@ -52,7 +54,11 @@ export default function DashboardProfile({ user, status }: Props) {
 
                 {status && (
                     <div className="mb-6 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                        {status}
+                        {status === 'verification-link-sent'
+                            ? c.email_verification_sent_message
+                            : status === 'password-reset-link-sent'
+                              ? c.password_reset_sent_message
+                              : status}
                     </div>
                 )}
 
@@ -61,7 +67,6 @@ export default function DashboardProfile({ user, status }: Props) {
                         action="/dashboard/profile"
                         method="patch"
                         options={{ preserveScroll: true }}
-                        resetOnSuccess={['password', 'password_confirmation']}
                         className="space-y-6"
                     >
                         {({ processing, errors, recentlySuccessful }) => (
@@ -113,53 +118,6 @@ export default function DashboardProfile({ user, status }: Props) {
                                     }
                                 />
 
-                                {/* Password is optional — leave both fields blank to keep the
-                                        existing password unchanged. */}
-                                <div className="border-t border-neutral-100 pt-6">
-                                    <p className="mb-4 text-xs text-neutral-500">
-                                        {c.password_help}
-                                    </p>
-                                    <div className="grid gap-4 sm:grid-cols-2">
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="password">
-                                                {c.labels.new_password}
-                                            </Label>
-                                            <Input
-                                                id="password"
-                                                type="password"
-                                                name="password"
-                                                autoComplete="new-password"
-                                                placeholder={
-                                                    c.placeholders.password
-                                                }
-                                            />
-                                            <InputError
-                                                message={errors.password}
-                                            />
-                                        </div>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="password_confirmation">
-                                                {c.labels.confirm_new_password}
-                                            </Label>
-                                            <Input
-                                                id="password_confirmation"
-                                                type="password"
-                                                name="password_confirmation"
-                                                autoComplete="new-password"
-                                                placeholder={
-                                                    c.placeholders
-                                                        .password_confirmation
-                                                }
-                                            />
-                                            <InputError
-                                                message={
-                                                    errors.password_confirmation
-                                                }
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div className="flex items-center gap-3 pt-2">
                                     <Button
                                         type="submit"
@@ -179,6 +137,37 @@ export default function DashboardProfile({ user, status }: Props) {
                             </>
                         )}
                     </Form>
+
+                    <div className="border-t border-neutral-100 pt-6">
+                        <h2 className="text-base font-semibold text-neutral-900">
+                            {c.password_heading}
+                        </h2>
+                        <p className="mt-1 text-sm text-neutral-500">
+                            {c.password_help}
+                        </p>
+
+                        <Form
+                            {...SecurityController.requestPasswordReset.form()}
+                            options={{ preserveScroll: true }}
+                            className="mt-4"
+                        >
+                            {({ processing, errors }) => (
+                                <>
+                                    <InputError message={errors.password} />
+                                    <Button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="mt-3 bg-primary text-primary-foreground hover:bg-primary/90"
+                                    >
+                                        {processing && <Spinner />}
+                                        {processing
+                                            ? c.buttons.sending_password_link
+                                            : c.buttons.send_password_link}
+                                    </Button>
+                                </>
+                            )}
+                        </Form>
+                    </div>
                 </div>
             </div>
         </DashboardLayout>

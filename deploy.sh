@@ -59,6 +59,9 @@ rm -f "$PROJECT_DIR/public/hot"
 
 echo "==> 5/6 执行数据库迁移（不重置数据）"
 $PHP_BIN artisan migrate --force
+$PHP_BIN artisan db:seed --class=ShieldSeeder --force
+$PHP_BIN artisan db:seed --class=StickerProductOptionsSeeder --force
+$PHP_BIN artisan db:seed --class=FlyersAndBrochuresProductSeeder --force
 $PHP_BIN artisan db:seed --class=BusinessCardProductOptionsSeeder --force
 $PHP_BIN artisan db:seed --class=ClassicStandardBusinessCardOptionsSeeder --force
 $PHP_BIN artisan db:seed --class=PostcardProductSeeder --force

@@ -24,9 +24,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(RequirePassword::class)
         ->name('security.edit');
 
-    Route::put('settings/password', [SecurityController::class, 'update'])
+    Route::post('settings/password/request', [SecurityController::class, 'requestPasswordReset'])
         ->middleware('throttle:6,1')
-        ->name('user-password.update');
+        ->name('user-password.request');
 
     Route::inertia('settings/appearance', 'settings/appearance')->name('appearance.edit');
 

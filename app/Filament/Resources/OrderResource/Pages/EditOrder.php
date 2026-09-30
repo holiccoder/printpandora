@@ -16,10 +16,51 @@ class EditOrder extends EditRecord
 {
     protected static string $resource = OrderResource::class;
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record instanceof Order) {
+            return $data;
+        }
+
+        if (
+            ($data['status'] ?? null) === Order::STATUS_CONFIRMED
+            && $record->status !== Order::STATUS_CONFIRMED
+        ) {
+            Notification::make()
+                ->danger()
+                ->title('需要客户确认')
+                ->body('请先通过文件流程提交文件并等待客户确认。')
+                ->send();
+
+            $data['status'] = $record->status;
+        }
+
+        if (
+            ($data['status'] ?? null) === Order::STATUS_PRODUCTION
+            && ! in_array($record->status, [
+                Order::STATUS_CONFIRMED,
+                Order::STATUS_PRODUCTION,
+                Order::STATUS_SHIPPED,
+            ], true)
+        ) {
+            Notification::make()
+                ->danger()
+                ->title('生产前需要客户确认')
+                ->body('客户确认文件后，订单才能进入生产。')
+                ->send();
+
+            $data['status'] = $record->status;
+        }
+
+        return $data;
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            OrderResource::designAction(),
+            OrderResource::fileAction(),
             Actions\Action::make('createFourPxShipment')
                 ->label('创建 4PX 货运单')
                 ->icon('heroicon-o-truck')
@@ -116,7 +157,7 @@ class EditOrder extends EditRecord
                             ->send();
                     }
                 }),
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()->label('删除订单'),
         ];
     }
 }

@@ -202,33 +202,14 @@ class BusinessCardRoutesTest extends TestCase
                 ->where('content.global_chrome.header.business_cards_mega_menu.link_groups.1.links.2.children.1.href', '/business-cards/solid-quality'));
     }
 
-    public function test_cards_and_postcards_navigation_uses_the_requested_product_mappings(): void
+    public function test_cards_and_postcards_landing_redirects_to_a_postcard_product(): void
     {
         $this->get('/cards-and-postcards')
-            ->assertOk()
-            ->assertInertia(fn (Assert $page): Assert => $page
-                ->component('postcards')
-                ->where('content.global_chrome.header.top_navigation.1.label', 'Cards & Postcards')
-                ->where('content.global_chrome.header.top_navigation.1.href', '/cards-and-postcards')
-                ->has('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links', 3)
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.0.label', 'Classic Postcards')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.0.children.0.label', 'Classic Standard Postcards')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.0.children.0.href', '/postcards/classic-standard')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.0.children.1.label', 'Classic Special Postcards')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.0.children.1.href', '/postcards/classic-special')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.1.label', 'Super Postcards')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.1.children.0.label', 'Super Standard Postcards')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.1.children.0.href', '/postcards/super-standard')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.1.children.1.label', 'Super Luxe Postcards')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.1.children.1.href', '/postcards/super-luxe')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.2.label', 'Quality Postcards')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.2.children.0.label', 'Quality Standard Postcards')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.2.children.0.href', '/postcards/quality-standard')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.2.children.1.label', 'Quality Solid Postcards')
-                ->where('content.global_chrome.header.cards_postcards_mega_menu.link_groups.0.links.2.children.1.href', '/postcards/quality-solid'));
+            ->assertStatus(301)
+            ->assertRedirect('/postcards/classic-standard');
 
         $this->get('/postcards')
             ->assertStatus(301)
-            ->assertRedirect('/cards-and-postcards');
+            ->assertRedirect('/postcards/classic-standard');
     }
 }

@@ -1,6 +1,7 @@
 export const ORDER_STATUS_LABELS: Record<string, string> = {
     pending: 'Pending Payment',
     pending_review: 'Pending Review',
+    needs_reupload: 'Needs File Re-upload',
     pending_confirmation: 'Pending Confirmation',
     confirmed: 'Confirmed',
     production: 'In Production',
@@ -12,6 +13,7 @@ export const ORDER_STATUS_COLORS: Record<string, string> = {
         'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
     pending_review:
         'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
+    needs_reupload: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
     pending_confirmation:
         'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
     confirmed: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',

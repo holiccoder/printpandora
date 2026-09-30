@@ -399,7 +399,9 @@ class CheckoutController extends Controller
             case 'confirm_check':
                 $order->update([
                     'payment_status' => 'paid',
-                    'status' => Order::STATUS_CONFIRMED,
+                    'status' => $order->status === Order::STATUS_PENDING
+                        ? Order::STATUS_PENDING_REVIEW
+                        : $order->status,
                     'checkout_token' => null,
                 ]);
                 break;
@@ -529,7 +531,7 @@ class CheckoutController extends Controller
                 ];
 
                 if ($lockedOrder->status === Order::STATUS_PENDING) {
-                    $updates['status'] = Order::STATUS_CONFIRMED;
+                    $updates['status'] = Order::STATUS_PENDING_REVIEW;
                 }
 
                 if ($captureId && ! $lockedOrder->payment_id) {

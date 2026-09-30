@@ -2,12 +2,13 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Dashboard;
 use App\Http\Middleware\SetFilamentLocale;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use App\Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -35,6 +36,14 @@ class AdminPanelProvider extends PanelProvider
             ->authPasswordBroker('admins')
             ->colors([
                 'primary' => Color::hex('#800020'),
+            ])
+            ->plugins([
+                FilamentShieldPlugin::make()
+                    ->modelLabel('角色')
+                    ->pluralModelLabel('角色')
+                    ->navigationLabel('角色与权限')
+                    ->navigationGroup('用户管理')
+                    ->navigationIcon('heroicon-o-shield-check'),
             ])
             ->navigationGroups([
                 '商城管理',

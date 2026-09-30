@@ -12,14 +12,14 @@ class ViewOrder extends ViewRecord
 
     public function getTitle(): string
     {
-        return "Order #{$this->getRecord()->getKey()}";
+        return "订单 #{$this->getRecord()->getKey()}";
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
-            OrderResource::designAction(),
+            Actions\EditAction::make()->label('编辑'),
+            OrderResource::fileAction(),
         ];
     }
 

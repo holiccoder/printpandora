@@ -37,6 +37,7 @@ interface DesignServiceFormModalProps {
     productSlug?: string;
     productTypeLabel?: string;
     uploadFilesMode?: boolean;
+    hideDesignBriefFields?: boolean;
 }
 
 export default function DesignServiceFormModal({
@@ -61,6 +62,7 @@ export default function DesignServiceFormModal({
     productSlug,
     productTypeLabel,
     uploadFilesMode = false,
+    hideDesignBriefFields = false,
 }: DesignServiceFormModalProps) {
     const ds = useContent('design_service_page') as {
         notes_heading?: string;
@@ -210,6 +212,7 @@ export default function DesignServiceFormModal({
                                 productName={productName}
                                 productSlug={productSlug}
                                 productTypeLabel={productTypeLabel}
+                                hideDesignBriefFields={hideDesignBriefFields}
                                 onSuccess={() => {
                                     onSubmitted?.();
                                     onOpenChange(false);

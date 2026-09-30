@@ -17,3 +17,13 @@ use \public\images\product-options\business-cards\swatches\standard-size.webp as
 use \public\images\product-options\business-cards\swatches\square-size.webp as square size swatch image
 for all business card products
 and don't ever change that again
+
+## filament dashboard
+filament dashboard all labels, column names should be in chinese
+
+## user data
+please check if test customer account test@example.com exists, if not, please create
+check if admin account, admin@admin.com exists, if not, please create
+
+## testing
+when testing, don't use refresh database trait, only create new user

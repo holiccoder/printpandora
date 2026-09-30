@@ -108,7 +108,7 @@ class PayPalAsyncOrderTest extends TestCase
         $this->assertDatabaseHas('orders', [
             'payment_method' => 'paypal',
             'payment_status' => 'paid',
-            'status' => 'confirmed',
+            'status' => 'pending_review',
             'paypal_order_id' => 'PAYPAL-ORDER-1',
             'payment_id' => 'PAYPAL-CAPTURE-1',
         ]);
@@ -140,7 +140,7 @@ class PayPalAsyncOrderTest extends TestCase
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
             'payment_status' => 'paid',
-            'status' => 'confirmed',
+            'status' => 'pending_review',
             'payment_id' => 'PAYPAL-CAPTURE-1',
         ]);
         $this->assertDatabaseHas('paypal_webhook_events', [

@@ -1,26 +1,22 @@
 // Content (labels/placeholders/links) sourced from `content/hardcoded-content.json` via useContent('settings_security_page').
 import { Form } from '@inertiajs/react';
-import { useRef } from 'react';
 import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import type { Props as ManageTwoFactorProps } from '@/components/manage-two-factor';
 import ManageTwoFactor from '@/components/manage-two-factor';
-import PasswordInput from '@/components/password-input';
 import SEO from '@/components/seo';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useContent } from '@/hooks/use-content';
 import { edit } from '@/routes/security';
 
 type Props = {
-    passwordRules: string;
+    status?: string;
 } & ManageTwoFactorProps;
 
 export default function Security(props: Props) {
     const c = useContent('settings_security_page') as any;
-    const passwordInput = useRef<HTMLInputElement>(null);
-    const currentPasswordInput = useRef<HTMLInputElement>(null);
 
     return (
         <>
@@ -36,95 +32,35 @@ export default function Security(props: Props) {
                 />
 
                 <Form
-                    {...SecurityController.update.form()}
+                    {...SecurityController.requestPasswordReset.form()}
                     options={{
                         preserveScroll: true,
-                    }}
-                    resetOnError={[
-                        'password',
-                        'password_confirmation',
-                        'current_password',
-                    ]}
-                    resetOnSuccess
-                    onError={(errors) => {
-                        if (errors.password) {
-                            passwordInput.current?.focus();
-                        }
-
-                        if (errors.current_password) {
-                            currentPasswordInput.current?.focus();
-                        }
                     }}
                     className="space-y-6"
                 >
                     {({ errors, processing }) => (
                         <>
-                            <div className="grid gap-2">
-                                <Label htmlFor="current_password">
-                                    {c.labels.current_password}
-                                </Label>
+                            <p className="text-sm text-muted-foreground">
+                                {c.password_help}
+                            </p>
 
-                                <PasswordInput
-                                    id="current_password"
-                                    ref={currentPasswordInput}
-                                    name="current_password"
-                                    className="mt-1 block w-full"
-                                    autoComplete="current-password"
-                                    placeholder={
-                                        c.placeholders.current_password
-                                    }
-                                />
-
-                                <InputError message={errors.current_password} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">
-                                    {c.labels.new_password}
-                                </Label>
-
-                                <PasswordInput
-                                    id="password"
-                                    ref={passwordInput}
-                                    name="password"
-                                    className="mt-1 block w-full"
-                                    autoComplete="new-password"
-                                    placeholder={c.placeholders.new_password}
-                                    passwordrules={props.passwordRules}
-                                />
-
-                                <InputError message={errors.password} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    {c.labels.password_confirmation}
-                                </Label>
-
-                                <PasswordInput
-                                    id="password_confirmation"
-                                    name="password_confirmation"
-                                    className="mt-1 block w-full"
-                                    autoComplete="new-password"
-                                    placeholder={
-                                        c.placeholders.password_confirmation
-                                    }
-                                    passwordrules={props.passwordRules}
-                                />
-
-                                <InputError
-                                    message={errors.password_confirmation}
-                                />
-                            </div>
+                            <InputError message={errors.password} />
 
                             <div className="flex items-center gap-4">
                                 <Button
                                     disabled={processing}
-                                    data-test="update-password-button"
+                                    data-test="send-password-change-link-button"
                                 >
-                                    {c.buttons.save}
+                                    {processing && <Spinner />}
+                                    {c.buttons.send_reset_link}
                                 </Button>
                             </div>
+
+                            {props.status === 'password-reset-link-sent' && (
+                                <p className="text-sm font-medium text-green-600">
+                                    {c.password_reset_sent_message}
+                                </p>
+                            )}
                         </>
                     )}
                 </Form>

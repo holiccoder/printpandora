@@ -91,6 +91,7 @@ class DashboardController extends Controller
         OrderFileService $orderFiles,
         OrderWeightService $weights,
     ): Response {
+        $customer = $request->user();
         $status = $request->query('status');
         $status = is_string($status) && array_key_exists($status, Order::statusOptions())
             ? $status
@@ -108,7 +109,7 @@ class DashboardController extends Controller
             'designServiceRequests',
             'productDesignRequests',
         ])
-            ->where('user_id', $request->user()->id)
+            ->where('user_id', $customer->id)
             ->when($status !== null, function (Builder $query) use ($status): void {
                 $query->where('status', $status);
             })
@@ -151,7 +152,9 @@ class DashboardController extends Controller
             ->latest()
             ->paginate(15)
             ->withQueryString()
-            ->through(function (Order $order) use ($orderFiles, $weights): array {
+            ->through(function (Order $order) use ($customer, $orderFiles, $weights): array {
+                $files = $orderFiles->forOrder($order);
+
                 return [
                     'id' => $order->id,
                     'status' => $order->status,
@@ -193,7 +196,11 @@ class DashboardController extends Controller
                         ->all(),
                     'notes' => $order->notes,
                     'created_at' => $order->created_at?->toIso8601String(),
-                    ...$orderFiles->forOrder($order),
+                    ...$files,
+                    'can_manage_files' => $orderFiles->canCustomerManage($order),
+                    'can_confirm_files' => $orderFiles->canCustomerConfirm($order, $customer),
+                    'file_upload_url' => route('dashboard.orders.files.upload', ['id' => $order->id]),
+                    'file_confirm_url' => route('dashboard.orders.files.confirm', ['id' => $order->id]),
                 ];
             });
 
@@ -222,6 +229,8 @@ class DashboardController extends Controller
         ])
             ->where('user_id', $request->user()->id)
             ->findOrFail($id);
+
+        $files = $orderFiles->forOrder($order);
 
         return Inertia::render('dashboard/order-show', [
             'order' => [
@@ -253,7 +262,11 @@ class DashboardController extends Controller
                         ] : null,
                     ];
                 })->values()->all(),
-                'files' => $orderFiles->forOrder($order),
+                'files' => $files,
+                'can_manage_files' => $orderFiles->canCustomerManage($order),
+                'can_confirm_files' => $orderFiles->canCustomerConfirm($order, $request->user()),
+                'file_upload_url' => route('dashboard.orders.files.upload', ['id' => $order->id]),
+                'file_confirm_url' => route('dashboard.orders.files.confirm', ['id' => $order->id]),
                 'contact' => [
                     'name' => $order->customer_name,
                     'email' => $order->customer_email,
@@ -411,26 +424,30 @@ class DashboardController extends Controller
 
         // Name + email come from the shared ProfileUpdateRequest rules.
         $user->fill($request->validated());
+        $emailChanged = $user->isDirty('email');
 
-        if ($user->isDirty('email')) {
+        if ($emailChanged) {
             $user->email_verified_at = null;
-        }
-
-        // Password is opt-in; validate only if the user actually typed one.
-        // Empty submissions leave the stored hash untouched.
-        if ($request->filled('password')) {
-            $request->validate([
-                'password' => ['required', 'string', 'min:8', 'confirmed'],
-            ]);
-
-            $user->password = $request->string('password')->toString();
         }
 
         $user->save();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
+        if ($emailChanged) {
+            $user->sendEmailVerificationNotification();
+        }
 
-        return to_route('dashboard.profile');
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => $emailChanged
+                ? __('A verification link has been sent to your new email address.')
+                : __('Profile updated.'),
+        ]);
+
+        $response = to_route('dashboard.profile');
+
+        return $emailChanged
+            ? $response->with('status', 'verification-link-sent')
+            : $response;
     }
 
     /**
