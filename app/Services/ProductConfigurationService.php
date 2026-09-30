@@ -69,6 +69,19 @@ class ProductConfigurationService
     private const UV_FINISH_SWATCH_IMAGE = '/images/product-options/uv-swatch.png';
 
     /**
+     * Legacy product records pointed at template files that are no longer
+     * deployed. Keep the storefront resilient until every record is migrated.
+     *
+     * @var array<int, string>
+     */
+    private const LEGACY_BUSINESS_CARD_DESIGN_GUIDELINE_HREFS = [
+        '/templates/template.psd',
+        '/templates/template.ai',
+        '/templates/template.indd',
+        '/templates/template.jpg',
+    ];
+
+    /**
      * @var array<int, string>
      */
     public const PRICING_SCENARIOS = [
@@ -1370,7 +1383,11 @@ class ProductConfigurationService
 
             if (
                 is_array($sharedDownloads)
-                && (! is_array($downloads) || $downloads === [])
+                && (
+                    ! is_array($downloads)
+                    || $downloads === []
+                    || $this->hasLegacyBusinessCardDesignGuidelineDownloads($downloads)
+                )
             ) {
                 $details['design_specifications']['downloads'] = $sharedDownloads;
             }
@@ -1385,6 +1402,33 @@ class ProductConfigurationService
         $options['detail_sections'] = $details;
 
         return $options;
+    }
+
+    /**
+     * Detect the old per-product download set that references missing files.
+     *
+     * @param  mixed  $downloads
+     */
+    private function hasLegacyBusinessCardDesignGuidelineDownloads(mixed $downloads): bool
+    {
+        if (! is_array($downloads)) {
+            return false;
+        }
+
+        foreach ($downloads as $download) {
+            if (
+                is_array($download)
+                && in_array(
+                    $download['href'] ?? null,
+                    self::LEGACY_BUSINESS_CARD_DESIGN_GUIDELINE_HREFS,
+                    true,
+                )
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function belongsToBusinessCardCategory(Product $product): bool

@@ -1620,6 +1620,50 @@ class BusinessCardProductUpdatesMigrationTest extends TestCase
         );
     }
 
+    public function test_migration_replaces_legacy_design_guideline_downloads(): void
+    {
+        $category = ProductCategory::create([
+            'name' => 'Business Cards',
+            'slug' => 'business-cards',
+        ]);
+
+        Product::create([
+            'name' => 'Classic Standard Business Cards',
+            'slug' => 'classic-standard-business-cards',
+            'product_category_id' => $category->id,
+            'product_config' => [
+                'detail_sections' => [
+                    'design_specifications' => [
+                        'heading' => 'Keep this heading',
+                        'downloads' => [
+                            ['href' => '/templates/template.psd'],
+                            ['href' => '/templates/template.ai'],
+                            ['href' => '/templates/template.indd'],
+                            ['href' => '/templates/template.jpg'],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $migration = require base_path(
+            'database/migrations/2026_09_30_000003_replace_legacy_business_card_design_guideline_downloads.php',
+        );
+        $migration->up();
+        $migration->up();
+
+        $product = Product::where('slug', 'classic-standard-business-cards')->firstOrFail();
+
+        $this->assertSame(
+            ['/templates/pdf.zip', '/templates/ai.zip', '/templates/indd.zip', '/templates/jpg.zip'],
+            data_get($product->product_config, 'detail_sections.design_specifications.downloads.*.href'),
+        );
+        $this->assertSame(
+            'Keep this heading',
+            data_get($product->product_config, 'detail_sections.design_specifications.heading'),
+        );
+    }
+
     public function test_migration_uses_standard_pvc_finish_swatches_for_basic_and_premium(): void
     {
         $category = ProductCategory::create([

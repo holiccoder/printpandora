@@ -459,6 +459,58 @@ class ProductConfigurationServiceTest extends TestCase
         );
     }
 
+    public function test_business_card_design_guideline_downloads_replace_legacy_template_links(): void
+    {
+        $product = new Product([
+            'name' => 'Classic Standard Business Cards',
+            'slug' => 'classic-standard-business-cards',
+            'product_config' => [
+                'detail_sections' => [
+                    'design_specifications' => [
+                        'heading' => 'Design Specifications',
+                        'downloads' => [
+                            [
+                                'id' => 'photoshop',
+                                'label' => 'Photoshop',
+                                'extension' => '.psd',
+                                'href' => '/templates/template.psd',
+                            ],
+                            [
+                                'id' => 'illustrator',
+                                'label' => 'Illustrator',
+                                'extension' => '.ai',
+                                'href' => '/templates/template.ai',
+                            ],
+                            [
+                                'id' => 'indesign',
+                                'label' => 'InDesign',
+                                'extension' => '.indd',
+                                'href' => '/templates/template.indd',
+                            ],
+                            [
+                                'id' => 'jpeg',
+                                'label' => 'Jpeg',
+                                'extension' => '.jpg',
+                                'href' => '/templates/template.jpg',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $product->setRelation('category', new ProductCategory([
+            'id' => 1,
+            'slug' => 'business-cards',
+        ]));
+
+        $options = app(ProductConfigurationService::class)->storefrontOptions($product);
+
+        $this->assertSame(
+            ['/templates/pdf.zip', '/templates/ai.zip', '/templates/indd.zip', '/templates/jpg.zip'],
+            data_get($options, 'detail_sections.design_specifications.downloads.*.href'),
+        );
+    }
+
     public function test_database_legacy_product_data_gets_shared_cross_sell_sections(): void
     {
         $product = new Product([
