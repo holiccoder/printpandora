@@ -7,6 +7,7 @@ import { countries, countriesByCode } from '@/data/countries';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { isPvcProductSlug } from '@/lib/product-images';
+import { formatOrderOptions } from '@/lib/order-options';
 import { productHref } from '@/lib/product-routes';
 
 interface CartItem {
@@ -17,7 +18,7 @@ interface CartItem {
     quantity: number;
     image: string | null;
     slug: string;
-    options?: Record<string, string>;
+    options?: Record<string, unknown>;
 }
 
 interface PaypalConfig {
@@ -526,7 +527,7 @@ export default function Checkout({
                                                         ).length > 0 && (
                                                             <span className="ml-1">
                                                                 •{' '}
-                                                                {formatOptions(
+                                                                {formatOrderOptions(
                                                                     item.options,
                                                                 )}
                                                             </span>
@@ -967,17 +968,4 @@ export default function Checkout({
             </div>
         </StorefrontLayout>
     );
-}
-
-function formatOptions(options: Record<string, string>): string {
-    return Object.entries(options)
-        .filter(([key]) => key !== 'design_service_request_id')
-        .map(([key, value]) => {
-            const label = key
-                .replace(/_/g, ' ')
-                .replace(/\b\w/g, (l) => l.toUpperCase());
-
-            return `${label}: ${value}`;
-        })
-        .join(', ');
 }

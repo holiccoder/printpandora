@@ -2759,28 +2759,6 @@
         "order_label_prefix": "Order #",
         "items_suffix": "item(s)"
     },
-    "shop_orders_show_page": {
-        "_source_file": "resources/js/pages/shop/orders/show.tsx",
-        "seo_title_prefix": "Order #",
-        "brand": "InkPavo",
-        "nav_my_orders": "My Orders",
-        "back_link": "All orders",
-        "page_heading_prefix": "Order #",
-        "section_headings": {
-            "items": "Items",
-            "design_service_files": "Design service files",
-            "customer": "Customer",
-            "shipping": "Shipping",
-            "notes": "Notes"
-        },
-        "shipping_method_label": "Shipping method",
-        "shipping_fee_label": "Shipping fee",
-        "tracking_label": "Tracking number",
-        "track_package_label": "Track package",
-        "qty_label": "Qty:",
-        "total_label": "Total:",
-        "download_label": "Download"
-    },
     "shop_thank_you_page": {
         "_source_file": "resources/js/pages/shop/thank-you.tsx",
         "seo_title": "Thank you for your order",

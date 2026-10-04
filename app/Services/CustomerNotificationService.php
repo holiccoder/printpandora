@@ -20,7 +20,7 @@ class CustomerNotificationService
             category: CustomerNotification::CATEGORY_SYSTEM,
             title: "Order #{$order->id} received",
             body: "We've received your order. Its current status is ".Order::statusLabel($order->status).'.',
-            actionUrl: route('shop.orders.show', $order->id),
+            actionUrl: route('dashboard.orders.show', $order->id),
             meta: [
                 'event' => 'order_placed',
                 'order_id' => $order->id,
@@ -51,7 +51,7 @@ class CustomerNotificationService
             category: CustomerNotification::CATEGORY_SYSTEM,
             title: "Order #{$order->id} status updated",
             body: $body,
-            actionUrl: route('shop.orders.show', $order->id),
+            actionUrl: route('dashboard.orders.show', $order->id),
             meta: [
                 'event' => 'order_status_changed',
                 'order_id' => $order->id,

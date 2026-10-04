@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Support\BusinessCardOptionCatalog;
+use App\Support\CardsAndPostcardsProductImageCatalog;
 use App\Support\ClassicSpecialBusinessCardTexture;
 use App\Support\HardcodedContent;
 use App\Support\PostcardProductCatalog;
@@ -425,15 +426,23 @@ class ProductConfigurationService
                 (string) $product->slug,
             );
 
-            return $config;
+            return CardsAndPostcardsProductImageCatalog::synchronizePostcardConfig(
+                $config,
+                (string) $product->slug,
+            );
         }
 
         $legacy = $this->databaseLegacyOptions($product);
 
-        return $this->fromLegacyOptions(
+        $config = $this->fromLegacyOptions(
             $product,
             $legacy ?? $this->loadHardcodedProductOptions($product) ?? [],
             $legacy !== null,
+        );
+
+        return CardsAndPostcardsProductImageCatalog::synchronizePostcardConfig(
+            $config,
+            (string) $product->slug,
         );
     }
 
@@ -1295,6 +1304,10 @@ class ProductConfigurationService
         $config['media']['gallery_rules'] = $this->withSharedLaserSilverFoilGalleryRule(
             $config['media']['gallery_rules'],
             is_array($config['options'] ?? null) ? $config['options'] : [],
+            (string) $product->slug,
+        );
+        $config = CardsAndPostcardsProductImageCatalog::synchronizePostcardConfig(
+            $config,
             (string) $product->slug,
         );
 

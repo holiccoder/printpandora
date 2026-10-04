@@ -57,7 +57,9 @@
         'folding' => '折叠方式',
         'uv_finish' => 'UV 工艺',
         'special_finish' => '特殊工艺',
+        'special_finish_on_sides' => '特殊工艺单双面',
         'hot_foil' => '烫金',
+        'hot_foil_on_sides' => '烫金单双面',
         'cold_foil' => '冷烫金',
         'print_code' => '印刷代码',
         'print_code_or_magnetic_stripe' => '印刷代码或磁条',
@@ -75,19 +77,8 @@
         return $optionLabels[$normalizedKey] ?? \Illuminate\Support\Str::headline($normalizedKey);
     };
     $money = static fn (mixed $value): string => number_format((float) $value, 2);
-    $formatOptionValue = static function (mixed $value) use (&$formatOptionValue): string {
-        if (is_array($value)) {
-            return collect($value)
-                ->map(static fn (mixed $entry): string => $formatOptionValue($entry))
-                ->implode(', ');
-        }
-
-        if (is_bool($value)) {
-            return $value ? '是' : '否';
-        }
-
-        return \Illuminate\Support\Str::headline(str_replace(['_', '-'], ' ', (string) $value));
-    };
+    $formatOptionValue = static fn (mixed $value): string =>
+        \App\Support\OrderOptionFormatter::value($value);
 @endphp
 
 <div class="space-y-6">

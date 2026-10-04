@@ -17,20 +17,6 @@ final class PostcardProductCatalog
     public const RECOMMENDED_QUANTITY = 200;
 
     /**
-     * One shared, stable four-image gallery selected from the supplied 4x3
-     * source set. The selection is made once when the assets are added; it is
-     * intentionally not randomized per request.
-     *
-     * @var list<string>
-     */
-    private const GALLERY = [
-        '/images/products/postcards/gallery/postcard-4x3-01.png',
-        '/images/products/postcards/gallery/postcard-4x3-02.png',
-        '/images/products/postcards/gallery/postcard-4x3-03.png',
-        '/images/products/postcards/gallery/postcard-4x3-04.png',
-    ];
-
-    /**
      * @var array<string, array{
      *     reference: string,
      *     name: string,
@@ -296,7 +282,15 @@ final class PostcardProductCatalog
      */
     public static function gallery(): array
     {
-        return self::GALLERY;
+        return self::galleryFor('classic-standard-postcards');
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function galleryFor(string $slug): array
+    {
+        return CardsAndPostcardsProductImageCatalog::postcardGalleryFor($slug) ?? [];
     }
 
     /**
@@ -313,7 +307,8 @@ final class PostcardProductCatalog
         return [
             ...$definition,
             'slug' => $slug,
-            'gallery' => self::GALLERY,
+            'gallery' => self::galleryFor($slug),
+            'featured_image' => CardsAndPostcardsProductImageCatalog::postcardFeaturedImageFor($slug),
             'pricing' => self::pricingFor($slug),
         ];
     }

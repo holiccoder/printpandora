@@ -7,6 +7,7 @@ import type { OrderFileSections } from '@/components/order-files-modal';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import DashboardLayout from '@/layouts/dashboard-layout';
+import { formatOrderOptions } from '@/lib/order-options';
 import { ORDER_STATUS_COLORS, orderStatusLabel } from '@/lib/order-status';
 
 const ACCENT = '#800020';
@@ -82,7 +83,15 @@ export default function DashboardOrders({
     filters,
 }: Props) {
     const c = useContent('dashboard_orders_page') as any;
-    const [openOrder, setOpenOrder] = useState<Order | null>(null);
+    const [openOrderId, setOpenOrderId] = useState<number | null>(null);
+    const [viewedFileKey, setViewedFileKey] = useState<string | null>(null);
+    const openOrder =
+        orders.data.find((order) => order.id === openOrderId) ?? null;
+    const openOrderFileKey = openOrder
+        ? `${openOrder.id}:${openOrder.status}:${openOrder.awaiting_confirmation
+              .map((file) => file.id)
+              .join('|')}`
+        : null;
     const statusTabs = [
         { value: null, label: c.status_filter.all },
         ...Object.keys(statusOptions).map((value) => ({
@@ -206,10 +215,10 @@ export default function DashboardOrders({
                                                     {productsForOrder(
                                                         order,
                                                     ).map((product, index) => {
-                                                        const options =
-                                                            formatOptions(
-                                                                product.options,
-                                                            );
+                                                            const options =
+                                                                formatOrderOptions(
+                                                                    product.options,
+                                                                );
 
                                                         return (
                                                             <li
@@ -296,7 +305,7 @@ export default function DashboardOrders({
                                             <button
                                                 type="button"
                                                 onClick={() =>
-                                                    setOpenOrder(order)
+                                                    setOpenOrderId(order.id)
                                                 }
                                                 className="inline-flex items-center gap-1.5 font-semibold whitespace-nowrap hover:underline"
                                                 style={{
@@ -363,12 +372,15 @@ export default function DashboardOrders({
                     open
                     onOpenChange={(open) => {
                         if (!open) {
-                            setOpenOrder(null);
+                            setOpenOrderId(null);
                         }
                     }}
                     content={c.file_downloads_modal}
                     canManage={openOrder.can_manage_files}
-                    canConfirm={openOrder.can_confirm_files}
+                    canConfirm={
+                        openOrder.can_confirm_files ||
+                        viewedFileKey === openOrderFileKey
+                    }
                     isPendingConfirmation={
                         openOrder.status === 'pending_confirmation'
                     }
@@ -378,13 +390,7 @@ export default function DashboardOrders({
                         'needs_reupload',
                         'pending_confirmation',
                     ].includes(openOrder.status)}
-                    onFileDownloaded={() =>
-                        setOpenOrder((current) =>
-                            current
-                                ? { ...current, can_confirm_files: true }
-                                : current,
-                        )
-                    }
+                    onFileDownloaded={() => setViewedFileKey(openOrderFileKey)}
                     uploadUrl={openOrder.file_upload_url}
                     confirmUrl={openOrder.file_confirm_url}
                 />
@@ -548,49 +554,6 @@ function TextField({
             />
         </label>
     );
-}
-
-function formatOptions(options: Record<string, unknown>): string {
-    return Object.entries(options)
-        .filter(
-            ([key, value]) =>
-                key !== 'design_service_request_id' &&
-                value !== null &&
-                value !== '' &&
-                !(Array.isArray(value) && value.length === 0),
-        )
-        .map(
-            ([key, value]) =>
-                `${humanizeOptionText(key)}: ${formatOptionValue(value)}`,
-        )
-        .join(', ');
-}
-
-function formatOptionValue(value: unknown): string {
-    if (Array.isArray(value)) {
-        return value.map(formatOptionValue).join(', ');
-    }
-
-    if (typeof value === 'boolean') {
-        return value ? 'Yes' : 'No';
-    }
-
-    if (typeof value === 'object' && value !== null) {
-        return Object.entries(value as Record<string, unknown>)
-            .map(
-                ([key, nestedValue]) =>
-                    `${humanizeOptionText(key)}: ${formatOptionValue(nestedValue)}`,
-            )
-            .join(', ');
-    }
-
-    return humanizeOptionText(String(value));
-}
-
-function humanizeOptionText(value: string): string {
-    return value
-        .replace(/[_-]+/g, ' ')
-        .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 function formatWeight(weight: number | null): string {

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductConfigurationService;
+use App\Support\CardsAndPostcardsProductImageCatalog;
 use App\Support\PostcardProductCatalog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -51,6 +52,7 @@ class PostcardProductSeeder extends Seeder
                     $metaDescription,
                 );
                 $gallery = $definition['gallery'];
+                $featuredImage = $definition['featured_image'] ?? $gallery[0];
 
                 $product = Product::query()->updateOrCreate(
                     ['slug' => $slug],
@@ -64,7 +66,7 @@ class PostcardProductSeeder extends Seeder
                         'product_config' => $config,
                         'price_line' => null,
                         'meta_description' => $metaDescription,
-                        'featured_image' => $gallery[0],
+                        'featured_image' => $featuredImage,
                         'product_category_id' => $category->getKey(),
                         'is_active' => true,
                         'weight' => $reference->weight,
@@ -102,7 +104,7 @@ class PostcardProductSeeder extends Seeder
             'description_title' => $descriptionTitle,
             'bullet_points' => $bulletPoints ?? [],
             'meta_description' => $metaDescription,
-            'featured_image' => $definition['gallery'][0],
+            'featured_image' => $definition['featured_image'] ?? $definition['gallery'][0],
         ]);
         $config['product'] = $product;
         $config['options'] = $this->postcardOptions(
@@ -121,7 +123,7 @@ class PostcardProductSeeder extends Seeder
         ]];
         $config['media'] = $media;
 
-        return $config;
+        return CardsAndPostcardsProductImageCatalog::synchronizePostcardConfig($config, $slug);
     }
 
     /**

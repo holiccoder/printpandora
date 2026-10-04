@@ -5,10 +5,9 @@ namespace App\Support;
 use App\Models\Product;
 
 /**
- * Stable assignments for the six postcard entries that reuse the business-
- * card option contracts. The source artwork was selected from the shared
- * 4x3 image set and copied into the public product-image directory with
- * route-safe filenames.
+ * Stable featured-image assignments for the six postcard entries that reuse
+ * the business-card option contracts. Their four-image galleries are kept in
+ * CardsAndPostcardsProductImageCatalog so each paper family has its own set.
  */
 final class PostcardProductImageCatalog
 {
@@ -92,6 +91,31 @@ final class PostcardProductImageCatalog
     public static function imageFor(string $productSlug): ?string
     {
         return self::DEFINITIONS[$productSlug]['image'] ?? null;
+    }
+
+    public static function postcardSlugFor(string $businessCardSlug): ?string
+    {
+        return CardsAndPostcardsProductImageCatalog::postcardSlugForBusinessCard($businessCardSlug);
+    }
+
+    /**
+     * @return list<string>|null
+     */
+    public static function galleryFor(string $businessCardSlug): ?array
+    {
+        $postcardSlug = self::postcardSlugFor($businessCardSlug);
+
+        return $postcardSlug === null
+            ? null
+            : CardsAndPostcardsProductImageCatalog::postcardGalleryFor($postcardSlug);
+    }
+
+    /**
+     * Apply the supplied-folder gallery to its postcard product row.
+     */
+    public static function applyToPostcard(Product $product): bool
+    {
+        return CardsAndPostcardsProductImageCatalog::applyPostcard($product);
     }
 
     public static function isAppliedTo(Product $product): bool

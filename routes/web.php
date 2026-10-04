@@ -195,11 +195,6 @@ Route::middleware(['auth'])->group(function () {
         ->whereNumber('id')
         ->name('shop.checkout.thank-you');
     Route::get('orders', [OrderController::class, 'index'])->name('shop.orders.index');
-    Route::get('orders/{id}', [OrderController::class, 'show'])->name('shop.orders.show')->whereNumber('id');
-    Route::get('orders/{id}/design-service-attachments/{designServiceRequest}/{attachment}', [OrderController::class, 'downloadDesignServiceAttachment'])
-        ->whereNumber(['id', 'designServiceRequest'])
-        ->where('attachment', 'logo|example-[0-9]+')
-        ->name('shop.orders.design-service-attachment');
 
     // Support tickets
     Route::get('tickets', [TicketController::class, 'index'])->name('shop.tickets.index');

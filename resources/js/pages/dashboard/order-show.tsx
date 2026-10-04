@@ -17,6 +17,7 @@ import type { OrderFileSections } from '@/components/order-files-modal';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import DashboardLayout from '@/layouts/dashboard-layout';
+import { formatOrderOptionValue } from '@/lib/order-options';
 import { ORDER_STATUS_COLORS, orderStatusLabel } from '@/lib/order-status';
 
 const ACCENT = '#800020';
@@ -513,7 +514,7 @@ function OptionList({
                                 {humanize(key)}:
                             </dt>
                             <dd className="font-medium text-neutral-800">
-                                {formatOptionValue(value)}
+                                {formatOrderOptionValue(value)}
                             </dd>
                         </div>
                     ))}
@@ -692,27 +693,6 @@ function hasValue(value: unknown): boolean {
     }
 
     return true;
-}
-
-function formatOptionValue(value: unknown): string {
-    if (Array.isArray(value)) {
-        return value.map(formatOptionValue).join(', ');
-    }
-
-    if (typeof value === 'object' && value !== null) {
-        return Object.entries(value)
-            .map(
-                ([key, nestedValue]) =>
-                    `${humanize(key)}: ${formatOptionValue(nestedValue)}`,
-            )
-            .join(', ');
-    }
-
-    if (typeof value === 'boolean') {
-        return value ? 'Yes' : 'No';
-    }
-
-    return String(value);
 }
 
 function humanize(value: string | null): string {

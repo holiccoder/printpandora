@@ -3,16 +3,15 @@ import { Link } from '@inertiajs/react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
-import {
-    ORDER_STATUS_COLORS,
-    orderStatusLabel,
-} from '@/lib/order-status';
+import { formatOrderOptions } from '@/lib/order-options';
+import { ORDER_STATUS_COLORS, orderStatusLabel } from '@/lib/order-status';
 
 interface OrderItem {
     id: number;
     quantity: number;
     unit_price: string;
     subtotal: string;
+    options?: Record<string, unknown> | null;
     product: {
         id: number;
         name: string;
@@ -59,7 +58,7 @@ export default function OrderIndex({ orders }: Props) {
                             {orders.data.map((order) => (
                                 <Link
                                     key={order.id}
-                                    href={`/orders/${order.id}`}
+                                    href={`/dashboard/orders/${order.id}`}
                                     className="block rounded-lg border border-[#e3e3e0] bg-white p-6 transition-shadow hover:shadow-md dark:border-[#3E3E3A] dark:bg-[#161615]"
                                 >
                                     <div className="mb-3 flex items-center justify-between">
@@ -92,6 +91,34 @@ export default function OrderIndex({ orders }: Props) {
                                             day: 'numeric',
                                         })}
                                     </p>
+                                    {order.items.length > 0 && (
+                                        <div className="mt-4 space-y-2 border-t border-[#e3e3e0] pt-3 text-sm dark:border-[#3E3E3A]">
+                                            {order.items.map((item) => {
+                                                const options =
+                                                    formatOrderOptions(
+                                                        item.options ?? {},
+                                                    );
+
+                                                return (
+                                                    <div
+                                                        key={item.id}
+                                                        className="break-words text-[#706f6c]"
+                                                    >
+                                                        <span className="font-medium text-[#1b1b18] dark:text-[#EDEDEC]">
+                                                            {item.product.name}{' '}
+                                                            × {item.quantity}
+                                                        </span>
+                                                        {options && (
+                                                            <span className="mt-0.5 block text-xs">
+                                                                Options:{' '}
+                                                                {options}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </Link>
                             ))}
                         </div>

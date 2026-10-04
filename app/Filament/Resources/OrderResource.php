@@ -5,8 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Admin;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\ProductDesignRequest;
 use App\Services\OrderFileService;
+use App\Support\OrderOptionFormatter;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Infolists\Components\ViewEntry;
@@ -496,10 +498,29 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(
+                fn (Builder $query): Builder => $query->with('items.product'),
+            )
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('订单号')->sortable(),
                 Tables\Columns\TextColumn::make('customer_name')->label('客户姓名')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('customer_email')->label('电子邮箱')->searchable(),
+                Tables\Columns\TextColumn::make('items_summary')
+                    ->label('商品及选项')
+                    ->state(
+                        fn (Order $record): array => $record->items
+                            ->map(function (OrderItem $item): string {
+                                $productName = $item->product?->name ?? '产品不可用';
+                                $options = OrderOptionFormatter::options($item->options);
+
+                                return $options === ''
+                                    ? $productName
+                                    : $productName.' — '.$options;
+                            })
+                            ->all(),
+                    )
+                    ->listWithLineBreaks()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('total')->label('订单总计')->money('USD')->sortable(),
                 Tables\Columns\TextColumn::make('shipping_weight_grams')
                     ->label('订单重量（克）')

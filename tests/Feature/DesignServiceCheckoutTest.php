@@ -67,7 +67,7 @@ class DesignServiceCheckoutTest extends TestCase
         $this->assertSame($pendingOrder->id, $designRequest->fresh()->order_id);
 
         $this->post(route('shop.checkout.store'), $this->checkoutData())
-            ->assertRedirect(route('shop.orders.show', $pendingOrder->id));
+            ->assertRedirect(route('dashboard.orders.show', $pendingOrder->id));
 
         $order = $pendingOrder->fresh('items.product');
         $this->assertNotNull($order);
@@ -104,36 +104,33 @@ class DesignServiceCheckoutTest extends TestCase
         $order = Order::query()->firstOrFail();
         $designRequest = DesignServiceRequest::query()->firstOrFail();
 
-        $this->get(route('shop.orders.show', $order->id))
+        $this->get(route('dashboard.orders.show', $order->id))
             ->assertInertia(fn (Assert $page): Assert => $page
-                ->component('shop/orders/show')
-                ->where('order.design_service_attachments.0.label', 'Logo')
-                ->where('order.design_service_attachments.1.label', 'Example 1')
-                ->has('order.design_service_attachments', 2));
+                ->component('dashboard/order-show')
+                ->where('order.files.awaiting_confirmation.0.filename', 'logo.png')
+                ->where('order.files.awaiting_confirmation.1.filename', 'example.pdf')
+                ->has('order.files.awaiting_confirmation', 2));
 
-        $this->get(route('shop.orders.design-service-attachment', [
+        $this->get(route('dashboard.orders.file', [
             'id' => $order->id,
-            'designServiceRequest' => $designRequest->id,
-            'attachment' => 'logo',
+            'file' => 'design-service-'.$designRequest->id.'-logo',
         ]))
             ->assertOk()
-            ->assertHeader('content-disposition', 'attachment; filename=design-service-logo.png');
+            ->assertHeader('content-disposition', 'attachment; filename=logo.png');
 
-        $this->get(route('shop.orders.design-service-attachment', [
+        $this->get(route('dashboard.orders.file', [
             'id' => $order->id,
-            'designServiceRequest' => $designRequest->id,
-            'attachment' => 'example-0',
+            'file' => 'design-service-'.$designRequest->id.'-example-0',
         ]))
             ->assertOk()
-            ->assertHeader('content-disposition', 'attachment; filename=design-service-example-0.pdf');
+            ->assertHeader('content-disposition', 'attachment; filename=example.pdf');
 
         $otherUser = User::factory()->create();
 
         $this->actingAs($otherUser)
-            ->get(route('shop.orders.design-service-attachment', [
+            ->get(route('dashboard.orders.file', [
                 'id' => $order->id,
-                'designServiceRequest' => $designRequest->id,
-                'attachment' => 'logo',
+                'file' => 'design-service-'.$designRequest->id.'-logo',
             ]))
             ->assertNotFound();
     }

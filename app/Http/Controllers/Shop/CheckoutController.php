@@ -106,7 +106,7 @@ class CheckoutController extends Controller
         $cart->clear();
         $order->update(['checkout_token' => null]);
 
-        return redirect()->route('shop.orders.show', $order->id)
+        return redirect()->route('dashboard.orders.show', $order->id)
             ->with('success', 'Order placed successfully!');
     }
 

@@ -47,7 +47,7 @@ class CryptomusService
             'amount' => number_format($amount, 2, '.', ''),
             'currency' => $this->currency(),
             'order_id' => (string) $orderId,
-            'url_return' => $returnUrl ?? route('shop.orders.show', $orderId),
+            'url_return' => $returnUrl ?? route('dashboard.orders.show', $orderId),
             'url_callback' => $callbackUrl ?? route('shop.checkout.cryptomus.webhook'),
             'lifetime' => '7200',
         ];
