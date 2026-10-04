@@ -7,6 +7,7 @@ use App\Models\Affiliate;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Notifications\CustomerNotification;
+use App\Notifications\OrderFileConfirmationReminder;
 use App\Services\DiscountService;
 use App\Services\OrderFileService;
 use App\Services\OrderWeightService;
@@ -347,7 +348,10 @@ class DashboardController extends Controller
     {
         $notifications = $request->user()
             ->notifications()
-            ->where('type', CustomerNotification::class)
+            ->whereIn('type', [
+                CustomerNotification::class,
+                OrderFileConfirmationReminder::class,
+            ])
             ->latest()
             ->paginate(20)
             ->through(fn (DatabaseNotification $notification): array => $this->notificationPayload($notification));
@@ -356,7 +360,10 @@ class DashboardController extends Controller
             'notifications' => $notifications,
             'unreadCount' => $request->user()
                 ->unreadNotifications()
-                ->where('type', CustomerNotification::class)
+                ->whereIn('type', [
+                    CustomerNotification::class,
+                    OrderFileConfirmationReminder::class,
+                ])
                 ->count(),
         ]);
     }
@@ -368,7 +375,10 @@ class DashboardController extends Controller
     {
         $notification = $request->user()
             ->notifications()
-            ->where('type', CustomerNotification::class)
+            ->whereIn('type', [
+                CustomerNotification::class,
+                OrderFileConfirmationReminder::class,
+            ])
             ->whereKey($id)
             ->firstOrFail();
 
@@ -384,7 +394,10 @@ class DashboardController extends Controller
     {
         $request->user()
             ->unreadNotifications()
-            ->where('type', CustomerNotification::class)
+            ->whereIn('type', [
+                CustomerNotification::class,
+                OrderFileConfirmationReminder::class,
+            ])
             ->update(['read_at' => now()]);
 
         return back();

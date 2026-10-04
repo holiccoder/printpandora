@@ -29,6 +29,11 @@ export type OrderFileSections = {
     uploaded_files: OrderFile[];
     awaiting_confirmation: OrderFile[];
     confirmed_files: OrderFile[];
+    latest_rejection: {
+        version: number;
+        reason: string;
+        reviewed_at: string | null;
+    } | null;
 };
 
 type OrderFilesModalProps = {
@@ -55,6 +60,8 @@ type OrderFilesModalProps = {
         version?: string;
         confirm_warning?: string;
         upload_help?: string;
+        review_rejected?: string;
+        review_reason?: string;
     };
     canManage?: boolean;
     canConfirm?: boolean;
@@ -90,6 +97,19 @@ export default function OrderFilesModal({
                 </DialogHeader>
 
                 <div className="space-y-8">
+                    {files.latest_rejection?.reason && (
+                        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
+                            <p className="font-semibold">
+                                {content.review_rejected ??
+                                    'Files need to be re-uploaded'}{' '}
+                                (v{files.latest_rejection.version})
+                            </p>
+                            <p className="mt-1 whitespace-pre-wrap">
+                                {content.review_reason ?? 'Review reason'}:{' '}
+                                {files.latest_rejection.reason}
+                            </p>
+                        </div>
+                    )}
                     <FileSection
                         title={content.awaiting_confirmation}
                         files={files.awaiting_confirmation}

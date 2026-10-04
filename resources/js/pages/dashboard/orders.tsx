@@ -32,6 +32,7 @@ type Order = {
     uploaded_files: OrderFileSections['uploaded_files'];
     awaiting_confirmation: OrderFileSections['awaiting_confirmation'];
     confirmed_files: OrderFileSections['confirmed_files'];
+    latest_rejection: OrderFileSections['latest_rejection'];
 };
 
 type OrderedProduct = {
@@ -215,10 +216,10 @@ export default function DashboardOrders({
                                                     {productsForOrder(
                                                         order,
                                                     ).map((product, index) => {
-                                                            const options =
-                                                                formatOrderOptions(
-                                                                    product.options,
-                                                                );
+                                                        const options =
+                                                            formatOrderOptions(
+                                                                product.options,
+                                                            );
 
                                                         return (
                                                             <li
@@ -368,6 +369,7 @@ export default function DashboardOrders({
                         uploaded_files: openOrder.uploaded_files,
                         awaiting_confirmation: openOrder.awaiting_confirmation,
                         confirmed_files: openOrder.confirmed_files,
+                        latest_rejection: openOrder.latest_rejection,
                     }}
                     open
                     onOpenChange={(open) => {

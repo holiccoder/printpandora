@@ -25,10 +25,18 @@ class Cart
      *
      * @return string The cart item key for the line that was added/updated.
      */
-    public function add(int|string $productId, array $options = []): string
+    public function add(
+        int|string $productId,
+        array $options = [],
+        ?string $pendingDesignId = null,
+    ): string
     {
         $cart = $this->all();
-        $itemKey = $this->makeItemKey((int) $productId, $options);
+        $itemKey = $this->makeItemKey(
+            (int) $productId,
+            $options,
+            $pendingDesignId,
+        );
 
         if (! isset($cart[$itemKey])) {
             $product = Product::findOrFail($productId);
@@ -41,6 +49,7 @@ class Cart
                 'image' => $product->featured_image,
                 'slug' => $product->slug,
                 'options' => $options,
+                'pending_design_id' => $pendingDesignId,
             ];
         }
 
@@ -196,11 +205,24 @@ class Cart
     /**
      * Build a stable cart line key from a product and its options.
      */
-    protected function makeItemKey(int $productId, array $options): string
+    protected function makeItemKey(
+        int $productId,
+        array $options,
+        ?string $pendingDesignId = null,
+    ): string
     {
-        $optionsHash = empty($options)
-            ? 'default'
-            : substr(md5(json_encode($options)), 0, 10);
+        $optionsHash = $pendingDesignId === null
+            ? (empty($options)
+                ? 'default'
+                : substr(md5(json_encode($options)), 0, 10))
+            : substr(
+                md5(json_encode([
+                    'options' => $options,
+                    'pending_design_id' => $pendingDesignId,
+                ])),
+                0,
+                10,
+            );
 
         return "{$productId}:{$optionsHash}";
     }

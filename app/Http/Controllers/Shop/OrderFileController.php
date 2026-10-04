@@ -32,13 +32,6 @@ class OrderFileController extends Controller
 
         $files->upload($order, $validated['files'], 'customer', $request->user());
 
-        if (in_array($order->status, [
-            Order::STATUS_PENDING_CONFIRMATION,
-            Order::STATUS_NEEDS_REUPLOAD,
-        ], true)) {
-            $order->update(['status' => Order::STATUS_PENDING_REVIEW]);
-        }
-
         return back()->with('success', 'Files uploaded successfully.');
     }
 

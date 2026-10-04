@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductDesignRequest;
 use App\Services\OrderFileService;
+use App\Services\OrderWorkflowService;
 use App\Support\OrderOptionFormatter;
 use Filament\Actions;
 use Filament\Forms;
@@ -49,6 +50,11 @@ class OrderResource extends Resource
                     ->icon('heroicon-o-arrow-up-tray')
                     ->modalHeading('上传文件')
                     ->modalSubmitActionLabel('上传')
+                    ->visible(fn (Order $record): bool => $record->payment_status === 'paid'
+                        && in_array($record->status, [
+                            Order::STATUS_PENDING_REVIEW,
+                            Order::STATUS_PENDING_CONFIRMATION,
+                        ], true))
                     ->form([
                         Forms\Components\FileUpload::make('files')
                             ->label('文件')
@@ -90,6 +96,8 @@ class OrderResource extends Resource
                     ->label('替客户确认')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
+                    ->visible(fn (Order $record): bool => $record->payment_status === 'paid'
+                        && $record->status === Order::STATUS_PENDING_CONFIRMATION)
                     ->requiresConfirmation()
                     ->modalHeading('替客户确认')
                     ->modalDescription('确认后订单状态将变为已确认，并进入后续生产流程。')
@@ -110,6 +118,11 @@ class OrderResource extends Resource
                     ->label('审核不通过')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
+                    ->visible(fn (Order $record): bool => $record->payment_status === 'paid'
+                        && in_array($record->status, [
+                            Order::STATUS_PENDING_REVIEW,
+                            Order::STATUS_PENDING_CONFIRMATION,
+                        ], true))
                     ->modalHeading('审核不通过')
                     ->modalSubmitActionLabel('提交')
                     ->modalCancelActionLabel('取消')
@@ -388,15 +401,10 @@ class OrderResource extends Resource
                             ->required()
                             ->options(Order::statusOptions())
                             ->disableOptionWhen(
-                                fn (string $value, Order $record): bool => match ($value) {
-                                    Order::STATUS_CONFIRMED => $record->status !== Order::STATUS_CONFIRMED,
-                                    Order::STATUS_PRODUCTION => ! in_array($record->status, [
-                                        Order::STATUS_CONFIRMED,
-                                        Order::STATUS_PRODUCTION,
-                                        Order::STATUS_SHIPPED,
-                                    ], true),
-                                    default => false,
-                                },
+                                fn (string $value, Order $record): bool => (
+                                    $value === Order::STATUS_CONFIRMED
+                                    && $record->status !== Order::STATUS_CONFIRMED
+                                ) || ! app(OrderWorkflowService::class)->canTransition($record, $value),
                             ),
                         Forms\Components\Select::make('shipping_method')
                             ->label('运输方式')
@@ -534,16 +542,16 @@ class OrderResource extends Resource
                     ->options(Order::statusOptions())
                     ->selectablePlaceholder(false)
                     ->disableOptionWhen(
-                        fn (string $value, Order $record): bool => match ($value) {
-                            Order::STATUS_CONFIRMED => $record->status !== Order::STATUS_CONFIRMED,
-                            Order::STATUS_PRODUCTION => ! in_array($record->status, [
-                                Order::STATUS_CONFIRMED,
-                                Order::STATUS_PRODUCTION,
-                                Order::STATUS_SHIPPED,
-                            ], true),
-                            default => false,
-                        },
+                        fn (string $value, Order $record): bool => (
+                            $value === Order::STATUS_CONFIRMED
+                            && $record->status !== Order::STATUS_CONFIRMED
+                        ) || ! app(OrderWorkflowService::class)->canTransition($record, $value),
                     )
+                    ->updateStateUsing(function (Order $record, string $state): string {
+                        app(OrderWorkflowService::class)->transition($record, $state);
+
+                        return $state;
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('items_count')->counts('items')->label('商品件数'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->label('下单时间'),
@@ -747,6 +755,11 @@ class OrderResource extends Resource
                 Actions\ViewAction::make()->label('查看'),
                 static::fileAction(),
                 Actions\Action::make('addShippingTracking')
+                    ->visible(fn (Order $record): bool => $record->shipping_method === 'standard'
+                        && in_array($record->status, [
+                            Order::STATUS_PRODUCTION,
+                            Order::STATUS_SHIPPED,
+                        ], true))
                     ->label('填写物流信息')
                     ->icon('heroicon-o-truck')
                     ->color('success')
@@ -769,10 +782,14 @@ class OrderResource extends Resource
                             ->helperText('客户将通过此链接查询物流状态。'),
                     ])
                     ->action(function (Order $record, array $data): void {
+                        app(OrderWorkflowService::class)->transition(
+                            $record,
+                            Order::STATUS_SHIPPED,
+                        );
+
                         $record->update([
                             'tracking_number' => $data['tracking_number'],
                             'tracking_url' => $data['tracking_url'],
-                            'status' => Order::STATUS_SHIPPED,
                         ]);
                     })
                     ->successNotificationTitle('物流信息已保存，订单已标记为已发货'),

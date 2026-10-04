@@ -2564,7 +2564,9 @@
             "current": "Current",
             "version": "Version",
             "confirm_warning": "After confirmation, you will not be able to edit these files. Continue?",
-            "upload_help": "Upload the final production files for review."
+            "upload_help": "Upload the final production files for review.",
+            "review_rejected": "Files need to be re-uploaded",
+            "review_reason": "Review reason"
         },
         "tracking_link": "Track package",
         "pagination": {
@@ -2647,7 +2649,9 @@
             "current": "Current",
             "version": "Version",
             "confirm_warning": "After confirmation, you will not be able to edit these files. Continue?",
-            "upload_help": "Upload the final production files for review."
+            "upload_help": "Upload the final production files for review.",
+            "review_rejected": "Files need to be re-uploaded",
+            "review_reason": "Review reason"
         },
         "download": "Download",
         "unavailable": "Unavailable",

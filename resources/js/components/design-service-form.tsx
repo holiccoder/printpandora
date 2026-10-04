@@ -15,6 +15,10 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useContent } from '@/hooks/use-content';
+import type {
+    PendingProductDesignDraft,
+    ProductDesignMode,
+} from '@/lib/pending-product-designs';
 
 export interface DesignServiceOption {
     code: string;
@@ -23,7 +27,7 @@ export interface DesignServiceOption {
 }
 
 export type DesignSubmissionTarget = 'design-service' | 'product-design';
-export type ProductDesignMode = 'upload' | 'design-for-you';
+export type { ProductDesignMode };
 
 const DESIGN_FILE_ACCEPT = '.ai,.eps,.pdf,.jpg,.jpeg,.png,.psd,.svg,.tiff';
 const MAX_DESIGN_FILE_BYTES = 75 * 1024 * 1024;
@@ -32,7 +36,7 @@ interface DesignServiceFormProps {
     productOptions?: string[];
     businessCardType?: string;
     businessCardTypeDisabled?: boolean;
-    onSuccess?: () => void;
+    onSuccess?: (pendingDesignId?: string) => void;
     submitLabel?: string;
     className?: string;
     designServices?: DesignServiceOption[];
@@ -52,6 +56,10 @@ interface DesignServiceFormProps {
     productSlug?: string;
     productTypeLabel?: string;
     hideDesignBriefFields?: boolean;
+    deferUpload?: boolean;
+    onDeferredSubmit?: (
+        draft: PendingProductDesignDraft,
+    ) => Promise<string | void> | string | void;
 }
 
 type UploadValue = File | File[] | null;
@@ -94,6 +102,8 @@ export default function DesignServiceForm({
     productSlug,
     productTypeLabel,
     hideDesignBriefFields = false,
+    deferUpload = false,
+    onDeferredSubmit,
 }: DesignServiceFormProps) {
     const flashSuccess = (
         usePage().props.flash as { success?: string } | undefined
@@ -114,6 +124,7 @@ export default function DesignServiceForm({
         null,
     );
     const [designFileError, setDesignFileError] = useState<string | null>(null);
+    const [deferredProcessing, setDeferredProcessing] = useState(false);
     const designInputRef = useRef<HTMLInputElement>(null);
     const logoInputRef = useRef<HTMLInputElement>(null);
     const examplesInputRef = useRef<HTMLInputElement>(null);
@@ -199,7 +210,7 @@ export default function DesignServiceForm({
         onDesignServiceError?.(null);
     };
 
-    const submit: FormEventHandler = (e) => {
+    const submit: FormEventHandler = async (e) => {
         e.preventDefault();
 
         if (hasDesignServices && !designServiceCode) {
@@ -215,9 +226,76 @@ export default function DesignServiceForm({
         setDesignServiceError(null);
         onDesignServiceError?.(null);
         const savedCode = designServiceCode;
+        const normalizedData = {
+            ...data,
+            business_card_type: businessCardType ?? data.business_card_type,
+            design_service_code: designServiceCode,
+        };
+
+        if (deferUpload && onDeferredSubmit) {
+            setDeferredProcessing(true);
+
+            try {
+                const pendingDesignId = await onDeferredSubmit({
+                    mode: productDesignMode,
+                    productId: productId ?? 0,
+                    productName: productName ?? '',
+                    productSlug: productSlug ?? '',
+                    email: normalizedData.email,
+                    orderName: normalizedData.order_name,
+                    businessName: normalizedData.business_name,
+                    cardInfo: normalizedData.card_info,
+                    businessCardType: normalizedData.business_card_type,
+                    designServiceCode: normalizedData.design_service_code,
+                    termsAccepted: normalizedData.terms_accepted,
+                    files: {
+                        design_file: filesFromUpload(
+                            normalizedData.design_file,
+                        ),
+                        logo_file: filesFromUpload(normalizedData.logo_file),
+                        example_files: normalizedData.example_files,
+                    },
+                });
+
+                if (savedCode) {
+                    onDesignServiceSaved?.(savedCode);
+                }
+
+                reset();
+
+                if (designInputRef.current) {
+                    designInputRef.current.value = '';
+                }
+
+                if (logoInputRef.current) {
+                    logoInputRef.current.value = '';
+                }
+
+                if (examplesInputRef.current) {
+                    examplesInputRef.current.value = '';
+                }
+
+                onSuccess?.(
+                    typeof pendingDesignId === 'string'
+                        ? pendingDesignId
+                        : undefined,
+                );
+            } catch (error) {
+                const message =
+                    error instanceof Error
+                        ? error.message
+                        : 'Unable to temporarily save the selected design files.';
+                setDesignFileError(message);
+                onDesignServiceError?.(message);
+            } finally {
+                setDeferredProcessing(false);
+            }
+
+            return;
+        }
 
         transform((formData) => {
-            const normalizedData = {
+            const transformedData = {
                 ...formData,
                 business_card_type:
                     businessCardType ?? formData.business_card_type,
@@ -232,23 +310,23 @@ export default function DesignServiceForm({
                         product_id: productId ?? null,
                         product_name: productName ?? null,
                         product_slug: productSlug ?? null,
-                        email: normalizedData.email,
-                        order_name: normalizedData.order_name || null,
-                        business_name: normalizedData.business_name,
-                        card_info: normalizedData.card_info,
-                        business_card_type: normalizedData.business_card_type,
+                        email: transformedData.email,
+                        order_name: transformedData.order_name || null,
+                        business_name: transformedData.business_name,
+                        card_info: transformedData.card_info,
+                        business_card_type: transformedData.business_card_type,
                         design_service_code:
-                            normalizedData.design_service_code || null,
-                        terms_accepted: normalizedData.terms_accepted,
+                            transformedData.design_service_code || null,
+                        terms_accepted: transformedData.terms_accepted,
                     }),
-                    return_to: normalizedData.return_to,
-                    design_file: normalizedData.design_file,
-                    logo_file: normalizedData.logo_file,
-                    example_files: normalizedData.example_files,
+                    return_to: transformedData.return_to,
+                    design_file: transformedData.design_file,
+                    logo_file: transformedData.logo_file,
+                    example_files: transformedData.example_files,
                 };
             }
 
-            return normalizedData;
+            return transformedData;
         });
 
         post(
@@ -533,6 +611,7 @@ export default function DesignServiceForm({
                 disabled={
                     !data.terms_accepted ||
                     processing ||
+                    deferredProcessing ||
                     (hasDesignServices && !designServiceCode) ||
                     (requiresDesignFile &&
                         filesFromUpload(data.design_file).length === 0)

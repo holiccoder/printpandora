@@ -21,13 +21,18 @@ final class OrderFileService
 {
     public const STATUS_AWAITING_CONFIRMATION = 'awaiting_confirmation';
 
+    public const STATUS_REJECTED = 'rejected';
+
+    public const STATUS_SUPERSEDED = 'superseded';
+
     public const STATUS_CONFIRMED = 'confirmed';
 
     /**
      * @return array{
      *     uploaded_files: array<int, array<string, mixed>>,
      *     awaiting_confirmation: array<int, array<string, mixed>>,
-     *     confirmed_files: array<int, array<string, mixed>>
+     *     confirmed_files: array<int, array<string, mixed>>,
+     *     latest_rejection: array<string, mixed>|null
      * }
      */
     public function forOrder(Order $order, string $audience = 'customer'): array
@@ -38,14 +43,20 @@ final class OrderFileService
             'uploaded_files' => [],
             'awaiting_confirmation' => [],
             'confirmed_files' => [],
+            'latest_rejection' => $this->latestRejection($order),
         ];
+        $awaitingVersion = $this->awaitingVersion($order);
 
         foreach ($this->recordsForOrder($order) as $file) {
             $presented = $this->present($order, $file, $audience);
 
             if ($file->status === self::STATUS_CONFIRMED) {
                 $files['confirmed_files'][] = $presented;
-            } else {
+            } elseif (
+                $file->status === self::STATUS_AWAITING_CONFIRMATION
+                && $awaitingVersion !== null
+                && $file->version === $awaitingVersion
+            ) {
                 $files['awaiting_confirmation'][] = $presented;
             }
 
@@ -79,46 +90,83 @@ final class OrderFileService
 
     public function canCustomerManage(Order $order): bool
     {
-        return in_array($order->status, [
-            Order::STATUS_PENDING_REVIEW,
-            Order::STATUS_PENDING_CONFIRMATION,
-            Order::STATUS_NEEDS_REUPLOAD,
-        ], true);
+        return $order->payment_status === 'paid'
+            && in_array($order->status, [
+                Order::STATUS_PENDING_REVIEW,
+                Order::STATUS_PENDING_CONFIRMATION,
+                Order::STATUS_NEEDS_REUPLOAD,
+            ], true);
     }
 
     public function canCustomerConfirm(Order $order, ?Authenticatable $customer = null): bool
     {
         return $customer instanceof User
+            && $order->payment_status === 'paid'
             && $order->status === Order::STATUS_PENDING_CONFIRMATION
-            && $this->hasAwaitingFiles($order)
-            && $this->hasCustomerDownloadedAwaitingFile($order, $customer);
+            && $this->hasAwaitingFiles($order);
     }
 
     public function hasAwaitingFiles(Order $order): bool
     {
-        return $this->recordsForOrder($order)
-            ->contains(fn (OrderFile $file): bool => $file->status === self::STATUS_AWAITING_CONFIRMATION);
+        return $this->currentAwaitingFiles($order)->isNotEmpty();
     }
 
     public function hasCustomerDownloadedAwaitingFile(
         Order $order,
         User $customer,
     ): bool {
-        $awaitingFileIds = $this->recordsForOrder($order)
-            ->where('status', self::STATUS_AWAITING_CONFIRMATION)
-            ->modelKeys();
+        $awaitingFiles = $this->currentAwaitingFiles($order);
+        $awaitingFileIds = $awaitingFiles->modelKeys();
 
         if ($awaitingFileIds === []) {
             return false;
         }
 
-        return OrderFileAudit::query()
+        $downloadedFileIds = OrderFileAudit::query()
             ->where('order_id', $order->getKey())
             ->whereIn('order_file_id', $awaitingFileIds)
             ->where('actor_type', 'customer')
             ->where('actor_id', $customer->getAuthIdentifier())
             ->where('action', 'downloaded')
-            ->exists();
+            ->pluck('order_file_id')
+            ->map(static fn (mixed $id): int => (int) $id)
+            ->unique()
+            ->values();
+
+        if ($downloadedFileIds->count() === count($awaitingFileIds)) {
+            return true;
+        }
+
+        return OrderFileAudit::query()
+            ->where('order_id', $order->getKey())
+            ->where('actor_type', 'customer')
+            ->where('actor_id', $customer->getAuthIdentifier())
+            ->where('action', 'downloaded_zip')
+            ->latest('id')
+            ->get()
+            ->contains(function (OrderFileAudit $audit) use ($awaitingFiles): bool {
+                $metadataValue = $audit->getAttribute('metadata');
+                $metadata = is_array($metadataValue) ? $metadataValue : [];
+                $downloadedFileIds = $metadata['file_ids'] ?? [];
+
+                if (! is_array($downloadedFileIds)) {
+                    return false;
+                }
+
+                $downloadedFileIds = array_map(
+                    static fn (mixed $id): int => (int) $id,
+                    $downloadedFileIds,
+                );
+                sort($downloadedFileIds);
+                $awaitingFileIds = array_map(
+                    static fn (mixed $id): int => (int) $id,
+                    $awaitingFiles->modelKeys(),
+                );
+                sort($awaitingFileIds);
+
+                return (int) ($metadata['version'] ?? 0) === (int) $awaitingFiles->first()->version
+                    && $downloadedFileIds === $awaitingFileIds;
+            });
     }
 
     /**
@@ -155,6 +203,7 @@ final class OrderFileService
                 ->lockForUpdate()
                 ->whereKey($order->getKey())
                 ->firstOrFail();
+            $this->assertCanUpload($lockedOrder, $source, $actor);
             $version = $this->nextUploadVersion($lockedOrder);
             $created = new Collection;
 
@@ -194,6 +243,16 @@ final class OrderFileService
                 );
             }
 
+            if ($source === 'customer' && in_array($lockedOrder->status, [
+                Order::STATUS_NEEDS_REUPLOAD,
+                Order::STATUS_PENDING_CONFIRMATION,
+            ], true)) {
+                app(OrderWorkflowService::class)->transition(
+                    $lockedOrder,
+                    Order::STATUS_PENDING_REVIEW,
+                );
+            }
+
             return $created;
         });
     }
@@ -224,6 +283,19 @@ final class OrderFileService
             $wasCurrentConfirmedFile = $file->status === self::STATUS_CONFIRMED
                 && $file->is_current;
 
+            if (
+                $actor instanceof Admin
+                && $wasCurrentConfirmedFile
+                && ! in_array($lockedOrder->status, [
+                    Order::STATUS_PENDING_REVIEW,
+                    Order::STATUS_PENDING_CONFIRMATION,
+                ], true)
+            ) {
+                throw ValidationException::withMessages([
+                    'file' => '已确认的当前文件不能在生产或发货流程中删除。',
+                ]);
+            }
+
             $this->recordAudit(
                 $lockedOrder,
                 'deleted',
@@ -244,21 +316,39 @@ final class OrderFileService
                 $actor instanceof User
                 && $lockedOrder->status === Order::STATUS_PENDING_CONFIRMATION
             ) {
-                $lockedOrder->update(['status' => Order::STATUS_PENDING_REVIEW]);
+                app(OrderWorkflowService::class)->transition(
+                    $lockedOrder,
+                    Order::STATUS_PENDING_REVIEW,
+                );
             }
 
-            if ($actor instanceof Admin && $wasCurrentConfirmedFile) {
+            if ($actor instanceof Admin) {
                 // A legacy order-level path is updated through a separate
                 // model instance in removeLegacyReference(). Refresh the
                 // locked order before synchronizing legacy files again so a
                 // physically deleted path is not mirrored back into the new
                 // table.
                 $lockedOrder->refresh();
-                $lockedOrder->update([
-                    'status' => $this->hasAwaitingFiles($lockedOrder)
+                $hasAwaitingFiles = $this->hasAwaitingFiles($lockedOrder);
+                $targetStatus = null;
+
+                if (
+                    $wasCurrentConfirmedFile
+                    && $lockedOrder->status === Order::STATUS_PENDING_CONFIRMATION
+                ) {
+                    $targetStatus = $hasAwaitingFiles
                         ? Order::STATUS_PENDING_CONFIRMATION
-                        : Order::STATUS_PENDING_REVIEW,
-                ]);
+                        : Order::STATUS_PENDING_REVIEW;
+                } elseif (
+                    $lockedOrder->status === Order::STATUS_PENDING_CONFIRMATION
+                    && ! $hasAwaitingFiles
+                ) {
+                    $targetStatus = Order::STATUS_PENDING_REVIEW;
+                }
+
+                if ($targetStatus !== null) {
+                    app(OrderWorkflowService::class)->transition($lockedOrder, $targetStatus);
+                }
             }
         });
     }
@@ -277,7 +367,23 @@ final class OrderFileService
                 ]);
             }
 
-            $lockedOrder->update(['status' => Order::STATUS_PENDING_CONFIRMATION]);
+            if ($lockedOrder->payment_status !== 'paid') {
+                throw ValidationException::withMessages([
+                    'order' => '只有已付款订单才能提交客户确认。',
+                ]);
+            }
+
+            if ($lockedOrder->status === Order::STATUS_PENDING_CONFIRMATION) {
+                $lockedOrder->update([
+                    'confirmation_requested_at' => now(),
+                    'confirmation_reminded_at' => null,
+                ]);
+            } else {
+                $lockedOrder = app(OrderWorkflowService::class)->transition(
+                    $lockedOrder,
+                    Order::STATUS_PENDING_CONFIRMATION,
+                );
+            }
             $this->recordAudit(
                 $lockedOrder,
                 'submitted_for_confirmation',
@@ -305,12 +411,6 @@ final class OrderFileService
                 ]);
             }
 
-            if (! $this->hasCustomerDownloadedAwaitingFile($lockedOrder, $customer)) {
-                throw ValidationException::withMessages([
-                    'files' => 'Please download and review the files before confirming them.',
-                ]);
-            }
-
             return $this->confirmAwaitingFiles(
                 $lockedOrder,
                 $customer,
@@ -329,10 +429,7 @@ final class OrderFileService
                 ->firstOrFail();
             $this->synchronizeLegacyFiles($lockedOrder);
 
-            if (! in_array($lockedOrder->status, [
-                Order::STATUS_PENDING_REVIEW,
-                Order::STATUS_PENDING_CONFIRMATION,
-            ], true)) {
+            if ($lockedOrder->status !== Order::STATUS_PENDING_CONFIRMATION) {
                 throw ValidationException::withMessages([
                     'order' => '当前订单状态不能替客户确认文件。',
                 ]);
@@ -380,7 +477,18 @@ final class OrderFileService
                 ]);
             }
 
-            $lockedOrder->update(['status' => Order::STATUS_NEEDS_REUPLOAD]);
+            $rejectedFiles = $this->currentAwaitingFiles($lockedOrder);
+            OrderFile::query()
+                ->whereIn('id', $rejectedFiles->modelKeys())
+                ->update([
+                    'status' => self::STATUS_REJECTED,
+                    'is_current' => false,
+                ]);
+
+            $lockedOrder = app(OrderWorkflowService::class)->transition(
+                $lockedOrder,
+                Order::STATUS_NEEDS_REUPLOAD,
+            );
             $this->recordAudit(
                 $lockedOrder,
                 'review_rejected',
@@ -389,7 +497,14 @@ final class OrderFileService
                 [
                     'version' => $version,
                     'reason' => $reason,
+                    'file_ids' => $rejectedFiles->modelKeys(),
                 ],
+            );
+
+            app(CustomerNotificationService::class)->orderFileReviewRejected(
+                $lockedOrder,
+                $reason,
+                $version,
             );
 
             return $lockedOrder->fresh();
@@ -430,8 +545,14 @@ final class OrderFileService
 
     public function recordZipDownload(Order $order, ?Authenticatable $actor = null): void
     {
+        $awaitingFiles = $this->currentAwaitingFiles($order);
+
         $this->recordAudit($order, 'downloaded_zip', $actor, null, [
-            'file_count' => $this->recordsForOrder($order)->count(),
+            'file_count' => $awaitingFiles->isNotEmpty()
+                ? $awaitingFiles->count()
+                : $this->recordsForOrder($order)->count(),
+            'version' => $awaitingFiles->first()?->version,
+            'file_ids' => $awaitingFiles->modelKeys(),
         ]);
     }
 
@@ -516,7 +637,6 @@ final class OrderFileService
 
             if ($file->source === 'legacy'
                 && $file->uploaded_by_user_id === null
-                && $order->user_id !== null
             ) {
                 $updates['uploaded_by_user_id'] = $order->user_id;
             }
@@ -771,11 +891,8 @@ final class OrderFileService
                 $uploaderId = $file->uploaded_by_admin_id;
             } elseif (in_array($file->source, ['customer', 'legacy'], true)) {
                 $customerUploaderId = $file->uploaded_by_user_id ?? $order->user_id;
-
-                if ($customerUploaderId !== null) {
-                    $uploaderType = 'customer';
-                    $uploaderId = $customerUploaderId;
-                }
+                $uploaderType = 'customer';
+                $uploaderId = $customerUploaderId;
             }
         }
 
@@ -849,6 +966,88 @@ final class OrderFileService
         return $query->first();
     }
 
+    private function assertCanUpload(
+        Order $order,
+        string $source,
+        ?Authenticatable $actor,
+    ): void {
+        if ($order->payment_status !== 'paid') {
+            throw ValidationException::withMessages([
+                'order' => '只有已付款订单才能上传订单文件。',
+            ]);
+        }
+
+        if ($source === 'customer' && ! $actor instanceof User) {
+            throw ValidationException::withMessages([
+                'files' => '客户上传文件需要有效的客户账号。',
+            ]);
+        }
+
+        if ($source === 'admin' && ! $actor instanceof Admin) {
+            throw ValidationException::withMessages([
+                'files' => '管理员上传文件需要有效的管理员账号。',
+            ]);
+        }
+
+        $allowedStatuses = $source === 'admin'
+            ? [Order::STATUS_PENDING_REVIEW, Order::STATUS_PENDING_CONFIRMATION]
+            : [
+                Order::STATUS_PENDING_REVIEW,
+                Order::STATUS_PENDING_CONFIRMATION,
+                Order::STATUS_NEEDS_REUPLOAD,
+            ];
+
+        if (! in_array($order->status, $allowedStatuses, true)) {
+            throw ValidationException::withMessages([
+                'order' => '当前订单状态不能上传文件。',
+            ]);
+        }
+    }
+
+    /**
+     * @return Collection<int, OrderFile>
+     */
+    private function currentAwaitingFiles(Order $order): Collection
+    {
+        $version = OrderFile::query()
+            ->where('order_id', $order->getKey())
+            ->where('status', self::STATUS_AWAITING_CONFIRMATION)
+            ->max('version');
+
+        if ($version === null) {
+            return new Collection;
+        }
+
+        return OrderFile::query()
+            ->where('order_id', $order->getKey())
+            ->where('version', $version)
+            ->where('status', self::STATUS_AWAITING_CONFIRMATION)
+            ->orderBy('id')
+            ->get();
+    }
+
+    /**
+     * @return array{version: int, reason: string, reviewed_at: string|null}|null
+     */
+    private function latestRejection(Order $order): ?array
+    {
+        $audit = OrderFileAudit::query()
+            ->where('order_id', $order->getKey())
+            ->where('action', 'review_rejected')
+            ->latest('id')
+            ->first();
+
+        if (! $audit) {
+            return null;
+        }
+
+        return [
+            'version' => (int) data_get($audit->metadata, 'version', 0),
+            'reason' => (string) data_get($audit->metadata, 'reason', ''),
+            'reviewed_at' => $audit->created_at?->toIso8601String(),
+        ];
+    }
+
     private function nextUploadVersion(Order $order): int
     {
         $pendingVersion = OrderFile::query()
@@ -881,8 +1080,10 @@ final class OrderFileService
         string $auditAction,
         ?int $confirmedByUserId = null,
     ): Order {
+        $version = $this->awaitingVersion($lockedOrder);
         $awaitingFiles = OrderFile::query()
             ->where('order_id', $lockedOrder->getKey())
+            ->where('version', $version)
             ->where('status', self::STATUS_AWAITING_CONFIRMATION)
             ->lockForUpdate()
             ->get();
@@ -892,6 +1093,11 @@ final class OrderFileService
                 'files' => 'There are no files waiting for confirmation.',
             ]);
         }
+
+        $lockedOrder = app(OrderWorkflowService::class)->transition(
+            $lockedOrder,
+            Order::STATUS_CONFIRMED,
+        );
 
         OrderFile::query()
             ->where('order_id', $lockedOrder->getKey())
@@ -908,7 +1114,6 @@ final class OrderFileService
             ]);
         }
 
-        $lockedOrder->update(['status' => Order::STATUS_CONFIRMED]);
         $this->recordAudit(
             $lockedOrder,
             $auditAction,

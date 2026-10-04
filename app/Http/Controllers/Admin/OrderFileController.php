@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Order;
 use App\Models\OrderFile;
 use App\Services\OrderFileService;
@@ -19,6 +20,7 @@ class OrderFileController extends Controller
         string $file,
         OrderFileService $files,
     ): Response {
+        $this->authorizeOrderView($request);
         $order = Order::query()->findOrFail($id);
         $resolvedFile = $files->resolve($order, $file, $request->user('admin'));
 
@@ -37,6 +39,7 @@ class OrderFileController extends Controller
         int $id,
         OrderFileService $files,
     ): Response {
+        $this->authorizeOrderView($request);
         $order = Order::query()->findOrFail($id);
         $records = $files->recordsForOrder($order)
             ->filter(fn (OrderFile $file): bool => Storage::disk('public')->exists($file->path));
@@ -104,5 +107,15 @@ class OrderFileController extends Controller
         $usedNames[$candidate] = true;
 
         return $candidate;
+    }
+
+    private function authorizeOrderView(Request $request): void
+    {
+        $admin = $request->user('admin');
+
+        abort_unless(
+            $admin instanceof Admin && $admin->can('View:Order'),
+            403,
+        );
     }
 }

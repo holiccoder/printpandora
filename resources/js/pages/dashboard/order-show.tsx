@@ -70,6 +70,7 @@ type Props = {
             uploaded_files: OrderFileSections['uploaded_files'];
             awaiting_confirmation: OrderFileSections['awaiting_confirmation'];
             confirmed_files: OrderFileSections['confirmed_files'];
+            latest_rejection: OrderFileSections['latest_rejection'];
         };
         can_manage_files: boolean;
         can_confirm_files: boolean;

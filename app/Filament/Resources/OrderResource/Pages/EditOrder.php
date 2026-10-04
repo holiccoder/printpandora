@@ -5,6 +5,7 @@ namespace App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource;
 use App\Models\Order;
 use App\Services\FourPxService;
+use App\Services\OrderWorkflowService;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
@@ -22,6 +23,21 @@ class EditOrder extends EditRecord
 
         if (! $record instanceof Order) {
             return $data;
+        }
+
+        $requestedStatus = (string) ($data['status'] ?? $record->status);
+
+        if (
+            $requestedStatus !== $record->status
+            && ! app(OrderWorkflowService::class)->canTransition($record, $requestedStatus)
+        ) {
+            Notification::make()
+                ->danger()
+                ->title('订单状态变更不符合流程')
+                ->body('请按照付款、文件审核、客户确认和生产的顺序推进订单。')
+                ->send();
+
+            $data['status'] = $record->status;
         }
 
         if (
@@ -52,6 +68,24 @@ class EditOrder extends EditRecord
                 ->send();
 
             $data['status'] = $record->status;
+        }
+
+        // The edit form persists the status directly after this hook. Keep
+        // the reminder timestamps in sync with the same workflow rules used
+        // by the table status column and file actions.
+        $finalStatus = (string) ($data['status'] ?? $record->status);
+
+        if ($finalStatus !== $record->status) {
+            if ($finalStatus === Order::STATUS_PENDING_CONFIRMATION) {
+                $data['confirmation_requested_at'] = now();
+                $data['confirmation_reminded_at'] = null;
+            } elseif (in_array($finalStatus, [
+                Order::STATUS_PENDING_REVIEW,
+                Order::STATUS_NEEDS_REUPLOAD,
+            ], true)) {
+                $data['confirmation_requested_at'] = null;
+                $data['confirmation_reminded_at'] = null;
+            }
         }
 
         return $data;

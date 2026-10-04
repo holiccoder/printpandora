@@ -15,8 +15,11 @@ use App\Services\Cart;
 use App\Services\CryptomusService;
 use App\Services\DiscountException;
 use App\Services\DiscountService;
+use App\Services\OrderDesignRequirementService;
 use App\Services\OrderWeightService;
+use App\Services\OrderWorkflowService;
 use App\Services\PayPalService;
+use App\Services\ProductDesignCheckoutService;
 use App\Services\ShippingService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Throwable;
 
@@ -34,6 +38,8 @@ class CheckoutController extends Controller
     public function __construct(
         protected ShippingService $shipping,
         protected OrderWeightService $weights,
+        protected ProductDesignCheckoutService $productDesigns,
+        protected OrderDesignRequirementService $designRequirements,
     ) {}
 
     public function show(Request $request, Cart $cart)
@@ -146,6 +152,11 @@ class CheckoutController extends Controller
             ]);
         } catch (DiscountException $e) {
             return response()->json(['error' => $e->getMessage()], 422);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'error' => 'Please check the selected design files.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (Throwable $e) {
             Log::error('PayPal create order failed', ['error' => $e->getMessage()]);
 
@@ -339,6 +350,13 @@ class CheckoutController extends Controller
             DB::rollBack();
 
             return response()->json(['error' => $e->getMessage()], 422);
+        } catch (ValidationException $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'error' => 'Please check the selected design files.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (Throwable $e) {
             DB::rollBack();
             Log::error('Cryptomus checkout failed', ['error' => $e->getMessage()]);
@@ -399,11 +417,15 @@ class CheckoutController extends Controller
             case 'confirm_check':
                 $order->update([
                     'payment_status' => 'paid',
-                    'status' => $order->status === Order::STATUS_PENDING
-                        ? Order::STATUS_PENDING_REVIEW
-                        : $order->status,
                     'checkout_token' => null,
                 ]);
+
+                if ($order->status === Order::STATUS_PENDING) {
+                    app(OrderWorkflowService::class)->transition(
+                        $order,
+                        Order::STATUS_PENDING_REVIEW,
+                    );
+                }
                 break;
 
             case 'fail':
@@ -411,9 +433,15 @@ class CheckoutController extends Controller
             case 'system_fail':
                 $order->update([
                     'payment_status' => 'failed',
-                    'status' => Order::STATUS_PENDING,
                     'checkout_token' => null,
                 ]);
+
+                if ($order->status === Order::STATUS_PENDING_REVIEW) {
+                    app(OrderWorkflowService::class)->transition(
+                        $order,
+                        Order::STATUS_PENDING,
+                    );
+                }
                 break;
 
             case 'wait':
@@ -530,15 +558,18 @@ class CheckoutController extends Controller
                     'checkout_token' => null,
                 ];
 
-                if ($lockedOrder->status === Order::STATUS_PENDING) {
-                    $updates['status'] = Order::STATUS_PENDING_REVIEW;
-                }
-
                 if ($captureId && ! $lockedOrder->payment_id) {
                     $updates['payment_id'] = $captureId;
                 }
 
                 $lockedOrder->update($updates);
+
+                if ($lockedOrder->status === Order::STATUS_PENDING) {
+                    $lockedOrder = app(OrderWorkflowService::class)->transition(
+                        $lockedOrder,
+                        Order::STATUS_PENDING_REVIEW,
+                    );
+                }
             }
 
             return $lockedOrder->fresh();
@@ -558,15 +589,20 @@ class CheckoutController extends Controller
             }
 
             $updates = ['payment_status' => $paymentStatus];
-            if ($cancel && in_array($lockedOrder->status, [
-                Order::STATUS_PENDING,
-                Order::STATUS_PENDING_REVIEW,
-            ], true)) {
-                $updates['status'] = Order::STATUS_PENDING;
+            $shouldReturnToPayment = $cancel
+                && $lockedOrder->status === Order::STATUS_PENDING_REVIEW;
+            if ($shouldReturnToPayment) {
                 $updates['checkout_token'] = null;
             }
 
             $lockedOrder->update($updates);
+
+            if ($shouldReturnToPayment) {
+                $lockedOrder = app(OrderWorkflowService::class)->transition(
+                    $lockedOrder,
+                    Order::STATUS_PENDING,
+                );
+            }
 
             return $lockedOrder->fresh();
         });
@@ -862,8 +898,16 @@ class CheckoutController extends Controller
 
             $lockedOrder->update($attributes);
             $this->replaceOrderItems($lockedOrder, $cart);
+            $this->productDesigns->attach($request, $lockedOrder, $cart);
             $this->attachPendingProductDesignRequests($request, $lockedOrder, $cart);
             $this->attachPendingDesignServiceRequests($request, $lockedOrder, $cart);
+
+            // The storefront prepares the files in IndexedDB, but every
+            // checkout and payment endpoint must enforce the requirement on
+            // the server after those files have been attached to the order.
+            if ($validated !== null || $paymentMethod !== null) {
+                $this->designRequirements->assertReady($lockedOrder, $cart->all());
+            }
 
             if ($redeemDiscount) {
                 $this->applyPendingCheckoutFinancials($lockedOrder, $quote, $request);

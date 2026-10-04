@@ -1,13 +1,18 @@
 // Content sourced from `content/hardcoded-content.json` via useContent('checkout_page').
 import { Link, router, useForm } from '@inertiajs/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PaymentMethods } from '@/components/payment-methods';
 import SEO from '@/components/seo';
 import { countries, countriesByCode } from '@/data/countries';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
-import { isPvcProductSlug } from '@/lib/product-images';
 import { formatOrderOptions } from '@/lib/order-options';
+import {
+    getPendingProductDesign,
+    removePendingProductDesign,
+} from '@/lib/pending-product-designs';
+import type { PendingProductDesignRecord } from '@/lib/pending-product-designs';
+import { isPvcProductSlug } from '@/lib/product-images';
 import { productHref } from '@/lib/product-routes';
 
 interface CartItem {
@@ -19,6 +24,7 @@ interface CartItem {
     image: string | null;
     slug: string;
     options?: Record<string, unknown>;
+    pending_design_id?: string | null;
 }
 
 interface PaypalConfig {
@@ -121,6 +127,56 @@ function getMissingShippingErrors(
     }, {});
 }
 
+function checkoutFormData(
+    values: Record<string, unknown>,
+    pendingDesigns: PendingProductDesignRecord[],
+): FormData {
+    const formData = new FormData();
+
+    Object.entries(values).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+            formData.append(key, String(value));
+        }
+    });
+
+    let fileIndex = 0;
+    const drafts = pendingDesigns.map((design) => {
+        const fileIndexes: Record<string, number[]> = {};
+
+        (['design_file', 'logo_file', 'example_files'] as const).forEach(
+            (role) => {
+                fileIndexes[role] = [];
+
+                design.files[role].forEach((file) => {
+                    formData.append('pending_files[]', file, file.name);
+                    fileIndexes[role].push(fileIndex);
+                    fileIndex += 1;
+                });
+            },
+        );
+
+        return {
+            client_id: design.clientId,
+            mode: design.mode,
+            product_id: design.productId,
+            email: design.email || null,
+            order_name: design.orderName || null,
+            business_name: design.businessName || null,
+            card_info: design.cardInfo || null,
+            business_card_type: design.businessCardType || null,
+            design_service_code: design.designServiceCode || null,
+            terms_accepted: design.termsAccepted,
+            file_indexes: fileIndexes,
+        };
+    });
+
+    if (drafts.length > 0) {
+        formData.append('pending_product_designs', JSON.stringify(drafts));
+    }
+
+    return formData;
+}
+
 export default function Checkout({
     cart,
     subtotal,
@@ -159,6 +215,83 @@ export default function Checkout({
     const [shippingErrors, setShippingErrors] = useState<ShippingErrors>({});
     const [discountInput, setDiscountInput] = useState(discountCode ?? '');
     const [discountError, setDiscountError] = useState<string | null>(null);
+    const pendingDesignIds = useMemo(
+        () =>
+            Object.values(cart)
+                .map((item) => item.pending_design_id)
+                .filter((id): id is string => Boolean(id)),
+        [cart],
+    );
+    const [pendingDesigns, setPendingDesigns] = useState<
+        PendingProductDesignRecord[]
+    >([]);
+    const pendingDesignsKey = pendingDesignIds.join('|');
+    const [loadedPendingDesignsKey, setLoadedPendingDesignsKey] = useState('');
+    const [pendingDesignsError, setPendingDesignsError] = useState<
+        string | null
+    >(null);
+    const pendingDesignsLoading =
+        pendingDesignIds.length > 0 &&
+        loadedPendingDesignsKey !== pendingDesignsKey;
+    const checkoutPendingDesigns = useMemo(
+        () =>
+            pendingDesignsLoading || pendingDesignIds.length === 0
+                ? []
+                : pendingDesigns,
+        [pendingDesigns, pendingDesignsLoading, pendingDesignIds.length],
+    );
+    const activePendingDesignsError =
+        pendingDesignIds.length > 0 ? pendingDesignsError : null;
+
+    useEffect(() => {
+        let active = true;
+
+        if (pendingDesignIds.length === 0) {
+            return () => {
+                active = false;
+            };
+        }
+
+        Promise.all(pendingDesignIds.map((id) => getPendingProductDesign(id)))
+            .then((records) => {
+                if (!active) {
+                    return;
+                }
+
+                const availableRecords = records.filter(
+                    (record): record is PendingProductDesignRecord =>
+                        record !== null,
+                );
+
+                if (availableRecords.length !== pendingDesignIds.length) {
+                    setPendingDesignsError(
+                        'A selected design file is unavailable. Please return to the product page and select it again.',
+                    );
+                } else {
+                    setPendingDesignsError(null);
+                }
+
+                setPendingDesigns(availableRecords);
+                setLoadedPendingDesignsKey(pendingDesignsKey);
+            })
+            .catch((error: unknown) => {
+                if (!active) {
+                    return;
+                }
+
+                setPendingDesignsError(
+                    error instanceof Error
+                        ? error.message
+                        : 'Unable to prepare the selected design files.',
+                );
+                setPendingDesigns([]);
+                setLoadedPendingDesignsKey(pendingDesignsKey);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [pendingDesignIds, pendingDesignsKey]);
 
     const clearShippingError = (field: ShippingAddressField) => {
         setShippingErrors((current) => {
@@ -242,6 +375,13 @@ export default function Checkout({
     const paypalContainerRef = useRef<HTMLDivElement | null>(null);
     const paypalButtonsRef = useRef<any>(null);
     const dataRef = useRef(data);
+    const clearPendingDesigns = useCallback(async () => {
+        await Promise.all(
+            checkoutPendingDesigns.map((design) =>
+                removePendingProductDesign(design.clientId),
+            ),
+        );
+    }, [checkoutPendingDesigns]);
 
     const pricedShippingMethods = useMemo(
         () =>
@@ -359,16 +499,26 @@ export default function Checkout({
                     throw new Error(SHIPPING_VALIDATION_MESSAGE);
                 }
 
+                if (pendingDesignsLoading) {
+                    throw new Error(
+                        'Preparing the selected design files. Please try again in a moment.',
+                    );
+                }
+
+                if (activePendingDesignsError) {
+                    throw new Error(activePendingDesignsError);
+                }
+
                 const res = await fetch('/checkout/paypal/create', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                         Accept: 'application/json',
                     },
-                    body: JSON.stringify({
-                        ...dataRef.current,
-                    }),
+                    body: checkoutFormData(
+                        dataRef.current as Record<string, unknown>,
+                        checkoutPendingDesigns,
+                    ),
                 });
                 const json = await res.json().catch(() => ({}));
 
@@ -411,6 +561,7 @@ export default function Checkout({
                     }
 
                     if (json.redirect) {
+                        await clearPendingDesigns().catch(() => undefined);
                         router.visit(json.redirect);
                     }
                 } catch (err) {
@@ -450,7 +601,15 @@ export default function Checkout({
                 paypalButtonsRef.current = null;
             }
         };
-    }, [paymentMethod, paypalReady, c.error_messages]);
+    }, [
+        paymentMethod,
+        paypalReady,
+        c.error_messages,
+        clearPendingDesigns,
+        checkoutPendingDesigns,
+        activePendingDesignsError,
+        pendingDesignsLoading,
+    ]);
 
     const shipping = c.form_sections.shipping_address;
     const shippingMethodSection = c.form_sections.shipping_method;
@@ -543,6 +702,29 @@ export default function Checkout({
                                         </div>
                                     ))}
                                 </div>
+                                {pendingDesignsLoading && (
+                                    <p className="mt-4 text-sm text-[#706f6c]">
+                                        Preparing your design files for
+                                        checkout…
+                                    </p>
+                                )}
+                                {!pendingDesignsLoading &&
+                                    activePendingDesignsError && (
+                                        <p
+                                            className="mt-4 text-sm text-red-600"
+                                            role="alert"
+                                        >
+                                            {activePendingDesignsError}
+                                        </p>
+                                    )}
+                                {!pendingDesignsLoading &&
+                                    !activePendingDesignsError &&
+                                    checkoutPendingDesigns.length > 0 && (
+                                        <p className="mt-4 text-sm text-[#706f6c]">
+                                            Your selected design files will be
+                                            uploaded when you place the order.
+                                        </p>
+                                    )}
                             </div>
 
                             <div className="rounded-lg border border-[#e3e3e0] bg-white p-6 dark:border-[#3E3E3A] dark:bg-[#161615]">

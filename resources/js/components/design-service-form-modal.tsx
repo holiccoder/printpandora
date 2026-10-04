@@ -13,6 +13,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { useContent } from '@/hooks/use-content';
+import type { PendingProductDesignDraft } from '@/lib/pending-product-designs';
 import type { UploadFilesModalContent } from '@/types/content';
 
 interface DesignServiceFormModalProps {
@@ -29,7 +30,7 @@ interface DesignServiceFormModalProps {
     designServicesNote?: string;
     returnTo?: string;
     onDesignServiceSaved?: (code: string) => void;
-    onSubmitted?: () => void;
+    onSubmitted?: (pendingDesignId?: string) => void;
     submissionTarget?: DesignSubmissionTarget;
     productDesignMode?: ProductDesignMode;
     productId?: number;
@@ -38,6 +39,10 @@ interface DesignServiceFormModalProps {
     productTypeLabel?: string;
     uploadFilesMode?: boolean;
     hideDesignBriefFields?: boolean;
+    deferUpload?: boolean;
+    onDeferredSubmit?: (
+        draft: PendingProductDesignDraft,
+    ) => Promise<string | void> | string | void;
 }
 
 export default function DesignServiceFormModal({
@@ -63,6 +68,8 @@ export default function DesignServiceFormModal({
     productTypeLabel,
     uploadFilesMode = false,
     hideDesignBriefFields = false,
+    deferUpload = false,
+    onDeferredSubmit,
 }: DesignServiceFormModalProps) {
     const ds = useContent('design_service_page') as {
         notes_heading?: string;
@@ -213,8 +220,10 @@ export default function DesignServiceFormModal({
                                 productSlug={productSlug}
                                 productTypeLabel={productTypeLabel}
                                 hideDesignBriefFields={hideDesignBriefFields}
-                                onSuccess={() => {
-                                    onSubmitted?.();
+                                deferUpload={deferUpload}
+                                onDeferredSubmit={onDeferredSubmit}
+                                onSuccess={(pendingDesignId) => {
+                                    onSubmitted?.(pendingDesignId);
                                     onOpenChange(false);
                                 }}
                             />

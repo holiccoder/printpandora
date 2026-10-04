@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Order;
 use App\Models\User;
 use App\Notifications\CustomerNotification;
+use App\Notifications\OrderFileConfirmationReminder;
 
 class CustomerNotificationService
 {
@@ -59,6 +60,40 @@ class CustomerNotificationService
                 'previous_order_status' => $previousStatus,
             ],
         ));
+    }
+
+    public function orderFileReviewRejected(Order $order, string $reason, int $version): void
+    {
+        $user = $order->user;
+
+        if (! $user) {
+            return;
+        }
+
+        $user->notify(new CustomerNotification(
+            category: CustomerNotification::CATEGORY_SYSTEM,
+            title: "Order #{$order->id} files need to be re-uploaded",
+            body: "The files in version {$version} were not approved: {$reason}",
+            actionUrl: route('dashboard.orders.show', $order->id),
+            meta: [
+                'event' => 'order_file_review_rejected',
+                'order_id' => $order->id,
+                'order_status' => $order->status,
+                'file_version' => $version,
+                'review_reason' => $reason,
+            ],
+        ));
+    }
+
+    public function orderFileConfirmationReminder(Order $order): void
+    {
+        $user = $order->user;
+
+        if (! $user) {
+            return;
+        }
+
+        $user->notify(new OrderFileConfirmationReminder($order));
     }
 
     /**

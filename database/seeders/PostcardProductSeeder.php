@@ -7,6 +7,7 @@ use App\Models\ProductCategory;
 use App\Services\ProductConfigurationService;
 use App\Support\CardsAndPostcardsProductImageCatalog;
 use App\Support\PostcardProductCatalog;
+use App\Support\PostcardProductSwatchCatalog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -123,7 +124,9 @@ class PostcardProductSeeder extends Seeder
         ]];
         $config['media'] = $media;
 
-        return CardsAndPostcardsProductImageCatalog::synchronizePostcardConfig($config, $slug);
+        $config = CardsAndPostcardsProductImageCatalog::synchronizePostcardConfig($config, $slug);
+
+        return PostcardProductSwatchCatalog::synchronizeConfig($config, $slug);
     }
 
     /**

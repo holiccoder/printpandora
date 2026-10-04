@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Post;
 use App\Notifications\CustomerNotification;
+use App\Notifications\OrderFileConfirmationReminder;
 use App\Services\Cart;
 use App\Services\ProductImageResolver;
 use App\Support\HardcodedContent;
@@ -133,7 +134,10 @@ class HandleInertiaRequests extends Middleware
 
         return [
             'unread_count' => $user->unreadNotifications()
-                ->where('type', CustomerNotification::class)
+                ->whereIn('type', [
+                    CustomerNotification::class,
+                    OrderFileConfirmationReminder::class,
+                ])
                 ->count(),
         ];
     }

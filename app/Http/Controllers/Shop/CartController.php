@@ -36,6 +36,12 @@ class CartController extends Controller
         $data = $request->validate([
             'product_id' => 'required|integer|exists:products,id',
             'options' => 'nullable|array',
+            'pending_design_id' => [
+                'nullable',
+                'string',
+                'max:100',
+                'regex:/^[A-Za-z0-9_-]+$/',
+            ],
         ]);
 
         $product = Product::query()->findOrFail((int) $data['product_id']);
@@ -44,6 +50,7 @@ class CartController extends Controller
         $itemKey = $cart->add(
             $product->id,
             $options,
+            $data['pending_design_id'] ?? null,
         );
 
         if ($request->wantsJson()) {

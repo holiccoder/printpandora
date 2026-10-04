@@ -19,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
+import { savePendingProductDesign } from '@/lib/pending-product-designs';
 import { computeDynamicTiers, squareInchesToSquareMetres } from '@/lib/pricing';
 import type { DynamicPricingData } from '@/lib/pricing';
 import type { PricingRule } from '@/lib/pricing';
@@ -1333,6 +1334,7 @@ export default function ShopShow({
     const [selectedDesignService, setSelectedDesignService] = useState<
         string | null
     >(null);
+    const [pendingDesignId, setPendingDesignId] = useState<string | null>(null);
     const [hasInteracted, setHasInteracted] = useState(false);
 
     const stickerPaperArea = useMemo(() => {
@@ -1379,11 +1381,15 @@ export default function ShopShow({
 
     const markDesignSubmitted = (
         mode: 'canva' | 'upload' | 'design-for-you',
+        deferredDesignId?: string,
     ) => {
         setSubmittedDesignModes((current) => ({
             ...current,
             [mode]: true,
         }));
+        if (deferredDesignId) {
+            setPendingDesignId(deferredDesignId);
+        }
         setDesignSelectionError(null);
         setDesignModal(null);
     };
@@ -2225,6 +2231,7 @@ export default function ShopShow({
             '/cart/add',
             {
                 product_id: product.id,
+                pending_design_id: pendingDesignId,
                 // Only the code is submitted; the server resolves the fee.
                 options: selectedDesignService
                     ? {
@@ -2468,6 +2475,9 @@ export default function ShopShow({
                                 onCustomSizeSelect={openCustomSizeModal}
                                 useBusinessCardSizeSwatches={
                                     isBusinessCardProduct
+                                }
+                                preserveOnlyCustomSizeLabel={
+                                    isCottonBusinessCards
                                 }
                                 showSpecialFinishSides={!isCottonBusinessCards}
                                 showHotFoilSides={true}
@@ -3391,8 +3401,9 @@ export default function ShopShow({
                             productId={product.id}
                             productName={product.name}
                             productSlug={product.slug}
-                            returnTo={pageUrl}
-                            onSubmitted={() => markDesignSubmitted('canva')}
+                            onSubmitted={(deferredDesignId) =>
+                                markDesignSubmitted('canva', deferredDesignId)
+                            }
                         />
                         <DesignServiceFormModal
                             open={designModal === 'upload'}
@@ -3410,8 +3421,11 @@ export default function ShopShow({
                             productName={product.name}
                             productSlug={product.slug}
                             hideDesignBriefFields
-                            returnTo={pageUrl}
-                            onSubmitted={() => markDesignSubmitted('upload')}
+                            deferUpload
+                            onDeferredSubmit={savePendingProductDesign}
+                            onSubmitted={(deferredDesignId) =>
+                                markDesignSubmitted('upload', deferredDesignId)
+                            }
                         />
                         <DesignServiceFormModal
                             open={designModal === 'design-for-you'}
@@ -3427,6 +3441,8 @@ export default function ShopShow({
                             productId={product.id}
                             productName={product.name}
                             productSlug={product.slug}
+                            deferUpload
+                            onDeferredSubmit={savePendingProductDesign}
                             designServices={designServicesConfig?.options}
                             designServicesHeading={
                                 designServicesConfig?.heading
@@ -3439,8 +3455,11 @@ export default function ShopShow({
                             onDesignServiceSaved={(code) =>
                                 setSelectedDesignService(code)
                             }
-                            onSubmitted={() =>
-                                markDesignSubmitted('design-for-you')
+                            onSubmitted={(deferredDesignId) =>
+                                markDesignSubmitted(
+                                    'design-for-you',
+                                    deferredDesignId,
+                                )
                             }
                         />
 
@@ -3795,6 +3814,7 @@ function DynamicOptionGroups({
     customSize,
     onCustomSizeSelect,
     useBusinessCardSizeSwatches,
+    preserveOnlyCustomSizeLabel,
     showSpecialFinishSides,
     showHotFoilSides,
     specialFinishSides,
@@ -3806,6 +3826,7 @@ function DynamicOptionGroups({
     customSize?: { width: number; height: number } | null;
     onCustomSizeSelect?: () => void;
     useBusinessCardSizeSwatches: boolean;
+    preserveOnlyCustomSizeLabel: boolean;
     showSpecialFinishSides: boolean;
     showHotFoilSides: boolean;
     specialFinishSides: Record<string, SpecialFinishSide>;
@@ -3959,6 +3980,9 @@ function DynamicOptionGroups({
                                           : value.swatch_image;
                                 const isCustomSize =
                                     group.key === 'sizes' && code === 'custom';
+                                const hideSizeMetadata =
+                                    preserveOnlyCustomSizeLabel &&
+                                    group.key === 'sizes';
                                 const hasSpecialFinishSide =
                                     (group.key === 'special_finish'
                                         ? showSpecialFinishSides
@@ -4003,10 +4027,11 @@ function DynamicOptionGroups({
                                                 </span>
                                             )}
                                         </div>
-                                        {shouldShowSwatchCaption(
-                                            group.key,
-                                            code,
-                                        ) &&
+                                        {!hideSizeMetadata &&
+                                            shouldShowSwatchCaption(
+                                                group.key,
+                                                code,
+                                            ) &&
                                             (isCustomSize &&
                                             active &&
                                             customSize ? (
@@ -4072,10 +4097,20 @@ function DynamicOptionGroups({
                                         key={code}
                                         active={active}
                                         onClick={handleSelect}
+                                        ariaLabel={
+                                            hideSizeMetadata
+                                                ? value.name
+                                                : undefined
+                                        }
                                         label={
-                                            isCustomSize && active && customSize
-                                                ? `${value.name} (${customSizeDisplay(customSize.width, customSize.height, value.unit?.toLowerCase() === 'mm' ? 'mm' : 'in')})`
-                                                : value.name
+                                            hideSizeMetadata && !isCustomSize
+                                                ? undefined
+                                                : isCustomSize &&
+                                                    active &&
+                                                    customSize &&
+                                                    !hideSizeMetadata
+                                                  ? `${value.name} (${customSizeDisplay(customSize.width, customSize.height, value.unit?.toLowerCase() === 'mm' ? 'mm' : 'in')})`
+                                                  : value.name
                                         }
                                     >
                                         {tileContent}
@@ -4422,18 +4457,21 @@ function ChoiceTile({
     disabled,
     onClick,
     label,
+    ariaLabel,
     children,
 }: {
     active: boolean;
     disabled?: boolean;
     onClick: () => void;
     label?: React.ReactNode;
+    ariaLabel?: string;
     children: React.ReactNode;
 }) {
     return (
         <button
             type="button"
             aria-pressed={active}
+            aria-label={ariaLabel}
             disabled={disabled}
             onClick={onClick}
             className={`group relative overflow-hidden rounded-md border-2 p-2 text-left transition-colors ${
@@ -4597,37 +4635,75 @@ function CanvaDesignModal({
     productId,
     productName,
     productSlug,
-    returnTo,
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onSubmitted: () => void;
+    onSubmitted: (pendingDesignId?: string) => void;
     productId?: number;
     productName?: string;
     productSlug?: string;
-    returnTo?: string;
 }) {
-    const { data, setData, post, processing, errors, reset, transform } =
-        useForm<{
-            desgin: string;
-            email: string;
-            order_name: string;
-            design_file: File[];
-            return_to: string;
-        }>({
-            desgin: JSON.stringify({
-                source: 'product-page',
-                mode: 'canva',
-                product_id: productId ?? null,
-                product_name: productName ?? null,
-                product_slug: productSlug ?? null,
-            }),
-            email: '',
-            order_name: '',
-            design_file: [],
-            return_to: returnTo ?? '',
-        });
+    const { data, setData, reset } = useForm({
+        email: '',
+        order_name: '',
+        design_file: [] as File[],
+    });
+    const [processing, setProcessing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const designInputRef = useRef<HTMLInputElement>(null);
+
+    const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (data.design_file.length === 0) {
+            setError('Please select at least one design file.');
+
+            return;
+        }
+
+        setError(null);
+        setProcessing(true);
+
+        try {
+            const savedId = await savePendingProductDesign({
+                mode: 'canva',
+                productId: productId ?? 0,
+                productName: productName ?? '',
+                productSlug: productSlug ?? '',
+                email: data.email,
+                orderName: data.order_name,
+                businessName: '',
+                cardInfo: '',
+                businessCardType: productName ?? '',
+                designServiceCode: '',
+                termsAccepted: true,
+                files: {
+                    design_file: data.design_file,
+                    logo_file: [],
+                    example_files: [],
+                },
+            });
+            toast.success(
+                'File saved on this device and will be uploaded at checkout.',
+            );
+            reset();
+
+            if (designInputRef.current) {
+                designInputRef.current.value = '';
+            }
+
+            onSubmitted(savedId);
+            onOpenChange(false);
+        } catch (submitError) {
+            setError(
+                submitError instanceof Error
+                    ? submitError.message
+                    : 'Unable to temporarily save the selected design files.',
+            );
+        } finally {
+            setProcessing(false);
+        }
+    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -4650,41 +4726,7 @@ function CanvaDesignModal({
                     />
                 </div>
 
-                <form
-                    className="mt-2 space-y-3"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        transform((formData) => ({
-                            desgin: JSON.stringify({
-                                source: 'product-page',
-                                mode: 'canva',
-                                product_id: productId ?? null,
-                                product_name: productName ?? null,
-                                product_slug: productSlug ?? null,
-                                email: formData.email,
-                                order_name: formData.order_name || null,
-                            }),
-                            design_file: formData.design_file,
-                            return_to: formData.return_to,
-                        }));
-                        post('/product-designs', {
-                            forceFormData: true,
-                            preserveScroll: true,
-                            preserveState: true,
-                            onSuccess: () => {
-                                toast.success(
-                                    'File received — we will attach it to your order.',
-                                );
-                                reset();
-                                if (designInputRef.current) {
-                                    designInputRef.current.value = '';
-                                }
-                                onSubmitted();
-                                onOpenChange(false);
-                            },
-                        });
-                    }}
-                >
+                <form className="mt-2 space-y-3" onSubmit={submit}>
                     <h3 className="text-sm font-bold text-neutral-900">
                         Upload your Canva design file
                     </h3>
@@ -4709,6 +4751,7 @@ function CanvaDesignModal({
                             }
                         />
                     </label>
+                    {error && <p className="text-sm text-red-600">{error}</p>}
                     <Input
                         ref={designInputRef}
                         type="file"
@@ -4722,11 +4765,6 @@ function CanvaDesignModal({
                             )
                         }
                     />
-                    {(errors.design_file ?? errors['design_file.0']) && (
-                        <p className="text-sm text-red-600">
-                            {errors.design_file ?? errors['design_file.0']}
-                        </p>
-                    )}
                     <Button
                         type="submit"
                         className="w-full sm:w-auto"

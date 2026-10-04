@@ -1,17 +1,27 @@
 @php
     $awaitingFiles = $files['awaiting_confirmation'] ?? [];
     $confirmedFiles = $files['confirmed_files'] ?? [];
+    $latestRejection = $files['latest_rejection'] ?? null;
     $uploadAction = $action->getModalAction('upload');
     $confirmAction = $action->getModalAction('confirmForCustomer');
     $rejectAction = $action->getModalAction('rejectReview');
     $deleteAction = $action->getModalAction('deleteFile');
-    $canReviewFiles = in_array($order->status, [
+    $canReviewFiles = $order->payment_status === 'paid' && in_array($order->status, [
         \App\Models\Order::STATUS_PENDING_REVIEW,
         \App\Models\Order::STATUS_PENDING_CONFIRMATION,
     ], true);
+    $canConfirmFiles = $order->payment_status === 'paid'
+        && $order->status === \App\Models\Order::STATUS_PENDING_CONFIRMATION;
 @endphp
 
 <div class="space-y-8">
+    @if ($latestRejection && filled($latestRejection['reason'] ?? null))
+        <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-100">
+            <p class="font-semibold">审核不通过理由（第 {{ $latestRejection['version'] ?? '-' }} 版）</p>
+            <p class="mt-1 whitespace-pre-wrap">{{ $latestRejection['reason'] }}</p>
+        </div>
+    @endif
+
     <section class="space-y-4">
         <div class="flex flex-wrap items-start justify-between gap-3">
             <div>
@@ -24,7 +34,7 @@
                 @if ($uploadAction)
                     {{ $uploadAction }}
                 @endif
-                @if ($confirmAction && $canReviewFiles && count($awaitingFiles) > 0)
+                @if ($confirmAction && $canConfirmFiles && count($awaitingFiles) > 0)
                     {{ $confirmAction }}
                 @endif
                 @if ($rejectAction && $canReviewFiles && count($awaitingFiles) > 0)
@@ -58,7 +68,7 @@
 
         @include('filament.pages.order-files-table', [
             'files' => $confirmedFiles,
-            'deleteAction' => $deleteAction,
+            'deleteAction' => null,
             'showUploader' => false,
             'empty' => '暂无已确认的文件。',
         ])
