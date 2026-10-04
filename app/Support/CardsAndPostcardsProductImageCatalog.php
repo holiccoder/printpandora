@@ -360,7 +360,7 @@ final class CardsAndPostcardsProductImageCatalog
      */
     public static function synchronizeConfig(array $config, array $gallery, ?string $featuredImage = null): array
     {
-        $gallery = array_values(array_filter($gallery, static fn (mixed $image): bool => is_string($image) && $image !== ''));
+        $gallery = array_values(array_filter($gallery, static fn (string $image): bool => $image !== ''));
 
         if ($gallery === []) {
             return $config;
@@ -520,6 +520,7 @@ final class CardsAndPostcardsProductImageCatalog
     }
 
     /**
+     * @param  array<string, string>  $match
      * @return array{id: string, match: array<string, string>, images: list<string>, primary: string}
      */
     private static function galleryRule(string $id, array $match, string $image): array
