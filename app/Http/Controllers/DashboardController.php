@@ -10,6 +10,7 @@ use App\Notifications\CustomerNotification;
 use App\Notifications\OrderFileConfirmationReminder;
 use App\Services\DiscountService;
 use App\Services\OrderFileService;
+use App\Services\OrderNotificationText;
 use App\Services\OrderWeightService;
 use App\Services\ProductImageService;
 use Carbon\CarbonImmutable;
@@ -470,13 +471,14 @@ class DashboardController extends Controller
     {
         $data = $notification->data;
         $actionUrl = data_get($data, 'action_url');
+        $orderText = OrderNotificationText::fromStored($data);
 
         return [
             'id' => (string) $notification->getKey(),
             'category' => (string) data_get($data, 'category', CustomerNotification::CATEGORY_SYSTEM),
             'type' => (string) data_get($data, 'type', data_get($data, 'category', CustomerNotification::CATEGORY_SYSTEM)),
-            'title' => (string) data_get($data, 'title', 'Notification'),
-            'body' => (string) data_get($data, 'body', ''),
+            'title' => $orderText['title'] ?? (string) data_get($data, 'title', 'Notification'),
+            'body' => $orderText['body'] ?? (string) data_get($data, 'body', ''),
             'action_url' => is_string($actionUrl) && $actionUrl !== '' ? $actionUrl : null,
             'order_id' => data_get($data, 'order_id'),
             'read_at' => $notification->read_at?->toIso8601String(),

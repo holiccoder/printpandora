@@ -17,10 +17,12 @@ class CustomerNotificationService
             return;
         }
 
+        $text = OrderNotificationText::placed($order->id, $order->status);
+
         $user->notify(new CustomerNotification(
             category: CustomerNotification::CATEGORY_SYSTEM,
-            title: "Order #{$order->id} received",
-            body: "We've received your order. Its current status is ".Order::statusLabel($order->status).'.',
+            title: $text['title'],
+            body: $text['body'],
             actionUrl: route('dashboard.orders.show', $order->id),
             meta: [
                 'event' => 'order_placed',
@@ -38,20 +40,12 @@ class CustomerNotificationService
             return;
         }
 
-        $previousLabel = $previousStatus !== null
-            ? Order::statusLabel($previousStatus)
-            : null;
-        $currentLabel = Order::statusLabel($order->status);
-        $body = "Your order status is now {$currentLabel}.";
-
-        if ($previousLabel !== null && $previousLabel !== $currentLabel) {
-            $body = "Your order status changed from {$previousLabel} to {$currentLabel}.";
-        }
+        $text = OrderNotificationText::statusChanged($order->id, $order->status, $previousStatus);
 
         $user->notify(new CustomerNotification(
             category: CustomerNotification::CATEGORY_SYSTEM,
-            title: "Order #{$order->id} status updated",
-            body: $body,
+            title: $text['title'],
+            body: $text['body'],
             actionUrl: route('dashboard.orders.show', $order->id),
             meta: [
                 'event' => 'order_status_changed',
