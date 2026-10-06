@@ -5,11 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Admin;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\ProductDesignRequest;
 use App\Services\OrderFileService;
 use App\Services\OrderWorkflowService;
-use App\Support\OrderOptionFormatter;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Infolists\Components\ViewEntry;
@@ -511,32 +509,20 @@ class OrderResource extends Resource
             )
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('订单号')->sortable(),
-                Tables\Columns\TextColumn::make('customer_name')->label('客户姓名')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('customer_email')->label('电子邮箱')->searchable(),
-                Tables\Columns\TextColumn::make('items_summary')
+                Tables\Columns\ViewColumn::make('items_summary')
                     ->label('商品及选项')
-                    ->state(
-                        fn (Order $record): array => $record->items
-                            ->map(function (OrderItem $item): string {
-                                $productName = $item->product?->name ?? '产品不可用';
-                                $options = OrderOptionFormatter::options($item->options);
-
-                                return $options === ''
-                                    ? $productName
-                                    : $productName.' — '.$options;
-                            })
-                            ->all(),
-                    )
-                    ->listWithLineBreaks()
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('total')->label('订单总计')->money('USD')->sortable(),
-                Tables\Columns\TextColumn::make('shipping_weight_grams')
-                    ->label('订单重量（克）')
-                    ->numeric()
-                    ->sortable()
-                    ->placeholder('-'),
-                Tables\Columns\TextColumn::make('shipping_carrier')->label('承运商')->sortable(),
-                Tables\Columns\TextColumn::make('tracking_number')->label('快递单号')->searchable(),
+                    ->view('filament.tables.columns.order-products'),
+                Tables\Columns\ViewColumn::make('customer_information')
+                    ->label('客户信息')
+                    ->view('filament.tables.columns.order-customer-information')
+                    ->searchable(['customer_name', 'customer_email'])
+                    ->sortable(['customer_name']),
+                Tables\Columns\TextColumn::make('total')->label('订单总计')->money('USD', locale: 'en_US')->sortable(),
+                Tables\Columns\ViewColumn::make('shipping_information')
+                    ->label('物流信息')
+                    ->view('filament.tables.columns.order-shipping-information')
+                    ->searchable(['shipping_carrier', 'tracking_number'])
+                    ->sortable(['shipping_weight_grams']),
                 Tables\Columns\SelectColumn::make('status')
                     ->label('状态')
                     ->options(Order::statusOptions())
@@ -553,9 +539,7 @@ class OrderResource extends Resource
                         return $state;
                     })
                     ->sortable(),
-                Tables\Columns\TextColumn::make('items_count')->counts('items')->label('商品件数'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->label('下单时间'),
-                Tables\Columns\TextColumn::make('shipped_at')->dateTime()->sortable()->label('发货时间'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -752,7 +736,6 @@ class OrderResource extends Resource
                     ->icon('heroicon-o-funnel');
             })
             ->actions([
-                Actions\ViewAction::make()->label('查看'),
                 static::fileAction(),
                 Actions\Action::make('addShippingTracking')
                     ->visible(fn (Order $record): bool => $record->shipping_method === 'standard'

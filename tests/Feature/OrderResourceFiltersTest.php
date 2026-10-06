@@ -47,7 +47,7 @@ class OrderResourceFiltersTest extends TestCase
         ], array_keys(Order::statusOptions()));
     }
 
-    public function test_order_list_displays_the_order_weight_column(): void
+    public function test_order_list_displays_the_shipping_information_column(): void
     {
         $order = $this->makeOrder([
             'shipping_weight_grams' => 542,
@@ -55,11 +55,10 @@ class OrderResourceFiltersTest extends TestCase
 
         Livewire::test(ListOrders::class)
             ->assertTableColumnExists(
-                'shipping_weight_grams',
-                static fn ($column): bool => $column->getLabel() === '订单重量（克）',
+                'shipping_information',
+                static fn ($column): bool => $column->getLabel() === '物流信息',
                 $order,
-            )
-            ->assertTableColumnStateSet('shipping_weight_grams', 542, $order);
+            );
     }
 
     public function test_requested_text_filters_match_order_data(): void
