@@ -126,10 +126,10 @@
                         @endphp
                         <div class="flex min-w-0 flex-1 flex-col items-center text-center">
                             <span @class([
-                                'relative z-10 flex size-10 items-center justify-center rounded-full border-2 bg-white dark:bg-gray-900',
-                                'border-primary-600 bg-primary-600 text-white dark:border-primary-500 dark:bg-primary-500' => $isComplete,
-                                'border-primary-600 bg-primary-600 text-white ring-4 ring-primary-600/15 dark:border-primary-500 dark:bg-primary-500' => $isCurrent,
-                                'border-gray-300 text-gray-400 dark:border-gray-700 dark:text-gray-600' => ! $isComplete && ! $isCurrent,
+                                'relative z-10 flex size-10 items-center justify-center rounded-full border-2',
+                                'border-primary-600 bg-primary-600 text-white dark:border-primary-500 dark:bg-primary-500' => $isComplete || $isCurrent,
+                                'ring-4 ring-primary-600/15' => $isCurrent,
+                                'border-gray-300 bg-white text-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-600' => ! $isComplete && ! $isCurrent,
                             ])>
                                 <x-filament::icon :icon="$stepIcon" class="size-4" />
                             </span>
