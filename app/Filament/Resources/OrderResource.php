@@ -507,6 +507,7 @@ class OrderResource extends Resource
             ->modifyQueryUsing(
                 fn (Builder $query): Builder => $query->with('items.product'),
             )
+            ->recordUrl(fn (Order $record): string => static::getUrl('view', ['record' => $record]))
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('订单号')->sortable(),
                 Tables\Columns\ViewColumn::make('items_summary')
@@ -736,6 +737,7 @@ class OrderResource extends Resource
                     ->icon('heroicon-o-funnel');
             })
             ->actions([
+                Actions\ViewAction::make()->label('查看'),
                 static::fileAction(),
                 Actions\Action::make('addShippingTracking')
                     ->visible(fn (Order $record): bool => $record->shipping_method === 'standard'
