@@ -169,20 +169,6 @@
     ],
     "quantity_price_table": [
         {
-            "quantity": "50",
-            "price_per_card": "0.54",
-            "pack_price": "23",
-            "pack_original_price": "",
-            "is_recommended": false
-        },
-        {
-            "quantity": "100",
-            "price_per_card": "0.45",
-            "pack_price": "45",
-            "pack_original_price": "46",
-            "is_recommended": false
-        },
-        {
             "quantity": "200",
             "price_per_card": "0.39",
             "pack_price": "78",
