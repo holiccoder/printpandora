@@ -524,21 +524,50 @@ class OrderResource extends Resource
                     ->view('filament.tables.columns.order-shipping-information')
                     ->searchable(['shipping_carrier', 'tracking_number'])
                     ->sortable(['shipping_weight_grams']),
-                Tables\Columns\SelectColumn::make('status')
+                Tables\Columns\TextColumn::make('status')
                     ->label('状态')
-                    ->options(Order::statusOptions())
-                    ->selectablePlaceholder(false)
-                    ->disableOptionWhen(
-                        fn (string $value, Order $record): bool => (
-                            $value === Order::STATUS_CONFIRMED
-                            && $record->status !== Order::STATUS_CONFIRMED
-                        ) || ! app(OrderWorkflowService::class)->canTransition($record, $value),
-                    )
-                    ->updateStateUsing(function (Order $record, string $state): string {
-                        app(OrderWorkflowService::class)->transition($record, $state);
-
-                        return $state;
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        Order::STATUS_PENDING => 'gray',
+                        Order::STATUS_PENDING_REVIEW => 'warning',
+                        Order::STATUS_NEEDS_REUPLOAD => 'danger',
+                        Order::STATUS_PENDING_CONFIRMATION => 'info',
+                        Order::STATUS_CONFIRMED => 'primary',
+                        Order::STATUS_PRODUCTION => 'warning',
+                        Order::STATUS_SHIPPED => 'success',
+                        default => 'gray',
                     })
+                    ->formatStateUsing(fn (string $state): string => Order::statusLabel($state))
+                    ->action(
+                        Actions\Action::make('editOrderStatus')
+                            ->label('修改订单状态')
+                            ->modalHeading('修改订单状态')
+                            ->modalSubmitActionLabel('保存')
+                            ->fillForm(fn (Order $record): array => ['status' => $record->status])
+                            ->form([
+                                Forms\Components\Select::make('status')
+                                    ->label('订单状态')
+                                    ->required()
+                                    ->options(function (Order $record): array {
+                                        $workflow = app(OrderWorkflowService::class);
+
+                                        return collect(Order::statusOptions())
+                                            ->filter(fn (string $label, string $value): bool => (
+                                                $value === $record->status
+                                                || (
+                                                    ($value !== Order::STATUS_CONFIRMED
+                                                        || $record->status === Order::STATUS_CONFIRMED)
+                                                    && $workflow->canTransition($record, $value)
+                                                )
+                                            ))
+                                            ->all();
+                                    }),
+                            ])
+                            ->action(function (Order $record, array $data): void {
+                                app(OrderWorkflowService::class)->transition($record, (string) $data['status']);
+                            })
+                            ->successNotificationTitle('订单状态已更新'),
+                    )
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->label('下单时间'),
             ])
@@ -737,7 +766,6 @@ class OrderResource extends Resource
                     ->icon('heroicon-o-funnel');
             })
             ->actions([
-                Actions\ViewAction::make()->label('查看'),
                 static::fileAction(),
                 Actions\Action::make('addShippingTracking')
                     ->visible(fn (Order $record): bool => $record->shipping_method === 'standard'
