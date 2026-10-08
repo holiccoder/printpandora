@@ -9,6 +9,7 @@ import { useContent } from '@/hooks/use-content';
 import DashboardLayout from '@/layouts/dashboard-layout';
 import { formatOrderOptions } from '@/lib/order-options';
 import { ORDER_STATUS_COLORS, orderStatusLabel } from '@/lib/order-status';
+import { formatGramMeasurements, formatGramsAsPounds } from '@/lib/weight';
 
 const ACCENT = '#800020';
 
@@ -217,8 +218,10 @@ export default function DashboardOrders({
                                                         order,
                                                     ).map((product, index) => {
                                                         const options =
-                                                            formatOrderOptions(
-                                                                product.options,
+                                                            formatGramMeasurements(
+                                                                formatOrderOptions(
+                                                                    product.options,
+                                                                ),
                                                             );
 
                                                         return (
@@ -559,7 +562,9 @@ function TextField({
 }
 
 function formatWeight(weight: number | null): string {
-    return typeof weight === 'number' && weight > 0 ? `${weight} g` : '—';
+    return typeof weight === 'number' && weight > 0
+        ? formatGramsAsPounds(weight)
+        : '—';
 }
 
 function emptyFilters(): DashboardOrderFilters {

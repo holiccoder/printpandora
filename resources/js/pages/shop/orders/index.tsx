@@ -5,6 +5,7 @@ import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { formatOrderOptions } from '@/lib/order-options';
 import { ORDER_STATUS_COLORS, orderStatusLabel } from '@/lib/order-status';
+import { formatGramMeasurements } from '@/lib/weight';
 
 interface OrderItem {
     id: number;
@@ -95,8 +96,10 @@ export default function OrderIndex({ orders }: Props) {
                                         <div className="mt-4 space-y-2 border-t border-[#e3e3e0] pt-3 text-sm dark:border-[#3E3E3A]">
                                             {order.items.map((item) => {
                                                 const options =
-                                                    formatOrderOptions(
-                                                        item.options ?? {},
+                                                    formatGramMeasurements(
+                                                        formatOrderOptions(
+                                                            item.options ?? {},
+                                                        ),
                                                     );
 
                                                 return (

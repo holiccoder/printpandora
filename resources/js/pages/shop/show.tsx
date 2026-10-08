@@ -32,6 +32,7 @@ import {
 } from '@/lib/product-options';
 import type { ProductGallery } from '@/lib/product-options';
 import { cn } from '@/lib/utils';
+import { formatGramMeasurements } from '@/lib/weight';
 
 type QuantityTierRecommendation = {
     qty: number;
@@ -135,7 +136,7 @@ const SPECIAL_FINISH_SIDE_OPTIONS: Array<{
     label: string;
 }> = [
     { value: 'one_side', label: 'single side' },
-    { value: 'both_sides', label: 'both sides' },
+    { value: 'both_sides', label: 'double sides' },
 ];
 
 const OPTION_GROUP_ORDER: Record<string, number> = {
@@ -2338,9 +2339,13 @@ export default function ShopShow({
         <StorefrontLayout>
             <SEO
                 title={product.name}
-                description={product.description
-                    ?.replace(/<[^>]+>/g, '')
-                    .slice(0, 160)}
+                description={
+                    product.description
+                        ? formatGramMeasurements(
+                              product.description.replace(/<[^>]+>/g, ''),
+                          ).slice(0, 160)
+                        : undefined
+                }
                 image={product.featured_image ?? undefined}
             />
 
@@ -2437,7 +2442,9 @@ export default function ShopShow({
                             className="mt-4 text-sm leading-relaxed text-neutral-700 [&_a]:underline [&_em]:text-primary [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-0 [&_p+p]:mt-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:text-primary"
                             dangerouslySetInnerHTML={{
                                 __html: accentProductShortDescription(
-                                    product.subtitle ?? '',
+                                    formatGramMeasurements(
+                                        product.subtitle ?? '',
+                                    ),
                                 ),
                             }}
                         />
@@ -2453,14 +2460,18 @@ export default function ShopShow({
                             <div className="mt-6">
                                 {product.description_title && (
                                     <h2 className="text-lg font-bold text-neutral-900">
-                                        {product.description_title}
+                                        {formatGramMeasurements(
+                                            product.description_title,
+                                        )}
                                     </h2>
                                 )}
                                 {product.description && (
                                     <div
                                         className="mt-2 text-sm leading-relaxed text-neutral-700"
                                         dangerouslySetInnerHTML={{
-                                            __html: product.description,
+                                            __html: formatGramMeasurements(
+                                                product.description,
+                                            ),
                                         }}
                                     />
                                 )}
@@ -2476,7 +2487,9 @@ export default function ShopShow({
                                                         <Bullet
                                                             accent={ACCENT}
                                                         />{' '}
-                                                        {bullet}
+                                                        {formatGramMeasurements(
+                                                            bullet,
+                                                        )}
                                                     </li>
                                                 ),
                                             )}
@@ -2488,10 +2501,14 @@ export default function ShopShow({
                         {c.description_block && (
                             <div className="mt-6">
                                 <h2 className="text-lg font-bold text-neutral-900">
-                                    {c.description_block.title}
+                                    {formatGramMeasurements(
+                                        c.description_block.title,
+                                    )}
                                 </h2>
                                 <p className="mt-2 text-sm leading-relaxed text-neutral-700">
-                                    {c.description_block.description}
+                                    {formatGramMeasurements(
+                                        c.description_block.description,
+                                    )}
                                 </p>
                                 <ul className="mt-3 space-y-1.5 text-sm text-neutral-700">
                                     {c.description_block.bullets.map(
@@ -2501,7 +2518,9 @@ export default function ShopShow({
                                                 className="flex gap-2"
                                             >
                                                 <Bullet accent={ACCENT} />{' '}
-                                                {bullet}
+                                                {formatGramMeasurements(
+                                                    bullet,
+                                                )}
                                             </li>
                                         ),
                                     )}
@@ -3156,7 +3175,9 @@ export default function ShopShow({
                                                             ) === 'custom' &&
                                                             confirmedCustomSize
                                                                 ? `Custom (${customSizeDisplay(confirmedCustomSize.width, confirmedCustomSize.height, customSizeLimits.unit)})`
-                                                                : value.name,
+                                                                : formatGramMeasurements(
+                                                                      value.name,
+                                                                  ),
                                                         );
 
                                                     return (
@@ -3544,9 +3565,6 @@ export default function ShopShow({
                                     <LiveText
                                         text={String(
                                             c.add_to_cart_button_template,
-                                        ).replace(
-                                            '{price}',
-                                            Math.round(finalPrice).toFixed(0),
                                         )}
                                     />
                                 ) : (
@@ -4020,6 +4038,15 @@ function DynamicOptionGroups({
                         >
                             {values.map((value) => {
                                 const code = optionValueCode(value);
+                                const displayName = formatGramMeasurements(
+                                    value.name,
+                                );
+                                const displayDescription =
+                                    value.description
+                                        ? formatGramMeasurements(
+                                              value.description,
+                                          )
+                                        : undefined;
                                 const selectedValue = selected[group.key];
                                 const isSelected =
                                     group.type === 'multi_select'
@@ -4108,7 +4135,7 @@ function DynamicOptionGroups({
                                                 </p>
                                             ) : value.description ? (
                                                 <p className="text-xs text-neutral-500">
-                                                    {value.description}
+                                                    {displayDescription}
                                                 </p>
                                             ) : null)}
                                     </>
@@ -4120,7 +4147,7 @@ function DynamicOptionGroups({
                                             key={code}
                                             active={active}
                                             onClick={handleSelect}
-                                            label={value.name}
+                                            label={displayName}
                                             finishSide={
                                                 specialFinishSides[code] ??
                                                 DEFAULT_SPECIAL_FINISH_SIDE
@@ -4145,7 +4172,7 @@ function DynamicOptionGroups({
                                     return (
                                         <CornerChoiceCard
                                             key={code}
-                                            label={value.name}
+                                            label={displayName}
                                             swatch={swatch}
                                             active={active}
                                             onClick={handleSelect}
@@ -4160,7 +4187,7 @@ function DynamicOptionGroups({
                                         onClick={handleSelect}
                                         ariaLabel={
                                             hideSizeMetadata
-                                                ? value.name
+                                                ? displayName
                                                 : undefined
                                         }
                                         label={
@@ -4170,8 +4197,8 @@ function DynamicOptionGroups({
                                                     active &&
                                                     customSize &&
                                                     !hideSizeMetadata
-                                                  ? `${value.name} (${customSizeDisplay(customSize.width, customSize.height, value.unit?.toLowerCase() === 'mm' ? 'mm' : 'in')})`
-                                                  : value.name
+                                                  ? `${displayName} (${customSizeDisplay(customSize.width, customSize.height, value.unit?.toLowerCase() === 'mm' ? 'mm' : 'in')})`
+                                                  : displayName
                                         }
                                     >
                                         {tileContent}
@@ -4207,6 +4234,7 @@ function ThicknessOptionGroup({
             >
                 {group.values.map((value) => {
                     const code = optionValueCode(value);
+                    const displayName = formatGramMeasurements(value.name);
                     const active = selectedCode === code;
 
                     return (
@@ -4226,7 +4254,7 @@ function ThicknessOptionGroup({
                                 onChange={() => onSelect(group.key, code)}
                                 className="size-4 accent-[#800020]"
                             />
-                            <span>{value.name}</span>
+                            <span>{displayName}</span>
                         </label>
                     );
                 })}
@@ -4318,11 +4346,13 @@ function CottonTextureOptionGroup({
                                         </div>
                                     )}
                                     <p className="mt-2 text-sm font-semibold text-neutral-900">
-                                        {texture.label}
+                                        {formatGramMeasurements(texture.label)}
                                     </p>
                                     {activeValue.color_label && (
                                         <p className="mt-1 text-xs text-neutral-500">
-                                            {activeValue.color_label}
+                                            {formatGramMeasurements(
+                                                activeValue.color_label,
+                                            )}
                                         </p>
                                     )}
                                 </button>
@@ -4337,11 +4367,13 @@ function CottonTextureOptionGroup({
                                             <button
                                                 key={code}
                                                 type="button"
-                                                aria-label={`${texture.label} ${value.color_label ?? value.name}`}
+                                                aria-label={`${formatGramMeasurements(texture.label)} ${formatGramMeasurements(value.color_label ?? value.name)}`}
                                                 aria-pressed={colorActive}
                                                 title={
-                                                    value.color_label ??
-                                                    value.name
+                                                    formatGramMeasurements(
+                                                        value.color_label ??
+                                                            value.name,
+                                                    )
                                                 }
                                                 onClick={() =>
                                                     onSelect(group.key, code)

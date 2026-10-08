@@ -348,12 +348,13 @@ final class SolidQualityBusinessCardGallery
 
         foreach ([
             'single_side_uv' => 'single side',
-            'both_sides_uv' => 'both sides',
+            'both_sides_uv' => 'double sides',
         ] as $code => $label) {
             $normalizedValues[] = array_replace(
                 $existingByCode[$code] ?? [],
                 [
                     'code' => $code,
+                    'name' => $label,
                     'label' => $label,
                     'description' => '',
                     'swatch_image' => self::UV_FINISH_SWATCH_IMAGE,

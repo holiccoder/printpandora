@@ -14,6 +14,10 @@ import {
 import type { PendingProductDesignRecord } from '@/lib/pending-product-designs';
 import { isPvcProductSlug } from '@/lib/product-images';
 import { productHref } from '@/lib/product-routes';
+import {
+    formatGramMeasurements,
+    formatGramsAsPounds,
+} from '@/lib/weight';
 
 interface CartItem {
     key: string;
@@ -457,7 +461,7 @@ export default function Checkout({
     const shippingWeightLabel =
         shippingWeightGrams >= 1000
             ? `${(shippingWeightGrams / 1000).toFixed(2)} kg`
-            : `${Math.round(shippingWeightGrams)} g`;
+            : formatGramsAsPounds(Math.round(shippingWeightGrams));
 
     // Keep latest form values available inside PayPal SDK callbacks.
     useEffect(() => {
@@ -747,8 +751,10 @@ export default function Checkout({
                                                         ).length > 0 && (
                                                             <span className="ml-1">
                                                                 •{' '}
-                                                                {formatOrderOptions(
-                                                                    item.options,
+                                                                {formatGramMeasurements(
+                                                                    formatOrderOptions(
+                                                                        item.options,
+                                                                    ),
                                                                 )}
                                                             </span>
                                                         )}
@@ -796,9 +802,93 @@ export default function Checkout({
                                 {!pendingDesignsLoading &&
                                     !pendingDesignsUploading &&
                                     pendingDesignsUploaded && (
-                                        <p className="mt-4 text-sm text-green-700">
-                                            Your selected design files are uploaded and ready for checkout.
-                                        </p>
+                                        <div className="mt-4 space-y-3">
+                                            <h3 className="text-sm font-medium text-green-700">
+                                                Uploaded design files
+                                            </h3>
+                                            {checkoutPendingDesigns.map(
+                                                (design) => {
+                                                    const fileGroups = [
+                                                        {
+                                                            label: 'Design file',
+                                                            files: design.files
+                                                                .design_file,
+                                                        },
+                                                        {
+                                                            label: 'Logo file',
+                                                            files: design.files
+                                                                .logo_file,
+                                                        },
+                                                        {
+                                                            label: 'Example file',
+                                                            files: design.files
+                                                                .example_files,
+                                                        },
+                                                    ];
+                                                    const files =
+                                                        fileGroups.flatMap(
+                                                            (group) =>
+                                                                group.files.map(
+                                                                    (file) =>
+                                                                        ({
+                                                                            label: group.label,
+                                                                            file,
+                                                                        }),
+                                                                ),
+                                                        );
+
+                                                    return (
+                                                        <div
+                                                            key={
+                                                                design.clientId
+                                                            }
+                                                            className="rounded-md border border-[#e3e3e0] p-3 dark:border-[#3E3E3A]"
+                                                        >
+                                                            <p className="mb-2 text-sm font-medium">
+                                                                {
+                                                                    design.productName
+                                                                }
+                                                            </p>
+                                                            {files.length >
+                                                            0 ? (
+                                                                <ul className="space-y-1 text-sm text-[#706f6c]">
+                                                                    {files.map(
+                                                                        (
+                                                                            {
+                                                                                label,
+                                                                                file,
+                                                                            },
+                                                                            index,
+                                                                        ) => (
+                                                                            <li
+                                                                                key={`${label}-${file.name}-${index}`}
+                                                                                className="flex flex-wrap gap-x-2"
+                                                                            >
+                                                                                <span className="shrink-0">
+                                                                                    {
+                                                                                        label
+                                                                                    }
+                                                                                    :
+                                                                                </span>
+                                                                                <span className="break-all">
+                                                                                    {
+                                                                                        file.name
+                                                                                    }
+                                                                                </span>
+                                                                            </li>
+                                                                        ),
+                                                                    )}
+                                                                </ul>
+                                                            ) : (
+                                                                <p className="text-sm text-[#706f6c]">
+                                                                    No files attached.
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                },
+                                            )}
+                                        </div>
                                     )}
                                 {!pendingDesignsLoading &&
                                     !pendingDesignsUploading &&

@@ -3042,17 +3042,19 @@ class ProductConfigurationService
 
         foreach ([
             'single_side_uv' => 'single side UV',
-            'both_sides_uv' => 'both sides UV',
+            'both_sides_uv' => 'double sides UV',
         ] as $code => $label) {
             $uvValues[] = array_replace(
                 [
                     'code' => $code,
+                    'name' => $label,
                     'label' => $label,
                     'swatch_image' => self::UV_FINISH_SWATCH_IMAGE,
                 ],
                 $existingByCode[$code] ?? [],
                 [
                     'code' => $code,
+                    'name' => $label,
                     'label' => $label,
                     'swatch_image' => self::UV_FINISH_SWATCH_IMAGE,
                 ],

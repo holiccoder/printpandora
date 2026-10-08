@@ -492,8 +492,8 @@
             "swatch_image": "/images/product-options/uv-swatch.png"
         },
         {
-            "name": "both sides",
-            "label": "both sides",
+            "name": "double sides",
+            "label": "double sides",
             "code": "both_sides_uv",
             "description": "",
             "swatch_image": "/images/product-options/uv-swatch.png"

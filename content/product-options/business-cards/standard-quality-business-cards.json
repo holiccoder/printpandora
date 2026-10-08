@@ -1432,8 +1432,8 @@
         },
         {
             "code": "both_sides_uv",
-            "name": "both sides",
-            "label": "both sides",
+            "name": "double sides",
+            "label": "double sides",
             "description": "",
             "swatch_image": "/images/products/standard-quality-business-cards/3d-uv.png"
         }

@@ -117,11 +117,13 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                     ),
                     array_replace(
                         $this->existingValue($existing, 'uv_finish', 'both_sides_uv', [
-                            'label' => 'both sides UV',
+                            'name' => 'double sides UV',
+                            'label' => 'double sides UV',
                             'swatch_image' => '/images/product-options/uv-swatch.png',
                         ]),
                         [
-                            'label' => 'both sides UV',
+                            'name' => 'double sides UV',
+                            'label' => 'double sides UV',
                             'swatch_image' => '/images/product-options/uv-swatch.png',
                         ],
                     ),

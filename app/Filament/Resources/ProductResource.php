@@ -78,7 +78,7 @@ class ProductResource extends Resource
                                             ->maxLength(255)
                                             ->unique(ignoreRecord: true),
                                         TextInput::make('weight')
-                                            ->label('Weight')
+                                            ->label('重量')
                                             ->numeric()
                                             ->integer()
                                             ->minValue(0)
@@ -878,7 +878,7 @@ class ProductResource extends Resource
                     ->label('产品分类')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('weight')
-                    ->label('Weight')
+                    ->label('重量')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('启用')

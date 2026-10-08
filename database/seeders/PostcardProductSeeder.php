@@ -195,8 +195,9 @@ class PostcardProductSeeder extends Seeder
                     ],
                     [
                         'code' => 'both_sides_uv',
-                        'label' => 'Both sides UV',
-                        'description' => 'A regular UV finish on both sides.',
+                        'name' => 'double sides UV',
+                        'label' => 'double sides UV',
+                        'description' => 'A regular UV finish applied to double sides.',
                     ],
                 ],
             ];

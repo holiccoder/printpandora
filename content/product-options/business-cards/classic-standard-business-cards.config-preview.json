@@ -65,7 +65,7 @@
         },
         {
           "code": "both_sides_uv",
-          "label": "both sides UV",
+          "label": "double sides UV",
           "swatch_image": "/images/product-options/uv-swatch.png"
         }
       ]

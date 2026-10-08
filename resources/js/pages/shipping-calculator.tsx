@@ -11,6 +11,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import StorefrontLayout from '@/layouts/storefront-layout';
+import { formatGramsAsPounds } from '@/lib/weight';
 
 const PRODUCT_TYPES = [
     { value: 'business-cards', label: 'Business Cards' },
@@ -227,7 +228,9 @@ export default function ShippingCalculator() {
                         <div className="mt-8" aria-live="polite">
                             <p className="mb-4 text-sm font-medium text-neutral-600">
                                 Server-side estimate for a{' '}
-                                {quote.shipping_weight_grams} g parcel. Final
+                                {formatGramsAsPounds(
+                                    quote.shipping_weight_grams,
+                                )}{' '}parcel. Final
                                 checkout totals are recalculated when you place
                                 the order.
                             </p>

@@ -2113,13 +2113,15 @@ final class BusinessCardOptionCatalog
             [
                 [
                     'code' => 'single_side_uv',
+                    'name' => 'single side',
                     'label' => 'single side',
                     'description' => '',
                     'swatch_image' => self::QUALITY_3D_UV_SWATCH_IMAGE,
                 ],
                 [
                     'code' => 'both_sides_uv',
-                    'label' => 'both sides',
+                    'name' => 'double sides',
+                    'label' => 'double sides',
                     'description' => '',
                     'swatch_image' => self::QUALITY_3D_UV_SWATCH_IMAGE,
                 ],

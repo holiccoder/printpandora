@@ -30,6 +30,8 @@ export default function Login({
 }: Props) {
     const c = useContent('auth_login_page') as any;
     const registrationContent = useContent('auth_register_page') as any;
+    const isVerificationCodeSentStatus =
+        status === 'A verification code was sent to your email address.';
     const [codeSent, setCodeSent] = useState(false);
     const [sendingCode, setSendingCode] = useState(false);
     const [sendCodeError, setSendCodeError] = useState<string | null>(null);
@@ -87,7 +89,13 @@ export default function Login({
             )}
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <div
+                    className={`mb-4 text-center text-sm font-medium ${
+                        isVerificationCodeSentStatus
+                            ? 'text-red-600 dark:text-red-400'
+                            : 'text-green-600'
+                    }`}
+                >
                     {status}
                 </div>
             )}
@@ -275,7 +283,7 @@ export default function Login({
                                 message={registration.errors.email_code}
                             />
                             {codeSent && (
-                                <p className="text-xs text-green-700">
+                                <p className="text-xs text-red-600 dark:text-red-400">
                                     Check your inbox for the verification code.
                                 </p>
                             )}
