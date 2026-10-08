@@ -11,6 +11,22 @@ class BusinessCardQuantityRecommendationSeeder extends Seeder
 
     private const RECOMMENDED_QUANTITY = 200;
 
+    /** @var array<string, int> */
+    private const PRODUCT_START_QUANTITIES = [
+        'classic-standard-business-cards' => 200,
+        'classic-special-business-cards' => 200,
+    ];
+
+    /** @var array<int, string> */
+    private const TIER_MAP_KEYS = [
+        'quantity_discounts_percent',
+        'paperRates',
+        'paper_rates',
+        'rates',
+        'unitMultipliers',
+        'unit_multipliers',
+    ];
+
     public function run(): void
     {
         DB::table('products')
@@ -21,16 +37,18 @@ class BusinessCardQuantityRecommendationSeeder extends Seeder
                     ->orWhere('products.slug', 'like', '%business-card%')
                     ->orWhere('products.slug', 'like', '%pvc-card%');
             })
-            ->select(['products.id', 'products.product_config', 'products.product_options'])
+            ->select(['products.id', 'products.slug', 'products.product_config', 'products.product_options'])
             ->orderBy('products.id')
             ->get()
             ->each(function (object $product): void {
                 $updates = [];
+                $startQuantity = self::PRODUCT_START_QUANTITIES[$product->slug]
+                    ?? self::START_QUANTITY;
 
                 foreach (['product_config', 'product_options'] as $column) {
                     $payload = $this->decode($product->{$column} ?? null);
 
-                    if ($payload === null || ! $this->normalize($payload)) {
+                    if ($payload === null || ! $this->normalize($payload, $startQuantity)) {
                         continue;
                     }
 
@@ -50,7 +68,7 @@ class BusinessCardQuantityRecommendationSeeder extends Seeder
      *
      * @param  array<string|int, mixed>  $payload
      */
-    private function normalize(array &$payload): bool
+    private function normalize(array &$payload, int $startQuantity): bool
     {
         $changed = false;
         $startKey = array_key_exists('startQuantity', $payload)
@@ -59,8 +77,8 @@ class BusinessCardQuantityRecommendationSeeder extends Seeder
 
         if ($startKey !== null && is_numeric($payload[$startKey])) {
             $startValue = is_string($payload[$startKey])
-                ? (string) self::START_QUANTITY
-                : self::START_QUANTITY;
+                ? (string) $startQuantity
+                : $startQuantity;
 
             if ($payload[$startKey] !== $startValue) {
                 $payload[$startKey] = $startValue;
@@ -77,18 +95,55 @@ class BusinessCardQuantityRecommendationSeeder extends Seeder
             }
         }
 
-        if (is_array($payload['quantity_price_table'] ?? null)) {
-            $changed = $this->normalizeQuantityPriceTable($payload['quantity_price_table']) || $changed;
-        }
+        foreach ($payload as $key => &$value) {
+            if (
+                in_array((string) $key, self::TIER_MAP_KEYS, true)
+                && is_array($value)
+            ) {
+                foreach ($value as $quantity => $_) {
+                    if (is_numeric($quantity) && (int) $quantity < $startQuantity) {
+                        unset($value[$quantity]);
+                        $changed = true;
+                    }
+                }
+            } elseif ($key === 'quantity_price_table' && is_array($value)) {
+                $changed = $this->removeSmallerRows($value, $startQuantity) || $changed;
+                $changed = $this->normalizeQuantityPriceTable($value) || $changed;
+            } elseif (
+                in_array((string) $key, ['quantity_discounts', 'quantity_tiers'], true)
+                && is_array($value)
+            ) {
+                $changed = $this->removeSmallerRows($value, $startQuantity) || $changed;
+            }
 
-        foreach ($payload as &$value) {
             if (is_array($value)) {
-                $changed = $this->normalize($value) || $changed;
+                $changed = $this->normalize($value, $startQuantity) || $changed;
             }
         }
         unset($value);
 
         return $changed;
+    }
+
+    /**
+     * @param  array<int|string, mixed>  $rows
+     */
+    private function removeSmallerRows(array &$rows, int $startQuantity): bool
+    {
+        $filtered = array_values(array_filter(
+            $rows,
+            static fn (mixed $row): bool => ! is_array($row)
+                || ! is_numeric($row['quantity'] ?? $row['qty'] ?? null)
+                || (int) ($row['quantity'] ?? $row['qty']) >= $startQuantity,
+        ));
+
+        if (count($filtered) === count($rows)) {
+            return false;
+        }
+
+        $rows = $filtered;
+
+        return true;
     }
 
     /**
