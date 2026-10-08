@@ -698,8 +698,8 @@ class PricingService
 
         $quantities = array_values(array_unique(array_merge(
             [$startQuantity],
-            array_filter(array_map('intval', array_keys($paperRates)), static fn (int $value): bool => $value >= $startQuantity),
-            array_filter(array_map('intval', array_keys($unitMultipliers)), static fn (int $value): bool => $value >= $startQuantity),
+            array_filter(array_map('intval', array_keys($paperRates)), static fn (int $value): bool => $value > 0),
+            array_filter(array_map('intval', array_keys($unitMultipliers)), static fn (int $value): bool => $value > 0),
         )));
         sort($quantities);
 
@@ -1136,11 +1136,11 @@ class PricingService
             [$scenario['startQuantity']],
             array_filter(
                 array_map('intval', array_keys($scenario['paperRates'] ?? [])),
-                fn ($q) => $q >= $scenario['startQuantity']
+                fn ($q) => $q > 0
             ),
             array_filter(
                 array_map('intval', array_keys($scenario['unitMultipliers'] ?? [])),
-                fn ($q) => $q >= $scenario['startQuantity']
+                fn ($q) => $q > 0
             ),
         )));
         sort($quantities);

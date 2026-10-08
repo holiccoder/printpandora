@@ -23,6 +23,7 @@ use App\Services\ProductDesignCheckoutService;
 use App\Services\ShippingService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -87,6 +88,17 @@ class CheckoutController extends Controller
                 'currency' => config('services.paypal.currency', 'USD'),
             ],
         ]);
+    }
+
+    public function prepareDesigns(Request $request, Cart $cart): RedirectResponse
+    {
+        if ($cart->count() === 0) {
+            return redirect()->route('shop.cart');
+        }
+
+        $this->preparePendingCheckoutOrder($request, $cart);
+
+        return redirect()->route('shop.checkout');
     }
 
     public function store(Request $request, Cart $cart)

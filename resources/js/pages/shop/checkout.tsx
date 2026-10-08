@@ -230,6 +230,13 @@ export default function Checkout({
     const [pendingDesignsError, setPendingDesignsError] = useState<
         string | null
     >(null);
+    const [pendingDesignsUploading, setPendingDesignsUploading] =
+        useState(false);
+    const [pendingDesignsUploaded, setPendingDesignsUploaded] = useState(false);
+    const [pendingDesignUploadError, setPendingDesignUploadError] = useState<
+        string | null
+    >(null);
+    const preparingPendingDesignsKey = useRef<string | null>(null);
     const pendingDesignsLoading =
         pendingDesignIds.length > 0 &&
         loadedPendingDesignsKey !== pendingDesignsKey;
@@ -245,14 +252,17 @@ export default function Checkout({
 
     useEffect(() => {
         let active = true;
+        const designIds = pendingDesignsKey
+            ? pendingDesignsKey.split('|')
+            : [];
 
-        if (pendingDesignIds.length === 0) {
+        if (designIds.length === 0) {
             return () => {
                 active = false;
             };
         }
 
-        Promise.all(pendingDesignIds.map((id) => getPendingProductDesign(id)))
+        Promise.all(designIds.map((id) => getPendingProductDesign(id)))
             .then((records) => {
                 if (!active) {
                     return;
@@ -263,7 +273,7 @@ export default function Checkout({
                         record !== null,
                 );
 
-                if (availableRecords.length !== pendingDesignIds.length) {
+                if (availableRecords.length !== designIds.length) {
                     setPendingDesignsError(
                         'A selected design file is unavailable. Please return to the product page and select it again.',
                     );
@@ -291,7 +301,51 @@ export default function Checkout({
         return () => {
             active = false;
         };
-    }, [pendingDesignIds, pendingDesignsKey]);
+    }, [pendingDesignsKey]);
+
+    useEffect(() => {
+        if (
+            pendingDesignsLoading ||
+            pendingDesignsError ||
+            pendingDesignsUploaded ||
+            checkoutPendingDesigns.length === 0 ||
+            preparingPendingDesignsKey.current === pendingDesignsKey
+        ) {
+            return;
+        }
+
+        preparingPendingDesignsKey.current = pendingDesignsKey;
+        setPendingDesignsUploading(true);
+        setPendingDesignUploadError(null);
+        router.post(
+            '/checkout/prepare-designs',
+            checkoutFormData({}, checkoutPendingDesigns),
+            {
+                forceFormData: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    setPendingDesignsUploaded(true);
+                },
+                onError: (uploadErrors) => {
+                    const firstError = Object.values(
+                        uploadErrors as Record<string, string>,
+                    ).find((message) => typeof message === 'string');
+
+                    setPendingDesignUploadError(
+                        firstError ??
+                            'Your files could not be uploaded yet. They will be sent when you continue checkout.',
+                    );
+                },
+                onFinish: () => setPendingDesignsUploading(false),
+            },
+        );
+    }, [
+        checkoutPendingDesigns,
+        pendingDesignsKey,
+        pendingDesignsError,
+        pendingDesignsLoading,
+        pendingDesignsUploaded,
+    ]);
 
     const clearShippingError = (field: ShippingAddressField) => {
         setShippingErrors((current) => {
@@ -505,6 +559,12 @@ export default function Checkout({
                     );
                 }
 
+                if (pendingDesignsUploading) {
+                    throw new Error(
+                        'Uploading the selected design files. Please try again in a moment.',
+                    );
+                }
+
                 if (activePendingDesignsError) {
                     throw new Error(activePendingDesignsError);
                 }
@@ -609,6 +669,7 @@ export default function Checkout({
         checkoutPendingDesigns,
         activePendingDesignsError,
         pendingDesignsLoading,
+        pendingDesignsUploading,
     ]);
 
     const shipping = c.form_sections.shipping_address;
@@ -702,13 +763,21 @@ export default function Checkout({
                                         </div>
                                     ))}
                                 </div>
-                                {pendingDesignsLoading && (
+                                {pendingDesignsLoading &&
+                                    !pendingDesignsUploading && (
                                     <p className="mt-4 text-sm text-[#706f6c]">
                                         Preparing your design files for
                                         checkout…
                                     </p>
                                 )}
                                 {!pendingDesignsLoading &&
+                                    pendingDesignsUploading && (
+                                        <p className="mt-4 text-sm text-[#706f6c]">
+                                            Uploading your design files securely…
+                                        </p>
+                                    )}
+                                {!pendingDesignsLoading &&
+                                    !pendingDesignsUploading &&
                                     activePendingDesignsError && (
                                         <p
                                             className="mt-4 text-sm text-red-600"
@@ -718,11 +787,27 @@ export default function Checkout({
                                         </p>
                                     )}
                                 {!pendingDesignsLoading &&
+                                    !pendingDesignsUploading &&
+                                    pendingDesignUploadError && (
+                                        <p className="mt-4 text-sm text-amber-700">
+                                            {pendingDesignUploadError}
+                                        </p>
+                                    )}
+                                {!pendingDesignsLoading &&
+                                    !pendingDesignsUploading &&
+                                    pendingDesignsUploaded && (
+                                        <p className="mt-4 text-sm text-green-700">
+                                            Your selected design files are uploaded and ready for checkout.
+                                        </p>
+                                    )}
+                                {!pendingDesignsLoading &&
+                                    !pendingDesignsUploading &&
+                                    !pendingDesignsUploaded &&
                                     !activePendingDesignsError &&
                                     checkoutPendingDesigns.length > 0 && (
                                         <p className="mt-4 text-sm text-[#706f6c]">
                                             Your selected design files will be
-                                            uploaded when you place the order.
+                                            uploaded before you continue checkout.
                                         </p>
                                     )}
                             </div>

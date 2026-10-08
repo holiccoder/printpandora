@@ -33,6 +33,30 @@ import {
 import type { ProductGallery } from '@/lib/product-options';
 import { cn } from '@/lib/utils';
 
+type QuantityTierRecommendation = {
+    qty: number;
+    recommended?: boolean;
+};
+
+function recommend200Quantity<T extends QuantityTierRecommendation>(
+    tiers: T[],
+): T[] {
+    const recommendedQty = tiers.some((tier) => tier.qty === 200)
+        ? 200
+        : (tiers.find((tier) => tier.recommended)?.qty ?? tiers[0]?.qty);
+
+    return tiers.map((tier) => ({
+        ...tier,
+        recommended: tier.qty === recommendedQty,
+    }));
+}
+
+function getRecommendedQuantity(tiers: QuantityTierRecommendation[]) {
+    return (
+        recommend200Quantity(tiers).find((tier) => tier.recommended)?.qty ?? null
+    );
+}
+
 const COLD_FOIL_OPTIONS = [
     {
         id: 'cold_red_gold',
@@ -1036,12 +1060,49 @@ export default function ShopShow({
                 (rule) => rule.pricing.area_based === true,
             ));
 
+    const defaultDynamicPricingOptions = useMemo(() => {
+        const options: Record<string, string | string[]> = {};
+
+        for (const group of dynamicOptionGroups) {
+            const value = dynamicOptionDefaults[group.key];
+
+            if (value !== undefined) {
+                options[group.key] = value;
+            }
+        }
+
+        if (usesAreaBasedPricing) {
+            options.paper_area = stickerAreaOptionValue(
+                stickerAreaForSize(
+                    dynamicOptionGroups,
+                    dynamicOptionDefaults.sizes,
+                ),
+            );
+        }
+
+        return options;
+    }, [dynamicOptionDefaults, dynamicOptionGroups, usesAreaBasedPricing]);
+
+    const dynamicDefaultTiers = useMemo(() => {
+        if (!hasDynamicPricing) {
+            return [];
+        }
+
+        return computeDynamicTiers(
+            {
+                ...(productOptions.pricing_data ?? {}),
+                rules: productOptions.pricing_rules,
+            },
+            0,
+            0,
+            0,
+            0,
+            defaultDynamicPricingOptions,
+        );
+    }, [defaultDynamicPricingOptions, hasDynamicPricing, productOptions]);
+
     const dynamicRecommendedQty = hasDynamicPricing
-        ? (productOptions.pricing_data?.rectangle?.recommendedQuantity ??
-          productOptions.pricing_rules?.[0]?.pricing.recommendedQuantity ??
-          productOptions.pricing_data?.rectangle?.startQuantity ??
-          productOptions.pricing_rules?.[0]?.pricing.startQuantity ??
-          null)
+        ? getRecommendedQuantity(dynamicDefaultTiers)
         : null;
 
     // "X cards from $Y" derived from data: X = startQuantity from the
@@ -1049,25 +1110,6 @@ export default function ShopShow({
     // quantity pricing table under the default option configuration.
     const startingPriceText = useMemo(() => {
         if (hasDynamicPricing && productOptions.pricing_data) {
-            const defaultPricingOptions: Record<string, string | string[]> = {};
-
-            for (const group of dynamicOptionGroups) {
-                const value = dynamicOptionDefaults[group.key];
-
-                if (value !== undefined) {
-                    defaultPricingOptions[group.key] = value;
-                }
-            }
-
-            if (usesAreaBasedPricing) {
-                defaultPricingOptions.paper_area = stickerAreaOptionValue(
-                    stickerAreaForSize(
-                        dynamicOptionGroups,
-                        dynamicOptionDefaults.sizes,
-                    ),
-                );
-            }
-
             const firstTier = computeDynamicTiers(
                 {
                     ...productOptions.pricing_data,
@@ -1077,7 +1119,7 @@ export default function ShopShow({
                 0, // default paper finish
                 0, // default corners
                 0, // default special finish
-                defaultPricingOptions,
+                defaultDynamicPricingOptions,
             )[0];
 
             if (firstTier) {
@@ -1086,32 +1128,13 @@ export default function ShopShow({
         }
 
         if (hasDynamicPricing && productOptions.pricing_rules?.[0]?.pricing) {
-            const defaultPricingOptions: Record<string, string | string[]> = {};
-
-            for (const group of dynamicOptionGroups) {
-                const value = dynamicOptionDefaults[group.key];
-
-                if (value !== undefined) {
-                    defaultPricingOptions[group.key] = value;
-                }
-            }
-
-            if (usesAreaBasedPricing) {
-                defaultPricingOptions.paper_area = stickerAreaOptionValue(
-                    stickerAreaForSize(
-                        dynamicOptionGroups,
-                        dynamicOptionDefaults.sizes,
-                    ),
-                );
-            }
-
             const firstTier = computeDynamicTiers(
                 { rules: productOptions.pricing_rules },
                 0,
                 0,
                 0,
                 0,
-                defaultPricingOptions,
+                defaultDynamicPricingOptions,
             )[0];
 
             if (firstTier) {
@@ -1139,8 +1162,7 @@ export default function ShopShow({
 
         return product.price_line ?? undefined;
     }, [
-        dynamicOptionDefaults,
-        dynamicOptionGroups,
+        defaultDynamicPricingOptions,
         hasDynamicPricing,
         productUnitLabel,
         usesAreaBasedPricing,
@@ -1180,9 +1202,7 @@ export default function ShopShow({
                   };
               });
 
-        const rec = tiers.find((t: any) => t.recommended) ?? tiers[0];
-
-        return rec?.qty ?? null;
+        return getRecommendedQuantity(tiers);
     })();
 
     const RECOMMENDED_QTY = dynamicRecommendedQty ?? staticRecommendedQty;
@@ -1745,52 +1765,59 @@ export default function ShopShow({
                 (f: any) => f.id === selectedSpecialFinish,
             );
 
-            return computeDynamicTiers(
-                {
-                    ...(productOptions.pricing_data ?? {}),
-                    rules: productOptions.pricing_rules,
-                },
-                Math.max(0, sizeIndex),
-                Math.max(0, finishIndex),
-                Math.max(0, cornersIndex),
-                Math.max(0, specialIndex),
-                selectedOptions,
-                foilSidesForSelection(
+            return recommend200Quantity(
+                computeDynamicTiers(
+                    {
+                        ...(productOptions.pricing_data ?? {}),
+                        rules: productOptions.pricing_rules,
+                    },
+                    Math.max(0, sizeIndex),
+                    Math.max(0, finishIndex),
+                    Math.max(0, cornersIndex),
+                    Math.max(0, specialIndex),
                     selectedOptions,
-                    selectedSpecialFinishSides,
+                    foilSidesForSelection(
+                        selectedOptions,
+                        selectedSpecialFinishSides,
+                    ),
                 ),
             );
         }
 
-        return hasProductOptions
-            ? productOptions.quantity_price_table.map((q) => ({
-                  qty: parseInt(q.quantity, 10),
-                  pricePerCard: parseFloat(q.price_per_card),
-                  currentPrice: Math.round(parseFloat(q.pack_price)),
-                  originalPrice: q.pack_original_price
-                      ? Math.round(parseFloat(q.pack_original_price))
-                      : null,
-                  recommended: q.is_recommended,
-              }))
-            : c.configurator_options.quantity_tiers.map((t: any) => {
-                  const total = Math.round(
-                      parseFloat(product.price) * t.multiplier * (1 - t.save),
-                  );
+        return recommend200Quantity(
+            hasProductOptions
+                ? productOptions.quantity_price_table.map((q) => ({
+                      qty: parseInt(q.quantity, 10),
+                      pricePerCard: parseFloat(q.price_per_card),
+                      currentPrice: Math.round(parseFloat(q.pack_price)),
+                      originalPrice: q.pack_original_price
+                          ? Math.round(parseFloat(q.pack_original_price))
+                          : null,
+                      recommended: q.is_recommended,
+                  }))
+                : c.configurator_options.quantity_tiers.map((t: any) => {
+                      const total = Math.round(
+                          parseFloat(product.price) *
+                              t.multiplier *
+                              (1 - t.save),
+                      );
 
-                  return {
-                      qty: t.qty,
-                      pricePerCard: total / t.qty,
-                      currentPrice: total,
-                      originalPrice:
-                          t.save > 0
-                              ? Math.round(
-                                    parseFloat(product.price) * t.multiplier,
-                                )
-                              : null,
-                      recommended: !!t.recommended,
-                      badge: t.badge,
-                  };
-              });
+                      return {
+                          qty: t.qty,
+                          pricePerCard: total / t.qty,
+                          currentPrice: total,
+                          originalPrice:
+                              t.save > 0
+                                  ? Math.round(
+                                        parseFloat(product.price) *
+                                            t.multiplier,
+                                    )
+                                  : null,
+                          recommended: !!t.recommended,
+                          badge: t.badge,
+                      };
+                  }),
+        );
     }, [
         hasDynamicPricing,
         hasProductOptions,
@@ -2266,7 +2293,7 @@ export default function ShopShow({
         );
     };
 
-    const addToCart = () => {
+    const requireSubmittedDesign = () => {
         if (!hasSubmittedDesign) {
             const message =
                 c.design_cta?.required_error ??
@@ -2275,6 +2302,14 @@ export default function ShopShow({
             setDesignSelectionError(message);
             toast.error(message);
 
+            return false;
+        }
+
+        return true;
+    };
+
+    const addToCart = () => {
+        if (!requireSubmittedDesign()) {
             return;
         }
 
@@ -2285,6 +2320,14 @@ export default function ShopShow({
         }
 
         submitAddToCart();
+    };
+
+    const buyNow = () => {
+        if (!requireSubmittedDesign()) {
+            return;
+        }
+
+        submitAddToCart(true);
     };
 
     const confirmAddToCart = () => {
@@ -3479,31 +3522,49 @@ export default function ShopShow({
                             onConfirm={confirmCustomSize}
                         />
 
-                        <Button
-                            onClick={addToCart}
-                            aria-describedby={
-                                designSelectionError
-                                    ? 'design-selection-error'
-                                    : undefined
-                            }
-                            disabled={added || !hasSelection || !tier}
-                            className={`mt-6 h-12 w-full text-base font-semibold text-primary-foreground ${added ? 'bg-primary/90' : 'bg-primary hover:bg-primary/90'}`}
-                        >
-                            {added ? (
-                                c.added_to_cart_button
-                            ) : hasSelection && tier ? (
-                                <LiveText
-                                    text={String(
-                                        c.add_to_cart_button_template,
-                                    ).replace(
-                                        '{price}',
-                                        Math.round(finalPrice).toFixed(0),
-                                    )}
-                                />
-                            ) : (
-                                'Select options'
-                            )}
-                        </Button>
+                        <div className="mt-6 grid grid-cols-2 gap-3">
+                            <Button
+                                onClick={addToCart}
+                                aria-describedby={
+                                    designSelectionError
+                                        ? 'design-selection-error'
+                                        : undefined
+                                }
+                                disabled={
+                                    added ||
+                                    isSubmittingCart ||
+                                    !hasSelection ||
+                                    !tier
+                                }
+                                className={`h-12 w-full text-base font-semibold text-primary-foreground ${added ? 'bg-primary/90' : 'bg-primary hover:bg-primary/90'}`}
+                            >
+                                {added ? (
+                                    c.added_to_cart_button
+                                ) : hasSelection && tier ? (
+                                    <LiveText
+                                        text={String(
+                                            c.add_to_cart_button_template,
+                                        ).replace(
+                                            '{price}',
+                                            Math.round(finalPrice).toFixed(0),
+                                        )}
+                                    />
+                                ) : (
+                                    'Select options'
+                                )}
+                            </Button>
+                            <Button
+                                onClick={buyNow}
+                                disabled={
+                                    isSubmittingCart || !hasSelection || !tier
+                                }
+                                className="h-12 w-full text-base font-semibold"
+                            >
+                                {isSubmittingCart
+                                    ? 'Continuing…'
+                                    : 'Buy now'}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </section>

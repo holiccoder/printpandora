@@ -591,10 +591,10 @@ export function computeDynamicTiers(
             scenario.startQuantity,
             ...Object.keys(scenario.paperRates)
                 .map((q) => parseInt(q, 10))
-                .filter((q) => q >= scenario.startQuantity),
+                .filter((q) => q > 0),
             ...Object.keys(scenario.unitMultipliers ?? {})
                 .map((q) => parseInt(q, 10))
-                .filter((q) => q >= scenario.startQuantity),
+                .filter((q) => q > 0),
         ]),
     ].sort((a, b) => a - b);
 

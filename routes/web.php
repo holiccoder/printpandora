@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminAiChatController;
 use App\Http\Controllers\Admin\OrderFileController as AdminOrderFileController;
 use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\Auth\EmailCodeRegistrationController;
 use App\Http\Controllers\Auth\PasswordChangeController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\BlogController;
@@ -70,6 +71,15 @@ Route::get('auth/{provider}/redirect', [SocialAuthController::class, 'redirect']
 Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback'])
     ->whereIn('provider', ['google', 'facebook'])
     ->name('social.callback');
+
+Route::middleware('guest')->group(function () {
+    Route::post('register/send-code', [EmailCodeRegistrationController::class, 'sendCode'])
+        ->middleware('throttle:3,1')
+        ->name('register.send-code');
+    Route::post('register/verified', [EmailCodeRegistrationController::class, 'register'])
+        ->middleware('throttle:10,1')
+        ->name('register.verified');
+});
 
 // Password change links sent from an authenticated account must remain usable
 // while that account is signed in. Fortify's public reset routes intentionally
@@ -185,6 +195,8 @@ Route::delete('cart/discount', [CartController::class, 'removeDiscount'])->name(
 // Checkout (requires auth)
 Route::middleware(['auth'])->group(function () {
     Route::get('checkout', [CheckoutController::class, 'show'])->name('shop.checkout');
+    Route::post('checkout/prepare-designs', [CheckoutController::class, 'prepareDesigns'])
+        ->name('shop.checkout.prepare-designs');
     Route::post('checkout', [CheckoutController::class, 'store'])->name('shop.checkout.store');
     Route::post('checkout/paypal/create', [CheckoutController::class, 'paypalCreate'])->name('shop.checkout.paypal.create');
     Route::post('checkout/paypal/capture', [CheckoutController::class, 'paypalCapture'])->name('shop.checkout.paypal.capture');

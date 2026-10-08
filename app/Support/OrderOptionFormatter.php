@@ -51,17 +51,29 @@ final class OrderOptionFormatter
 
     public static function options(mixed $options): string
     {
+        return collect(self::optionPairs($options))
+            ->map(static fn (array $option): string => $option['name'].': '.$option['value'])
+            ->implode(', ');
+    }
+
+    /**
+     * @return array<int, array{name: string, value: string}>
+     */
+    public static function optionPairs(mixed $options): array
+    {
         if (! is_array($options)) {
-            return '';
+            return [];
         }
 
         return collect($options)
             ->reject(static fn (mixed $value, string|int $key): bool => $key === 'design_service_request_id')
             ->filter(static fn (mixed $value): bool => self::hasValue($value))
-            ->map(
-                static fn (mixed $value, string|int $key): string => self::label($key).': '.self::value($value),
-            )
-            ->implode(', ');
+            ->map(static fn (mixed $value, string|int $key): array => [
+                'name' => self::label($key),
+                'value' => self::value($value),
+            ])
+            ->values()
+            ->all();
     }
 
     public static function value(mixed $value): string
