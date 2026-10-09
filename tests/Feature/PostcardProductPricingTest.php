@@ -126,8 +126,8 @@ class PostcardProductPricingTest extends TestCase
                         'required' => false,
                         'default' => null,
                         'values' => [
-                            ['code' => 'single_side_uv', 'label' => 'Single side UV'],
-                            ['code' => 'both_sides_uv', 'label' => 'Both sides UV'],
+                            ['code' => 'single_side_uv', 'label' => 'SINGLE SIDE'],
+                            ['code' => 'both_sides_uv', 'label' => 'DOUBLE SIDES'],
                         ],
                     ],
                     'special_finish' => [

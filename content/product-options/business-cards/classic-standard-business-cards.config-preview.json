@@ -60,12 +60,12 @@
       "values": [
         {
           "code": "single_side_uv",
-          "label": "single side UV",
+          "label": "SINGLE SIDE",
           "swatch_image": "/images/product-options/uv-swatch.png"
         },
         {
           "code": "both_sides_uv",
-          "label": "double sides UV",
+          "label": "DOUBLE SIDES",
           "swatch_image": "/images/product-options/uv-swatch.png"
         }
       ]

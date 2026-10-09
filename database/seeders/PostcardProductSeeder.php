@@ -190,13 +190,13 @@ class PostcardProductSeeder extends Seeder
                 'values' => [
                     [
                         'code' => 'single_side_uv',
-                        'label' => 'Single side UV',
+                        'label' => 'SINGLE SIDE',
                         'description' => 'A regular UV finish on one side.',
                     ],
                     [
                         'code' => 'both_sides_uv',
-                        'name' => 'double sides UV',
-                        'label' => 'double sides UV',
+                        'name' => 'DOUBLE SIDES',
+                        'label' => 'DOUBLE SIDES',
                         'description' => 'A regular UV finish applied to double sides.',
                     ],
                 ],

@@ -273,12 +273,12 @@
     ],
     "uv_finish": [
         {
-            "name": "single side UV",
+            "name": "SINGLE SIDE",
             "code": "single_side_uv",
             "swatch_image": "/images/product-options/uv-swatch.png"
         },
         {
-            "name": "double sides UV",
+            "name": "DOUBLE SIDES",
             "code": "both_sides_uv",
             "swatch_image": "/images/product-options/uv-swatch.png"
         }

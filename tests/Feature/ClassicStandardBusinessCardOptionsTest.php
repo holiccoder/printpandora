@@ -160,7 +160,7 @@ class ClassicStandardBusinessCardOptionsTest extends TestCase
             data_get($product->product_config, 'options.uv_finish.values.*.code'),
         );
         $this->assertSame(
-            ['single side UV', 'both sides UV'],
+            ['SINGLE SIDE', 'DOUBLE SIDES'],
             data_get($product->product_config, 'options.uv_finish.values.*.label'),
         );
         $this->assertSame(

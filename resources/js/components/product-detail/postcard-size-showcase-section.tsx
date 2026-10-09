@@ -1,86 +1,68 @@
-import { Link } from '@inertiajs/react';
-
 interface PostcardSizeShowcaseItem {
     id: string;
     title: string;
     price: string;
     dimensions: string;
-    ctaText: string;
     aspectRatio: string;
     imageUrl: string;
-    href: string;
 }
 
 const POSTCARD_SIZE_ITEMS: PostcardSizeShowcaseItem[] = [
     {
         id: 'standard',
         title: 'Standard Postcards',
-        price: '25 postcards from $24.00',
+        price: '50 postcards from $24.00',
         dimensions: '4" x 6"',
-        ctaText: 'Start making',
-        aspectRatio: '6 / 4',
-        imageUrl: '/images/products/postcards/card.png',
-        href: '/postcards/classic-standard',
+        aspectRatio: '4 / 3',
+        imageUrl: '/images/products/postcards/sizes/standard.png',
     },
     {
         id: 'square',
         title: 'Square Postcards',
-        price: '25 postcards from $23.00',
+        price: '50 postcards from $23.00',
         dimensions: '4.72" x 4.72"',
-        ctaText: 'Shop Square Postcards',
-        aspectRatio: '1 / 1',
-        imageUrl: '/images/products/postcards/postcard-2.png',
-        href: '/postcards/classic-special',
+        aspectRatio: '4 / 3',
+        imageUrl: '/images/products/postcards/sizes/square.png',
     },
     {
         id: 'rack',
         title: 'Rack Cards',
-        price: '25 postcards from $26.00',
+        price: '50 postcards from $26.00',
         dimensions: '3.67" x 8.5"',
-        ctaText: 'Shop Rack Cards',
-        aspectRatio: '3.67 / 8.5',
-        imageUrl: '/images/products/postcards/postcard-1.png',
-        href: '/postcards/super-standard',
+        aspectRatio: '4 / 3',
+        imageUrl: '/images/products/postcards/sizes/rack.png',
     },
     {
         id: 'half-page',
         title: 'Half Page Postcards',
-        price: '25 postcards from $36.00',
+        price: '50 postcards from $36.00',
         dimensions: '5.5" x 8.5"',
-        ctaText: 'Shop Half Page Postcards',
-        aspectRatio: '8.5 / 5.5',
-        imageUrl: '/images/products/postcards/postcard-4.png',
-        href: '/postcards/super-luxe',
+        aspectRatio: '4 / 3',
+        imageUrl: '/images/products/postcards/sizes/half-page.png',
     },
     {
         id: 'small',
         title: 'Small Postcards',
-        price: '25 postcards from $24.00',
+        price: '50 postcards from $24.00',
         dimensions: '4.13" x 5.83"',
-        ctaText: 'Shop Small Postcards',
-        aspectRatio: '5.83 / 4.13',
-        imageUrl: '/images/products/postcards/classic-standard-postcards.png',
-        href: '/postcards/classic-standard',
+        aspectRatio: '4 / 3',
+        imageUrl: '/images/products/postcards/sizes/small.png',
     },
     {
         id: 'medium',
         title: 'Medium Postcards',
-        price: '25 postcards from $27.00',
+        price: '50 postcards from $27.00',
         dimensions: '5" x 7"',
-        ctaText: 'Shop Medium Postcards',
-        aspectRatio: '7 / 5',
-        imageUrl: '/images/products/postcards/quality-standard-postcards.png',
-        href: '/postcards/quality-standard',
+        aspectRatio: '4 / 3',
+        imageUrl: '/images/products/postcards/sizes/medium.png',
     },
     {
         id: 'large',
         title: 'Large Postcards',
-        price: '25 postcards from $36.00',
+        price: '50 postcards from $36.00',
         dimensions: '6" x 9"',
-        ctaText: 'Shop Large Postcards',
-        aspectRatio: '9 / 6',
-        imageUrl: '/images/products/postcards/super-standard-postcards.png',
-        href: '/postcards/super-standard',
+        aspectRatio: '4 / 3',
+        imageUrl: '/images/products/postcards/sizes/large.png',
     },
 ];
 
@@ -127,13 +109,6 @@ function PostcardSizeCard({ item }: { item: PostcardSizeShowcaseItem }) {
                 </h3>
                 <p className="mt-1.5 text-sm text-[#374151]">{item.price}</p>
                 <p className="mt-1 text-sm text-[#6b7280]">{item.dimensions}</p>
-                <Link
-                    href={item.href}
-                    className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#006654] transition-colors hover:text-[#0f766e] hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#006654]"
-                >
-                    {item.ctaText}
-                    <span aria-hidden="true">›</span>
-                </Link>
             </div>
         </article>
     );

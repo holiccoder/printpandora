@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use App\Support\BusinessCardOptionCatalog;
 use App\Support\CardsAndPostcardsProductImageCatalog;
+use App\Support\ClassicStandardBusinessCardGallery;
 use App\Support\ClassicSpecialBusinessCardTexture;
 use App\Support\FlyersAndBrochuresProductCatalog;
 use App\Support\HardcodedContent;
@@ -430,6 +431,10 @@ class ProductConfigurationService
             $config = $this->normalizeCanonicalConfig($product->product_config ?? [], $product);
 
             $config['options'] = $this->normalizeProductSpecificOptions($config['options'], $product);
+            $config['options'] = $this->normalizeClassicStandardUvOptionLabels(
+                $config['options'],
+                $product,
+            );
             if (! PostcardProductCatalog::isPostcardProduct((string) $product->slug)) {
                 $config['media']['gallery_rules'] = $this->withSharedBusinessCardFoilGalleryRules(
                     is_array($config['media']['gallery_rules'] ?? null)
@@ -2513,6 +2518,10 @@ class ProductConfigurationService
         $config['options'] = BusinessCardOptionCatalog::normalizeHotFoilOptions(
             $config['options'],
         );
+        $config['options'] = $this->normalizeClassicStandardUvOptionLabels(
+            $config['options'],
+            $product,
+        );
 
         $foldingGroup = $config['options']['folding'] ?? null;
 
@@ -3223,6 +3232,59 @@ class ProductConfigurationService
                 'values' => $uvValues,
             ],
         );
+
+        return $options;
+    }
+
+    /**
+     * Keep the classic standard business card and postcard UV labels aligned
+     * with their storefront copy, including configurations already in the DB.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private function normalizeClassicStandardUvOptionLabels(array $options, Product $product): array
+    {
+        if (! in_array($product->slug, [
+            ClassicStandardBusinessCardGallery::PRODUCT_SLUG,
+            'classic-standard-postcards',
+        ], true)) {
+            return $options;
+        }
+
+        $uvGroup = is_array($options['uv_finish'] ?? null) ? $options['uv_finish'] : null;
+        $values = is_array($uvGroup['values'] ?? null) ? $uvGroup['values'] : null;
+
+        if ($uvGroup === null || $values === null) {
+            return $options;
+        }
+
+        $labels = [
+            'single_side_uv' => 'SINGLE SIDE',
+            'both_sides_uv' => 'DOUBLE SIDES',
+        ];
+
+        foreach ($values as &$value) {
+            if (! is_array($value)) {
+                continue;
+            }
+
+            $label = $labels[(string) ($value['code'] ?? '')] ?? null;
+
+            if ($label === null) {
+                continue;
+            }
+
+            $value['label'] = $label;
+
+            if (array_key_exists('name', $value)) {
+                $value['name'] = $label;
+            }
+        }
+        unset($value);
+
+        $uvGroup['values'] = array_values($values);
+        $options['uv_finish'] = $uvGroup;
 
         return $options;
     }
