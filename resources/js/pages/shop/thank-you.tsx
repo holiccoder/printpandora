@@ -1,5 +1,4 @@
-import { Link, router } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { Link } from '@inertiajs/react';
 import SEO from '@/components/seo';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
@@ -17,21 +16,6 @@ interface Props {
 
 export default function ThankYou({ order }: Props) {
     const c = useContent('shop_thank_you_page');
-    const [secondsRemaining, setSecondsRemaining] = useState(5);
-
-    useEffect(() => {
-        const redirectTimer = window.setTimeout(() => {
-            router.visit('/orders');
-        }, 5000);
-        const countdownTimer = window.setInterval(() => {
-            setSecondsRemaining((seconds) => Math.max(seconds - 1, 0));
-        }, 1000);
-
-        return () => {
-            window.clearTimeout(redirectTimer);
-            window.clearInterval(countdownTimer);
-        };
-    }, []);
 
     return (
         <>
@@ -128,6 +112,15 @@ export default function ThankYou({ order }: Props) {
                             </p>
                         </div>
 
+                        <div className="mt-6 text-center">
+                            <Link
+                                href="/dashboard"
+                                className="inline-flex items-center justify-center rounded-md bg-[#800020] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#5c0018]"
+                            >
+                                {c.dashboard_link}
+                            </Link>
+                        </div>
+
                         <div className="mt-6 rounded-2xl border border-[#e3d9cf] bg-white p-6 text-center sm:p-8">
                             <h2 className="text-xl font-semibold text-neutral-900">
                                 {c.contact_heading}
@@ -140,22 +133,6 @@ export default function ThankYou({ order }: Props) {
                                 className="mt-5 inline-flex items-center justify-center rounded-md bg-[#800020] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#5c0018]"
                             >
                                 {c.contact_link}
-                            </Link>
-                        </div>
-
-                        <div className="mt-8 text-center text-sm text-neutral-500">
-                            <p>
-                                {c.redirect_prefix}{' '}
-                                <span className="font-semibold text-neutral-900">
-                                    {secondsRemaining}
-                                </span>{' '}
-                                {c.redirect_suffix}
-                            </p>
-                            <Link
-                                href="/orders"
-                                className="mt-3 inline-block font-semibold text-[#800020] hover:underline"
-                            >
-                                {c.orders_link}
                             </Link>
                         </div>
                     </div>

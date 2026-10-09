@@ -678,9 +678,7 @@ export interface ShopThankYouPageContent {
     contact_heading: string;
     contact_body: string;
     contact_link: string;
-    orders_link: string;
-    redirect_prefix: string;
-    redirect_suffix: string;
+    dashboard_link: string;
 }
 
 /**

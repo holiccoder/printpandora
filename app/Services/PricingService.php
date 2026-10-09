@@ -34,7 +34,9 @@ class PricingService
         $base = $this->calculateDynamicPrice($product, $options)
             ?? (float) ($product->getAttribute('price') ?? 0);
 
-        return $base + $this->designServiceFee($options);
+        $designQuantity = max(1, (int) ($options['design_quantity'] ?? 1));
+
+        return ($base + $this->designServiceFee($options)) * $designQuantity;
     }
 
     /**
@@ -48,6 +50,22 @@ class PricingService
      */
     public function validateOptions(Product $product, array $options): array
     {
+        $designQuantity = filter_var(
+            $options['design_quantity'] ?? 1,
+            FILTER_VALIDATE_INT,
+        );
+
+        if (
+            $designQuantity === false
+            || $designQuantity < 1
+            || $designQuantity > 100
+        ) {
+            throw ValidationException::withMessages([
+                'options.design_quantity' => 'Design quantity must be a whole number between 1 and 100.',
+            ]);
+        }
+
+        $options['design_quantity'] = $designQuantity;
         $config = $this->configuration->canonicalConfig($product);
 
         if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {

@@ -33,7 +33,7 @@ return [
 </ol>
 
 <h2>After you place the order</h2>
-<p>After the order is received, InkPavo creates an order record and shows the order details. Save the order number for future questions. You can review your orders from <a href="/orders">My Orders</a>, and you will receive shipping information when the parcel leaves our facility.</p>
+<p>After the order is received, InkPavo creates an order record and shows the order details. Save the order number for future questions. You can review your orders from <a href="/dashboard/orders">My Orders</a>, and you will receive shipping information when the parcel leaves our facility.</p>
 
 <p>Production starts after the final artwork is approved. Check the <a href="/shipping-policy">Shipping &amp; Delivery</a> page for current production and delivery estimates.</p>
 HTML,
@@ -47,7 +47,7 @@ HTML,
 
 <h2>View your order status</h2>
 <ol>
-    <li>Open <a href="/orders">My Orders</a> while signed in.</li>
+    <li>Open <a href="/dashboard/orders">My Orders</a> while signed in.</li>
     <li>Select the order number you want to review.</li>
     <li>Check the status, payment status, items, shipping address, and shipping method.</li>
     <li>When the order has shipped, use the tracking number or tracking link on the order details page.</li>
@@ -123,7 +123,7 @@ HTML,
 <p>We will check the order status before confirming whether a change is possible. Changes may not be possible after production has started, the parcel has been packed, or the order has shipped. An address cannot be redirected after it has been handed to the carrier.</p>
 
 <h2>Place a reorder</h2>
-<p>The current order history page does not include a one-click <strong>Reorder</strong> action. To place another order, open <a href="/orders">My Orders</a> to review the previous product and options, then open the matching product page, select the options again, add it to your cart, and complete checkout.</p>
+<p>The current order history page does not include a one-click <strong>Reorder</strong> action. To place another order, open <a href="/dashboard/orders">My Orders</a> to review the previous product and options, then open the matching product page, select the options again, add it to your cart, and complete checkout.</p>
 
 <p>If you need the same artwork, quantity, or finishing details and are not sure which options were used, contact support with the previous order number before placing the reorder. This helps us confirm the details and avoid an incorrect repeat order.</p>
 HTML,

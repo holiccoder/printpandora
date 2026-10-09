@@ -2753,16 +2753,6 @@
             "checkout_hint": "Enter this code during checkout."
         }
     },
-    "shop_orders_index_page": {
-        "_source_file": "resources/js/pages/shop/orders/index.tsx",
-        "seo_title": "My Orders",
-        "brand": "InkPavo",
-        "nav_continue_shopping": "Continue Shopping",
-        "page_heading": "My Orders",
-        "empty_state": "No orders yet.",
-        "order_label_prefix": "Order #",
-        "items_suffix": "item(s)"
-    },
     "shop_thank_you_page": {
         "_source_file": "resources/js/pages/shop/thank-you.tsx",
         "seo_title": "Thank you for your order",
@@ -2780,9 +2770,7 @@
         "contact_heading": "Need help with your order?",
         "contact_body": "If you have any questions, our support team is happy to help.",
         "contact_link": "Contact support",
-        "orders_link": "View all orders",
-        "redirect_prefix": "You will be redirected to your orders in",
-        "redirect_suffix": "seconds."
+        "dashboard_link": "My dashboard"
     },
     "shop_tickets_index_page": {
         "_source_file": "resources/js/pages/shop/tickets/index.tsx",

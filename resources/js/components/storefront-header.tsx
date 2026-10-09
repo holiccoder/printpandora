@@ -808,9 +808,6 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
             <div className="col-span-12 md:col-span-3">
                 {activeSub && (
                     <div className="rounded-md border border-neutral-200 bg-white p-4">
-                        <p className="mb-3 text-xs font-semibold tracking-wide text-neutral-500 uppercase">
-                            {activeSub.label}
-                        </p>
                         <ul className="space-y-1">
                             {activeSub.children!.map((sub) => (
                                 <li key={sub.label}>

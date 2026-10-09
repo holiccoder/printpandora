@@ -12,6 +12,7 @@ interface CartItem {
     name: string;
     price: number;
     quantity: number;
+    selected?: boolean;
     image: string | null;
     slug: string;
     options?: Record<string, string>;
@@ -41,6 +42,7 @@ export default function Cart({
         ...item,
         key: item.key ?? key,
     }));
+    const hasSelectedItems = items.some((item) => item.selected ?? true);
 
     const removeItem = (itemKey: string) => {
         router.delete('/cart/remove', {
@@ -79,6 +81,24 @@ export default function Cart({
                                         key={item.key}
                                         className="flex items-center gap-4 rounded-lg border border-[#e3e3e0] bg-white p-4 dark:border-[#3E3E3E] dark:bg-[#161615]"
                                     >
+                                        <input
+                                            type="checkbox"
+                                            checked={item.selected ?? true}
+                                            aria-label={`Select ${item.name}`}
+                                            onChange={(event) =>
+                                                router.post(
+                                                    '/cart/select',
+                                                    {
+                                                        item_key: item.key,
+                                                        selected:
+                                                            event.currentTarget
+                                                                .checked,
+                                                    },
+                                                    { preserveScroll: true },
+                                                )
+                                            }
+                                            className="size-4 shrink-0 accent-[#800020]"
+                                        />
                                         <div className="h-20 w-20 shrink-0 overflow-hidden rounded bg-neutral-100 dark:bg-neutral-800">
                                             {item.image ? (
                                                 <img
@@ -170,12 +190,22 @@ export default function Cart({
                                     <span>Total</span>
                                     <span>${total.toFixed(2)}</span>
                                 </div>
-                                <Link
-                                    href="/checkout"
-                                    className="mt-4 block w-full rounded-lg bg-primary px-6 py-3 text-center font-semibold text-primary-foreground hover:bg-primary/90"
-                                >
-                                    {c.checkout_cta}
-                                </Link>
+                                {hasSelectedItems ? (
+                                    <Link
+                                        href="/checkout"
+                                        className="mt-4 block w-full rounded-lg bg-primary px-6 py-3 text-center font-semibold text-primary-foreground hover:bg-primary/90"
+                                    >
+                                        {c.checkout_cta}
+                                    </Link>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        disabled
+                                        className="mt-4 block w-full cursor-not-allowed rounded-lg bg-neutral-300 px-6 py-3 text-center font-semibold text-neutral-600"
+                                    >
+                                        {c.checkout_cta}
+                                    </button>
+                                )}
                             </div>
                         </>
                     )}

@@ -3,7 +3,7 @@
 // Product fields, pricing, FAQs, and detail sections come from the database;
 // the product-option JSON is limited to option metadata and galleries.
 import { Link, router, useForm, usePage } from '@inertiajs/react';
-import { ChevronDown, ChevronRight, Lightbulb } from 'lucide-react';
+import { ChevronDown, ChevronRight, Info, Lightbulb } from 'lucide-react';
 import { Fragment, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import DesignServiceFormModal from '@/components/design-service-form-modal';
@@ -17,6 +17,12 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { savePendingProductDesign } from '@/lib/pending-product-designs';
@@ -1326,6 +1332,11 @@ export default function ShopShow({
     const [selectedQty, setSelectedQty] = useState<number | null>(
         RECOMMENDED_QTY,
     );
+    const [designQuantity, setDesignQuantity] = useState('1');
+    const normalizedDesignQuantity = Math.min(
+        100,
+        Math.max(1, Math.trunc(Number(designQuantity) || 1)),
+    );
     const [selectedThumbnail, setSelectedThumbnail] = useState<string | null>(
         null,
     );
@@ -1483,6 +1494,7 @@ export default function ShopShow({
     const defaultOptions = useMemo<Record<string, string | string[]>>(() => {
         const opts: Record<string, string | string[]> = {
             quantity: String(RECOMMENDED_QTY ?? ''),
+            design_quantity: String(normalizedDesignQuantity),
         };
 
         if (usesDynamicOptions) {
@@ -1535,12 +1547,14 @@ export default function ShopShow({
         dynamicOptionDefaults,
         usesAreaBasedPricing,
         selectedSpecialFinish,
+        normalizedDesignQuantity,
     ]);
 
     const selectedOptions = useMemo<Record<string, string | string[]>>(() => {
         if (usesDynamicOptions) {
             const opts: Record<string, string | string[]> = {
                 quantity: String(selectedQty ?? RECOMMENDED_QTY),
+                design_quantity: String(normalizedDesignQuantity),
             };
 
             for (const group of dynamicOptionGroups) {
@@ -1579,6 +1593,7 @@ export default function ShopShow({
 
         const opts: Record<string, string | string[]> = {
             quantity: String(selectedQty ?? RECOMMENDED_QTY),
+            design_quantity: String(normalizedDesignQuantity),
         };
         if (sizes.length > 0 && selectedSize) opts['sizes'] = selectedSize;
         if (selectedSize === 'custom' && confirmedCustomSize) {
@@ -1620,6 +1635,7 @@ export default function ShopShow({
         selectedEmbossing,
         selectedEmbossingOrSignaturePanel,
         selectedQty,
+        normalizedDesignQuantity,
         RECOMMENDED_QTY,
         sizes,
         finishes,
@@ -1856,8 +1872,10 @@ export default function ShopShow({
         : 0;
 
     const fullPrice =
-        (tier?.originalPrice ?? tier?.currentPrice ?? 0) + designFee;
-    const finalPrice = (tier?.currentPrice ?? 0) + designFee;
+        ((tier?.originalPrice ?? tier?.currentPrice ?? 0) + designFee) *
+        normalizedDesignQuantity;
+    const finalPrice =
+        ((tier?.currentPrice ?? 0) + designFee) * normalizedDesignQuantity;
 
     function selectDynamicOption(groupKey: string, value: string) {
         const group = dynamicOptionGroups.find((item) => item.key === groupKey);
@@ -2538,9 +2556,6 @@ export default function ShopShow({
                                 useBusinessCardSizeSwatches={
                                     isBusinessCardProduct
                                 }
-                                preserveOnlyCustomSizeLabel={
-                                    isCottonBusinessCards
-                                }
                                 showSpecialFinishSides={!isCottonBusinessCards}
                                 showHotFoilSides={true}
                                 specialFinishSides={selectedSpecialFinishSides}
@@ -2997,6 +3012,52 @@ export default function ShopShow({
                             )}
 
                         <OptionGroup
+                            label={
+                                <span className="inline-flex items-center gap-2">
+                                    Design quantity
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    type="button"
+                                                    aria-label="About design quantity"
+                                                    className="inline-flex text-neutral-500 hover:text-neutral-800"
+                                                >
+                                                    <Info className="size-4" />
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                if you want to print multiple
+                                                items, you should input the
+                                                number.
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </span>
+                            }
+                            required
+                        >
+                            <div className="max-w-xs">
+                                <Input
+                                    type="number"
+                                    min={1}
+                                    max={100}
+                                    step={1}
+                                    value={designQuantity}
+                                    onChange={(event) =>
+                                        setDesignQuantity(event.target.value)
+                                    }
+                                    onBlur={() =>
+                                        setDesignQuantity(
+                                            String(normalizedDesignQuantity),
+                                        )
+                                    }
+                                    aria-label="Design quantity"
+                                />
+                            </div>
+                        </OptionGroup>
+
+                        <OptionGroup
                             label={c.configurator_labels.quantity}
                             required
                         >
@@ -3026,9 +3087,13 @@ export default function ShopShow({
                                                         !!t.recommended;
                                                     const active =
                                                         selectedQty === t.qty;
-                                                    const now = t.currentPrice;
+                                                    const now =
+                                                        t.currentPrice *
+                                                        normalizedDesignQuantity;
                                                     const bracketPrice =
-                                                        t.qty * baseUnitPrice;
+                                                        t.qty *
+                                                        baseUnitPrice *
+                                                        normalizedDesignQuantity;
 
                                                     return (
                                                         <tr
@@ -3893,7 +3958,6 @@ function DynamicOptionGroups({
     customSize,
     onCustomSizeSelect,
     useBusinessCardSizeSwatches,
-    preserveOnlyCustomSizeLabel,
     showSpecialFinishSides,
     showHotFoilSides,
     specialFinishSides,
@@ -3905,7 +3969,6 @@ function DynamicOptionGroups({
     customSize?: { width: number; height: number } | null;
     onCustomSizeSelect?: () => void;
     useBusinessCardSizeSwatches: boolean;
-    preserveOnlyCustomSizeLabel: boolean;
     showSpecialFinishSides: boolean;
     showHotFoilSides: boolean;
     specialFinishSides: Record<string, SpecialFinishSide>;
@@ -4068,9 +4131,6 @@ function DynamicOptionGroups({
                                           : value.swatch_image;
                                 const isCustomSize =
                                     group.key === 'sizes' && code === 'custom';
-                                const hideSizeMetadata =
-                                    preserveOnlyCustomSizeLabel &&
-                                    group.key === 'sizes';
                                 const hasSpecialFinishSide =
                                     (group.key === 'special_finish'
                                         ? showSpecialFinishSides
@@ -4115,11 +4175,10 @@ function DynamicOptionGroups({
                                                 </span>
                                             )}
                                         </div>
-                                        {!hideSizeMetadata &&
-                                            shouldShowSwatchCaption(
-                                                group.key,
-                                                code,
-                                            ) &&
+                                        {shouldShowSwatchCaption(
+                                            group.key,
+                                            code,
+                                        ) &&
                                             (isCustomSize &&
                                             active &&
                                             customSize ? (
@@ -4185,20 +4244,12 @@ function DynamicOptionGroups({
                                         key={code}
                                         active={active}
                                         onClick={handleSelect}
-                                        ariaLabel={
-                                            hideSizeMetadata
-                                                ? displayName
-                                                : undefined
-                                        }
                                         label={
-                                            hideSizeMetadata && !isCustomSize
-                                                ? undefined
-                                                : isCustomSize &&
-                                                    active &&
-                                                    customSize &&
-                                                    !hideSizeMetadata
-                                                  ? `${displayName} (${customSizeDisplay(customSize.width, customSize.height, value.unit?.toLowerCase() === 'mm' ? 'mm' : 'in')})`
-                                                  : displayName
+                                            isCustomSize &&
+                                            active &&
+                                            customSize
+                                                ? `${displayName} (${customSizeDisplay(customSize.width, customSize.height, value.unit?.toLowerCase() === 'mm' ? 'mm' : 'in')})`
+                                                : displayName
                                         }
                                     >
                                         {tileContent}
@@ -4413,7 +4464,7 @@ function OptionGroup({
     required = true,
     children,
 }: {
-    label: string;
+    label: React.ReactNode;
     required?: boolean;
     children: React.ReactNode;
 }) {
@@ -4550,21 +4601,18 @@ function ChoiceTile({
     disabled,
     onClick,
     label,
-    ariaLabel,
     children,
 }: {
     active: boolean;
     disabled?: boolean;
     onClick: () => void;
     label?: React.ReactNode;
-    ariaLabel?: string;
     children: React.ReactNode;
 }) {
     return (
         <button
             type="button"
             aria-pressed={active}
-            aria-label={ariaLabel}
             disabled={disabled}
             onClick={onClick}
             className={`group relative overflow-hidden rounded-md border-2 p-2 text-left transition-colors ${

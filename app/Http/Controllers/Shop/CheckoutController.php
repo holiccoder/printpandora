@@ -45,7 +45,7 @@ class CheckoutController extends Controller
 
     public function show(Request $request, Cart $cart)
     {
-        if ($cart->count() === 0) {
+        if ($cart->selectedCount() === 0) {
             return redirect()->route('shop.cart');
         }
 
@@ -54,7 +54,7 @@ class CheckoutController extends Controller
         $quote = $this->pendingCheckoutQuote($cart, $customerEmail, $pendingOrder, false);
         $defaultShippingMethod = (string) $pendingOrder->shipping_method;
         $defaultCountry = (string) $pendingOrder->shipping_country;
-        $shippingWeightGrams = $this->weights->forCart($cart->all());
+        $shippingWeightGrams = $this->weights->forCart($cart->selectedItems());
         $shippingFee = $this->shipping->fee(
             $defaultShippingMethod,
             $defaultCountry,
@@ -62,7 +62,7 @@ class CheckoutController extends Controller
         );
 
         return Inertia::render('shop/checkout', [
-            'cart' => $cart->all(),
+            'cart' => $cart->selectedItems(),
             'subtotal' => $quote['subtotal'],
             'discountAmount' => $quote['discount'],
             'itemsTotal' => $quote['total'],
@@ -92,7 +92,7 @@ class CheckoutController extends Controller
 
     public function prepareDesigns(Request $request, Cart $cart): RedirectResponse
     {
-        if ($cart->count() === 0) {
+        if ($cart->selectedCount() === 0) {
             return redirect()->route('shop.cart');
         }
 
@@ -103,7 +103,7 @@ class CheckoutController extends Controller
 
     public function store(Request $request, Cart $cart)
     {
-        if ($cart->count() === 0) {
+        if ($cart->selectedCount() === 0) {
             return back()->withErrors(['cart' => 'Your cart is empty.']);
         }
 
@@ -121,7 +121,7 @@ class CheckoutController extends Controller
             return back()->withErrors(['discount_code' => $exception->getMessage()])->withInput();
         }
 
-        $cart->clear();
+        $cart->clearSelected();
         $order->update(['checkout_token' => null]);
 
         return redirect()->route('dashboard.orders.show', $order->id)
@@ -133,7 +133,7 @@ class CheckoutController extends Controller
      */
     public function paypalCreate(Request $request, Cart $cart, PayPalService $paypal): JsonResponse
     {
-        if ($cart->count() === 0) {
+        if ($cart->selectedCount() === 0) {
             return response()->json(['error' => 'Your cart is empty.'], 422);
         }
 
@@ -192,7 +192,7 @@ class CheckoutController extends Controller
         }
 
         if ($order->payment_status === 'paid') {
-            $cart->clear();
+            $cart->clearSelected();
             $order->update(['checkout_token' => null]);
 
             return response()->json([
@@ -222,7 +222,7 @@ class CheckoutController extends Controller
 
         $order = $this->completePayPalOrder($order, $paypal->captureId($capture));
 
-        $cart->clear();
+        $cart->clearSelected();
 
         return response()->json([
             'redirect' => route('shop.checkout.thank-you', $order->id),
@@ -332,7 +332,7 @@ class CheckoutController extends Controller
      */
     public function cryptomusCreate(Request $request, Cart $cart, CryptomusService $cryptomus)
     {
-        if ($cart->count() === 0) {
+        if ($cart->selectedCount() === 0) {
             return response()->json(['error' => 'Your cart is empty.'], 422);
         }
 
@@ -376,7 +376,7 @@ class CheckoutController extends Controller
             return response()->json(['error' => 'Unable to start Cryptomus payment.'], 500);
         }
 
-        $cart->clear();
+        $cart->clearSelected();
         $order->update(['checkout_token' => null]);
 
         return response()->json([
@@ -778,7 +778,7 @@ class CheckoutController extends Controller
 
         $shippingMethod = $this->shipping->defaultMethod();
         $shippingCountry = $user->shipping_country ?: $this->shipping->defaultCountry();
-        $shippingWeightGrams = $this->weights->forCart($cart->all());
+        $shippingWeightGrams = $this->weights->forCart($cart->selectedItems());
         $shipping = $this->shipping->get(
             $shippingMethod,
             $shippingCountry,
@@ -856,7 +856,9 @@ class CheckoutController extends Controller
                 $shippingMethod = $this->shipping->defaultMethod();
             }
 
-            $shippingWeightGrams = $this->weights->forCart($cart->all());
+            $shippingWeightGrams = $this->weights->forCart(
+                $cart->selectedItems(),
+            );
             $shipping = $this->shipping->get(
                 $shippingMethod,
                 $shippingCountry,
@@ -918,7 +920,10 @@ class CheckoutController extends Controller
             // checkout and payment endpoint must enforce the requirement on
             // the server after those files have been attached to the order.
             if ($validated !== null || $paymentMethod !== null) {
-                $this->designRequirements->assertReady($lockedOrder, $cart->all());
+                $this->designRequirements->assertReady(
+                    $lockedOrder,
+                    $cart->selectedItems(),
+                );
             }
 
             if ($redeemDiscount) {
@@ -1014,7 +1019,7 @@ class CheckoutController extends Controller
     {
         $order->items()->delete();
 
-        foreach ($cart->all() as $item) {
+        foreach ($cart->selectedItems() as $item) {
             OrderItem::create([
                 'order_id' => $order->id,
                 'product_id' => $item['product_id'],
@@ -1042,7 +1047,7 @@ class CheckoutController extends Controller
 
         $productIds = [];
 
-        foreach ($cart->all() as $item) {
+        foreach ($cart->selectedItems() as $item) {
             $productId = (int) ($item['product_id'] ?? 0);
 
             if ($productId > 0) {
@@ -1110,7 +1115,7 @@ class CheckoutController extends Controller
 
         $cartRequestIds = [];
 
-        foreach ($cart->all() as $item) {
+        foreach ($cart->selectedItems() as $item) {
             $requestId = (int) data_get(
                 $item,
                 'options.design_service_request_id',

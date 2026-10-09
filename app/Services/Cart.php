@@ -50,7 +50,10 @@ class Cart
                 'slug' => $product->slug,
                 'options' => $options,
                 'pending_design_id' => $pendingDesignId,
+                'selected' => true,
             ];
+        } else {
+            $cart[$itemKey]['selected'] = true;
         }
 
         $this->session->put('cart', $cart);
@@ -62,6 +65,49 @@ class Cart
     {
         $cart = $this->all();
         unset($cart[$itemKey]);
+        $this->session->put('cart', $cart);
+    }
+
+    public function setSelected(string $itemKey, bool $selected): void
+    {
+        $cart = $this->all();
+
+        if (isset($cart[$itemKey])) {
+            $cart[$itemKey]['selected'] = $selected;
+            $this->session->put('cart', $cart);
+        }
+    }
+
+    /** @return array<string, array<string, mixed>> */
+    public function selectedItems(): array
+    {
+        return array_filter(
+            $this->all(),
+            static fn (array $item): bool => (bool) ($item['selected'] ?? true),
+        );
+    }
+
+    public function selectedCount(): int
+    {
+        return count($this->selectedItems());
+    }
+
+    public function clearSelected(): void
+    {
+        $cart = $this->all();
+
+        foreach ($cart as $key => $item) {
+            if ((bool) ($item['selected'] ?? true)) {
+                unset($cart[$key]);
+            }
+        }
+
+        if ($cart === []) {
+            $this->clear();
+
+            return;
+        }
+
         $this->session->put('cart', $cart);
     }
 
@@ -96,6 +142,7 @@ class Cart
                 'name' => (string) ($item['name'] ?? ''),
                 'price' => '$'.number_format((float) ($item['price'] ?? 0), 2),
                 'quantity' => (int) ($item['quantity'] ?? 1),
+                'selected' => (bool) ($item['selected'] ?? true),
                 'image' => $item['image'] ?? null,
                 'href' => BusinessCardRoutes::hrefForProductSlug($slug),
             ];
@@ -104,14 +151,19 @@ class Cart
         return [
             'items' => $items,
             'count' => $this->count(),
-            'subtotal' => '$'.number_format($this->subtotal(), 2),
+            'subtotal' => '$'.number_format($this->selectedSubtotal(), 2),
         ];
     }
 
     public function subtotal(): float
     {
+        return $this->selectedSubtotal();
+    }
+
+    public function selectedSubtotal(): float
+    {
         $total = 0;
-        foreach ($this->all() as $item) {
+        foreach ($this->selectedItems() as $item) {
             $total += $item['price'] * $item['quantity'];
         }
 
@@ -140,7 +192,11 @@ class Cart
 
     public function applyAutomaticFirstOrderDiscount(?int $customerId): void
     {
-        if ($customerId === null || $this->count() === 0 || $this->discountCode()) {
+        if (
+            $customerId === null
+            || $this->selectedCount() === 0
+            || $this->discountCode()
+        ) {
             return;
         }
 

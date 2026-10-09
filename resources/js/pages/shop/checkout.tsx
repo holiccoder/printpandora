@@ -1,6 +1,7 @@
 // Content sourced from `content/hardcoded-content.json` via useContent('checkout_page').
 import { Link, router, useForm } from '@inertiajs/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import { PaymentMethods } from '@/components/payment-methods';
 import SEO from '@/components/seo';
 import { countries, countriesByCode } from '@/data/countries';
@@ -179,6 +180,50 @@ function checkoutFormData(
     }
 
     return formData;
+}
+
+function UploadedDesignFiles({
+    design,
+    uploaded,
+}: {
+    design?: PendingProductDesignRecord;
+    uploaded: boolean;
+}) {
+    if (!design || !uploaded) {
+        return null;
+    }
+
+    const fileGroups = [
+        { label: 'Design file', files: design.files.design_file },
+        { label: 'Logo file', files: design.files.logo_file },
+        { label: 'Example file', files: design.files.example_files },
+    ];
+    const files = fileGroups.flatMap((group) =>
+        group.files.map((file) => ({ label: group.label, file })),
+    );
+
+    return (
+        <div className="ml-20 rounded-md border border-[#e3e3e0] p-3 text-sm dark:border-[#3E3E3A]">
+            <p className="mb-2 font-medium text-green-700">
+                Uploaded design files
+            </p>
+            {files.length > 0 ? (
+                <ul className="space-y-1 text-[#706f6c]">
+                    {files.map(({ label, file }, index) => (
+                        <li
+                            key={`${label}-${file.name}-${index}`}
+                            className="flex flex-wrap gap-x-2"
+                        >
+                            <span className="shrink-0">{label}:</span>
+                            <span className="break-all">{file.name}</span>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p className="text-[#706f6c]">No files attached.</p>
+            )}
+        </div>
+    );
 }
 
 export default function Checkout({
@@ -699,87 +744,125 @@ export default function Checkout({
                                 </h2>
 
                                 <div className="space-y-4">
-                                    {Object.values(cart).map((item) => (
-                                        <div
-                                            key={item.key}
-                                            className="flex items-center gap-4"
-                                        >
-                                            <Link
-                                                href={productHref(item.slug)}
-                                                className="block h-16 w-16 shrink-0 overflow-hidden rounded bg-neutral-100 dark:bg-neutral-800"
+                                    {Object.values(cart).map((item) => {
+                                        const design =
+                                            checkoutPendingDesigns.find(
+                                                (entry) =>
+                                                    entry.clientId ===
+                                                    item.pending_design_id,
+                                            );
+                                        return (
+                                            <div
+                                                key={item.key}
+                                                className="space-y-2"
                                             >
-                                                {item.image ? (
-                                                    <img
-                                                        src={item.image}
-                                                        alt={item.name}
-                                                        className={`h-full w-full ${isPvcProductSlug(item.slug) ? 'object-contain' : 'object-cover'}`}
-                                                    />
-                                                ) : (
-                                                    <div className="flex h-full items-center justify-center text-neutral-400">
-                                                        <svg
-                                                            className="h-6 w-6"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            stroke="currentColor"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                strokeWidth={
-                                                                    1.5
-                                                                }
-                                                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                                                            />
-                                                        </svg>
-                                                    </div>
-                                                )}
-                                            </Link>
-                                            <div className="min-w-0 flex-1">
-                                                <Link
-                                                    href={productHref(
-                                                        item.slug,
-                                                    )}
-                                                    className="text-base font-semibold hover:text-amber-600"
-                                                >
-                                                    {item.name}
-                                                </Link>
-                                                <p className="text-sm text-[#706f6c]">
-                                                    Qty: {item.quantity}
-                                                    {item.options &&
-                                                        Object.keys(
-                                                            item.options,
-                                                        ).length > 0 && (
-                                                            <span className="ml-1">
-                                                                •{' '}
-                                                                {formatGramMeasurements(
-                                                                    formatOrderOptions(
-                                                                        item.options,
-                                                                    ),
-                                                                )}
-                                                            </span>
+                                                <div className="flex items-center gap-4">
+                                                    <Link
+                                                        href={productHref(
+                                                            item.slug,
                                                         )}
-                                                </p>
+                                                        className="block h-16 w-16 shrink-0 overflow-hidden rounded bg-neutral-100 dark:bg-neutral-800"
+                                                    >
+                                                        {item.image ? (
+                                                            <img
+                                                                src={item.image}
+                                                                alt={item.name}
+                                                                className={`h-full w-full ${isPvcProductSlug(item.slug) ? 'object-contain' : 'object-cover'}`}
+                                                            />
+                                                        ) : (
+                                                            <div className="flex h-full items-center justify-center text-neutral-400">
+                                                                <svg
+                                                                    className="h-6 w-6"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    stroke="currentColor"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth={
+                                                                            1.5
+                                                                        }
+                                                                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                                                                    />
+                                                                </svg>
+                                                            </div>
+                                                        )}
+                                                    </Link>
+                                                    <div className="min-w-0 flex-1">
+                                                        <Link
+                                                            href={productHref(
+                                                                item.slug,
+                                                            )}
+                                                            className="text-base font-semibold hover:text-amber-600"
+                                                        >
+                                                            {item.name}
+                                                        </Link>
+                                                        <p className="text-sm text-[#706f6c]">
+                                                            Qty: {item.quantity}
+                                                            {item.options &&
+                                                                Object.keys(
+                                                                    item.options,
+                                                                ).length >
+                                                                    0 && (
+                                                                    <span className="ml-1">
+                                                                        •{' '}
+                                                                        {formatGramMeasurements(
+                                                                            formatOrderOptions(
+                                                                                item.options,
+                                                                            ),
+                                                                        )}
+                                                                    </span>
+                                                                )}
+                                                        </p>
+                                                    </div>
+                                                    <span className="text-base font-semibold">
+                                                        $
+                                                        {(
+                                                            item.price *
+                                                            item.quantity
+                                                        ).toFixed(2)}
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            router.delete(
+                                                                '/cart/remove',
+                                                                {
+                                                                    data: {
+                                                                        item_key:
+                                                                            item.key,
+                                                                    },
+                                                                    preserveScroll: true,
+                                                                },
+                                                            )
+                                                        }
+                                                        aria-label={`Remove ${item.name}`}
+                                                        className="rounded p-2 text-neutral-500 hover:bg-red-50 hover:text-red-700"
+                                                    >
+                                                        <Trash2 className="size-4" />
+                                                    </button>
+                                                </div>
+                                                <UploadedDesignFiles
+                                                    design={design}
+                                                    uploaded={pendingDesignsUploaded}
+                                                />
                                             </div>
-                                            <span className="text-base font-semibold">
-                                                $
-                                                {(
-                                                    item.price * item.quantity
-                                                ).toFixed(2)}
-                                            </span>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                                 {pendingDesignsLoading &&
                                     !pendingDesignsUploading && (
-                                    <p className="mt-4 text-sm text-[#706f6c]">
-                                        Preparing your design files for
-                                        checkout…
-                                    </p>
-                                )}
+                                        <p className="mt-4 text-sm text-[#706f6c]">
+                                            Preparing your design files for
+                                            checkout…
+                                        </p>
+                                    )}
                                 {!pendingDesignsLoading &&
                                     pendingDesignsUploading && (
                                         <p className="mt-4 text-sm text-[#706f6c]">
-                                            Uploading your design files securely…
+                                            Uploading your design files
+                                            securely…
                                         </p>
                                     )}
                                 {!pendingDesignsLoading &&
@@ -801,103 +884,13 @@ export default function Checkout({
                                     )}
                                 {!pendingDesignsLoading &&
                                     !pendingDesignsUploading &&
-                                    pendingDesignsUploaded && (
-                                        <div className="mt-4 space-y-3">
-                                            <h3 className="text-sm font-medium text-green-700">
-                                                Uploaded design files
-                                            </h3>
-                                            {checkoutPendingDesigns.map(
-                                                (design) => {
-                                                    const fileGroups = [
-                                                        {
-                                                            label: 'Design file',
-                                                            files: design.files
-                                                                .design_file,
-                                                        },
-                                                        {
-                                                            label: 'Logo file',
-                                                            files: design.files
-                                                                .logo_file,
-                                                        },
-                                                        {
-                                                            label: 'Example file',
-                                                            files: design.files
-                                                                .example_files,
-                                                        },
-                                                    ];
-                                                    const files =
-                                                        fileGroups.flatMap(
-                                                            (group) =>
-                                                                group.files.map(
-                                                                    (file) =>
-                                                                        ({
-                                                                            label: group.label,
-                                                                            file,
-                                                                        }),
-                                                                ),
-                                                        );
-
-                                                    return (
-                                                        <div
-                                                            key={
-                                                                design.clientId
-                                                            }
-                                                            className="rounded-md border border-[#e3e3e0] p-3 dark:border-[#3E3E3A]"
-                                                        >
-                                                            <p className="mb-2 text-sm font-medium">
-                                                                {
-                                                                    design.productName
-                                                                }
-                                                            </p>
-                                                            {files.length >
-                                                            0 ? (
-                                                                <ul className="space-y-1 text-sm text-[#706f6c]">
-                                                                    {files.map(
-                                                                        (
-                                                                            {
-                                                                                label,
-                                                                                file,
-                                                                            },
-                                                                            index,
-                                                                        ) => (
-                                                                            <li
-                                                                                key={`${label}-${file.name}-${index}`}
-                                                                                className="flex flex-wrap gap-x-2"
-                                                                            >
-                                                                                <span className="shrink-0">
-                                                                                    {
-                                                                                        label
-                                                                                    }
-                                                                                    :
-                                                                                </span>
-                                                                                <span className="break-all">
-                                                                                    {
-                                                                                        file.name
-                                                                                    }
-                                                                                </span>
-                                                                            </li>
-                                                                        ),
-                                                                    )}
-                                                                </ul>
-                                                            ) : (
-                                                                <p className="text-sm text-[#706f6c]">
-                                                                    No files attached.
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                    );
-                                                },
-                                            )}
-                                        </div>
-                                    )}
-                                {!pendingDesignsLoading &&
-                                    !pendingDesignsUploading &&
                                     !pendingDesignsUploaded &&
                                     !activePendingDesignsError &&
                                     checkoutPendingDesigns.length > 0 && (
                                         <p className="mt-4 text-sm text-[#706f6c]">
                                             Your selected design files will be
-                                            uploaded before you continue checkout.
+                                            uploaded before you continue
+                                            checkout.
                                         </p>
                                     )}
                             </div>

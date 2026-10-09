@@ -239,7 +239,7 @@ class ProductDesignCheckoutService
     {
         $items = [];
 
-        foreach ($cart->all() as $item) {
+        foreach ($cart->selectedItems() as $item) {
             $clientId = $item['pending_design_id'] ?? null;
 
             if (is_string($clientId) && $clientId !== '') {

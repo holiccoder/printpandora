@@ -189,6 +189,7 @@ Route::post('cart/add', [CartController::class, 'add'])->name('shop.cart.add');
 Route::post('cart/add/free-sample-pack', [CartController::class, 'addFreeSamplePack'])
     ->name('shop.cart.add.free-sample-pack');
 Route::delete('cart/remove', [CartController::class, 'remove'])->name('shop.cart.remove');
+Route::post('cart/select', [CartController::class, 'select'])->name('shop.cart.select');
 Route::post('cart/discount', [CartController::class, 'applyDiscount'])->name('shop.cart.discount.apply');
 Route::delete('cart/discount', [CartController::class, 'removeDiscount'])->name('shop.cart.discount.remove');
 
@@ -206,7 +207,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('thank-you/{id}', [OrderController::class, 'thankYou'])
         ->whereNumber('id')
         ->name('shop.checkout.thank-you');
-    Route::get('orders', [OrderController::class, 'index'])->name('shop.orders.index');
 
     // Support tickets
     Route::get('tickets', [TicketController::class, 'index'])->name('shop.tickets.index');

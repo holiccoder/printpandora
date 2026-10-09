@@ -59,7 +59,8 @@ class OrderWeightService
             $productWeight += $this->forLine(
                 $product,
                 $options,
-                (int) ($item['quantity'] ?? 1),
+                (int) ($item['quantity'] ?? 1)
+                    * max(1, (int) ($options['design_quantity'] ?? 1)),
             );
         }
 

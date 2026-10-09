@@ -116,7 +116,7 @@ export default function Shipping() {
                 You'll receive a shipping confirmation email with a tracking
                 link as soon as your order leaves our facility. You can also
                 track every order from{' '}
-                <a href="/orders">Your account → Orders</a>.
+                <a href="/dashboard/orders">Your account → Orders</a>.
             </p>
             <p>
                 If tracking shows your parcel hasn't moved for 5 business days

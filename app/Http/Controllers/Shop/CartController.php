@@ -92,6 +92,18 @@ class CartController extends Controller
         return back();
     }
 
+    public function select(Request $request, Cart $cart)
+    {
+        $data = $request->validate([
+            'item_key' => 'required|string',
+            'selected' => 'required|boolean',
+        ]);
+
+        $cart->setSelected($data['item_key'], (bool) $data['selected']);
+
+        return back();
+    }
+
     public function applyDiscount(Request $request, Cart $cart)
     {
         $data = $request->validate([

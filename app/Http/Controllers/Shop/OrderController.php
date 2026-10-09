@@ -17,18 +17,6 @@ use Throwable;
 
 class OrderController extends Controller
 {
-    public function index(): InertiaResponse
-    {
-        $orders = Order::with('items.product')
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->simplePaginate(10);
-
-        return Inertia::render('shop/orders/index', [
-            'orders' => $orders,
-        ]);
-    }
-
     public function downloadOrderFile(
         Request $request,
         int $id,

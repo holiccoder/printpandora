@@ -1,5 +1,5 @@
-import { Link } from '@inertiajs/react';
-import { ShoppingCart } from 'lucide-react';
+import { Link, router } from '@inertiajs/react';
+import { ShoppingCart, Trash2 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,6 +29,7 @@ export type CartItem = {
     /** Display price, e.g. "$12.00" */
     price: string;
     quantity: number;
+    selected: boolean;
     image?: string | null;
     href: string;
 };
@@ -47,6 +48,7 @@ export function CartDrawer({ trigger, items = [], subtotal }: Props) {
     const c = useContent('global_chrome').cart_drawer;
     const isEmpty = items.length === 0;
     const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
+    const hasSelectedItems = items.some((item) => item.selected);
 
     return (
         <Sheet>
@@ -112,14 +114,20 @@ export function CartDrawer({ trigger, items = [], subtotal }: Props) {
                         <p className="mb-4 text-xs text-neutral-500">
                             {c.footer.shipping_note}
                         </p>
-                        <Button
-                            asChild
-                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                        >
-                            <Link href={c.footer.checkout_button_href}>
+                        {hasSelectedItems ? (
+                            <Button
+                                asChild
+                                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                            >
+                                <Link href={c.footer.checkout_button_href}>
+                                    {c.footer.checkout_button_label}
+                                </Link>
+                            </Button>
+                        ) : (
+                            <Button disabled className="w-full">
                                 {c.footer.checkout_button_label}
-                            </Link>
-                        </Button>
+                            </Button>
+                        )}
                         <Button asChild variant="outline" className="w-full">
                             <Link href={c.footer.view_cart_button_href}>
                                 {c.footer.view_cart_button_label}
@@ -181,6 +189,26 @@ function CartLines({
                         ) : null}
                     </Link>
                     <div className="flex flex-1 flex-col">
+                        <label className="mb-1 flex items-center gap-2 text-xs text-neutral-600">
+                            <input
+                                type="checkbox"
+                                checked={item.selected}
+                                aria-label={`Select ${item.name}`}
+                                onChange={(event) =>
+                                    router.post(
+                                        '/cart/select',
+                                        {
+                                            item_key: String(item.id),
+                                            selected:
+                                                event.currentTarget.checked,
+                                        },
+                                        { preserveScroll: true },
+                                    )
+                                }
+                                className="size-4 accent-[#800020]"
+                            />
+                            Select
+                        </label>
                         <Link
                             href={item.href}
                             className="text-sm font-medium text-neutral-900 hover:text-[#800020]"
@@ -194,6 +222,19 @@ function CartLines({
                     <span className="text-sm font-semibold text-neutral-900">
                         {item.price}
                     </span>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            router.delete('/cart/remove', {
+                                data: { item_key: String(item.id) },
+                                preserveScroll: true,
+                            })
+                        }
+                        aria-label={`Remove ${item.name}`}
+                        className="ml-1 self-start rounded p-1 text-neutral-500 hover:bg-red-50 hover:text-red-700"
+                    >
+                        <Trash2 className="size-4" />
+                    </button>
                 </li>
             ))}
         </ul>

@@ -91,7 +91,7 @@ class OrderResource extends Resource
                             ->send();
                     }),
                 Actions\Action::make('confirmForCustomer')
-                    ->label('替客户确认')
+                    ->label('替客户确认文件')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn (Order $record): bool => $record->payment_status === 'paid'
