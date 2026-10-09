@@ -362,7 +362,7 @@ final class FlyersAndBrochuresProductCatalog
         $options['folding'] = [
             'label' => 'Folding',
             'type' => 'select',
-            'required' => true,
+            'required' => false,
             'default' => $definition['foldings'][0],
             'values' => self::foldingValues($definition['foldings']),
         ];

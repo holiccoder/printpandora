@@ -733,13 +733,13 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
 
     return (
         <div
-            className="mx-auto grid max-w-7xl grid-cols-12 gap-6 px-6 py-6"
+            className="mx-auto grid max-w-7xl grid-cols-12 gap-x-3 gap-y-6 px-6 py-6 lg:grid-cols-[max-content_minmax(0,1fr)_minmax(0,2fr)]"
             // Closing the sub-flyout when the cursor leaves the whole panel
             // gives a much smoother feel than relying on per-row leave events.
             onMouseLeave={() => setHoveredLink(null)}
         >
             {/* Left: link groups */}
-            <ul className="col-span-12 space-y-2 md:col-span-3">
+            <ul className="col-span-12 w-fit space-y-2 md:col-span-3 lg:col-span-1">
                 {mega.groups.map((group, gi) => (
                     <li key={gi}>
                         <ul className="space-y-1">
@@ -748,7 +748,7 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                                 const isActive =
                                     hoveredLink?.label === link.label;
                                 const linkClassName = cn(
-                                    'group flex items-center justify-between rounded-sm py-1 text-sm text-neutral-700 hover:text-[#800020]',
+                                    'group flex w-full items-center justify-between gap-1 rounded-sm py-1 text-sm text-neutral-700 hover:text-[#800020]',
                                     isActive && 'text-[#800020]',
                                 );
                                 const linkContent = (
@@ -805,7 +805,7 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
 
             {/* Middle: third-level vertical flyout. Reserve the slot even
                 when nothing is hovered so the right-hand promos don't shift. */}
-            <div className="col-span-12 md:col-span-3">
+            <div className="col-span-12 md:col-span-3 lg:col-span-1">
                 {activeSub && (
                     <div className="rounded-md border border-neutral-200 bg-white p-4">
                         <ul className="space-y-1">
@@ -825,7 +825,7 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
             </div>
 
             {/* Right: compact promo cards */}
-            <div className="col-span-12 md:col-span-6">
+            <div className="col-span-12 md:col-span-6 lg:col-span-1">
                 <div className="flex h-full items-start justify-end">
                     {visiblePromos.map((promo) => (
                         <div

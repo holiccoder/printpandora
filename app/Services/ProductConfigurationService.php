@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Support\BusinessCardOptionCatalog;
 use App\Support\CardsAndPostcardsProductImageCatalog;
 use App\Support\ClassicSpecialBusinessCardTexture;
+use App\Support\FlyersAndBrochuresProductCatalog;
 use App\Support\HardcodedContent;
 use App\Support\PostcardProductCatalog;
 use App\Support\SolidQualityBusinessCardGallery;
@@ -25,6 +26,26 @@ use Illuminate\Validation\ValidationException;
  */
 class ProductConfigurationService
 {
+    /**
+     * Match the existing per-card foil markup and discount schedule used by
+     * other business-card products until cotton-specific pricing is supplied.
+     *
+     * @var array<string, int|float>
+     */
+    private const COTTON_HOT_FOIL_QUANTITY_DISCOUNTS = [
+        '100' => 50,
+        '200' => 75,
+        '500' => 77.5,
+        '1000' => 80,
+        '2000' => 80,
+        '3000' => 82.5,
+        '4000' => 82.5,
+        '5000' => 85,
+        '10000' => 85,
+    ];
+
+    private const COTTON_HOT_FOIL_MARKUP_PER_CARD = 0.4;
+
     public function __construct(
         private HardcodedContent $content,
         private ProductImageResolver $imageResolver,
@@ -1180,6 +1201,114 @@ class ProductConfigurationService
         }, $pricing['processes']));
 
         return $pricing;
+    }
+
+    /**
+     * Cotton product configs expose hot-foil choices but their pricing
+     * payloads have no foil process. Add the shared foil price to every
+     * scenario and pricing rule so the storefront and cart use the same rate.
+     *
+     * @param  array<string, mixed>  $pricing
+     * @return array<string, mixed>
+     */
+    private function withCottonHotFoilPricing(array $pricing): array
+    {
+        foreach (['scenarios', 'pricing_data'] as $key) {
+            if (! is_array($pricing[$key] ?? null)) {
+                continue;
+            }
+
+            foreach ($pricing[$key] as &$scenario) {
+                if (! is_array($scenario)) {
+                    continue;
+                }
+
+                $dynamicShape = array_key_exists('basePrice', $scenario)
+                    || array_key_exists('startQuantity', $scenario);
+                $scenario['processes'] = $this->appendCottonHotFoilProcess(
+                    is_array($scenario['processes'] ?? null)
+                        ? $scenario['processes']
+                        : [],
+                    $dynamicShape ? 'dynamic' : 'scenario',
+                );
+            }
+            unset($scenario);
+        }
+
+        if (is_array($pricing['rules'] ?? null)) {
+            foreach ($pricing['rules'] as &$rule) {
+                if (! is_array($rule) || ! is_array($rule['pricing'] ?? null)) {
+                    continue;
+                }
+
+                $rule['pricing']['processes'] = $this->appendCottonHotFoilProcess(
+                    is_array($rule['pricing']['processes'] ?? null)
+                        ? $rule['pricing']['processes']
+                        : [],
+                    'canonical',
+                );
+            }
+            unset($rule);
+        }
+
+        if (is_array($pricing['processes'] ?? null)) {
+            $pricing['processes'] = $this->appendCottonHotFoilProcess(
+                $pricing['processes'],
+                'canonical',
+            );
+        }
+
+        return $pricing;
+    }
+
+    /**
+     * @param  array<int, mixed>  $processes
+     * @return array<int, mixed>
+     */
+    private function appendCottonHotFoilProcess(array $processes, string $shape): array
+    {
+        foreach ($processes as $process) {
+            if (! is_array($process)) {
+                continue;
+            }
+
+            $code = $this->normalizedRuleValue($process['code'] ?? '');
+            $name = $this->normalizedRuleValue($process['name'] ?? $process['label'] ?? '');
+            $isColdFoil = str_contains($code, 'cold') || str_contains($name, 'cold');
+            $isFoilPricing = in_array($code, ['foil', 'special_finish'], true)
+                || str_contains($code, 'foil')
+                || str_contains($name, 'foil');
+
+            if (
+                $isFoilPricing
+                && ! $isColdFoil
+            ) {
+                return array_values($processes);
+            }
+        }
+
+        $processes[] = match ($shape) {
+            'scenario' => [
+                'code' => 'hot_foil',
+                'label' => 'Hot Foil',
+                'markup_per_card' => self::COTTON_HOT_FOIL_MARKUP_PER_CARD,
+                'quantity_discounts_percent' => self::COTTON_HOT_FOIL_QUANTITY_DISCOUNTS,
+            ],
+            'dynamic' => [
+                'name' => 'Hot Foil',
+                'code' => 'hot_foil',
+                'markup' => self::COTTON_HOT_FOIL_MARKUP_PER_CARD,
+                'rates' => self::COTTON_HOT_FOIL_QUANTITY_DISCOUNTS,
+            ],
+            default => [
+                'name' => 'Hot Foil',
+                'code' => 'hot_foil',
+                'markup' => self::COTTON_HOT_FOIL_MARKUP_PER_CARD,
+                'rates' => self::COTTON_HOT_FOIL_QUANTITY_DISCOUNTS,
+            ],
+        };
+
+        return array_values($processes);
     }
 
     private function normalizedRuleValue(mixed $value): string
@@ -2384,6 +2513,18 @@ class ProductConfigurationService
         $config['options'] = BusinessCardOptionCatalog::normalizeHotFoilOptions(
             $config['options'],
         );
+
+        $foldingGroup = $config['options']['folding'] ?? null;
+
+        if (
+            FlyersAndBrochuresProductCatalog::isFlyerProduct((string) $product->slug)
+            && is_array($foldingGroup)
+            && is_array($foldingGroup['values'] ?? null)
+        ) {
+            $foldingGroup['required'] = false;
+            $config['options']['folding'] = $foldingGroup;
+        }
+
         $config['media'] = is_array($config['media'] ?? null) ? $config['media'] : [];
         $config['media']['gallery'] = is_array($config['media']['gallery'] ?? null)
             ? array_values($config['media']['gallery'])
@@ -2418,6 +2559,11 @@ class ProductConfigurationService
         $config['pricing']['rules'] = $this->normalizeUvOptionRules(
             is_array($config['pricing']['rules'] ?? null) ? $config['pricing']['rules'] : [],
         );
+
+        if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {
+            $config['pricing'] = $this->withCottonHotFoilPricing($config['pricing']);
+        }
+
         $config['faq'] = is_array($config['faq'] ?? null) ? array_values($config['faq']) : [];
         $config['detail_sections'] = is_array($config['detail_sections'] ?? null)
             ? $config['detail_sections']

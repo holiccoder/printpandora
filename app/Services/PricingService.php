@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\DesignServiceRequest;
 use App\Models\Product;
 use App\Support\BusinessCardOptionCatalog;
+use App\Support\SolidQualityBusinessCardGallery;
 use App\Support\StickerProductCatalog;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -70,6 +71,23 @@ class PricingService
 
         if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {
             $options = $this->validateCottonOptions($options, $config);
+        }
+
+        if ((string) $product->slug === SolidQualityBusinessCardGallery::PRODUCT_SLUG) {
+            $paperFinishGroup = data_get($config, 'options.paper_finish', []);
+            $paperFinishGroup = is_array($paperFinishGroup) ? $paperFinishGroup : [];
+            $paperFinish = $this->resolveAllowedOptionCodes(
+                $this->submittedOptionValues($options['paper_finish'] ?? null),
+                $this->allowedOptionCodes($paperFinishGroup),
+            );
+
+            if (count($paperFinish) !== 1) {
+                throw ValidationException::withMessages([
+                    'options.paper_finish' => 'Select a valid paper finish.',
+                ]);
+            }
+
+            $options['paper_finish'] = $paperFinish[0];
         }
 
         $size = $options['sizes'] ?? null;

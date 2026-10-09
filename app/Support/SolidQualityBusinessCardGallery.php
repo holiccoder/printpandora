@@ -425,6 +425,7 @@ final class SolidQualityBusinessCardGallery
         unset($value);
 
         if ($isCanonicalGroup) {
+            $options['paper_finish']['required'] = true;
             $options['paper_finish']['values'] = array_values($values);
         } else {
             $options['paper_finish'] = array_values($values);
