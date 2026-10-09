@@ -1767,6 +1767,8 @@ export default function ShopShow({
 
     const quantityTiers = useMemo(() => {
         if (hasDynamicPricing) {
+            const pricingOptions = { ...selectedOptions };
+            delete pricingOptions.design_quantity;
             const sizeIndex = sizes.findIndex(
                 (s: any) =>
                     s.id ===
@@ -1792,9 +1794,9 @@ export default function ShopShow({
                     Math.max(0, finishIndex),
                     Math.max(0, cornersIndex),
                     Math.max(0, specialIndex),
-                    selectedOptions,
+                    pricingOptions,
                     foilSidesForSelection(
-                        selectedOptions,
+                        pricingOptions,
                         selectedSpecialFinishSides,
                     ),
                 ),
@@ -3087,13 +3089,9 @@ export default function ShopShow({
                                                         !!t.recommended;
                                                     const active =
                                                         selectedQty === t.qty;
-                                                    const now =
-                                                        t.currentPrice *
-                                                        normalizedDesignQuantity;
+                                                    const now = t.currentPrice;
                                                     const bracketPrice =
-                                                        t.qty *
-                                                        baseUnitPrice *
-                                                        normalizedDesignQuantity;
+                                                        t.qty * baseUnitPrice;
 
                                                     return (
                                                         <tr
@@ -3281,6 +3279,16 @@ export default function ShopShow({
                                                     text={String(selectedQty)}
                                                 />
                                             </dd>
+                                            <dt className="text-neutral-500">
+                                                Design quantity
+                                            </dt>
+                                            <dd className="text-right font-medium">
+                                                <LiveText
+                                                    text={String(
+                                                        normalizedDesignQuantity,
+                                                    )}
+                                                />
+                                            </dd>
                                             {selectedDesignService && (
                                                 <>
                                                     <dt className="order-10 text-neutral-500">
@@ -3318,6 +3326,16 @@ export default function ShopShow({
                                             <dd className="order-9 text-right font-medium">
                                                 <LiveText
                                                     text={String(selectedQty)}
+                                                />
+                                            </dd>
+                                            <dt className="order-8 text-neutral-500">
+                                                Design quantity
+                                            </dt>
+                                            <dd className="order-8 text-right font-medium">
+                                                <LiveText
+                                                    text={String(
+                                                        normalizedDesignQuantity,
+                                                    )}
                                                 />
                                             </dd>
                                             {cornersList.length > 0 && (
