@@ -22,6 +22,14 @@ class OrderNotificationText
      */
     public static function statusChanged(int|string $orderId, string $status, ?string $previousStatus): array
     {
+        if ($previousStatus === Order::STATUS_PENDING_REVIEW
+            && $status === Order::STATUS_PENDING_CONFIRMATION) {
+            return [
+                'title' => "Order #{$orderId} files are ready for confirmation",
+                'body' => 'We reviewed the files for your order. Please review and confirm them to continue production.',
+            ];
+        }
+
         $currentLabel = self::statusLabel($status);
         $previousLabel = $previousStatus !== null ? self::statusLabel($previousStatus) : null;
 

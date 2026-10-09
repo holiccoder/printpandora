@@ -55,6 +55,7 @@ interface DesignServiceFormProps {
     productName?: string;
     productSlug?: string;
     productTypeLabel?: string;
+    expectedDesignQuantity?: number;
     hideDesignBriefFields?: boolean;
     deferUpload?: boolean;
     onDeferredSubmit?: (
@@ -101,6 +102,7 @@ export default function DesignServiceForm({
     productName,
     productSlug,
     productTypeLabel,
+    expectedDesignQuantity = 1,
     hideDesignBriefFields = false,
     deferUpload = false,
     onDeferredSubmit,
@@ -113,6 +115,10 @@ export default function DesignServiceForm({
     const uploadContent = useContent('upload_files_modal');
     const requiresDesignFile =
         submissionTarget === 'product-design' && productDesignMode === 'upload';
+    const showsDesignFile =
+        submissionTarget === 'product-design' &&
+        (productDesignMode === 'upload' ||
+            productDesignMode === 'design-for-you');
     const allowsMultipleUploads = submissionTarget === 'product-design';
     const designFileHelp = allowsMultipleUploads
         ? 'One or more files, up to 75 MB each.'
@@ -198,6 +204,11 @@ export default function DesignServiceForm({
 
     const designServiceCode =
         controlledDesignServiceCode ?? data.design_service_code;
+    const selectedDesignFiles = filesFromUpload(data.design_file);
+    const shouldShowDesignFileWarning =
+        selectedDesignFiles.length > 1 ||
+        (selectedDesignFiles.length > 0 &&
+            selectedDesignFiles.length !== expectedDesignQuantity);
 
     const setDesignServiceCode = (code: string) => {
         if (onDesignServiceCodeChange) {
@@ -452,7 +463,7 @@ export default function DesignServiceForm({
                 </FormRow>
             )}
 
-            {requiresDesignFile && (
+            {showsDesignFile && (
                 <FormRow
                     label={uploadContent.file_input_label}
                     error={
@@ -462,14 +473,23 @@ export default function DesignServiceForm({
                     }
                 >
                     <div className="space-y-2">
+                        {shouldShowDesignFileWarning && (
+                            <p role="alert" className="text-sm text-red-600">
+                                You selected {selectedDesignFiles.length}{' '}
+                                design files. Please make sure the file count
+                                matches the {expectedDesignQuantity} item
+                                {expectedDesignQuantity === 1 ? '' : 's'} you
+                                want to print.
+                            </p>
+                        )}
                         <UploadButton
                             inputRef={designInputRef}
                             onChange={handleDesignFileChange}
                             accept={DESIGN_FILE_ACCEPT}
                             multiple={allowsMultipleUploads}
-                            required
+                            required={requiresDesignFile}
                             large
-                            selectedFiles={filesFromUpload(data.design_file)}
+                            selectedFiles={selectedDesignFiles}
                         />
                         <p className="text-xs text-neutral-500">
                             {designFileHelp}

@@ -3549,6 +3549,7 @@ export default function ShopShow({
                             productId={product.id}
                             productName={product.name}
                             productSlug={product.slug}
+                            expectedDesignQuantity={normalizedDesignQuantity}
                             hideDesignBriefFields
                             deferUpload
                             onDeferredSubmit={savePendingProductDesign}
@@ -3570,6 +3571,7 @@ export default function ShopShow({
                             productId={product.id}
                             productName={product.name}
                             productSlug={product.slug}
+                            expectedDesignQuantity={normalizedDesignQuantity}
                             deferUpload
                             onDeferredSubmit={savePendingProductDesign}
                             designServices={designServicesConfig?.options}

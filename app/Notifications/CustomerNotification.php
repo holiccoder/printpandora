@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class CustomerNotification extends Notification
@@ -18,6 +19,7 @@ class CustomerNotification extends Notification
         public readonly string $title,
         public readonly string $body,
         public readonly ?string $actionUrl = null,
+        public readonly bool $sendEmail = false,
         public readonly array $meta = [],
     ) {}
 
@@ -26,7 +28,21 @@ class CustomerNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return $this->sendEmail ? ['database', 'mail'] : ['database'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $message = (new MailMessage)
+            ->subject($this->title)
+            ->greeting('Hello,')
+            ->line($this->body);
+
+        if ($this->actionUrl) {
+            $message->action('View order details', $this->actionUrl);
+        }
+
+        return $message;
     }
 
     /**

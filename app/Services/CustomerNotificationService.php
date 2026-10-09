@@ -41,12 +41,15 @@ class CustomerNotificationService
         }
 
         $text = OrderNotificationText::statusChanged($order->id, $order->status, $previousStatus);
+        $filesAwaitingCustomerConfirmation = $previousStatus === Order::STATUS_PENDING_REVIEW
+            && $order->status === Order::STATUS_PENDING_CONFIRMATION;
 
         $user->notify(new CustomerNotification(
             category: CustomerNotification::CATEGORY_SYSTEM,
             title: $text['title'],
             body: $text['body'],
             actionUrl: route('dashboard.orders.show', $order->id),
+            sendEmail: $filesAwaitingCustomerConfirmation,
             meta: [
                 'event' => 'order_status_changed',
                 'order_id' => $order->id,

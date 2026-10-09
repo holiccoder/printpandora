@@ -37,6 +37,7 @@ interface DesignServiceFormModalProps {
     productName?: string;
     productSlug?: string;
     productTypeLabel?: string;
+    expectedDesignQuantity?: number;
     uploadFilesMode?: boolean;
     hideDesignBriefFields?: boolean;
     deferUpload?: boolean;
@@ -66,6 +67,7 @@ export default function DesignServiceFormModal({
     productName,
     productSlug,
     productTypeLabel,
+    expectedDesignQuantity,
     uploadFilesMode = false,
     hideDesignBriefFields = false,
     deferUpload = false,
@@ -219,6 +221,7 @@ export default function DesignServiceFormModal({
                                 productName={productName}
                                 productSlug={productSlug}
                                 productTypeLabel={productTypeLabel}
+                                expectedDesignQuantity={expectedDesignQuantity}
                                 hideDesignBriefFields={hideDesignBriefFields}
                                 deferUpload={deferUpload}
                                 onDeferredSubmit={onDeferredSubmit}

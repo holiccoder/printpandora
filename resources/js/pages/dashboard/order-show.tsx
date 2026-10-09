@@ -142,6 +142,16 @@ export default function DashboardOrderShow({ order }: Props) {
                         </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
+                        {order.status === 'pending_confirmation' && (
+                            <button
+                                type="button"
+                                onClick={() => setFilesOpen(true)}
+                                className="inline-flex items-center gap-1.5 rounded-md bg-[#800020] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#650019]"
+                            >
+                                <Check className="size-4" />
+                                {c.file_downloads_modal.confirm ?? 'Confirm files'}
+                            </button>
+                        )}
                         <StatusPill status={order.status} />
                         {order.invoice_url && (
                             <a
