@@ -833,6 +833,8 @@ export default function ShopShow({
     const isBusinessCardProduct =
         product.slug.includes('business-card') ||
         product.category?.slug.includes('business-card');
+    const isClassicStandardBusinessCard =
+        product.slug === 'classic-standard-business-cards';
     const isStickerProduct = isStickerProductSlug(product.slug);
     const isPostcardProduct =
         product.category?.slug === 'cards-and-postcards' ||
@@ -2401,7 +2403,14 @@ export default function ShopShow({
                             <img
                                 src={activeImage}
                                 alt={product.name}
-                                className="h-full w-full transform object-contain transition-transform duration-500 hover:scale-[1.02]"
+                                className={`h-full w-full transform transition-transform duration-500 hover:scale-[1.02] ${
+                                    isClassicStandardBusinessCard &&
+                                    activeImage.includes(
+                                        '/classic-standard-business-cards-default-',
+                                    )
+                                        ? 'object-cover'
+                                        : 'object-contain'
+                                }`}
                             />
                         </div>
                         <div className="mt-3 grid grid-cols-4 gap-2">
@@ -2419,7 +2428,14 @@ export default function ShopShow({
                                     <img
                                         src={src}
                                         alt=""
-                                        className="h-full w-full bg-neutral-100 object-contain"
+                                        className={`h-full w-full bg-neutral-100 ${
+                                            isClassicStandardBusinessCard &&
+                                            src.includes(
+                                                '/classic-standard-business-cards-default-',
+                                            )
+                                                ? 'object-cover'
+                                                : 'object-contain'
+                                        }`}
                                     />
                                 </button>
                             ))}

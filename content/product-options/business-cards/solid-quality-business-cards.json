@@ -1377,137 +1377,6 @@
             "swatch_image": "/images/product-options/business-cards/swatches/cold/blue-gold.png"
         }
     ],
-    "print_code": [
-        {
-            "name": "need print code",
-            "code": "need_print_code",
-            "description": "no need to print codes",
-            "swatch_image": "/images/product-options/business-cards/swatches/pvc-print-code.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
-    "drill": [
-        {
-            "name": "needs drilling",
-            "code": "needs_drilling",
-            "swatch_image": "/images/product-options/business-cards/swatches/drilling/needs-drilling.png",
-            "added_price": [
-                {
-                    "pack_size": 50,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 100,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 800,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1200,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1400,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 1600,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 2000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 3000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 4000,
-                    "price_per_card": 0
-                },
-                {
-                    "pack_size": 5000,
-                    "price_per_card": 0
-                }
-            ]
-        }
-    ],
     "quantity_price_table": [
         {
             "quantity": "50",
@@ -1699,7 +1568,7 @@
                 "uv_finish": "single_side_uv"
             },
             "images": [
-                "/images/products/classic-solid/user-3d-uv.png"
+                "/images/products/solid-quality-business-cards/3d-uv.png"
             ]
         },
         {
@@ -1708,7 +1577,7 @@
                 "uv_finish": "both_sides_uv"
             },
             "images": [
-                "/images/products/classic-solid/user-3d-uv.png"
+                "/images/products/solid-quality-business-cards/3d-uv.png"
             ]
         },
         {

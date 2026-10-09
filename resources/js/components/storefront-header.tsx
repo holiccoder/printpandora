@@ -625,7 +625,7 @@ function CompactDropdown({
                                                 hasChildren ? isOpen : undefined
                                             }
                                             className={cn(
-                                                'flex items-center justify-between rounded-sm px-3 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-[#800020]',
+                                                'flex items-center justify-between rounded-sm px-3 py-2 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-[#800020]',
                                                 isOpen &&
                                                     'bg-neutral-50 text-[#800020]',
                                             )}
@@ -690,7 +690,7 @@ function CompactDropdown({
                             <li key={link.label}>
                                 <Link
                                     href={link.href}
-                                    className="flex items-center justify-between rounded-sm px-3 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-[#800020]"
+                                    className="flex items-center justify-between rounded-sm px-3 py-2 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50 hover:text-[#800020]"
                                 >
                                     <span>{link.label}</span>
                                     {link.children?.length ? (
@@ -748,7 +748,7 @@ function MegaPanel({ mega }: { mega: MegaMenu }) {
                                 const isActive =
                                     hoveredLink?.label === link.label;
                                 const linkClassName = cn(
-                                    'group flex w-full items-center justify-between gap-1 rounded-sm py-1 text-sm text-neutral-700 hover:text-[#800020]',
+                                    'group flex w-full items-center justify-between gap-1 rounded-sm py-1 text-sm font-semibold text-neutral-700 hover:text-[#800020]',
                                     isActive && 'text-[#800020]',
                                 );
                                 const linkContent = (
