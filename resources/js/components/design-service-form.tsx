@@ -31,6 +31,7 @@ export type { ProductDesignMode };
 
 const DESIGN_FILE_ACCEPT = '.ai,.eps,.pdf,.jpg,.jpeg,.png,.psd,.svg,.tiff';
 const MAX_DESIGN_FILE_BYTES = 75 * 1024 * 1024;
+const MAX_REFERENCE_FILE_BYTES = 20 * 1024 * 1024;
 
 interface DesignServiceFormProps {
     productOptions?: string[];
@@ -120,11 +121,19 @@ export default function DesignServiceForm({
         (productDesignMode === 'upload' ||
             productDesignMode === 'design-for-you');
     const allowsMultipleUploads = submissionTarget === 'product-design';
+    const maxDesignFileBytes =
+        productDesignMode === 'design-for-you'
+            ? MAX_REFERENCE_FILE_BYTES
+            : MAX_DESIGN_FILE_BYTES;
+    const designFileAccept =
+        productDesignMode === 'design-for-you'
+            ? '.ai,.eps,.pdf,.jpg,.jpeg,.png,.psd,.svg'
+            : DESIGN_FILE_ACCEPT;
     const designFileHelp = allowsMultipleUploads
-        ? 'One or more files, up to 75 MB each.'
+        ? `One or more files, up to ${Math.round(maxDesignFileBytes / 1024 / 1024)} MB each.`
         : uploadContent.file_input_help;
     const designFileErrorMessage = allowsMultipleUploads
-        ? 'Please select at least one file up to 75 MB each.'
+        ? `Please select at least one file up to ${Math.round(maxDesignFileBytes / 1024 / 1024)} MB each.`
         : uploadContent.file_input_error;
     const [designServiceError, setDesignServiceError] = useState<string | null>(
         null,
@@ -181,7 +190,7 @@ export default function DesignServiceForm({
     ) => {
         const files = Array.from(event.target.files ?? []);
 
-        if (files.some((file) => file.size > MAX_DESIGN_FILE_BYTES)) {
+        if (files.some((file) => file.size > maxDesignFileBytes)) {
             setData('design_file', allowsMultipleUploads ? [] : null);
             setDesignFileError(designFileErrorMessage);
             event.target.value = '';
@@ -485,7 +494,7 @@ export default function DesignServiceForm({
                         <UploadButton
                             inputRef={designInputRef}
                             onChange={handleDesignFileChange}
-                            accept={DESIGN_FILE_ACCEPT}
+                            accept={designFileAccept}
                             multiple={allowsMultipleUploads}
                             required={requiresDesignFile}
                             large
