@@ -69,7 +69,7 @@
         @include('filament.pages.order-files-table', [
             'files' => $confirmedFiles,
             'deleteAction' => null,
-            'showUploader' => false,
+            'showUploader' => true,
             'empty' => '暂无已确认的文件。',
         ])
     </section>
