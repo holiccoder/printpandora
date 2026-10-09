@@ -2343,14 +2343,6 @@ export default function ShopShow({
         submitAddToCart();
     };
 
-    const buyNow = () => {
-        if (!requireSubmittedDesign()) {
-            return;
-        }
-
-        submitAddToCart(true);
-    };
-
     const confirmAddToCart = () => {
         submitAddToCart(true);
     };
@@ -3628,7 +3620,7 @@ export default function ShopShow({
                             onConfirm={confirmCustomSize}
                         />
 
-                        <div className="mt-6 grid grid-cols-2 gap-3">
+                        <div className="mt-6">
                             <Button
                                 onClick={addToCart}
                                 aria-describedby={
@@ -3655,17 +3647,6 @@ export default function ShopShow({
                                 ) : (
                                     'Select options'
                                 )}
-                            </Button>
-                            <Button
-                                onClick={buyNow}
-                                disabled={
-                                    isSubmittingCart || !hasSelection || !tier
-                                }
-                                className="h-12 w-full text-base font-semibold"
-                            >
-                                {isSubmittingCart
-                                    ? 'Continuing…'
-                                    : 'Buy now'}
                             </Button>
                         </div>
                     </div>

@@ -1118,10 +1118,12 @@ class BusinessCardProductOptionsTest extends TestCase
 
         $product->refresh();
         $config = $product->product_config;
-        $textureCodes = array_map(
-            fn (int $number): string => "inkpavo_j{$number}",
-            range(1, 8),
-        );
+        $textureCodes = [
+            'j1_water_ripple_paper',
+            'j2_cloth_texture_paper',
+            'j5_pearlescent_paper',
+            'j8_pinhole_paper',
+        ];
         $defaultGallery = [
             '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-01.png',
             '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-02.png',
@@ -1172,14 +1174,18 @@ class BusinessCardProductOptionsTest extends TestCase
         $this->assertSame('Keep this design spec', data_get($config, 'detail_sections.design_specifications.heading'));
 
         $rules = data_get($config, 'media.gallery_rules');
-        $this->assertCount(21, $rules);
+        $this->assertCount(29, $rules);
         $this->assertSame(
-            ['sizes' => 'standard', 'texture' => 'inkpavo_j4'],
-            data_get($rules, '4.match'),
+            [
+                'sizes' => 'standard',
+                'corners' => 'square',
+                'texture' => 'j5_pearlescent_paper',
+            ],
+            data_get($rules, '5.match'),
         );
         $this->assertSame(
-            '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j4.png',
-            data_get($rules, '4.primary'),
+            '/images/products/super-business-cards/super-business-cards-standard-j5-pearlescent-paper.png',
+            data_get($rules, '5.primary'),
         );
     }
 
@@ -1228,11 +1234,24 @@ class BusinessCardProductOptionsTest extends TestCase
             array_column(data_get($options, 'option_groups.0.values', []), 'code'),
         );
         $this->assertSame(
-            ['inkpavo_j1', 'inkpavo_j2', 'inkpavo_j3', 'inkpavo_j4', 'inkpavo_j5', 'inkpavo_j6', 'inkpavo_j7', 'inkpavo_j8'],
+            [
+                'j1_water_ripple_paper',
+                'j2_cloth_texture_paper',
+                'j5_pearlescent_paper',
+                'j8_pinhole_paper',
+            ],
             array_column(data_get($options, 'option_groups.2.values', []), 'code'),
         );
         $this->assertSame(
-            '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j6.webp',
+            'J1 Water Ripple Paper',
+            data_get($options, 'option_groups.2.values.0.name'),
+        );
+        $this->assertSame(
+            '/images/products/super-business-cards/texture/j1-water-ripple-paper.webp',
+            data_get($options, 'option_groups.2.values.0.swatch_image'),
+        );
+        $this->assertSame(
+            '/images/products/super-business-cards/super-business-cards-rounded-j5-pearlescent-paper.webp',
             data_get($options, 'galleries.7.images.0'),
         );
     }

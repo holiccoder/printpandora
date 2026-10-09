@@ -1071,84 +1071,196 @@
       ]
     },
     {
-      "id": "inkpavo_j1",
+      "id": "j1_water_ripple_paper_square",
       "match": {
         "sizes": "standard",
-        "texture": "inkpavo_j1"
+        "corners": "square",
+        "texture": "j1_water_ripple_paper"
       },
       "images": [
-        "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j1.png"
-      ]
+        "/images/products/super-business-cards/super-business-cards-standard-j1-water-ripple-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-standard-j1-water-ripple-paper.png"
     },
     {
-      "id": "inkpavo_j2",
+      "id": "j1_water_ripple_paper_rounded",
       "match": {
         "sizes": "standard",
-        "texture": "inkpavo_j2"
+        "corners": "rounded",
+        "texture": "j1_water_ripple_paper"
       },
       "images": [
-        "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j2.png"
-      ]
+        "/images/products/super-business-cards/super-business-cards-rounded-j1-water-ripple-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-rounded-j1-water-ripple-paper.png"
     },
     {
-      "id": "inkpavo_j3",
+      "id": "j2_cloth_texture_paper_square",
       "match": {
         "sizes": "standard",
-        "texture": "inkpavo_j3"
+        "corners": "square",
+        "texture": "j2_cloth_texture_paper"
       },
       "images": [
-        "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j3.png"
-      ]
+        "/images/products/super-business-cards/super-business-cards-standard-j2-cloth-texture-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-standard-j2-cloth-texture-paper.png"
     },
     {
-      "id": "inkpavo_j4",
+      "id": "j2_cloth_texture_paper_rounded",
       "match": {
         "sizes": "standard",
-        "texture": "inkpavo_j4"
+        "corners": "rounded",
+        "texture": "j2_cloth_texture_paper"
       },
       "images": [
-        "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j4.png"
-      ]
+        "/images/products/super-business-cards/super-business-cards-rounded-j2-cloth-texture-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-rounded-j2-cloth-texture-paper.png"
     },
     {
-      "id": "inkpavo_j5",
+      "id": "j5_pearlescent_paper_square",
       "match": {
         "sizes": "standard",
-        "texture": "inkpavo_j5"
+        "corners": "square",
+        "texture": "j5_pearlescent_paper"
       },
       "images": [
-        "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j5.png"
-      ]
+        "/images/products/super-business-cards/super-business-cards-standard-j5-pearlescent-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-standard-j5-pearlescent-paper.png"
     },
     {
-      "id": "inkpavo_j6",
+      "id": "j5_pearlescent_paper_rounded",
       "match": {
         "sizes": "standard",
-        "texture": "inkpavo_j6"
+        "corners": "rounded",
+        "texture": "j5_pearlescent_paper"
       },
       "images": [
-        "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j6.png"
-      ]
+        "/images/products/super-business-cards/super-business-cards-rounded-j5-pearlescent-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-rounded-j5-pearlescent-paper.png"
     },
     {
-      "id": "inkpavo_j7",
+      "id": "j8_pinhole_paper_square",
       "match": {
         "sizes": "standard",
-        "texture": "inkpavo_j7"
+        "corners": "square",
+        "texture": "j8_pinhole_paper"
       },
       "images": [
-        "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j7.png"
-      ]
+        "/images/products/super-business-cards/super-business-cards-standard-j8-pinhole-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-standard-j8-pinhole-paper.png"
     },
     {
-      "id": "inkpavo_j8",
+      "id": "j8_pinhole_paper_rounded",
       "match": {
         "sizes": "standard",
-        "texture": "inkpavo_j8"
+        "corners": "rounded",
+        "texture": "j8_pinhole_paper"
       },
       "images": [
-        "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j8.png"
-      ]
+        "/images/products/super-business-cards/super-business-cards-rounded-j8-pinhole-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-rounded-j8-pinhole-paper.png"
+    },
+    {
+      "id": "j1_water_ripple_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j1_water_ripple_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j1-water-ripple-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-square-j1-water-ripple-paper.png"
+    },
+    {
+      "id": "j1_water_ripple_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j1_water_ripple_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j1-water-ripple-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-square-rounded-j1-water-ripple-paper.png"
+    },
+    {
+      "id": "j2_cloth_texture_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j2_cloth_texture_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j2-cloth-texture-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-square-j2-cloth-texture-paper.png"
+    },
+    {
+      "id": "j2_cloth_texture_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j2_cloth_texture_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j2-cloth-texture-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-square-rounded-j2-cloth-texture-paper.png"
+    },
+    {
+      "id": "j5_pearlescent_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j5_pearlescent_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j5-pearlescent-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-square-j5-pearlescent-paper.png"
+    },
+    {
+      "id": "j5_pearlescent_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j5_pearlescent_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j5-pearlescent-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-square-rounded-j5-pearlescent-paper.png"
+    },
+    {
+      "id": "j8_pinhole_paper_square_size_square",
+      "match": {
+        "sizes": "square",
+        "corners": "square",
+        "texture": "j8_pinhole_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-j8-pinhole-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-square-j8-pinhole-paper.png"
+    },
+    {
+      "id": "j8_pinhole_paper_square_size_rounded",
+      "match": {
+        "sizes": "square",
+        "corners": "rounded",
+        "texture": "j8_pinhole_paper"
+      },
+      "images": [
+        "/images/products/super-business-cards/super-business-cards-square-rounded-j8-pinhole-paper.png"
+      ],
+      "primary": "/images/products/super-business-cards/super-business-cards-square-rounded-j8-pinhole-paper.png"
     }
   ],
   "detail_sections": {
@@ -1341,10 +1453,10 @@
   },
   "texture": [
     {
-      "name": "InkPavo-J1",
-      "code": "inkpavo_j1",
-      "description": "InkPavo-J1 texture.",
-      "swatch_image": "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j1.png",
+      "name": "J1 Water Ripple Paper",
+      "code": "j1_water_ripple_paper",
+      "description": "J1 Water Ripple Paper.",
+      "swatch_image": "/images/products/super-business-cards/texture/j1-water-ripple-paper.png",
       "added_price": [
         {
           "pack_size": 50,
@@ -1405,10 +1517,10 @@
       ]
     },
     {
-      "name": "InkPavo-J2",
-      "code": "inkpavo_j2",
-      "description": "InkPavo-J2 texture.",
-      "swatch_image": "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j2.png",
+      "name": "J2 Cloth Texture Paper",
+      "code": "j2_cloth_texture_paper",
+      "description": "J2 Cloth Texture Paper.",
+      "swatch_image": "/images/products/super-business-cards/texture/j2-cloth-texture-paper.png",
       "added_price": [
         {
           "pack_size": 50,
@@ -1469,10 +1581,10 @@
       ]
     },
     {
-      "name": "InkPavo-J3",
-      "code": "inkpavo_j3",
-      "description": "InkPavo-J3 texture.",
-      "swatch_image": "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j3.png",
+      "name": "J5 Pearlescent Paper",
+      "code": "j5_pearlescent_paper",
+      "description": "J5 Pearlescent Paper.",
+      "swatch_image": "/images/products/super-business-cards/texture/j5-pearlescent-paper.png",
       "added_price": [
         {
           "pack_size": 50,
@@ -1533,266 +1645,10 @@
       ]
     },
     {
-      "name": "InkPavo-J4",
-      "code": "inkpavo_j4",
-      "description": "InkPavo-J4 texture.",
-      "swatch_image": "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j4.png",
-      "added_price": [
-        {
-          "pack_size": 50,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 100,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 200,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 400,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 600,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 800,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1200,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1400,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1600,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 2000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 3000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 4000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 5000,
-          "price_per_card": 0
-        }
-      ]
-    },
-    {
-      "name": "InkPavo-J5",
-      "code": "inkpavo_j5",
-      "description": "InkPavo-J5 texture.",
-      "swatch_image": "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j5.png",
-      "added_price": [
-        {
-          "pack_size": 50,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 100,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 200,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 400,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 600,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 800,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1200,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1400,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1600,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 2000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 3000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 4000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 5000,
-          "price_per_card": 0
-        }
-      ]
-    },
-    {
-      "name": "InkPavo-J6",
-      "code": "inkpavo_j6",
-      "description": "InkPavo-J6 texture.",
-      "swatch_image": "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j6.png",
-      "added_price": [
-        {
-          "pack_size": 50,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 100,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 200,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 400,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 600,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 800,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1200,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1400,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1600,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 2000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 3000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 4000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 5000,
-          "price_per_card": 0
-        }
-      ]
-    },
-    {
-      "name": "InkPavo-J7",
-      "code": "inkpavo_j7",
-      "description": "InkPavo-J7 texture.",
-      "swatch_image": "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j7.png",
-      "added_price": [
-        {
-          "pack_size": 50,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 100,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 200,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 400,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 600,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 800,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1200,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1400,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 1600,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 2000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 3000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 4000,
-          "price_per_card": 0
-        },
-        {
-          "pack_size": 5000,
-          "price_per_card": 0
-        }
-      ]
-    },
-    {
-      "name": "InkPavo-J8",
-      "code": "inkpavo_j8",
-      "description": "InkPavo-J8 texture.",
-      "swatch_image": "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j8.png",
+      "name": "J8 Pinhole Paper",
+      "code": "j8_pinhole_paper",
+      "description": "J8 Pinhole Paper.",
+      "swatch_image": "/images/products/super-business-cards/texture/j8-pinhole-paper.png",
       "added_price": [
         {
           "pack_size": 50,

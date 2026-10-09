@@ -50,7 +50,10 @@ final class OrderFileService
         foreach ($this->recordsForOrder($order) as $file) {
             $presented = $this->present($order, $file, $audience);
 
-            if ($file->status === self::STATUS_CONFIRMED) {
+            if (
+                $file->status === self::STATUS_CONFIRMED
+                && $this->wasUploadedByAdmin($file)
+            ) {
                 $files['confirmed_files'][] = $presented;
             } elseif (
                 $file->status === self::STATUS_AWAITING_CONFIRMATION
@@ -72,6 +75,23 @@ final class OrderFileService
         }
 
         return $files;
+    }
+
+    private function wasUploadedByAdmin(OrderFile $file): bool
+    {
+        if ($file->source === 'admin' || $file->uploaded_by_admin_id !== null) {
+            return true;
+        }
+
+        // Older confirmed design fields predate order_files and are mirrored
+        // as legacy records. Those fields contain files produced by admins;
+        // legacy customer design uploads use fields such as design_path.
+        return $file->source === 'legacy'
+            && in_array($file->origin_field, [
+                'confirmed_design_paths',
+                'confirmed_design_path',
+                'confirmed_design',
+            ], true);
     }
 
     /**

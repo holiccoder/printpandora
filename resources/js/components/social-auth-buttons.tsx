@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 
-type Provider = 'google' | 'facebook';
+type Provider = 'google';
 
 type Props = {
     /** "Log in" or "Sign up" — controls the button text. */
@@ -14,8 +14,8 @@ const VERB: Record<Props['intent'], string> = {
 };
 
 /**
- * Two-button block (Google + Facebook) plus an "or" divider, used on the
- * login and register pages. The buttons are real `<a>` redirects to
+ * Social sign-in buttons plus an "or" divider, used on the login and
+ * register pages. The buttons are real `<a>` redirects to
  * `/auth/{provider}/redirect`, so they integrate with whatever OAuth
  * driver is wired up server-side (e.g. Laravel Socialite).
  */
@@ -26,10 +26,6 @@ export default function SocialAuthButtons({ intent, className }: Props) {
         <div className={className}>
             <div className="grid gap-3">
                 <SocialButton provider="google" label={`${verb} with Google`} />
-                <SocialButton
-                    provider="facebook"
-                    label={`${verb} with Facebook`}
-                />
             </div>
             <div className="my-6 flex items-center gap-3 text-xs tracking-wider text-muted-foreground uppercase">
                 <span aria-hidden className="h-px flex-1 bg-border" />
@@ -55,7 +51,7 @@ function SocialButton({
             className="w-full justify-center gap-2 font-medium"
         >
             <a href={`/auth/${provider}/redirect`}>
-                {provider === 'google' ? <GoogleIcon /> : <FacebookIcon />}
+                <GoogleIcon />
                 {label}
             </a>
         </Button>
@@ -86,20 +82,6 @@ function GoogleIcon() {
                 fill="#EA4335"
                 d="M12 4.75c1.76 0 3.34.6 4.59 1.78l3.45-3.45C17.95 1.18 15.23 0 12 0 7.31 0 3.25 2.7 1.27 6.65l4.04 3.09C6.26 6.85 8.89 4.75 12 4.75Z"
             />
-        </svg>
-    );
-}
-
-function FacebookIcon() {
-    return (
-        <svg
-            aria-hidden
-            viewBox="0 0 24 24"
-            className="size-4"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="#1877F2"
-        >
-            <path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.24 2.69.24v2.97h-1.52c-1.49 0-1.96.93-1.96 1.89v2.27h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07Z" />
         </svg>
     );
 }

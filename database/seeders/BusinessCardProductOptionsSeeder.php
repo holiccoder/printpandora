@@ -140,7 +140,7 @@ class BusinessCardProductOptionsSeeder extends Seeder
     ];
 
     /**
-     * @var array{default: array<int, string>, textures: array<string, string>}
+     * @var array{default: array<int, string>}
      */
     private const LUXE_BUSINESS_CARD_GALLERY = [
         'default' => [
@@ -149,16 +149,16 @@ class BusinessCardProductOptionsSeeder extends Seeder
             '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-03.png',
             '/images/products/super-luxe-business-cards/super-luxe-business-cards-default-04.png',
         ],
-        'textures' => [
-            'inkpavo_j1' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j1.png',
-            'inkpavo_j2' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j2.png',
-            'inkpavo_j3' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j3.png',
-            'inkpavo_j4' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j4.png',
-            'inkpavo_j5' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j5.png',
-            'inkpavo_j6' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j6.png',
-            'inkpavo_j7' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j7.png',
-            'inkpavo_j8' => '/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j8.png',
-        ],
+    ];
+
+    /**
+     * @var array<int, string>
+     */
+    private const SUPER_LUXE_TEXTURE_CODES = [
+        'j1_water_ripple_paper',
+        'j2_cloth_texture_paper',
+        'j5_pearlescent_paper',
+        'j8_pinhole_paper',
     ];
 
     /**
@@ -478,24 +478,14 @@ class BusinessCardProductOptionsSeeder extends Seeder
             if ($product) {
                 $config = $this->databaseConfigForProduct($product);
                 $defaultGallery = self::LUXE_BUSINESS_CARD_GALLERY['default'];
-                $galleryRules = [[
-                    'id' => 'default',
-                    'match' => [],
-                    'images' => $defaultGallery,
-                    'primary' => $defaultGallery[0],
-                ]];
-
-                foreach (self::LUXE_BUSINESS_CARD_GALLERY['textures'] as $texture => $image) {
-                    $galleryRules[] = [
-                        'id' => $texture,
-                        'match' => [
-                            'sizes' => 'standard',
-                            'texture' => $texture,
-                        ],
-                        'images' => [$image],
-                        'primary' => $image,
-                    ];
-                }
+                $config['options'] = BusinessCardOptionCatalog::normalize(
+                    'super-luxe-business-cards',
+                    is_array($config['options'] ?? null) ? $config['options'] : [],
+                ) ?? ($config['options'] ?? []);
+                $galleryRules = $this->superBusinessCardGalleryRules(
+                    $defaultGallery,
+                    self::SUPER_LUXE_TEXTURE_CODES,
+                );
 
                 $config['media']['gallery'] = $defaultGallery;
                 $config['media']['gallery_rules'] = $galleryRules;
@@ -513,58 +503,10 @@ class BusinessCardProductOptionsSeeder extends Seeder
             if ($product) {
                 $config = $this->databaseConfigForProduct($product);
                 $defaultGallery = self::SUPER_BUSINESS_CARD_GALLERY['default'];
-                $galleryRules = [[
-                    'id' => 'default',
-                    'match' => [],
-                    'images' => $defaultGallery,
-                    'primary' => $defaultGallery[0],
-                ]];
-
-                foreach (self::SUPER_BUSINESS_CARD_GALLERY['textures'] as $texture => $images) {
-                    $galleryRules[] = [
-                        'id' => "{$texture}_square",
-                        'match' => [
-                            'sizes' => 'standard',
-                            'corners' => 'square',
-                            'texture' => $texture,
-                        ],
-                        'images' => [$images['standard']['square']],
-                        'primary' => $images['standard']['square'],
-                    ];
-                    $galleryRules[] = [
-                        'id' => "{$texture}_rounded",
-                        'match' => [
-                            'sizes' => 'standard',
-                            'corners' => 'rounded',
-                            'texture' => $texture,
-                        ],
-                        'images' => [$images['standard']['rounded']],
-                        'primary' => $images['standard']['rounded'],
-                    ];
-                }
-
-                foreach (self::SUPER_BUSINESS_CARD_GALLERY['textures'] as $texture => $images) {
-                    $galleryRules[] = [
-                        'id' => "{$texture}_square_size_square",
-                        'match' => [
-                            'sizes' => 'square',
-                            'corners' => 'square',
-                            'texture' => $texture,
-                        ],
-                        'images' => [$images['square']['square']],
-                        'primary' => $images['square']['square'],
-                    ];
-                    $galleryRules[] = [
-                        'id' => "{$texture}_square_size_rounded",
-                        'match' => [
-                            'sizes' => 'square',
-                            'corners' => 'rounded',
-                            'texture' => $texture,
-                        ],
-                        'images' => [$images['square']['rounded']],
-                        'primary' => $images['square']['rounded'],
-                    ];
-                }
+                $galleryRules = $this->superBusinessCardGalleryRules(
+                    $defaultGallery,
+                    array_keys(self::SUPER_BUSINESS_CARD_GALLERY['textures']),
+                );
 
                 $config['media']['gallery'] = $defaultGallery;
                 $config['media']['gallery_rules'] = $galleryRules;
@@ -583,6 +525,75 @@ class BusinessCardProductOptionsSeeder extends Seeder
         if ($this->command !== null) {
             $this->command->info('Business-card product option contracts synchronized.');
         }
+    }
+
+    /**
+     * Build the size- and corner-specific texture galleries shared by the
+     * super-standard and super-luxe business-card products.
+     *
+     * @param  array<int, string>  $defaultGallery
+     * @param  array<int, string>  $textureCodes
+     * @return array<int, array<string, mixed>>
+     */
+    private function superBusinessCardGalleryRules(array $defaultGallery, array $textureCodes): array
+    {
+        $rules = [[
+            'id' => 'default',
+            'match' => [],
+            'images' => $defaultGallery,
+            'primary' => $defaultGallery[0],
+        ]];
+
+        foreach ($textureCodes as $texture) {
+            $images = self::SUPER_BUSINESS_CARD_GALLERY['textures'][$texture] ?? null;
+
+            if (! is_array($images)) {
+                continue;
+            }
+
+            $rules[] = [
+                'id' => "{$texture}_square",
+                'match' => [
+                    'sizes' => 'standard',
+                    'corners' => 'square',
+                    'texture' => $texture,
+                ],
+                'images' => [$images['standard']['square']],
+                'primary' => $images['standard']['square'],
+            ];
+            $rules[] = [
+                'id' => "{$texture}_rounded",
+                'match' => [
+                    'sizes' => 'standard',
+                    'corners' => 'rounded',
+                    'texture' => $texture,
+                ],
+                'images' => [$images['standard']['rounded']],
+                'primary' => $images['standard']['rounded'],
+            ];
+            $rules[] = [
+                'id' => "{$texture}_square_size_square",
+                'match' => [
+                    'sizes' => 'square',
+                    'corners' => 'square',
+                    'texture' => $texture,
+                ],
+                'images' => [$images['square']['square']],
+                'primary' => $images['square']['square'],
+            ];
+            $rules[] = [
+                'id' => "{$texture}_square_size_rounded",
+                'match' => [
+                    'sizes' => 'square',
+                    'corners' => 'rounded',
+                    'texture' => $texture,
+                ],
+                'images' => [$images['square']['rounded']],
+                'primary' => $images['square']['rounded'],
+            ];
+        }
+
+        return $rules;
     }
 
     /**

@@ -1717,7 +1717,7 @@ final class BusinessCardOptionCatalog
         return [
             'sizes' => self::group('Size', self::sizeValues($options), 'standard'),
             'corners' => self::group('Corners', self::cornerValues($options), 'square'),
-            'texture' => self::group('Texture', self::luxeTextureValues($options), 'inkpavo_j1'),
+            'texture' => self::group('Texture', self::luxeTextureValues($options), 'j1_water_ripple_paper'),
             'special_finish' => self::group(
                 'Special Finish',
                 self::hotFoilValues($options),
@@ -2227,20 +2227,17 @@ final class BusinessCardOptionCatalog
      */
     private static function luxeTextureValues(array $options): array
     {
-        $textures = array_map(
-            fn (int $number): array => [
-                'code' => "inkpavo_j{$number}",
-                'label' => "InkPavo-J{$number}",
-                'description' => "InkPavo-J{$number} texture.",
-                'swatch_image' => "/images/products/luxe-business-cards/luxe-business-cards-standard-inkpavo-j{$number}.png",
-            ],
-            range(1, 8),
-        );
+        $luxeTextureCodes = [
+            'j1_water_ripple_paper',
+            'j2_cloth_texture_paper',
+            'j5_pearlescent_paper',
+            'j8_pinhole_paper',
+        ];
 
-        return array_map(
-            fn (array $texture): array => self::value($options, 'texture', $texture['code'], $texture),
-            $textures,
-        );
+        return array_values(array_filter(
+            self::superTextureValues($options),
+            static fn (array $texture): bool => in_array($texture['code'] ?? null, $luxeTextureCodes, true),
+        ));
     }
 
     /**
