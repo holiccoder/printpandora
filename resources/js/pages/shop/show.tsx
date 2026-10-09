@@ -3697,8 +3697,15 @@ export default function ShopShow({
                     {productOptions.detail_sections.design_service_banner && (
                         <DesignServiceBanner
                             content={
-                                productOptions.detail_sections
-                                    .design_service_banner
+                                isPostcardProduct
+                                    ? {
+                                          ...productOptions.detail_sections
+                                              .design_service_banner,
+                                          image_url:
+                                              '/images/products/postcards/postcard-design-service-banner.png',
+                                      }
+                                    : productOptions.detail_sections
+                                          .design_service_banner
                             }
                         />
                     )}
