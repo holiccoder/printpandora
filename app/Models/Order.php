@@ -30,6 +30,7 @@ class Order extends Model
 
     public const STATUS_PENDING_CONFIRMATION = 'pending_confirmation';
 
+    /** @deprecated Existing order records are migrated directly to production. */
     public const STATUS_CONFIRMED = 'confirmed';
 
     public const STATUS_PRODUCTION = 'production';
@@ -58,7 +59,6 @@ class Order extends Model
             self::STATUS_PENDING_REVIEW => '待审核',
             self::STATUS_NEEDS_REUPLOAD => '需重新上传文件',
             self::STATUS_PENDING_CONFIRMATION => '待确认',
-            self::STATUS_CONFIRMED => '已确认',
             self::STATUS_PRODUCTION => '生产中',
             self::STATUS_SHIPPED => '已发货',
         ];

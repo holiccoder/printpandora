@@ -33,7 +33,6 @@ class OrderResource extends Resource
                 Order::STATUS_PENDING_REVIEW => '文件待审核',
                 Order::STATUS_NEEDS_REUPLOAD => '文件需重传',
                 Order::STATUS_PENDING_CONFIRMATION => '文件待确认',
-                Order::STATUS_CONFIRMED => '文件已确认',
                 default => '查看文件',
             })
             ->icon('heroicon-o-document-arrow-down')
@@ -91,15 +90,15 @@ class OrderResource extends Resource
                             ->send();
                     }),
                 Actions\Action::make('confirmForCustomer')
-                    ->label('替客户确认文件')
+                    ->label('确认文件并开始生产')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn (Order $record): bool => $record->payment_status === 'paid'
                         && $record->status === Order::STATUS_PENDING_CONFIRMATION)
                     ->requiresConfirmation()
-                    ->modalHeading('替客户确认')
-                    ->modalDescription('确认后订单状态将变为已确认，并进入后续生产流程。')
-                    ->modalSubmitActionLabel('确认')
+                    ->modalHeading('确认文件并开始生产')
+                    ->modalDescription('确认后，订单状态将直接变为生产中。')
+                    ->modalSubmitActionLabel('确认并开始生产')
                     ->modalCancelActionLabel('取消')
                     ->action(function (Order $record): void {
                         $admin = auth('admin')->user();
@@ -109,7 +108,7 @@ class OrderResource extends Resource
 
                         Notification::make()
                             ->success()
-                            ->title('订单已替客户确认')
+                            ->title('文件已确认，订单已进入生产')
                             ->send();
                     }),
                 Actions\Action::make('rejectReview')
@@ -399,10 +398,10 @@ class OrderResource extends Resource
                             ->required()
                             ->options(Order::statusOptions())
                             ->disableOptionWhen(
-                                fn (string $value, Order $record): bool => (
-                                    $value === Order::STATUS_CONFIRMED
-                                    && $record->status !== Order::STATUS_CONFIRMED
-                                ) || ! app(OrderWorkflowService::class)->canTransition($record, $value),
+                                fn (string $value, Order $record): bool => ! app(OrderWorkflowService::class)->canTransition(
+                                    $record,
+                                    $value,
+                                ),
                             ),
                         Forms\Components\Select::make('shipping_method')
                             ->label('运输方式')
@@ -532,7 +531,6 @@ class OrderResource extends Resource
                         Order::STATUS_PENDING_REVIEW => 'warning',
                         Order::STATUS_NEEDS_REUPLOAD => 'danger',
                         Order::STATUS_PENDING_CONFIRMATION => 'info',
-                        Order::STATUS_CONFIRMED => 'primary',
                         Order::STATUS_PRODUCTION => 'warning',
                         Order::STATUS_SHIPPED => 'success',
                         default => 'gray',
@@ -553,12 +551,7 @@ class OrderResource extends Resource
 
                                         return collect(Order::statusOptions())
                                             ->filter(fn (string $label, string $value): bool => (
-                                                $value === $record->status
-                                                || (
-                                                    ($value !== Order::STATUS_CONFIRMED
-                                                        || $record->status === Order::STATUS_CONFIRMED)
-                                                    && $workflow->canTransition($record, $value)
-                                                )
+                                                $value === $record->status || $workflow->canTransition($record, $value)
                                             ))
                                             ->all();
                                     }),

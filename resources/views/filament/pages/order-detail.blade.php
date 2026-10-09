@@ -5,7 +5,6 @@
         ['key' => \App\Models\Order::STATUS_PENDING_REVIEW, 'description' => '等待审核', 'icon' => 'heroicon-o-magnifying-glass'],
         ['key' => \App\Models\Order::STATUS_NEEDS_REUPLOAD, 'description' => '客户需要重新上传文件', 'icon' => 'heroicon-o-arrow-up-tray'],
         ['key' => \App\Models\Order::STATUS_PENDING_CONFIRMATION, 'description' => '等待确认', 'icon' => 'heroicon-o-question-mark-circle'],
-        ['key' => \App\Models\Order::STATUS_CONFIRMED, 'description' => '订单已确认', 'icon' => 'heroicon-o-shield-check'],
         ['key' => \App\Models\Order::STATUS_PRODUCTION, 'description' => '正在生产', 'icon' => 'heroicon-o-cog-6-tooth'],
         ['key' => \App\Models\Order::STATUS_SHIPPED, 'description' => '运输中', 'icon' => 'heroicon-o-truck'],
     ];
@@ -23,7 +22,6 @@
         'pending_review' => '订单已提交，正在等待管理员审核。',
         'needs_reupload' => '管理员已要求客户重新上传文件。',
         'pending_confirmation' => '订单正在等待客户或管理员确认最终信息。',
-        'confirmed' => '订单信息已确认，可以进入生产。',
         'production' => '订单正在生产中。',
         'shipped' => '订单已交给承运商配送。',
     ];

@@ -61,7 +61,7 @@ class OrderFileController extends Controller
         abort_unless($customer instanceof User, 401);
         $files->confirmForCustomer($order, $customer);
 
-        return back()->with('success', 'The files have been confirmed.');
+        return back()->with('success', 'The files are confirmed and production has started.');
     }
 
     private function customerOrder(Request $request, int $id): Order

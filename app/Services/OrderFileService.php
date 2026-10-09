@@ -1094,11 +1094,6 @@ final class OrderFileService
             ]);
         }
 
-        $lockedOrder = app(OrderWorkflowService::class)->transition(
-            $lockedOrder,
-            Order::STATUS_CONFIRMED,
-        );
-
         OrderFile::query()
             ->where('order_id', $lockedOrder->getKey())
             ->where('status', self::STATUS_CONFIRMED)
@@ -1113,6 +1108,11 @@ final class OrderFileService
                 'confirmed_at' => $now,
             ]);
         }
+
+        $lockedOrder = app(OrderWorkflowService::class)->transition(
+            $lockedOrder,
+            Order::STATUS_PRODUCTION,
+        );
 
         $this->recordAudit(
             $lockedOrder,

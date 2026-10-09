@@ -85,9 +85,8 @@ final class OrderWorkflowService
                 Order::STATUS_PENDING_REVIEW,
                 Order::STATUS_PENDING_CONFIRMATION,
             ],
-            Order::STATUS_CONFIRMED => [Order::STATUS_PENDING_CONFIRMATION],
             Order::STATUS_PRODUCTION => [
-                Order::STATUS_CONFIRMED,
+                Order::STATUS_PENDING_CONFIRMATION,
                 Order::STATUS_PRODUCTION,
             ],
             Order::STATUS_SHIPPED => [
@@ -114,10 +113,11 @@ final class OrderWorkflowService
             ]);
         }
 
-        if ($targetStatus === Order::STATUS_CONFIRMED
-            && ! $this->hasAwaitingFiles($order)) {
+        if ($targetStatus === Order::STATUS_PRODUCTION
+            && $fromStatus === Order::STATUS_PENDING_CONFIRMATION
+            && ($this->hasAwaitingFiles($order) || ! $this->hasCurrentConfirmedFiles($order))) {
             throw ValidationException::withMessages([
-                'files' => '确认订单前至少需要一个待确认文件。',
+                'files' => '确认最终文件后才能将订单转入生产。',
             ]);
         }
 
@@ -155,6 +155,15 @@ final class OrderWorkflowService
             ->where('order_id', $order->getKey())
             ->where('version', $version)
             ->where('status', self::AWAITING_FILE_STATUS)
+            ->exists();
+    }
+
+    private function hasCurrentConfirmedFiles(Order $order): bool
+    {
+        return Schema::hasTable('order_files') && OrderFile::query()
+            ->where('order_id', $order->getKey())
+            ->where('status', 'confirmed')
+            ->where('is_current', true)
             ->exists();
     }
 }

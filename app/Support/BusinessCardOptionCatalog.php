@@ -1696,6 +1696,7 @@ final class BusinessCardOptionCatalog
                 self::cottonSpecialFinishValues($options),
                 [],
                 true,
+                false,
             ),
             'hot_foil' => self::group(
                 'Hot Foil',

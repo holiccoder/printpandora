@@ -32,7 +32,6 @@ class OrderStatusChart extends ChartWidget
             'pending' => '#f59e0b',
             'pending_review' => '#f97316',
             'pending_confirmation' => '#a855f7',
-            'confirmed' => '#3b82f6',
             'production' => '#6366f1',
             'shipped' => '#8b5cf6',
         ];
