@@ -201,7 +201,7 @@ class ProductDesignCheckoutService
 
             $designPaths = $mode === 'canva'
                 ? $this->storeFiles($files['design_file'], 'product-designs/canva')
-                : ($mode === 'upload'
+                : (in_array($mode, ['upload', 'design-for-you'], true)
                     ? $this->storeFiles($files['design_file'], 'product-designs/designs')
                     : []);
             $logoPaths = $this->storeFiles($files['logo_file'], 'product-designs/logos');

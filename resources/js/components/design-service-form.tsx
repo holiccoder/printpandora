@@ -127,7 +127,7 @@ export default function DesignServiceForm({
             : MAX_DESIGN_FILE_BYTES;
     const designFileAccept =
         productDesignMode === 'design-for-you'
-            ? '.ai,.eps,.pdf,.jpg,.jpeg,.png,.psd,.svg'
+            ? '.ai,.eps,.pdf,.jpg,.jpeg,.png,.webp,.psd,.svg'
             : DESIGN_FILE_ACCEPT;
     const designFileHelp = allowsMultipleUploads
         ? `One or more files, up to ${Math.round(maxDesignFileBytes / 1024 / 1024)} MB each.`

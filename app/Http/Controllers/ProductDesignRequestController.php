@@ -87,7 +87,7 @@ class ProductDesignRequestController extends Controller
                 $designPayload['design_path'] = $this->pathValue($designPaths);
             }
         } else {
-            if ($mode === 'upload') {
+            if (in_array($mode, ['upload', 'design-for-you'], true)) {
                 $designPaths = $this->storeFiles(
                     $request->file('design_file', []),
                     'product-designs/designs',
