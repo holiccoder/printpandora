@@ -6,7 +6,17 @@ import AuthLayout from '@/layouts/auth-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'InkPavo';
+
+function resolvePageTitle(title: string | undefined): string {
+    if (!title) {
+        return appName;
+    }
+
+    return title.toLocaleLowerCase().endsWith(appName.toLocaleLowerCase())
+        ? title
+        : `${title} - ${appName}`;
+}
 
 // Chrome's Google Translate mutates React-managed text nodes by wrapping them
 // in <font> elements. When React later removes or inserts around those nodes
@@ -37,7 +47,7 @@ if (typeof window !== 'undefined' && typeof Node === 'function') {
 }
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: resolvePageTitle,
     layout: (name) => {
         switch (true) {
             case name === 'home':
@@ -54,8 +64,6 @@ createInertiaApp({
             case name === 'free-sample-pack':
             case name === 'business-card-design-service':
             case name === 'designer-partner-program':
-            case name === 'stickers-and-labels':
-            case name === 'flyers-and-brochures':
                 return null;
             case name === 'dashboard':
                 return null;

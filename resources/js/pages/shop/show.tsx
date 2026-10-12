@@ -60,7 +60,8 @@ function recommend200Quantity<T extends QuantityTierRecommendation>(
 
 function getRecommendedQuantity(tiers: QuantityTierRecommendation[]) {
     return (
-        recommend200Quantity(tiers).find((tier) => tier.recommended)?.qty ?? null
+        recommend200Quantity(tiers).find((tier) => tier.recommended)?.qty ??
+        null
     );
 }
 
@@ -166,6 +167,8 @@ import DesignServiceBanner from '@/components/product-detail/design-service-bann
 import PaperStockComparisonSection from '@/components/product-detail/paper-stock-comparison-section';
 import PostcardSizeShowcaseSection from '@/components/product-detail/postcard-size-showcase-section';
 import MoreGoodStuffSection from '@/components/product-detail/more-good-stuff-section';
+import VinylReturnAddressLabelsHighlights from '@/components/product-detail/vinyl-return-address-labels-highlights';
+import StickerTemplateCustomizerBanner from '@/components/product-detail/sticker-template-customizer-banner';
 import ProductFaqSection from '@/components/product-detail/product-faq-section';
 import StickerTemplatesSection from '@/components/product-detail/sticker-templates-section';
 import LightboxGallery from '@/components/product-detail/lightbox-gallery';
@@ -2546,9 +2549,7 @@ export default function ShopShow({
                                                 className="flex gap-2"
                                             >
                                                 <Bullet accent={ACCENT} />{' '}
-                                                {formatGramMeasurements(
-                                                    bullet,
-                                                )}
+                                                {formatGramMeasurements(bullet)}
                                             </li>
                                         ),
                                     )}
@@ -3071,17 +3072,17 @@ export default function ShopShow({
                             label={c.configurator_labels.quantity}
                             required
                         >
-                            <div className="overflow-x-auto rounded-md border border-neutral-200">
-                                <table className="w-full min-w-[32rem] text-sm sm:min-w-0">
-                                    <thead>
+                            <div className="rounded-md border border-neutral-200">
+                                <table className="w-full text-sm">
+                                    <thead className="hidden sm:table-header-group">
                                         <tr className="bg-neutral-50 text-left text-xs tracking-wide text-neutral-500 uppercase">
-                                            <th className="px-4 py-2 font-medium">
+                                            <th className="px-2 py-2 font-medium sm:px-4">
                                                 {c.quantity_table_headers[0]}
                                             </th>
-                                            <th className="px-4 py-2 font-medium">
+                                            <th className="px-2 py-2 font-medium sm:px-4">
                                                 {c.quantity_table_headers[1]}
                                             </th>
-                                            <th className="px-4 py-2 font-medium">
+                                            <th className="px-2 py-2 font-medium sm:px-4">
                                                 {c.quantity_table_headers[2]}
                                             </th>
                                         </tr>
@@ -3109,15 +3110,15 @@ export default function ShopShow({
                                                                     t.qty,
                                                                 )
                                                             }
-                                                            className={`cursor-pointer transition-colors ${
+                                                            className={`grid grid-cols-2 gap-x-4 px-3 py-3 transition-colors sm:table-row sm:px-0 sm:py-0 ${
                                                                 active
                                                                     ? 'bg-[#800020]/5'
                                                                     : recommended
                                                                       ? 'bg-amber-50/60 hover:bg-amber-50'
                                                                       : 'hover:bg-neutral-50'
-                                                            }`}
+                                                                }`}
                                                         >
-                                                            <td className="px-4 py-3">
+                                                            <td className="col-span-2 px-0 pb-2 sm:table-cell sm:px-4 sm:py-3">
                                                                 <label className="flex items-center gap-3">
                                                                     <input
                                                                         type="radio"
@@ -3132,6 +3133,9 @@ export default function ShopShow({
                                                                         }
                                                                         className="size-4 accent-[#800020]"
                                                                     />
+                                                                    <span className="text-xs text-neutral-500 sm:hidden">
+                                                                        {c.quantity_table_headers[0]}
+                                                                    </span>
                                                                     <span className="font-semibold text-neutral-900">
                                                                         {t.qty}
                                                                     </span>
@@ -3143,16 +3147,22 @@ export default function ShopShow({
                                                                     )}
                                                                 </label>
                                                             </td>
-                                                            <td className="px-4 py-3 text-neutral-500">
+                                                            <td className="min-w-0 px-0 py-1 text-neutral-500 sm:table-cell sm:px-4 sm:py-3">
+                                                                <span className="mb-0.5 block text-[11px] text-neutral-500 sm:hidden">
+                                                                    {c.quantity_table_headers[1]}
+                                                                </span>
                                                                 <LiveText
                                                                     text={`$${t.pricePerCard.toFixed(3)}`}
                                                                 />
                                                             </td>
-                                                            <td className="px-4 py-3 font-semibold text-neutral-900">
+                                                            <td className="min-w-0 px-0 py-1 font-semibold text-neutral-900 sm:table-cell sm:px-4 sm:py-3">
+                                                                <span className="mb-0.5 block text-[11px] font-normal text-neutral-500 sm:hidden">
+                                                                    {c.quantity_table_headers[2]}
+                                                                </span>
                                                                 <LiveText
                                                                     text={`$${Math.round(now).toFixed(0)}`}
                                                                 />
-                                                                <span className="ml-2 font-normal text-neutral-400">
+                                                                <span className="ml-1 font-normal text-neutral-400 sm:ml-2">
                                                                     <LiveText
                                                                         className="line-through"
                                                                         text={`($${Number(bracketPrice.toFixed(2))})`}
@@ -3681,19 +3691,27 @@ export default function ShopShow({
                         />
                     )}
                     {productOptions.detail_sections.free_sample && (
-                        <section className="bg-[#f9f8f6] py-12 lg:py-16">
+                        <section className="bg-[#f9f8f6] py-6 lg:py-8">
                             <div className="product-detail-container mx-auto max-w-7xl px-4">
                                 <SamplePackBanner className="rounded-2xl" />
                             </div>
                         </section>
                     )}
-                    {productOptions.detail_sections.sticker_templates && (
-                        <StickerTemplatesSection
-                            content={
-                                productOptions.detail_sections.sticker_templates
-                            }
-                        />
+                    {isStickerProduct && (
+                        <>
+                            <StickerTemplateCustomizerBanner />
+                            <VinylReturnAddressLabelsHighlights />
+                        </>
                     )}
+                    {!isStickerProduct &&
+                        productOptions.detail_sections.sticker_templates && (
+                            <StickerTemplatesSection
+                                content={
+                                    productOptions.detail_sections
+                                        .sticker_templates
+                                }
+                            />
+                        )}
                     {productOptions.detail_sections.design_service_banner && (
                         <DesignServiceBanner
                             content={
@@ -4128,12 +4146,9 @@ function DynamicOptionGroups({
                                 const displayName = formatGramMeasurements(
                                     value.name,
                                 );
-                                const displayDescription =
-                                    value.description
-                                        ? formatGramMeasurements(
-                                              value.description,
-                                          )
-                                        : undefined;
+                                const displayDescription = value.description
+                                    ? formatGramMeasurements(value.description)
+                                    : undefined;
                                 const selectedValue = selected[group.key];
                                 const isSelected =
                                     group.type === 'multi_select'
@@ -4269,9 +4284,7 @@ function DynamicOptionGroups({
                                         active={active}
                                         onClick={handleSelect}
                                         label={
-                                            isCustomSize &&
-                                            active &&
-                                            customSize
+                                            isCustomSize && active && customSize
                                                 ? `${displayName} (${customSizeDisplay(customSize.width, customSize.height, value.unit?.toLowerCase() === 'mm' ? 'mm' : 'in')})`
                                                 : displayName
                                         }
@@ -4444,12 +4457,10 @@ function CottonTextureOptionGroup({
                                                 type="button"
                                                 aria-label={`${formatGramMeasurements(texture.label)} ${formatGramMeasurements(value.color_label ?? value.name)}`}
                                                 aria-pressed={colorActive}
-                                                title={
-                                                    formatGramMeasurements(
-                                                        value.color_label ??
-                                                            value.name,
-                                                    )
-                                                }
+                                                title={formatGramMeasurements(
+                                                    value.color_label ??
+                                                        value.name,
+                                                )}
                                                 onClick={() =>
                                                     onSelect(group.key, code)
                                                 }

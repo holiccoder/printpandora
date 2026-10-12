@@ -17,6 +17,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductDesignRequestController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ShippingCalculatorController;
 use App\Http\Controllers\Shop\CartController;
 use App\Http\Controllers\Shop\CheckoutController;
 use App\Http\Controllers\Shop\OrderController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Shop\OrderFileController;
 use App\Http\Controllers\Shop\ProductController;
 use App\Http\Controllers\Shop\TicketController;
 use App\Http\Controllers\ShowcaseController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Http\Controllers\NewPasswordController;
@@ -37,8 +39,17 @@ Route::inertia('/privacy-policy', 'privacy')->name('privacy');
 Route::inertia('/affiliate-program', 'affiliate-program')->name('affiliate-program');
 Route::inertia('/affiliate-program-terms-and-conditions', 'affiliate-terms')->name('affiliate-terms');
 Route::inertia('/shipping-policy', 'shipping')->name('shipping');
-Route::inertia('/shipping-and-cost-calculator', 'shipping-calculator')->name('shipping.calculator');
+Route::get('/shipping-and-cost-calculator', [ShippingCalculatorController::class, 'show'])->name('shipping.calculator');
 Route::redirect('/shipping', '/shipping-policy', 301)->name('shipping.legacy');
+Route::redirect('/products/business-cards', '/business-cards', 301)->name('shop.business-cards.legacy-products');
+Route::redirect('/products/cotton-business-cards', '/business-cards/classic-cotton', 301)->name('shop.cotton-business-cards.legacy-products');
+Route::redirect('/products/pvc-business-cards', '/business-cards/basic-pvc', 301)->name('shop.pvc-business-cards.legacy-products');
+Route::redirect('/design-service', '/business-card-design-service', 301)->name('design-service.legacy');
+Route::redirect('/help', '/faq-and-help-center', 301)->name('help.legacy');
+Route::redirect('/contact', '/contact-us', 301)->name('contact.legacy');
+Route::redirect('/newsletter', '/contact-us', 301)->name('newsletter.legacy');
+Route::redirect('/flyer-printing-1000', '/flyers-and-brochures/classic-standard', 301)->name('shop.flyer-printing-legacy');
+Route::redirect('/tri-fold-brochure-500', '/flyers-and-brochures/classic-standard', 301)->name('shop.tri-fold-brochure-legacy');
 Route::redirect('/classic-business-cards', '/business-cards/classic-standard', 301)->name('shop.classic-business-cards.legacy');
 Route::redirect('/classic-cotton-business-card', '/business-cards/classic-cotton', 301)->name('shop.classic-cotton.legacy');
 Route::get('/faq-and-help-center', [HelpController::class, 'index'])->name('help');
@@ -55,8 +66,8 @@ Route::post('/designer-partner-program/applications', [DesignerPartnerApplicatio
 Route::post('/product-designs', [ProductDesignRequestController::class, 'store'])->name('product-designs.store');
 Route::redirect('/postcards', '/postcards/classic-standard', 301)->name('postcards.legacy');
 Route::redirect('/cards-and-postcards', '/postcards/classic-standard', 301)->name('cards-and-postcards.legacy');
-Route::inertia('/stickers-and-labels', 'stickers-and-labels')->name('stickers-and-labels');
-Route::inertia('/flyers-and-brochures', 'flyers-and-brochures')->name('flyers-and-brochures');
+Route::redirect('/stickers-and-labels', '/stickers/classic', 301)->name('stickers-and-labels');
+Route::redirect('/flyers-and-brochures', '/flyers-and-brochures/classic-standard', 301)->name('flyers-and-brochures');
 Route::get('/showcases', [ShowcaseController::class, 'index'])->name('showcases');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 
@@ -136,30 +147,8 @@ Route::middleware('auth:admin')->group(function () {
         ->name('admin.orders.files.zip');
 });
 
-// Sitemap
-Route::get('sitemap.xml', function () {
-    $urls = [
-        ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'daily'],
-        ['loc' => route('login'), 'priority' => '0.6', 'changefreq' => 'monthly'],
-        ['loc' => route('register'), 'priority' => '0.6', 'changefreq' => 'monthly'],
-        ['loc' => route('designer-partner-program'), 'priority' => '0.7', 'changefreq' => 'monthly'],
-    ];
-
-    $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
-    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
-
-    foreach ($urls as $url) {
-        $xml .= "  <url>\n";
-        $xml .= "    <loc>{$url['loc']}</loc>\n";
-        $xml .= "    <changefreq>{$url['changefreq']}</changefreq>\n";
-        $xml .= "    <priority>{$url['priority']}</priority>\n";
-        $xml .= "  </url>\n";
-    }
-
-    $xml .= '</urlset>';
-
-    return response($xml)->header('Content-Type', 'application/xml');
-})->name('sitemap');
+// Keep the sitemap current with active products and published editorial content.
+Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 
 // Blog
 Route::get('blog', [BlogController::class, 'index'])->name('blog.index');
@@ -209,6 +198,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('shop.checkout.thank-you');
 
     // Support tickets
+    Route::get('tickets/create', fn () => redirect()->route('shop.tickets.index'))->name('shop.tickets.create');
     Route::get('tickets', [TicketController::class, 'index'])->name('shop.tickets.index');
     Route::post('tickets', [TicketController::class, 'store'])->name('shop.tickets.store');
     Route::get('tickets/{id}', [TicketController::class, 'show'])->name('shop.tickets.show')->whereNumber('id');

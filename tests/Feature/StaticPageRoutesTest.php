@@ -50,7 +50,9 @@ class StaticPageRoutesTest extends TestCase
 
     public function test_sitemap_is_served_as_a_direct_xml_response(): void
     {
-        $this->get('/sitemap.xml')
+        $response = $this->get('/sitemap.xml');
+
+        $response
             ->assertOk()
             ->assertHeader('Content-Type', 'application/xml')
             ->assertSee('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"', false)
@@ -58,7 +60,7 @@ class StaticPageRoutesTest extends TestCase
 
         $this->assertStringContainsString(
             '/designer-partner-program',
-            (string) file_get_contents(public_path('sitemap.xml')),
+            (string) $response->getContent(),
         );
     }
 }

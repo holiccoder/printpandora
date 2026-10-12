@@ -7,6 +7,7 @@ use App\Notifications\CustomerNotification;
 use App\Notifications\OrderFileConfirmationReminder;
 use App\Services\Cart;
 use App\Services\ProductImageResolver;
+use App\Services\SeoMetadataService;
 use App\Support\HardcodedContent;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -44,6 +45,9 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'appName' => config('app.name', 'InkPavo'),
+            'appUrl' => rtrim((string) config('app.url', 'https://www.inkpavo.com'), '/'),
+            'seo' => fn (): array => app(SeoMetadataService::class)->forRequest($request),
             'auth' => [
                 'user' => $request->user(),
             ],

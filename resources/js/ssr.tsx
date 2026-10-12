@@ -10,13 +10,23 @@ import SettingsLayout from '@/layouts/settings/layout';
 import StorefrontLayout from '@/layouts/storefront-layout';
 import '../css/app.css';
 
-const appName = process.env.VITE_APP_NAME || 'Laravel';
+const appName = process.env.VITE_APP_NAME || 'InkPavo';
+
+function resolvePageTitle(title: string | undefined): string {
+    if (!title) {
+        return appName;
+    }
+
+    return title.toLocaleLowerCase().endsWith(appName.toLocaleLowerCase())
+        ? title
+        : `${title} - ${appName}`;
+}
 
 createServer((page) =>
     createInertiaApp({
         page,
         render: ReactDOMServer.renderToString,
-        title: (title) => (title ? `${title} - ${appName}` : appName),
+        title: resolvePageTitle,
         layout: (name) => {
             switch (true) {
                 case name === 'home':
@@ -29,8 +39,6 @@ createServer((page) =>
                 case name === 'sample-packs':
                 case name === 'business-card-design-service':
                 case name === 'designer-partner-program':
-                case name === 'stickers-and-labels':
-                case name === 'flyers-and-brochures':
                     return null;
                 case name === 'dashboard':
                     return null;

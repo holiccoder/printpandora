@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Sitemap: /sitemap.xml
+Sitemap: https://www.inkpavo.com/sitemap.xml
 
 # AI Agent & LLM Crawler Policies
 User-agent: GPTBot

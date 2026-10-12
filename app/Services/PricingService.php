@@ -350,7 +350,8 @@ class PricingService
         );
 
         if ($specialFinishSubmitted === []) {
-            $errors['options.special_finish'] = 'Select at least one special finish.';
+            $normalized['special_finish'] = [];
+            $normalized['special_finish_on_sides'] = [];
         } elseif (
             count($specialFinishResolved) !== count(array_unique(array_map(
                 fn (string $value): string => $this->normalizeOptionValue($value),

@@ -602,8 +602,8 @@
             "resources/js/components/recent-posts.tsx"
         ],
         "seo": {
-            "page_title": "Welcome",
-            "page_description": "InkPavo - your go-to solution for printing, customization, and on-demand production."
+            "page_title": "Custom Business Cards, Stickers & Print | InkPavo",
+            "page_description": "Order custom business cards, stickers, postcards, and flyers in distinctive papers and finishes. Explore sample packs and design support from InkPavo."
         },
         "hero_carousel": {
             "aria_label": "Featured products",
@@ -913,7 +913,7 @@
                     "excerpt": "The silence. The brain blank. The awkward eye contact. Here's how to fix your brainstorms.",
                     "date": "February 25, 2026",
                     "read_minutes": 4,
-                    "href": "/blog/brainstorms-less-awkward",
+                    "href": "/blog",
                     "sticker_text": "Let's Workshop That"
                 },
                 {
@@ -924,7 +924,7 @@
                     "excerpt": "Small canvas, big stakes. The finishing touches that turn a stack of cards into a story people keep.",
                     "date": "February 14, 2026",
                     "read_minutes": 5,
-                    "href": "/blog/business-cards-remembered"
+                    "href": "/blog"
                 },
                 {
                     "image_url": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=70",
@@ -934,7 +934,7 @@
                     "excerpt": "Tone slips when teams scatter. The rituals that keep your copy sounding like you, wherever everyone is.",
                     "date": "February 6, 2026",
                     "read_minutes": 6,
-                    "href": "/blog/remote-brand-voice"
+                    "href": "/blog"
                 },
                 {
                     "image_url": "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?auto=format&fit=crop&w=1400&q=70",
@@ -944,7 +944,7 @@
                     "excerpt": "Why some of the most loved brands still hand new hires a tangible welcome.",
                     "date": "January 28, 2026",
                     "read_minutes": 3,
-                    "href": "/blog/printed-onboarding-kits"
+                    "href": "/blog"
                 },
                 {
                     "image_url": "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1400&q=70",
@@ -954,7 +954,7 @@
                     "excerpt": "Foil, letterpress, soft-touch — a designer's shortcut to making paper feel expensive.",
                     "date": "January 19, 2026",
                     "read_minutes": 4,
-                    "href": "/blog/premium-print-finishes"
+                    "href": "/blog"
                 },
                 {
                     "image_url": "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=1400&q=70",
@@ -964,7 +964,7 @@
                     "excerpt": "How to pick brand colours that age well — and the trend-chasing traps to skip.",
                     "date": "January 11, 2026",
                     "read_minutes": 5,
-                    "href": "/blog/lasting-colour-palette"
+                    "href": "/blog"
                 },
                 {
                     "image_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=70",
@@ -974,7 +974,7 @@
                     "excerpt": "A decade of brand sprints, distilled into the handful of moves that always work.",
                     "date": "January 4, 2026",
                     "read_minutes": 7,
-                    "href": "/blog/100-client-workshops"
+                    "href": "/blog"
                 }
             ]
         }
@@ -1027,8 +1027,8 @@
         "newsletter_card": {
             "title": "Keep in touch",
             "description": "Get design inspiration, business ideas, and new product alerts sent straight to your inbox with The InkPavo Hub.",
-            "cta": "Subscribe",
-            "cta_href": "/newsletter"
+            "cta": "Contact us",
+            "cta_href": "/contact-us"
         },
         "related_section": {
             "heading": "May also interest you"
@@ -3267,7 +3267,7 @@
                     "blurb": "8.5\"×11\" workhorses for handouts, posters, and storefronts.",
                     "price_from": "from $39",
                     "image_url": "/images/products/flyers/flyer-us-letter.png",
-                    "href": "/flyer-printing-1000"
+                    "href": "/flyers-and-brochures/classic-standard"
                 },
                 {
                     "name": "Half Page Flyers",
@@ -3295,7 +3295,7 @@
                     "blurb": "Classic three-panel storytelling for services, tours, and menus.",
                     "price_from": "from $49",
                     "image_url": "/images/products/flyers/brochure-tri-fold.png",
-                    "href": "/tri-fold-brochure-500"
+                    "href": "/flyers-and-brochures/classic-standard"
                 },
                 {
                     "name": "Bi-Fold Brochures",

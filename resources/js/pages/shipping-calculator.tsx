@@ -13,14 +13,11 @@ import {
 import StorefrontLayout from '@/layouts/storefront-layout';
 import { formatGramsAsPounds } from '@/lib/weight';
 
-const PRODUCT_TYPES = [
-    { value: 'business-cards', label: 'Business Cards' },
-    { value: 'cotton-business-cards', label: 'Cotton Business Cards' },
-    { value: 'pvc-business-cards', label: 'PVC Business Cards' },
-    { value: 'postcards', label: 'Postcards' },
-    { value: 'stickers-labels', label: 'Stickers & Labels' },
-    { value: 'flyers', label: 'Flyers' },
-];
+type ProductOption = {
+    value: string;
+    label: string;
+    shippingType: string;
+};
 
 const COUNTRIES = [
     { value: 'US', label: 'United States' },
@@ -70,9 +67,13 @@ function formatCurrency(amount: number, currency: string): string {
     }
 }
 
-export default function ShippingCalculator() {
+export default function ShippingCalculator({
+    productOptions,
+}: {
+    productOptions: ProductOption[];
+}) {
     const [country, setCountry] = useState('');
-    const [productType, setProductType] = useState('');
+    const [selectedProduct, setSelectedProduct] = useState('');
     const [quantity, setQuantity] = useState('100');
     const [quote, setQuote] = useState<ShippingQuote | null>(null);
     const [loading, setLoading] = useState(false);
@@ -94,7 +95,9 @@ export default function ShippingCalculator() {
                 },
                 body: JSON.stringify({
                     country,
-                    product_type: productType,
+                    product_type: productOptions.find(
+                        (item) => item.value === selectedProduct,
+                    )?.shippingType,
                     quantity: Number(quantity),
                 }),
             });
@@ -172,18 +175,22 @@ export default function ShippingCalculator() {
                                     Product type
                                 </Label>
                                 <Select
-                                    value={productType}
-                                    onValueChange={setProductType}
+                                    value={selectedProduct}
+                                    onValueChange={setSelectedProduct}
                                     required
                                 >
-                                    <SelectTrigger id="product-type">
+                                    <SelectTrigger
+                                        id="product-type"
+                                        className="w-full"
+                                    >
                                         <SelectValue placeholder="Select product" />
                                     </SelectTrigger>
-                                    <SelectContent>
-                                        {PRODUCT_TYPES.map((item) => (
+                                    <SelectContent className="max-w-[calc(100vw-2rem)]">
+                                        {productOptions.map((item) => (
                                             <SelectItem
                                                 key={item.value}
                                                 value={item.value}
+                                                className="whitespace-normal"
                                             >
                                                 {item.label}
                                             </SelectItem>

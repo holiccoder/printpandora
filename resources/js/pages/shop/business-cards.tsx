@@ -133,13 +133,13 @@ export default function BusinessCardsLanding() {
                             </p>
                         )}
                         <div className="mt-8">
-                            <Link
-                                href="/business-cards"
+                            <a
+                                href="#shop-by-paper"
                                 className="inline-flex items-center gap-2 rounded-md bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                             >
                                 {c.hero.cta}
                                 <ArrowRight className="size-4" />
-                            </Link>
+                            </a>
                         </div>
                     </div>
 
