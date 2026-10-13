@@ -342,7 +342,7 @@ final class PostcardProductCatalog
             'min_height' => 18,
             'max_height' => 301,
             'description' => 'W 18–430 mm × H 18–301 mm',
-            'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
+            'swatch_image' => '/images/products/postcards/sizes/custom.svg',
         ];
 
         return [

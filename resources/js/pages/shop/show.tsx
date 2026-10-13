@@ -468,6 +468,18 @@ const generatedSizeSwatches: Record<string, string> = {
     custom: `${reusableSwatchBase}/custom-size.webp`,
 };
 
+const postcardSizeSwatches: Record<string, string> = {
+    standard: '/images/products/postcards/sizes/standard.png',
+    square: '/images/products/postcards/sizes/square.png',
+    rack: '/images/products/postcards/sizes/rack.png',
+    half_page: '/images/products/postcards/sizes/half-page.png',
+    'half-page': '/images/products/postcards/sizes/half-page.png',
+    small: '/images/products/postcards/sizes/small.png',
+    medium: '/images/products/postcards/sizes/medium.png',
+    large: '/images/products/postcards/sizes/large.png',
+    custom: '/images/products/postcards/sizes/custom.svg',
+};
+
 const captionedSizeSwatchCodes = new Set(['standard', 'square', 'custom']);
 
 function shouldShowSwatchCaption(groupKey: string, code: string): boolean {
@@ -478,6 +490,13 @@ function shouldShowSwatchCaption(groupKey: string, code: string): boolean {
 
 function sizeSwatchFor(code: string, fallback?: string): string | undefined {
     return generatedSizeSwatches[code.toLowerCase()] ?? fallback;
+}
+
+function postcardSizeSwatchFor(
+    code: string,
+    fallback?: string,
+): string | undefined {
+    return postcardSizeSwatches[code.toLowerCase()] ?? fallback;
 }
 
 const generatedFinishSwatches: Record<string, string> = {
@@ -966,13 +985,17 @@ export default function ShopShow({
                                 sizeSwatches[s.name.toLowerCase()] ??
                                     s.swatch_image,
                             )
-                          : (s.swatch_image ??
-                            sizeSwatches[s.name.toLowerCase()]),
+                          : isPostcardProduct
+                            ? postcardSizeSwatchFor(id, s.swatch_image)
+                            : (s.swatch_image ??
+                              sizeSwatches[s.name.toLowerCase()]),
                   };
               })
             : c.configurator_options.sizes.map((s: any) => ({
                   ...s,
-                  swatch: sizeSwatches[s.id.toLowerCase()] ?? s.swatch,
+                  swatch: isPostcardProduct
+                      ? postcardSizeSwatchFor(s.id, s.swatch)
+                      : sizeSwatches[s.id.toLowerCase()] ?? s.swatch,
               }));
     }, [
         hasProductOptions,
@@ -980,6 +1003,7 @@ export default function ShopShow({
         c.configurator_options.sizes,
         product.slug,
         isBusinessCardProduct,
+        isPostcardProduct,
         customSizeLimits,
     ]);
 
@@ -2567,6 +2591,7 @@ export default function ShopShow({
                                 useBusinessCardSizeSwatches={
                                     isBusinessCardProduct
                                 }
+                                usePostcardSizeSwatches={isPostcardProduct}
                                 showSpecialFinishSides={!isCottonBusinessCards}
                                 showHotFoilSides={true}
                                 specialFinishSides={selectedSpecialFinishSides}
@@ -4006,6 +4031,7 @@ function DynamicOptionGroups({
     customSize,
     onCustomSizeSelect,
     useBusinessCardSizeSwatches,
+    usePostcardSizeSwatches,
     showSpecialFinishSides,
     showHotFoilSides,
     specialFinishSides,
@@ -4017,6 +4043,7 @@ function DynamicOptionGroups({
     customSize?: { width: number; height: number } | null;
     onCustomSizeSelect?: () => void;
     useBusinessCardSizeSwatches: boolean;
+    usePostcardSizeSwatches: boolean;
     showSpecialFinishSides: boolean;
     showHotFoilSides: boolean;
     specialFinishSides: Record<string, SpecialFinishSide>;
@@ -4172,6 +4199,11 @@ function DynamicOptionGroups({
                                                     code,
                                                     value.swatch_image,
                                                 )
+                                              : usePostcardSizeSwatches
+                                                ? postcardSizeSwatchFor(
+                                                      code,
+                                                      value.swatch_image,
+                                                  )
                                               : value.swatch_image
                                           : value.swatch_image;
                                 const isCustomSize =
