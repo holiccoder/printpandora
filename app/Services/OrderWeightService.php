@@ -138,6 +138,34 @@ class OrderWeightService
         );
     }
 
+    /**
+     * Calculate the combined parcel weight for the calculator's selected
+     * product lines. Catalog dimensions are supplied by the server after
+     * validating each selected size against that product's options.
+     *
+     * @param  array<int, array{product: Product, options: array<string, mixed>, quantity: int}>  $lines
+     */
+    public function forCalculatorLines(array $lines): float
+    {
+        $productWeight = 0.0;
+        $hasFixedShippingWeight = false;
+
+        foreach ($lines as $line) {
+            $product = $line['product'];
+            $hasFixedShippingWeight = $hasFixedShippingWeight
+                || $product->shipping_weight_grams !== null;
+            $productWeight += $this->forLine(
+                $product,
+                $line['options'],
+                $line['quantity'],
+            );
+        }
+
+        return $hasFixedShippingWeight
+            ? round(max(0.0, $productWeight), 4)
+            : $this->withPackageWeight($productWeight);
+    }
+
     public function wholeGrams(float $weightGrams): int
     {
         return max(0, (int) round($weightGrams));
@@ -158,9 +186,15 @@ class OrderWeightService
             return max(0.0, (float) $product->shipping_weight_grams) * $quantity;
         }
 
-        $area = StickerProductCatalog::isStickerProduct((string) $product->slug)
-            ? $this->stickerAreaSquareMeters($product, $options)
-            : $this->cardAreaSquareMeters($options);
+        $area = $this->positiveNumber($options['calculator_area_square_meters'] ?? null)
+            ?? $this->dimensionsAreaSquareMeters(
+                $options['calculator_width'] ?? null,
+                $options['calculator_height'] ?? null,
+                $options['calculator_unit'] ?? 'in',
+            )
+            ?? (StickerProductCatalog::isStickerProduct((string) $product->slug)
+                ? $this->stickerAreaSquareMeters($product, $options)
+                : $this->cardAreaSquareMeters($options));
 
         return $area
             * max(0.0, (float) $product->weight)
@@ -245,6 +279,24 @@ class OrderWeightService
         }
 
         return self::DEFAULT_CARD_WIDTH_METERS * self::DEFAULT_CARD_HEIGHT_METERS;
+    }
+
+    private function dimensionsAreaSquareMeters(mixed $width, mixed $height, mixed $unit): ?float
+    {
+        $width = $this->positiveNumber($width);
+        $height = $this->positiveNumber($height);
+
+        if ($width === null || $height === null) {
+            return null;
+        }
+
+        $metersPerUnit = match ($this->optionValue($unit)) {
+            'mm', 'millimeter', 'millimeters' => 0.001,
+            'cm', 'centimeter', 'centimeters' => 0.01,
+            default => self::INCH_TO_METERS,
+        };
+
+        return ($width * $metersPerUnit) * ($height * $metersPerUnit);
     }
 
     private function withPackageWeight(float $productWeight): float

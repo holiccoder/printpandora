@@ -7,6 +7,13 @@ export function formatGramsAsPounds(grams: number): string {
     return `${poundValue} lbs (${gramValue}g)`;
 }
 
+export function formatWeightInGramsAndPounds(grams: number): string {
+    const gramValue = Math.max(0, Math.round(grams));
+    const poundValue = (gramValue / GRAMS_PER_POUND).toFixed(2);
+
+    return `${gramValue} g (${poundValue} lbs)`;
+}
+
 /** Convert explicit gram weights in display copy, leaving GSM values intact. */
 export function formatGramMeasurements(text: string): string {
     return text.replace(

@@ -48,6 +48,39 @@ class ProductConfigurationService
     private const COTTON_HOT_FOIL_MARKUP_PER_CARD = 0.4;
 
     /**
+     * The cotton workbook's special-process surcharge is $1 per card at the
+     * 50-card tier, with these quantity discounts. Apply it to each selected
+     * non-foil finish on every cotton card tier.
+     *
+     * @var array<string, int|float>
+     */
+    private const COTTON_SPECIAL_FINISH_QUANTITY_DISCOUNTS = [
+        '100' => 50,
+        '200' => 75,
+        '500' => 80,
+        '1000' => 82,
+        '2000' => 82.5,
+        '3000' => 83,
+        '4000' => 83.5,
+        '5000' => 84,
+        '10000' => 84,
+    ];
+
+    private const COTTON_SPECIAL_FINISH_MARKUP_PER_CARD = 1.0;
+
+    /**
+     * @var array<string, string>
+     */
+    private const COTTON_SPECIAL_FINISH_LABELS = [
+        'laser' => 'Laser',
+        'edge_coloring' => 'Edge Coloring',
+        'double_mounting' => 'Double Mounting',
+        'custom_die_cut' => 'Custom Die-Cut',
+        'emboss' => 'Emboss / Deboss',
+        'deboss' => 'Deboss',
+    ];
+
+    /**
      * One-side hot-foil surcharge for the 0.76 mm PVC card, expressed as a
      * discount from the $0.40 per-card surcharge at the 50-card tier.
      *
@@ -1284,6 +1317,110 @@ class ProductConfigurationService
         }
 
         return $pricing;
+    }
+
+    /**
+     * Add the workbook's shared special-process price to cotton pricing
+     * payloads that do not already contain each finish.
+     *
+     * @param  array<string, mixed>  $pricing
+     * @return array<string, mixed>
+     */
+    private function withCottonSpecialFinishPricing(array $pricing): array
+    {
+        foreach (['scenarios', 'pricing_data'] as $key) {
+            if (! is_array($pricing[$key] ?? null)) {
+                continue;
+            }
+
+            foreach ($pricing[$key] as &$scenario) {
+                if (! is_array($scenario)) {
+                    continue;
+                }
+
+                $dynamicShape = array_key_exists('basePrice', $scenario)
+                    || array_key_exists('startQuantity', $scenario);
+                $scenario['processes'] = $this->appendCottonSpecialFinishProcesses(
+                    is_array($scenario['processes'] ?? null)
+                        ? $scenario['processes']
+                        : [],
+                    $dynamicShape ? 'dynamic' : 'scenario',
+                );
+            }
+            unset($scenario);
+        }
+
+        if (is_array($pricing['rules'] ?? null)) {
+            foreach ($pricing['rules'] as &$rule) {
+                if (! is_array($rule) || ! is_array($rule['pricing'] ?? null)) {
+                    continue;
+                }
+
+                $rule['pricing']['processes'] = $this->appendCottonSpecialFinishProcesses(
+                    is_array($rule['pricing']['processes'] ?? null)
+                        ? $rule['pricing']['processes']
+                        : [],
+                    'canonical',
+                );
+            }
+            unset($rule);
+        }
+
+        if (is_array($pricing['processes'] ?? null)) {
+            $pricing['processes'] = $this->appendCottonSpecialFinishProcesses(
+                $pricing['processes'],
+                'canonical',
+            );
+        }
+
+        return $pricing;
+    }
+
+    /**
+     * @param  array<int, mixed>  $processes
+     * @return array<int, mixed>
+     */
+    private function appendCottonSpecialFinishProcesses(array $processes, string $shape): array
+    {
+        $pricedFinishes = [];
+
+        foreach ($processes as $process) {
+            if (! is_array($process)) {
+                continue;
+            }
+
+            $code = $this->normalizedRuleValue(
+                $process['code'] ?? $process['name'] ?? $process['label'] ?? '',
+            );
+            $code = $code === 'emboss_deboss' ? 'emboss' : $code;
+
+            if (array_key_exists($code, self::COTTON_SPECIAL_FINISH_LABELS)) {
+                $pricedFinishes[$code] = true;
+            }
+        }
+
+        foreach (self::COTTON_SPECIAL_FINISH_LABELS as $code => $label) {
+            if (isset($pricedFinishes[$code])) {
+                continue;
+            }
+
+            $processes[] = match ($shape) {
+                'scenario' => [
+                    'code' => $code,
+                    'label' => $label,
+                    'markup_per_card' => self::COTTON_SPECIAL_FINISH_MARKUP_PER_CARD,
+                    'quantity_discounts_percent' => self::COTTON_SPECIAL_FINISH_QUANTITY_DISCOUNTS,
+                ],
+                default => [
+                    'name' => $label,
+                    'code' => $code,
+                    'markup' => self::COTTON_SPECIAL_FINISH_MARKUP_PER_CARD,
+                    'rates' => self::COTTON_SPECIAL_FINISH_QUANTITY_DISCOUNTS,
+                ],
+            };
+        }
+
+        return array_values($processes);
     }
 
     /**
@@ -2694,6 +2831,7 @@ class ProductConfigurationService
         );
 
         if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {
+            $config['pricing'] = $this->withCottonSpecialFinishPricing($config['pricing']);
             $config['pricing'] = $this->withCottonHotFoilPricing($config['pricing']);
         }
 

@@ -38,7 +38,10 @@ import {
 } from '@/lib/product-options';
 import type { ProductGallery } from '@/lib/product-options';
 import { cn } from '@/lib/utils';
-import { formatGramMeasurements } from '@/lib/weight';
+import {
+    formatGramMeasurements,
+    formatWeightInGramsAndPounds,
+} from '@/lib/weight';
 
 type QuantityTierRecommendation = {
     qty: number;
@@ -182,6 +185,8 @@ interface Product {
     id: number;
     name: string;
     slug: string;
+    weight: number;
+    shipping_weight_grams: number | null;
     subtitle: string | null;
     description: string | null;
     description_title: string | null;
@@ -1447,6 +1452,65 @@ export default function ShopShow({
         customSizeLimits.unit,
         usesDynamicOptions,
         usesAreaBasedPricing,
+    ]);
+
+    const selectedTotalWeightGrams = useMemo(() => {
+        const quantity =
+            Math.max(0, selectedQty ?? RECOMMENDED_QTY ?? 0) *
+            normalizedDesignQuantity;
+
+        if (product.shipping_weight_grams !== null) {
+            return Math.max(0, product.shipping_weight_grams) * quantity;
+        }
+
+        const sizeGroup = dynamicOptionGroups.find(
+            (group) => group.key === 'sizes' || group.key === 'size',
+        );
+        const selectedSizeCode = usesDynamicOptions
+            ? (selectedDynamicOptions[sizeGroup?.key ?? 'sizes'] ?? '')
+            : (selectedSize ?? '');
+        const selectedSizeOption = usesDynamicOptions
+            ? (sizeGroup?.values ?? [])
+            : (productOptions?.sizes ?? []);
+        let areaSquareMeters = 0;
+
+        if (selectedSizeCode === 'custom') {
+            if (confirmedCustomSize) {
+                areaSquareMeters = areaForDimensions(
+                    confirmedCustomSize.width,
+                    confirmedCustomSize.height,
+                    customSizeLimits.unit,
+                );
+            }
+        } else {
+            areaSquareMeters = stickerAreaForSizeValues(
+                selectedSizeOption,
+                selectedSizeCode,
+            );
+
+            if (areaSquareMeters === 0 && selectedSizeCode === 'square') {
+                areaSquareMeters = 0.06 ** 2;
+            }
+
+            if (areaSquareMeters === 0 && selectedSizeCode !== 'custom') {
+                areaSquareMeters = 0.09 * 0.054;
+            }
+        }
+
+        return areaSquareMeters * Math.max(0, product.weight) * quantity;
+    }, [
+        RECOMMENDED_QTY,
+        confirmedCustomSize,
+        customSizeLimits.unit,
+        dynamicOptionGroups,
+        normalizedDesignQuantity,
+        product.shipping_weight_grams,
+        product.weight,
+        productOptions?.sizes,
+        selectedDynamicOptions,
+        selectedQty,
+        selectedSize,
+        usesDynamicOptions,
     ]);
 
     const hasSubmittedDesign =
@@ -3353,6 +3417,16 @@ export default function ShopShow({
                                                     )}
                                                 />
                                             </dd>
+                                            <dt className="text-neutral-500">
+                                                {c.order_summary.weight_label}
+                                            </dt>
+                                            <dd className="text-right font-medium">
+                                                <LiveText
+                                                    text={formatWeightInGramsAndPounds(
+                                                        selectedTotalWeightGrams,
+                                                    )}
+                                                />
+                                            </dd>
                                             {selectedDesignService && (
                                                 <>
                                                     <dt className="order-10 text-neutral-500">
@@ -3399,6 +3473,16 @@ export default function ShopShow({
                                                 <LiveText
                                                     text={String(
                                                         normalizedDesignQuantity,
+                                                    )}
+                                                />
+                                            </dd>
+                                            <dt className="order-10 text-neutral-500">
+                                                {c.order_summary.weight_label}
+                                            </dt>
+                                            <dd className="order-10 text-right font-medium">
+                                                <LiveText
+                                                    text={formatWeightInGramsAndPounds(
+                                                        selectedTotalWeightGrams,
                                                     )}
                                                 />
                                             </dd>
@@ -3456,10 +3540,10 @@ export default function ShopShow({
                                             )}
                                             {selectedDesignService && (
                                                 <>
-                                                    <dt className="order-10 text-neutral-500">
+                                                    <dt className="order-11 text-neutral-500">
                                                         {designFeeLabel}
                                                     </dt>
-                                                    <dd className="order-10 text-right font-medium">
+                                                    <dd className="order-11 text-right font-medium">
                                                         <LiveText
                                                             text={`$${designFee}`}
                                                         />
