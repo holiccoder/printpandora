@@ -64,6 +64,11 @@ return [
         ))),
     ],
 
+    'contact' => [
+        'telegram_username' => env('CONTACT_TELEGRAM_USERNAME', 'inkpavo'),
+        'whatsapp_username' => env('CONTACT_WHATSAPP_USERNAME', 'inkpavo'),
+    ],
+
     'wecom' => [
         'corp_id' => env('WECOM_CORP_ID'),
         'kf_secret' => env('WECOM_KF_SECRET'),

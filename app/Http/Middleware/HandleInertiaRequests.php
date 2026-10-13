@@ -42,11 +42,30 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $telegramUsername = ltrim(
+            trim((string) config('services.contact.telegram_username', 'inkpavo')),
+            '@',
+        ) ?: 'inkpavo';
+        $whatsappUsername = ltrim(
+            trim((string) config('services.contact.whatsapp_username', 'inkpavo')),
+            '@',
+        ) ?: 'inkpavo';
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'appName' => config('app.name', 'InkPavo'),
             'appUrl' => rtrim((string) config('app.url', 'https://www.inkpavo.com'), '/'),
+            'contactLinks' => [
+                'telegram' => [
+                    'username' => $telegramUsername,
+                    'href' => 'https://t.me/'.rawurlencode($telegramUsername),
+                ],
+                'whatsapp' => [
+                    'username' => $whatsappUsername,
+                    'href' => 'https://wa.me/'.rawurlencode($whatsappUsername),
+                ],
+            ],
             'seo' => fn (): array => app(SeoMetadataService::class)->forRequest($request),
             'auth' => [
                 'user' => $request->user(),

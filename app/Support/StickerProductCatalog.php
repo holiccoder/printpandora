@@ -14,6 +14,8 @@ final class StickerProductCatalog
 {
     public const CATEGORY_SLUG = 'stickers-and-labels';
 
+    public const WEIGHT_GSM = 157;
+
     public const RECOMMENDED_QUANTITY = 200;
 
     public const START_QUANTITY = 50;
@@ -396,7 +398,7 @@ final class StickerProductCatalog
             'meta_description' => $definition['meta_description'],
             'featured_image' => $defaultGallery[0],
             'price_line' => "{$startingQuantity} stickers from \${$startingTotal}",
-            'weight' => 0,
+            'weight' => self::WEIGHT_GSM,
             'product_config' => $config,
             'is_active' => true,
         ];

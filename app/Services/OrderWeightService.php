@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Support\StickerProductCatalog;
 
 class OrderWeightService
 {
@@ -18,7 +19,7 @@ class OrderWeightService
     /**
      * Calculate the total parcel weight for the current cart in grams.
      *
-     * Product weight is stored as GSM, so a card's weight is its area in
+     * Product weight is stored as GSM, so an item's weight is its area in
      * square metres multiplied by the product weight and line quantity.
      * Products with a fixed shipping weight already include their parcel
      * packaging and bypass the GSM calculation.
@@ -59,8 +60,7 @@ class OrderWeightService
             $productWeight += $this->forLine(
                 $product,
                 $options,
-                (int) ($item['quantity'] ?? 1)
-                    * max(1, (int) ($options['design_quantity'] ?? 1)),
+                (int) ($item['quantity'] ?? 1),
             );
         }
 
@@ -158,9 +158,67 @@ class OrderWeightService
             return max(0.0, (float) $product->shipping_weight_grams) * $quantity;
         }
 
-        return $this->cardAreaSquareMeters($options)
+        $area = StickerProductCatalog::isStickerProduct((string) $product->slug)
+            ? $this->stickerAreaSquareMeters($product, $options)
+            : $this->cardAreaSquareMeters($options);
+
+        return $area
             * max(0.0, (float) $product->weight)
             * $quantity;
+    }
+
+    /**
+     * Use finished sticker dimensions, excluding the production sheet area.
+     * Resolve the size from catalog data rather than submitted paper_area.
+     *
+     * @param  array<string, mixed>  $options
+     */
+    private function stickerAreaSquareMeters(Product $product, array $options): float
+    {
+        $sizeGroup = data_get($product->product_config, 'options.sizes', []);
+        $sizeGroup = is_array($sizeGroup) ? $sizeGroup : [];
+        $size = $this->optionValue(
+            $options['sizes'] ?? $options['size'] ?? ($sizeGroup['default'] ?? '1x2'),
+        );
+        $values = $sizeGroup['values'] ?? StickerProductCatalog::sizeValues();
+        $values = is_array($values) ? $values : [];
+        $selectedSize = [];
+
+        foreach ($values as $value) {
+            if (! is_array($value)) {
+                continue;
+            }
+
+            if ($size === $this->optionValue($value['code'] ?? null)
+                || $size === $this->optionValue($value['label'] ?? $value['name'] ?? null)) {
+                $selectedSize = $value;
+
+                break;
+            }
+        }
+
+        if ($size === 'custom') {
+            $width = $this->positiveNumber($options['custom_width'] ?? $options['width'] ?? null);
+            $height = $this->positiveNumber($options['custom_height'] ?? $options['height'] ?? null);
+        } else {
+            $area = $this->positiveNumber($selectedSize['area_sq_m'] ?? null);
+
+            if ($area !== null) {
+                return $area;
+            }
+
+            $width = $this->positiveNumber($selectedSize['width'] ?? null);
+            $height = $this->positiveNumber($selectedSize['height'] ?? null);
+        }
+
+        if ($width === null || $height === null) {
+            return 0.0;
+        }
+
+        $unit = $this->optionValue($selectedSize['unit'] ?? 'in');
+        $metersPerUnit = $unit === 'mm' ? 0.001 : self::INCH_TO_METERS;
+
+        return ($width * $metersPerUnit) * ($height * $metersPerUnit);
     }
 
     /**
@@ -215,7 +273,7 @@ class OrderWeightService
     }
 
     /**
-     * The storefront stores the number of cards in the line options. The
+     * The storefront stores the number of pieces per design in the line options. The
      * order/cart line quantity is the fallback for products without a pack
      * quantity option.
      *
@@ -226,9 +284,11 @@ class OrderWeightService
         $optionQuantity = $options['quantity'] ?? null;
 
         if (is_numeric($optionQuantity) && is_finite((float) $optionQuantity)) {
-            return max(0, (int) $optionQuantity);
+            $quantity = max(0, (int) $optionQuantity);
+        } else {
+            $quantity = max(0, $lineQuantity);
         }
 
-        return max(0, $lineQuantity);
+        return $quantity * max(1, (int) ($options['design_quantity'] ?? 1));
     }
 }

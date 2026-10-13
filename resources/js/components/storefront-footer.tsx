@@ -1,4 +1,5 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import ContactPlatformIcon from '@/components/contact-platform-icon';
 import { PaymentMethods } from '@/components/payment-methods';
 import { useContent } from '@/hooks/use-content';
 import type { FooterSocialLink, NavLink } from '@/types/content';
@@ -52,6 +53,14 @@ function SocialIcon({ network }: { network: string }) {
     };
 
     switch (network) {
+        case 'telegram':
+        case 'whatsapp':
+            return (
+                <ContactPlatformIcon
+                    platform={network}
+                    className={common.className}
+                />
+            );
         case 'facebook':
             return (
                 <svg {...common}>
@@ -124,7 +133,23 @@ function SocialLinks({ links }: { links: FooterSocialLink[] }) {
 export function StorefrontFooter() {
     const chrome = useContent('global_chrome');
     const f = chrome.footer;
-    const socialLinks = f.social_links ?? [];
+    const contactLinks = usePage().props.contactLinks;
+    const socialLinks = [
+        ...(f.social_links ?? []).filter(
+            (link) =>
+                link.network !== 'telegram' && link.network !== 'whatsapp',
+        ),
+        {
+            network: 'telegram',
+            label: 'Telegram',
+            href: contactLinks.telegram.href,
+        },
+        {
+            network: 'whatsapp',
+            label: 'WhatsApp',
+            href: contactLinks.whatsapp.href,
+        },
+    ];
     const paymentMethods = f.payment_methods ?? [];
 
     return (

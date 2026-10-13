@@ -1,6 +1,7 @@
 ﻿import { useForm, usePage } from '@inertiajs/react';
 import { Mail, MessageSquare } from 'lucide-react';
 import type { FormEventHandler } from 'react';
+import ContactPlatformIcon from '@/components/contact-platform-icon';
 import InputError from '@/components/input-error';
 import SEO from '@/components/seo';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,7 @@ const TOPICS = [
 
 export default function Contact() {
     const page = usePage();
+    const contactLinks = page.props.contactLinks;
     const flashSuccess = (page.props.flash as { success?: string } | undefined)
         ?.success;
     const query = new URLSearchParams(page.url.split('?')[1] ?? '');
@@ -102,6 +104,44 @@ export default function Contact() {
                                         className="text-[#800020] hover:underline"
                                     >
                                         support@inkpavo.com
+                                    </a>
+                                }
+                            />
+                            <InfoRow
+                                icon={
+                                    <ContactPlatformIcon
+                                        platform="telegram"
+                                        className="size-4"
+                                    />
+                                }
+                                label="Telegram"
+                                value={
+                                    <a
+                                        href={contactLinks.telegram.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[#800020] hover:underline"
+                                    >
+                                        @{contactLinks.telegram.username}
+                                    </a>
+                                }
+                            />
+                            <InfoRow
+                                icon={
+                                    <ContactPlatformIcon
+                                        platform="whatsapp"
+                                        className="size-4"
+                                    />
+                                }
+                                label="WhatsApp"
+                                value={
+                                    <a
+                                        href={contactLinks.whatsapp.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[#800020] hover:underline"
+                                    >
+                                        @{contactLinks.whatsapp.username}
                                     </a>
                                 }
                             />

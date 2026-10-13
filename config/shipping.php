@@ -20,13 +20,14 @@ return [
         'business-cards' => 'classic-standard-business-cards',
         'cotton-business-cards' => 'basic-cotton-business-card',
         'pvc-business-cards' => 'standard-pvc-card',
+        'stickers-labels' => 'classic-stickers',
     ],
     'calculator_unit_weights_grams' => [
         'business-cards' => 1.5,
         'cotton-business-cards' => 2.6,
         'pvc-business-cards' => 2.0,
         'postcards' => 5.0,
-        'stickers-labels' => 1.0,
+        'stickers-labels' => 0.20258024, // Default 1 x 2 in sticker at 157 GSM.
         'flyers' => 2.0,
     ],
 

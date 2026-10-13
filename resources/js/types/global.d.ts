@@ -1,4 +1,5 @@
 import type { Auth } from '@/types/auth';
+import type { ContactLinks } from '@/types/contact';
 import type { Content } from '@/types/content';
 
 declare module 'react' {
@@ -17,6 +18,7 @@ declare module '@inertiajs/core' {
                 success?: string;
                 error?: string;
             };
+            contactLinks: ContactLinks;
             sidebarOpen: boolean;
             content: Content;
             [key: string]: unknown;
