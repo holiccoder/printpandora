@@ -724,6 +724,19 @@ class PricingService
         $startQuantity = (int) ($pricing['startQuantity'] ?? 0);
         $quantity = (int) ($options['quantity'] ?? 0);
         $basePrice = (float) ($pricing['basePrice'] ?? 0);
+        $paperArea = 1.0;
+
+        if (($pricing['area_based'] ?? false) === true) {
+            $rawArea = $options['paper_area'] ?? null;
+
+            if (! is_numeric($rawArea) || ! is_finite((float) $rawArea) || (float) $rawArea <= 0) {
+                return null;
+            }
+
+            $paperArea = (float) $rawArea;
+            $basePrice = $this->areaUnitPrice($pricing['area_unit_prices'] ?? [], $paperArea, $basePrice);
+        }
+
         $paperRates = is_array($pricing['paperRates'] ?? null) ? $pricing['paperRates'] : [];
         $unitMultipliers = is_array($pricing['unitMultipliers'] ?? null)
             ? $pricing['unitMultipliers']
@@ -762,34 +775,52 @@ class PricingService
 
             $markup = (float) ($process['markup'] ?? $process['markup_per_card'] ?? 0);
 
+            if (($pricing['area_based'] ?? false) === true) {
+                $markup = $this->areaUnitPrice($process['area_unit_prices'] ?? [], $paperArea, $markup);
+            }
+
             if ($this->isFoilProcess($process, $options)) {
                 $markup *= $this->foilSideMultiplier($options, $process);
             } elseif ($this->isSideAwareProcess($process)) {
                 $markup *= $this->processSideMultiplier($options, $process);
             }
 
-            $unit += $markup;
+            $processMultiplier = $process['unitMultipliers'][(string) $quantity] ?? null;
 
-            $rates = is_array($process['rates'] ?? null)
-                ? $process['rates']
-                : (is_array($process['quantity_discounts_percent'] ?? null) ? $process['quantity_discounts_percent'] : []);
-            $rate = (float) ($rates[(string) $quantity] ?? $rates[$quantity] ?? 0);
-            $unit -= $markup * ($rate / 100);
-        }
-
-        $paperArea = 1.0;
-
-        if (($pricing['area_based'] ?? false) === true) {
-            $rawArea = $options['paper_area'] ?? null;
-
-            if (! is_numeric($rawArea) || ! is_finite((float) $rawArea) || (float) $rawArea <= 0) {
-                return null;
+            if (is_numeric($processMultiplier)) {
+                $unit += $markup * (float) $processMultiplier;
+            } else {
+                $rates = is_array($process['rates'] ?? null)
+                    ? $process['rates']
+                    : (is_array($process['quantity_discounts_percent'] ?? null) ? $process['quantity_discounts_percent'] : []);
+                $rate = (float) ($rates[(string) $quantity] ?? $rates[$quantity] ?? 0);
+                $unit += $markup * (1 - $rate / 100);
             }
-
-            $paperArea = (float) $rawArea;
         }
 
         return (float) round($quantity * $unit * $paperArea);
+    }
+
+    /**
+     * Workbook area bands are inclusive upper bounds; keep the final rate
+     * for larger custom dimensions rather than inventing an extrapolation.
+     *
+     * @param  array<string, float|int>  $prices
+     */
+    private function areaUnitPrice(array $prices, float $area, float $fallback): float
+    {
+        ksort($prices, SORT_NUMERIC);
+        $price = $fallback;
+
+        foreach ($prices as $upperArea => $unitPrice) {
+            $price = (float) $unitPrice;
+
+            if ($area <= (float) $upperArea + 1e-10) {
+                break;
+            }
+        }
+
+        return $price;
     }
 
     private function pricingUsesAreaBasedPricing(?array $pricingData, array $pricingRules): bool

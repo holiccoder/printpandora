@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import Link from '@/components/storefront-link';
 import type { MoreGoodStuffContent } from '@/types/product-detail';
 
 interface MoreGoodStuffSectionProps {

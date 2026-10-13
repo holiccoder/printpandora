@@ -7,8 +7,8 @@ namespace App\Support;
  *
  * The quantity schedules are transcribed from the supplied cards workbook:
  * sheet1 contains paper pricing and sheet2 contains finishing-process pricing.
- * Prices are stored per square metre so the same formula works for standard,
- * square, and custom dimensions: area × unit price × quantity multiplier.
+ * The area/unit-price columns use upper area bounds. Above the last bound,
+ * retain the final rate. Totals are area × unit price × quantity multiplier.
  */
 final class PostcardProductCatalog
 {
@@ -23,6 +23,7 @@ final class PostcardProductCatalog
      *     paper_name: string,
      *     area_sq_m: float,
      *     unit_price: float,
+     *     area_unit_prices: array<string, float>,
      *     start_quantity: int,
      *     multipliers: array<string, float>
      * }>
@@ -34,6 +35,11 @@ final class PostcardProductCatalog
             'paper_name' => '300g铜版纸',
             'area_sq_m' => 0.00486,
             'unit_price' => 3.2,
+            'area_unit_prices' => [
+                '0.005' => 3.2, '0.0085' => 3.0, '0.012' => 2.8,
+                '0.0155' => 2.6, '0.019' => 2.4, '0.0225' => 2.2,
+                '0.026' => 2.0, '0.0295' => 1.8,
+            ],
             'start_quantity' => 200,
             'multipliers' => [
                 '200' => 4.2,
@@ -51,6 +57,11 @@ final class PostcardProductCatalog
             'paper_name' => '300g艺术纸',
             'area_sq_m' => 0.00486,
             'unit_price' => 4.0,
+            'area_unit_prices' => [
+                '0.005' => 4.0, '0.0085' => 3.8, '0.012' => 3.6,
+                '0.0155' => 3.4, '0.019' => 3.2, '0.0225' => 3.0,
+                '0.026' => 2.8, '0.0295' => 2.6,
+            ],
             'start_quantity' => 200,
             'multipliers' => [
                 '200' => 4.2,
@@ -68,6 +79,12 @@ final class PostcardProductCatalog
             'paper_name' => '350g精品纸',
             'area_sq_m' => 0.015,
             'unit_price' => 5.5,
+            'area_unit_prices' => [
+                '0.005' => 7.0, '0.0085' => 6.5, '0.012' => 6.0,
+                '0.0155' => 5.5, '0.019' => 5.0, '0.0225' => 4.5,
+                '0.026' => 4.0, '0.0295' => 3.5, '0.033' => 3.0,
+                '0.0365' => 2.5,
+            ],
             'start_quantity' => 50,
             'multipliers' => [
                 '50' => 12.0,
@@ -87,6 +104,12 @@ final class PostcardProductCatalog
             'paper_name' => '700g精品纸',
             'area_sq_m' => 0.00486,
             'unit_price' => 12.0,
+            'area_unit_prices' => [
+                '0.005' => 12.0, '0.0085' => 11.0, '0.012' => 10.0,
+                '0.0155' => 9.0, '0.019' => 8.0, '0.0225' => 7.2,
+                '0.026' => 6.4, '0.0295' => 5.6, '0.033' => 4.9,
+                '0.0365' => 4.2,
+            ],
             'start_quantity' => 50,
             'multipliers' => [
                 '50' => 12.0,
@@ -106,6 +129,12 @@ final class PostcardProductCatalog
             'paper_name' => '320g铜版纸',
             'area_sq_m' => 0.0144,
             'unit_price' => 3.8,
+            'area_unit_prices' => [
+                '0.005' => 5.0, '0.0085' => 4.6, '0.012' => 4.2,
+                '0.0155' => 3.8, '0.019' => 3.4, '0.0225' => 3.0,
+                '0.026' => 2.7, '0.0295' => 2.4, '0.033' => 2.1,
+                '0.0365' => 1.8,
+            ],
             'start_quantity' => 50,
             'multipliers' => [
                 '50' => 12.0,
@@ -125,6 +154,12 @@ final class PostcardProductCatalog
             'paper_name' => '640g铜版纸',
             'area_sq_m' => 0.015,
             'unit_price' => 9.0,
+            'area_unit_prices' => [
+                '0.005' => 9.0, '0.0085' => 8.0, '0.012' => 7.0,
+                '0.0155' => 6.0, '0.019' => 5.0, '0.0225' => 4.2,
+                '0.026' => 3.4, '0.0295' => 2.6, '0.033' => 2.2,
+                '0.0365' => 1.8,
+            ],
             'start_quantity' => 50,
             'multipliers' => [
                 '50' => 18.0,
@@ -140,10 +175,27 @@ final class PostcardProductCatalog
         ],
     ];
 
+    /** @var array<string, float> */
+    private const FOIL_AREA_UNIT_PRICES = [
+        '0.005' => 5.0, '0.0085' => 4.85, '0.012' => 4.7,
+        '0.0155' => 4.65, '0.019' => 4.5, '0.0225' => 4.35,
+        '0.026' => 4.2, '0.0295' => 4.05, '0.033' => 3.9,
+        '0.0365' => 3.75,
+    ];
+
+    /** @var array<string, float> */
+    private const UV_AREA_UNIT_PRICES = [
+        '0.005' => 7.0, '0.0085' => 6.5, '0.012' => 6.0,
+        '0.0155' => 5.5, '0.019' => 5.0, '0.0225' => 4.5,
+        '0.026' => 4.0, '0.0295' => 3.5, '0.033' => 3.0,
+        '0.0365' => 2.5,
+    ];
+
     /**
      * @var array<string, array{
      *     label: string,
      *     unit_price: float,
+     *     area_unit_prices: array<string, float>,
      *     multipliers: array<string, float>
      * }>
      */
@@ -151,6 +203,7 @@ final class PostcardProductCatalog
         'rounded_corners' => [
             'label' => 'Rounded corners',
             'unit_price' => 3.5,
+            'area_unit_prices' => self::UV_AREA_UNIT_PRICES,
             'multipliers' => [
                 '50' => 12.0,
                 '100' => 9.0,
@@ -166,6 +219,7 @@ final class PostcardProductCatalog
         'uv_finish' => [
             'label' => 'Regular UV',
             'unit_price' => 3.5,
+            'area_unit_prices' => self::UV_AREA_UNIT_PRICES,
             'multipliers' => [
                 '50' => 12.0,
                 '100' => 9.0,
@@ -181,6 +235,7 @@ final class PostcardProductCatalog
         'hot_foil' => [
             'label' => 'Hot foil',
             'unit_price' => 3.75,
+            'area_unit_prices' => self::FOIL_AREA_UNIT_PRICES,
             'multipliers' => [
                 '50' => 16.8,
                 '100' => 8.4,
@@ -196,6 +251,7 @@ final class PostcardProductCatalog
         'cold_foil' => [
             'label' => 'Cold foil',
             'unit_price' => 3.75,
+            'area_unit_prices' => self::FOIL_AREA_UNIT_PRICES,
             'multipliers' => [
                 '50' => 16.8,
                 '100' => 8.4,
@@ -211,6 +267,7 @@ final class PostcardProductCatalog
         '3d_uv' => [
             'label' => '3D UV',
             'unit_price' => 3.75,
+            'area_unit_prices' => self::FOIL_AREA_UNIT_PRICES,
             'multipliers' => [
                 '50' => 16.8,
                 '100' => 8.4,
@@ -226,6 +283,7 @@ final class PostcardProductCatalog
         'custom_die_cut' => [
             'label' => 'Custom die-cut',
             'unit_price' => 8.0,
+            'area_unit_prices' => self::UV_AREA_UNIT_PRICES,
             'multipliers' => [
                 '50' => 12.0,
                 '100' => 9.0,
@@ -248,9 +306,88 @@ final class PostcardProductCatalog
         return array_keys(self::PRODUCTS);
     }
 
+    /** @return array<string, mixed> */
+    public static function sizeOptions(): array
+    {
+        $sizes = [
+            ['standard', 'Standard', 4, 6, 'standard'],
+            ['square', 'Square', 4.72, 4.72, 'square'],
+            ['rack', 'Rack', 3.67, 8.5, 'rack'],
+            ['half_page', 'Half Page', 5.5, 8.5, 'half-page'],
+            ['small', 'Small', 4.13, 5.83, 'small'],
+            ['medium', 'Medium', 5, 7, 'medium'],
+            ['large', 'Large', 6, 9, 'large'],
+        ];
+        $values = [];
+
+        foreach ($sizes as [$code, $label, $width, $height, $image]) {
+            $values[] = [
+                'code' => $code,
+                'label' => $label,
+                'width' => (string) $width,
+                'height' => (string) $height,
+                'unit' => 'in',
+                'area_sq_m' => round($width * $height * 0.0254 ** 2, 8),
+                'description' => $width.'" x '.$height.'"',
+                'swatch_image' => '/images/products/postcards/sizes/'.$image.'.png',
+            ];
+        }
+
+        $values[] = [
+            'code' => 'custom',
+            'label' => 'Custom Size',
+            'unit' => 'mm',
+            'min_width' => 18,
+            'max_width' => 430,
+            'min_height' => 18,
+            'max_height' => 301,
+            'description' => 'W 18–430 mm × H 18–301 mm',
+            'swatch_image' => '/images/product-options/business-cards/swatches/custom-size.webp',
+        ];
+
+        return [
+            'label' => 'Size',
+            'type' => 'select',
+            'required' => true,
+            'default' => 'standard',
+            'values' => $values,
+        ];
+    }
+
+    /**
+     * Update existing postcards without replacing their copy, finishes or media.
+     *
+     * @param  array<string, mixed>  $config
+     * @return array<string, mixed>
+     */
+    public static function synchronizeConfig(array $config, string $slug): array
+    {
+        if (! self::isPostcardProduct($slug)) {
+            return $config;
+        }
+
+        $config['options']['sizes'] = self::sizeOptions();
+        $config['pricing'] = self::pricingFor($slug);
+
+        return $config;
+    }
+
     public static function isPostcardProduct(string $slug): bool
     {
         return isset(self::PRODUCTS[$slug]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    public static function normalizeOptions(array $options, string $slug): array
+    {
+        if (in_array($slug, ['super-standard-postcards', 'super-luxe-postcards'], true)) {
+            unset($options['uv_finish']);
+        }
+
+        return $options;
     }
 
     public static function productSlugForSegment(string $segment): ?string
@@ -326,7 +463,6 @@ final class PostcardProductCatalog
 
         $paperMultipliers = $definition['multipliers'];
         $startQuantity = $definition['start_quantity'];
-        $paperBasePrice = $definition['unit_price'] * $paperMultipliers[(string) $startQuantity];
 
         $processes = [];
 
@@ -335,8 +471,10 @@ final class PostcardProductCatalog
             $processes[] = [
                 'name' => $schedule['label'],
                 'code' => $code,
-                'markup' => $schedule['unit_price'] * $schedule['multipliers']['50'],
+                'markup' => $schedule['unit_price'],
                 'rates' => self::discountRates($schedule['multipliers']),
+                'unitMultipliers' => $schedule['multipliers'],
+                'area_unit_prices' => $schedule['area_unit_prices'],
             ];
         }
 
@@ -351,10 +489,12 @@ final class PostcardProductCatalog
                 'match' => [],
                 'pricing' => [
                     'packageName' => $definition['paper_name'],
-                    'basePrice' => $paperBasePrice,
+                    'basePrice' => $definition['unit_price'],
                     'startQuantity' => $startQuantity,
                     'recommendedQuantity' => min(self::RECOMMENDED_QUANTITY, max(array_map('intval', array_keys($paperMultipliers)))),
                     'paperRates' => self::discountRates($paperMultipliers),
+                    'unitMultipliers' => $paperMultipliers,
+                    'area_unit_prices' => $definition['area_unit_prices'],
                     'area_based' => true,
                     'processes' => $processes,
                 ],

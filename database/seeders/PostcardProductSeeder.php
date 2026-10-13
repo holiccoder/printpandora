@@ -63,7 +63,12 @@ class PostcardProductSeeder extends Seeder
                         'description_title' => $descriptionTitle,
                         'description' => $description,
                         'bullet_points' => $bulletPoints,
-                        'product_options' => $this->replaceBusinessCardCopy($reference->product_options),
+                        'product_options' => is_array($reference->product_options)
+                            ? PostcardProductCatalog::normalizeOptions(
+                                $this->replaceBusinessCardCopy($reference->product_options),
+                                $slug,
+                            )
+                            : null,
                         'product_config' => $config,
                         'price_line' => null,
                         'meta_description' => $metaDescription,
@@ -108,9 +113,11 @@ class PostcardProductSeeder extends Seeder
             'featured_image' => $definition['featured_image'] ?? $definition['gallery'][0],
         ]);
         $config['product'] = $product;
-        $config['options'] = $this->postcardOptions(
-            is_array($config['options'] ?? null) ? $config['options'] : [],
-            (float) $definition['area_sq_m'],
+        $config['options'] = PostcardProductCatalog::normalizeOptions(
+            $this->postcardOptions(
+                is_array($config['options'] ?? null) ? $config['options'] : [],
+            ),
+            $slug,
         );
         $config['pricing'] = PostcardProductCatalog::pricingFor($slug);
 
@@ -133,53 +140,9 @@ class PostcardProductSeeder extends Seeder
      * @param  array<string, mixed>  $options
      * @return array<string, mixed>
      */
-    private function postcardOptions(array $options, float $standardArea): array
+    private function postcardOptions(array $options): array
     {
-        $sizeGroup = is_array($options['sizes'] ?? null) ? $options['sizes'] : [];
-        $sizeValues = is_array($sizeGroup['values'] ?? null) ? $sizeGroup['values'] : [];
-        $standardDimensions = null;
-
-        foreach ($sizeValues as $value) {
-            if (
-                is_array($value)
-                && strtolower((string) ($value['code'] ?? '')) === 'standard'
-                && is_numeric($value['width'] ?? null)
-                && is_numeric($value['height'] ?? null)
-            ) {
-                $standardDimensions = (float) $value['width'] * (float) $value['height'];
-                break;
-            }
-        }
-
-        foreach ($sizeValues as &$value) {
-            if (! is_array($value)) {
-                continue;
-            }
-
-            $code = strtolower((string) ($value['code'] ?? ''));
-
-            if ($code === 'standard') {
-                $value['area_sq_m'] = $standardArea;
-            } elseif (
-                $code === 'square'
-                && $standardDimensions !== null
-                && $standardDimensions > 0
-                && is_numeric($value['width'] ?? null)
-                && is_numeric($value['height'] ?? null)
-            ) {
-                $squareDimensions = (float) $value['width'] * (float) $value['height'];
-                $value['area_sq_m'] = round(
-                    $standardArea * ($squareDimensions / $standardDimensions),
-                    8,
-                );
-            }
-        }
-        unset($value);
-
-        if ($sizeValues !== []) {
-            $sizeGroup['values'] = array_values($sizeValues);
-            $options['sizes'] = $sizeGroup;
-        }
+        $options['sizes'] = PostcardProductCatalog::sizeOptions();
 
         if (! is_array($options['uv_finish'] ?? null)) {
             $options['uv_finish'] = [

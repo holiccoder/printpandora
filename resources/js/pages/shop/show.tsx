@@ -3728,7 +3728,13 @@ export default function ShopShow({
                         />
                     )}
                     {isPostcardProduct ? (
-                        <PostcardSizeShowcaseSection />
+                        <PostcardSizeShowcaseSection
+                            sizes={productOptions.sizes ?? []}
+                            pricingData={{
+                                ...(productOptions.pricing_data ?? {}),
+                                rules: productOptions.pricing_rules,
+                            }}
+                        />
                     ) : (
                         productOptions.detail_sections.paper_stocks && (
                             <PaperStockComparisonSection

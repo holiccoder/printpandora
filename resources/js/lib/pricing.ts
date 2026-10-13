@@ -6,11 +6,14 @@ export interface PricingScenario {
     paperRates: Record<string, number>;
     unitMultipliers?: Record<string, number>;
     area_based?: boolean;
+    area_unit_prices?: Record<string, number>;
     processes: Array<{
         code?: string;
         name: string;
         markup: number;
         rates: Record<string, number>;
+        unitMultipliers?: Record<string, number>;
+        area_unit_prices?: Record<string, number>;
     }>;
 }
 
@@ -562,6 +565,22 @@ export function findMatchingPricingRule(
         )?.pricing;
 }
 
+function areaUnitPrice(
+    prices: Record<string, number> | undefined,
+    area: number,
+    fallback: number,
+): number {
+    const bands = Object.entries(prices ?? {}).sort(
+        ([left], [right]) => Number(left) - Number(right),
+    );
+
+    return (
+        bands.find(([upperArea]) => area <= Number(upperArea) + 1e-10)?.[1] ??
+        bands.at(-1)?.[1] ??
+        fallback
+    );
+}
+
 export function computeDynamicTiers(
     data: DynamicPricingData,
     sizeIndex: number,
@@ -609,20 +628,32 @@ export function computeDynamicTiers(
             specialFinishIndex,
         ),
     );
+    const paperArea = scenario.area_based
+        ? Number(selectedOptions.paper_area ?? 0)
+        : 1;
+    const basePrice = scenario.area_based
+        ? areaUnitPrice(scenario.area_unit_prices, paperArea, scenario.basePrice)
+        : scenario.basePrice;
 
     return quantities.map((qty) => {
-        let unit = scenario.basePrice;
+        let unit = basePrice;
         const unitMultiplier = scenario.unitMultipliers?.[String(qty)];
 
         if (unitMultiplier != null && Number.isFinite(unitMultiplier)) {
-            unit = scenario.basePrice * unitMultiplier;
+            unit = basePrice * unitMultiplier;
         } else {
             const paperRate = scenario.paperRates[String(qty)] ?? 0;
-            unit -= scenario.basePrice * (paperRate / 100);
+            unit -= basePrice * (paperRate / 100);
         }
 
         for (const process of selectedProcesses) {
-            let markup = process.markup;
+            let markup = scenario.area_based
+                ? areaUnitPrice(
+                      process.area_unit_prices,
+                      paperArea,
+                      process.markup,
+                  )
+                : process.markup;
 
             if (isFoilProcess(process, selectedFoilValues)) {
                 markup *= foilSideMultiplier(
@@ -640,14 +671,19 @@ export function computeDynamicTiers(
                 );
             }
 
-            unit += markup;
-            const rate = process.rates[String(qty)] ?? 0;
-            unit -= markup * (rate / 100);
+            const processMultiplier = process.unitMultipliers?.[String(qty)];
+
+            if (
+                processMultiplier != null &&
+                Number.isFinite(processMultiplier)
+            ) {
+                unit += markup * processMultiplier;
+            } else {
+                const rate = process.rates[String(qty)] ?? 0;
+                unit += markup * (1 - rate / 100);
+            }
         }
 
-        const paperArea = scenario.area_based
-            ? Number(selectedOptions.paper_area ?? 0)
-            : 1;
         const adjustedUnit =
             Number.isFinite(paperArea) && paperArea > 0 ? unit * paperArea : 0;
 

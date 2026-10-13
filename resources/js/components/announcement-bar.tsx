@@ -1,5 +1,5 @@
-import { Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import Link from '@/components/storefront-link';
 import { useContent } from '@/hooks/use-content';
 import { cn } from '@/lib/utils';
 

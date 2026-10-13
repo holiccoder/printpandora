@@ -1,6 +1,7 @@
-import { Link, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import ContactPlatformIcon from '@/components/contact-platform-icon';
 import { PaymentMethods } from '@/components/payment-methods';
+import Link from '@/components/storefront-link';
 import { useContent } from '@/hooks/use-content';
 import type { FooterSocialLink, NavLink } from '@/types/content';
 

@@ -1,6 +1,7 @@
-import { Link, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { ShoppingCart, Trash2 } from 'lucide-react';
 import type { ReactNode } from 'react';
+import Link from '@/components/storefront-link';
 import { Button } from '@/components/ui/button';
 import {
     Sheet,

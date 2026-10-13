@@ -1,4 +1,4 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import {
     Bell,
     ChevronDown,
@@ -16,6 +16,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import AnnouncementBar from '@/components/announcement-bar';
 import { CartDrawer } from '@/components/cart-drawer';
 import type { CartItem } from '@/components/cart-drawer';
+import Link from '@/components/storefront-link';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -852,6 +853,7 @@ function PromoCard({
         <div className="flex origin-top-right flex-col transition-transform duration-200 ease-out hover:scale-[1.05]">
             <Link
                 href={promo.cta_href}
+                unlinkedAs="div"
                 className="block overflow-hidden rounded-md bg-white"
             >
                 {promo.image_url ? (

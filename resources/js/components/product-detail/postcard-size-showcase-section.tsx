@@ -1,8 +1,16 @@
+import { computeDynamicTiers } from '@/lib/pricing';
+import type { DynamicPricingData } from '@/lib/pricing';
+
+interface PostcardSize {
+    code?: string;
+    width?: string;
+    height?: string;
+    area_sq_m?: string | number;
+}
+
 interface PostcardSizeShowcaseItem {
     id: string;
     title: string;
-    price: string;
-    dimensions: string;
     aspectRatio: string;
     imageUrl: string;
 }
@@ -11,56 +19,42 @@ const POSTCARD_SIZE_ITEMS: PostcardSizeShowcaseItem[] = [
     {
         id: 'standard',
         title: 'Standard Postcards',
-        price: '50 postcards from $24.00',
-        dimensions: '4" x 6"',
         aspectRatio: '4 / 3',
         imageUrl: '/images/products/postcards/sizes/standard.png',
     },
     {
         id: 'square',
         title: 'Square Postcards',
-        price: '50 postcards from $23.00',
-        dimensions: '4.72" x 4.72"',
         aspectRatio: '4 / 3',
         imageUrl: '/images/products/postcards/sizes/square.png',
     },
     {
         id: 'rack',
         title: 'Rack Cards',
-        price: '50 postcards from $26.00',
-        dimensions: '3.67" x 8.5"',
         aspectRatio: '4 / 3',
         imageUrl: '/images/products/postcards/sizes/rack.png',
     },
     {
         id: 'half-page',
         title: 'Half Page Postcards',
-        price: '50 postcards from $36.00',
-        dimensions: '5.5" x 8.5"',
         aspectRatio: '4 / 3',
         imageUrl: '/images/products/postcards/sizes/half-page.png',
     },
     {
         id: 'small',
         title: 'Small Postcards',
-        price: '50 postcards from $24.00',
-        dimensions: '4.13" x 5.83"',
         aspectRatio: '4 / 3',
         imageUrl: '/images/products/postcards/sizes/small.png',
     },
     {
         id: 'medium',
         title: 'Medium Postcards',
-        price: '50 postcards from $27.00',
-        dimensions: '5" x 7"',
         aspectRatio: '4 / 3',
         imageUrl: '/images/products/postcards/sizes/medium.png',
     },
     {
         id: 'large',
         title: 'Large Postcards',
-        price: '50 postcards from $36.00',
-        dimensions: '6" x 9"',
         aspectRatio: '4 / 3',
         imageUrl: '/images/products/postcards/sizes/large.png',
     },
@@ -83,7 +77,11 @@ function previewWidthForAspectRatio(aspectRatio: string): number {
     return Math.min(220, (220 * width) / height);
 }
 
-function PostcardSizeCard({ item }: { item: PostcardSizeShowcaseItem }) {
+function PostcardSizeCard({
+    item,
+}: {
+    item: PostcardSizeShowcaseItem & { price?: string; dimensions: string };
+}) {
     return (
         <article className="group flex h-full flex-col items-center text-center">
             <div className="flex h-[220px] w-full items-center justify-center">
@@ -107,16 +105,48 @@ function PostcardSizeCard({ item }: { item: PostcardSizeShowcaseItem }) {
                 <h3 className="mt-4 min-h-10 text-base leading-5 font-semibold text-[#111827]">
                     {item.title}
                 </h3>
-                <p className="mt-1.5 text-sm text-[#374151]">{item.price}</p>
+                {item.price && (
+                    <p className="mt-1.5 text-sm text-[#374151]">{item.price}</p>
+                )}
                 <p className="mt-1 text-sm text-[#6b7280]">{item.dimensions}</p>
             </div>
         </article>
     );
 }
 
-export default function PostcardSizeShowcaseSection() {
-    const firstRow = POSTCARD_SIZE_ITEMS.slice(0, 4);
-    const secondRow = POSTCARD_SIZE_ITEMS.slice(4);
+export default function PostcardSizeShowcaseSection({
+    sizes,
+    pricingData,
+}: {
+    sizes: PostcardSize[];
+    pricingData: DynamicPricingData;
+}) {
+    const items = POSTCARD_SIZE_ITEMS.flatMap((item) => {
+        const size = sizes.find(
+            (value) => value.code?.replaceAll('_', '-') === item.id,
+        );
+
+        if (!size?.width || !size.height) {
+            return [];
+        }
+
+        const area = Number(size.area_sq_m);
+        const firstTier = computeDynamicTiers(pricingData, 0, 0, 0, 0, {
+            sizes: size.code ?? item.id,
+            corners: 'square',
+            paper_area: String(area),
+        })[0];
+
+        return [{
+            ...item,
+            dimensions: `${size.width}" x ${size.height}"`,
+            price: firstTier && area > 0
+                ? `${firstTier.qty} postcards from $${firstTier.currentPrice.toFixed(2)}`
+                : undefined,
+        }];
+    });
+    const firstRow = items.slice(0, 4);
+    const secondRow = items.slice(4);
 
     return (
         <section className="bg-white py-16 lg:py-20">

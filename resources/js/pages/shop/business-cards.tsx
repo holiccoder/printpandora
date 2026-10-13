@@ -1,7 +1,6 @@
 // Content (copy, blurbs, images) sourced from `content/hardcoded-content.json`
 // via useContent('business_cards_landing_page'). Hrefs and icon mappings
 // remain in this file because the JSON does not declare them.
-import { Link } from '@inertiajs/react';
 import {
     ArrowRight,
     ChevronRight,
@@ -14,6 +13,7 @@ import {
 } from 'lucide-react';
 import MoreGoodStuffSection from '@/components/product-detail/more-good-stuff-section';
 import SEO from '@/components/seo';
+import Link from '@/components/storefront-link';
 import { useContent } from '@/hooks/use-content';
 import StorefrontLayout from '@/layouts/storefront-layout';
 
@@ -34,8 +34,6 @@ const sizeHrefs = [
     '/business-cards/classic-standard',
 ];
 
-const finishHref = '/business-cards';
-const designHref = '/business-cards';
 const designIcons = [Pencil, Upload, Globe];
 const perkIcons = [ShieldCheck, Leaf, Truck];
 
@@ -76,23 +74,20 @@ function SectionHeader({
     );
 }
 
-function ShopLink({
+function ShopCta({
     children,
-    href,
     accent,
 }: {
     children: React.ReactNode;
-    href: string;
     accent: string;
 }) {
     return (
-        <Link
-            href={href}
+        <span
             className="mt-3 inline-flex items-center gap-1 text-sm font-semibold group-hover:underline"
             style={{ color: accent }}
         >
             {children} <ChevronRight className="size-3.5" />
-        </Link>
+        </span>
     );
 }
 
@@ -197,11 +192,15 @@ export default function BusinessCardsLanding() {
                     <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                         {sections.shop_by_paper.items.map(
                             (paper: any, i: number) => {
-                                const href = paperHrefs[i] ?? '/business-cards';
+                                const href = paperHrefs[i];
 
                                 return (
                                     <li key={paper.name} className="group">
-                                        <Link href={href} className="block">
+                                        <Link
+                                            href={href}
+                                            unlinkedAs="div"
+                                            className="block"
+                                        >
                                             <div className="overflow-hidden rounded-md bg-neutral-100">
                                                 <img
                                                     src={paper.image_url}
@@ -216,16 +215,15 @@ export default function BusinessCardsLanding() {
                                             <p className="mt-1 text-sm text-neutral-600">
                                                 {paper.blurb}
                                             </p>
-                                            <ShopLink
-                                                href={href}
-                                                accent={ACCENT}
-                                            >
-                                                {formatCta(
-                                                    sections.shop_by_paper
-                                                        .cta_template,
-                                                    paper.name,
-                                                )}
-                                            </ShopLink>
+                                            {href && (
+                                                <ShopCta accent={ACCENT}>
+                                                    {formatCta(
+                                                        sections.shop_by_paper
+                                                            .cta_template,
+                                                        paper.name,
+                                                    )}
+                                                </ShopCta>
+                                            )}
                                         </Link>
                                     </li>
                                 );
@@ -249,11 +247,15 @@ export default function BusinessCardsLanding() {
                     <ul className="grid grid-cols-1 gap-8 sm:grid-cols-3">
                         {sections.shop_by_size.items.map(
                             (size: any, i: number) => {
-                                const href = sizeHrefs[i] ?? '/business-cards';
+                                const href = sizeHrefs[i];
 
                                 return (
                                     <li key={size.name} className="group">
-                                        <Link href={href} className="block">
+                                        <Link
+                                            href={href}
+                                            unlinkedAs="div"
+                                            className="block"
+                                        >
                                             <div className="overflow-hidden rounded-md bg-neutral-100">
                                                 <img
                                                     src={size.image_url}
@@ -268,16 +270,15 @@ export default function BusinessCardsLanding() {
                                             <p className="mt-1 text-sm text-neutral-600">
                                                 {size.blurb}
                                             </p>
-                                            <ShopLink
-                                                href={href}
-                                                accent={ACCENT}
-                                            >
-                                                {formatCta(
-                                                    sections.shop_by_size
-                                                        .cta_template,
-                                                    size.name,
-                                                )}
-                                            </ShopLink>
+                                            {href && (
+                                                <ShopCta accent={ACCENT}>
+                                                    {formatCta(
+                                                        sections.shop_by_size
+                                                            .cta_template,
+                                                        size.name,
+                                                    )}
+                                                </ShopCta>
+                                            )}
                                         </Link>
                                     </li>
                                 );
@@ -300,8 +301,8 @@ export default function BusinessCardsLanding() {
                     />
                     <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
                         {sections.shop_by_finish.items.map((finish: any) => (
-                            <li key={finish.name} className="group">
-                                <Link href={finishHref} className="block">
+                            <li key={finish.name}>
+                                <div>
                                     <div
                                         className={`overflow-hidden rounded-md ${
                                             finish.emphasised
@@ -313,7 +314,7 @@ export default function BusinessCardsLanding() {
                                             src={finish.image_url}
                                             alt={finish.name}
                                             loading="lazy"
-                                            className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                            className="aspect-[4/3] w-full object-cover"
                                         />
                                     </div>
                                     <h3 className="mt-4 text-base font-bold text-neutral-900">
@@ -324,7 +325,7 @@ export default function BusinessCardsLanding() {
                                             {finish.blurb}
                                         </p>
                                     )}
-                                </Link>
+                                </div>
                             </li>
                         ))}
                     </ul>
@@ -384,10 +385,7 @@ export default function BusinessCardsLanding() {
 
                                 return (
                                     <li key={entry.name}>
-                                        <Link
-                                            href={designHref}
-                                            className="group flex h-full flex-col items-start rounded-lg border border-neutral-200 bg-white p-6 transition-all hover:-translate-y-0.5 hover:shadow-md"
-                                        >
+                                        <div className="flex h-full flex-col items-start rounded-lg border border-neutral-200 bg-white p-6">
                                             <span
                                                 className="flex size-12 items-center justify-center rounded-full"
                                                 style={{
@@ -403,14 +401,7 @@ export default function BusinessCardsLanding() {
                                             <p className="mt-2 text-sm text-neutral-600">
                                                 {entry.blurb}
                                             </p>
-                                            <span
-                                                className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-semibold group-hover:underline"
-                                                style={{ color: ACCENT }}
-                                            >
-                                                {entry.cta}{' '}
-                                                <ChevronRight className="size-3.5" />
-                                            </span>
-                                        </Link>
+                                        </div>
                                     </li>
                                 );
                             },

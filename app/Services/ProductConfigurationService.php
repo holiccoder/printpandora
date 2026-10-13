@@ -2967,6 +2967,7 @@ class ProductConfigurationService
     private function normalizeProductSpecificOptions(array $options, Product $product): array
     {
         $options = $this->splitUvPaperFinishOptionGroup($options);
+        $options = PostcardProductCatalog::normalizeOptions($options, (string) $product->slug);
 
         if ($product->slug === SolidQualityBusinessCardGallery::PRODUCT_SLUG) {
             return $this->orderedOptionGroups(
