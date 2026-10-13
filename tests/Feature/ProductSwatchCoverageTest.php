@@ -230,6 +230,18 @@ class ProductSwatchCoverageTest extends TestCase
         );
     }
 
+    public function test_muted_purple_gold_uses_the_updated_webp_swatch(): void
+    {
+        $options = BusinessCardOptionCatalog::normalize('basic-cotton-business-card', []);
+        $mutedPurpleGold = collect(data_get($options, 'hot_foil.values', []))
+            ->firstWhere('code', 'muted_purple_gold');
+
+        $this->assertSame(
+            '/images/product-options/business-cards/swatches/muted-purple-gold.webp',
+            $mutedPurpleGold['swatch_image'] ?? null,
+        );
+    }
+
     public function test_cotton_thickness_and_paper_sample_contract_has_complete_assets(): void
     {
         $options = BusinessCardOptionCatalog::normalize(
@@ -486,6 +498,11 @@ class ProductSwatchCoverageTest extends TestCase
                     $failures[] = "{$source}: {$groupKey}[{$index}] ({$code}) has no swatch_image";
 
                     continue;
+                }
+
+                if (($value['code'] ?? null) === 'muted_purple_gold'
+                    && $swatch !== BusinessCardOptionCatalog::MUTED_PURPLE_GOLD_SWATCH_IMAGE) {
+                    $failures[] = "{$source}: muted_purple_gold uses {$swatch} instead of the updated WebP swatch";
                 }
 
                 if (str_starts_with($swatch, '/images/') && ! is_file(public_path(ltrim($swatch, '/')))) {

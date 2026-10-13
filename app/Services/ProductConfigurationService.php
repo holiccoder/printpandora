@@ -3201,7 +3201,7 @@ class ProductConfigurationService
             ['code' => 'red_gold', 'label' => 'Red Gold', 'swatch_image' => $foilSwatches.'red-gold.png'],
             ['code' => 'rose_gold', 'label' => 'Rose Gold', 'swatch_image' => $foilSwatches.'rose-gold.png'],
             ['code' => 'aged_gold', 'label' => 'Aged Gold', 'swatch_image' => $foilSwatches.'aged-gold.png'],
-            ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => $foilSwatches.'muted-purple-gold.png'],
+            ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => BusinessCardOptionCatalog::MUTED_PURPLE_GOLD_SWATCH_IMAGE],
             ['code' => 'laser_silver', 'label' => 'laser silver', 'swatch_image' => $foilSwatches.'laser-silver.png'],
         ];
         $specialFinish = [

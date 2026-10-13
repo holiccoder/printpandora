@@ -916,7 +916,7 @@ class BusinessCardProductOptionsTest extends TestCase
                     '/images/product-options/business-cards/swatches/red-gold.png',
                     '/images/product-options/business-cards/swatches/rose-gold.png',
                     '/images/product-options/business-cards/swatches/aged-gold.png',
-                    '/images/product-options/business-cards/swatches/muted-purple-gold.png',
+                    '/images/product-options/business-cards/swatches/muted-purple-gold.webp',
                     '/images/product-options/business-cards/swatches/laser-silver.png',
                 ],
                 data_get($options, 'hot_foil.values.*.swatch_image'),

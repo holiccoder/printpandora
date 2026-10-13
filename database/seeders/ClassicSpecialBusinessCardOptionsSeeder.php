@@ -286,7 +286,7 @@ class ClassicSpecialBusinessCardOptionsSeeder extends Seeder
             ['code' => 'red_gold', 'label' => 'Red Gold', 'swatch_image' => $swatches.'red-gold.png'],
             ['code' => 'rose_gold', 'label' => 'Rose Gold', 'swatch_image' => $swatches.'rose-gold.png'],
             ['code' => 'aged_gold', 'label' => 'Aged Gold', 'swatch_image' => $swatches.'aged-gold.png'],
-            ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => $swatches.'muted-purple-gold.png'],
+            ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => BusinessCardOptionCatalog::MUTED_PURPLE_GOLD_SWATCH_IMAGE],
             ['code' => 'laser_silver', 'label' => 'laser silver', 'swatch_image' => $swatches.'laser-silver.png'],
         ];
     }

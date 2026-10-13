@@ -10,6 +10,8 @@ final class BusinessCardOptionCatalog
 
     public const LASER_SILVER_HOT_FOIL_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/laser-silver.png';
 
+    public const MUTED_PURPLE_GOLD_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/muted-purple-gold.webp';
+
     public const STANDARD_SIZE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/standard-size.webp';
 
     public const SQUARE_SIZE_SWATCH_IMAGE = '/images/product-options/business-cards/swatches/square-size.webp';
@@ -2022,7 +2024,7 @@ final class BusinessCardOptionCatalog
             ['code' => 'red_gold', 'label' => 'Red Gold', 'swatch_image' => $swatches.'red-gold.png'],
             ['code' => 'rose_gold', 'label' => 'Rose Gold', 'swatch_image' => $swatches.'rose-gold.png'],
             ['code' => 'aged_gold', 'label' => 'Aged Gold', 'swatch_image' => $swatches.'aged-gold.png'],
-            ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => $swatches.'muted-purple-gold.png'],
+            ['code' => 'muted_purple_gold', 'label' => 'Muted Purple Gold', 'swatch_image' => self::MUTED_PURPLE_GOLD_SWATCH_IMAGE],
             ['code' => self::LASER_SILVER_HOT_FOIL_CODE, 'label' => self::LASER_SILVER_HOT_FOIL_LABEL, 'swatch_image' => self::LASER_SILVER_HOT_FOIL_SWATCH_IMAGE],
         ];
 

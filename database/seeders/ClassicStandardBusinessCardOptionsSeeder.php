@@ -224,7 +224,7 @@ class ClassicStandardBusinessCardOptionsSeeder extends Seeder
                         [
                             'code' => 'muted_purple_gold',
                             'label' => 'Muted Purple Gold',
-                            'swatch_image' => '/images/product-options/business-cards/swatches/muted-purple-gold.png',
+                            'swatch_image' => BusinessCardOptionCatalog::MUTED_PURPLE_GOLD_SWATCH_IMAGE,
                         ],
                         [
                             'code' => 'laser_silver',
