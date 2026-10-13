@@ -328,8 +328,8 @@ final class PostcardProductCatalog
                 'height' => (string) $height,
                 'unit' => 'in',
                 'area_sq_m' => round($width * $height * 0.0254 ** 2, 8),
-                'description' => $width.'" x '.$height.'"',
-                'swatch_image' => '/images/products/postcards/sizes/'.$image.'.png',
+                'description' => $width.' x '.$height.' in',
+                'swatch_image' => '/images/products/postcards/size-swatches/'.$image.'.svg',
             ];
         }
 
@@ -342,7 +342,7 @@ final class PostcardProductCatalog
             'min_height' => 18,
             'max_height' => 301,
             'description' => 'W 18–430 mm × H 18–301 mm',
-            'swatch_image' => '/images/products/postcards/sizes/custom.svg',
+            'swatch_image' => '/images/products/postcards/size-swatches/custom.svg',
         ];
 
         return [

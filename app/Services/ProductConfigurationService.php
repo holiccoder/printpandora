@@ -47,6 +47,26 @@ class ProductConfigurationService
 
     private const COTTON_HOT_FOIL_MARKUP_PER_CARD = 0.4;
 
+    /**
+     * One-side hot-foil surcharge for the 0.76 mm PVC card, expressed as a
+     * discount from the $0.40 per-card surcharge at the 50-card tier.
+     *
+     * @var array<string, int|float>
+     */
+    private const STANDARD_PVC_HOT_FOIL_QUANTITY_DISCOUNTS = [
+        '100' => 50,
+        '200' => 75,
+        '500' => 77.5,
+        '1000' => 80,
+        '2000' => 80,
+        '3000' => 82.5,
+        '4000' => 82.5,
+        '5000' => 85,
+        '10000' => 85,
+    ];
+
+    private const STANDARD_PVC_HOT_FOIL_MARKUP_PER_CARD = 0.4;
+
     public function __construct(
         private HardcodedContent $content,
         private ProductImageResolver $imageResolver,
@@ -1316,6 +1336,110 @@ class ProductConfigurationService
         return array_values($processes);
     }
 
+    /**
+     * Add the sourced one-side hot-foil surcharge to standard 0.76 mm PVC
+     * pricing. The shared calculator applies it when a foil finish is chosen.
+     *
+     * @param  array<string, mixed>  $pricing
+     * @return array<string, mixed>
+     */
+    private function withStandardPvcHotFoilPricing(array $pricing): array
+    {
+        foreach (['scenarios', 'pricing_data'] as $key) {
+            if (! is_array($pricing[$key] ?? null)) {
+                continue;
+            }
+
+            foreach ($pricing[$key] as &$scenario) {
+                if (! is_array($scenario)) {
+                    continue;
+                }
+
+                $dynamicShape = array_key_exists('basePrice', $scenario)
+                    || array_key_exists('startQuantity', $scenario);
+                $scenario['processes'] = $this->appendStandardPvcHotFoilProcess(
+                    is_array($scenario['processes'] ?? null)
+                        ? $scenario['processes']
+                        : [],
+                    $dynamicShape ? 'dynamic' : 'scenario',
+                );
+            }
+            unset($scenario);
+        }
+
+        if (is_array($pricing['rules'] ?? null)) {
+            foreach ($pricing['rules'] as &$rule) {
+                if (! is_array($rule) || ! is_array($rule['pricing'] ?? null)) {
+                    continue;
+                }
+
+                $rule['pricing']['processes'] = $this->appendStandardPvcHotFoilProcess(
+                    is_array($rule['pricing']['processes'] ?? null)
+                        ? $rule['pricing']['processes']
+                        : [],
+                    'canonical',
+                );
+            }
+            unset($rule);
+        }
+
+        if (is_array($pricing['processes'] ?? null)) {
+            $pricing['processes'] = $this->appendStandardPvcHotFoilProcess(
+                $pricing['processes'],
+                'canonical',
+            );
+        }
+
+        return $pricing;
+    }
+
+    /**
+     * @param  array<int, mixed>  $processes
+     * @return array<int, mixed>
+     */
+    private function appendStandardPvcHotFoilProcess(array $processes, string $shape): array
+    {
+        foreach ($processes as $process) {
+            if (! is_array($process)) {
+                continue;
+            }
+
+            $code = $this->normalizedRuleValue($process['code'] ?? '');
+            $name = $this->normalizedRuleValue($process['name'] ?? $process['label'] ?? '');
+            $isColdFoil = str_contains($code, 'cold') || str_contains($name, 'cold');
+            $isFoilPricing = in_array($code, ['foil', 'special_finish'], true)
+                || str_contains($code, 'foil')
+                || str_contains($name, 'foil');
+
+            if ($isFoilPricing && ! $isColdFoil) {
+                return array_values($processes);
+            }
+        }
+
+        $processes[] = match ($shape) {
+            'scenario' => [
+                'code' => 'hot_foil',
+                'label' => 'Hot Foil',
+                'markup_per_card' => self::STANDARD_PVC_HOT_FOIL_MARKUP_PER_CARD,
+                'quantity_discounts_percent' => self::STANDARD_PVC_HOT_FOIL_QUANTITY_DISCOUNTS,
+            ],
+            'dynamic' => [
+                'name' => 'Hot Foil',
+                'code' => 'hot_foil',
+                'markup' => self::STANDARD_PVC_HOT_FOIL_MARKUP_PER_CARD,
+                'rates' => self::STANDARD_PVC_HOT_FOIL_QUANTITY_DISCOUNTS,
+            ],
+            default => [
+                'name' => 'Hot Foil',
+                'code' => 'hot_foil',
+                'markup' => self::STANDARD_PVC_HOT_FOIL_MARKUP_PER_CARD,
+                'rates' => self::STANDARD_PVC_HOT_FOIL_QUANTITY_DISCOUNTS,
+            ],
+        };
+
+        return array_values($processes);
+    }
+
     private function normalizedRuleValue(mixed $value): string
     {
         return Str::slug(strtolower(trim((string) $value)), '_');
@@ -2571,6 +2695,10 @@ class ProductConfigurationService
 
         if (BusinessCardOptionCatalog::isCottonBusinessCard((string) $product->slug)) {
             $config['pricing'] = $this->withCottonHotFoilPricing($config['pricing']);
+        }
+
+        if ((string) $product->slug === 'standard-pvc-card') {
+            $config['pricing'] = $this->withStandardPvcHotFoilPricing($config['pricing']);
         }
 
         $config['faq'] = is_array($config['faq'] ?? null) ? array_values($config['faq']) : [];

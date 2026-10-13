@@ -469,18 +469,28 @@ const generatedSizeSwatches: Record<string, string> = {
 };
 
 const postcardSizeSwatches: Record<string, string> = {
-    standard: '/images/products/postcards/sizes/standard.png',
-    square: '/images/products/postcards/sizes/square.png',
-    rack: '/images/products/postcards/sizes/rack.png',
-    half_page: '/images/products/postcards/sizes/half-page.png',
-    'half-page': '/images/products/postcards/sizes/half-page.png',
-    small: '/images/products/postcards/sizes/small.png',
-    medium: '/images/products/postcards/sizes/medium.png',
-    large: '/images/products/postcards/sizes/large.png',
-    custom: '/images/products/postcards/sizes/custom.svg',
+    standard: '/images/products/postcards/size-swatches/standard.svg',
+    square: '/images/products/postcards/size-swatches/square.svg',
+    rack: '/images/products/postcards/size-swatches/rack.svg',
+    half_page: '/images/products/postcards/size-swatches/half-page.svg',
+    'half-page': '/images/products/postcards/size-swatches/half-page.svg',
+    small: '/images/products/postcards/size-swatches/small.svg',
+    medium: '/images/products/postcards/size-swatches/medium.svg',
+    large: '/images/products/postcards/size-swatches/large.svg',
+    custom: '/images/products/postcards/size-swatches/custom.svg',
 };
 
-const captionedSizeSwatchCodes = new Set(['standard', 'square', 'custom']);
+const captionedSizeSwatchCodes = new Set([
+    'standard',
+    'square',
+    'rack',
+    'half_page',
+    'half-page',
+    'small',
+    'medium',
+    'large',
+    'custom',
+]);
 
 function shouldShowSwatchCaption(groupKey: string, code: string): boolean {
     return (
@@ -977,7 +987,9 @@ export default function ShopShow({
                           : s.width && s.height
                             ? s.unit?.toLowerCase() === 'mm'
                                 ? `${s.width} × ${s.height} mm`
-                                : `${s.width}" x ${s.height}"`
+                                : isPostcardProduct
+                                  ? `${s.width} x ${s.height} in`
+                                  : `${s.width}" x ${s.height}"`
                             : '',
                       swatch: isBusinessCardProduct
                           ? sizeSwatchFor(
@@ -2392,23 +2404,32 @@ export default function ShopShow({
 
             {/* breadcrumbs */}
             <nav aria-label="Breadcrumb" className="bg-white">
-                <ol className="product-detail-container mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-sm text-neutral-500">
-                    <li>
-                        <Link href="/" className="hover:text-neutral-900">
+                <ol className="product-detail-container mx-auto flex max-w-7xl items-center gap-1.5 overflow-x-auto px-4 py-2 text-xs whitespace-nowrap text-neutral-500 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-2 sm:py-3 sm:text-sm">
+                    <li className="shrink-0">
+                        <Link
+                            href="/"
+                            className="inline-flex min-h-10 items-center rounded px-1 transition-colors hover:bg-neutral-50 hover:text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800020]"
+                        >
                             {breadcrumbs[0]}
                         </Link>
                     </li>
-                    <ChevronRight className="size-3.5" />
-                    <li>
+                    <ChevronRight className="size-3 shrink-0 text-neutral-300" />
+                    <li className="shrink-0">
                         <Link
                             href={productCategoryHref(product.category.slug)}
-                            className="hover:text-neutral-900"
+                            className="inline-flex min-h-10 items-center rounded px-1 transition-colors hover:bg-neutral-50 hover:text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800020]"
                         >
                             {product.category.name}
                         </Link>
                     </li>
-                    <ChevronRight className="size-3.5" />
-                    <li className="text-neutral-900">{product.name}</li>
+                    <ChevronRight className="size-3 shrink-0 text-neutral-300" />
+                    <li
+                        aria-current="page"
+                        title={product.name}
+                        className="max-w-[55vw] truncate font-medium text-neutral-900 sm:max-w-none"
+                    >
+                        {product.name}
+                    </li>
                 </ol>
             </nav>
 
@@ -4182,6 +4203,13 @@ function DynamicOptionGroups({
                                 const displayDescription = value.description
                                     ? formatGramMeasurements(value.description)
                                     : undefined;
+                                const sizeDescription =
+                                    usePostcardSizeSwatches &&
+                                    group.key === 'sizes' &&
+                                    value.width &&
+                                    value.height
+                                        ? `${value.width} x ${value.height} ${value.unit?.toLowerCase() === 'mm' ? 'mm' : 'in'}`
+                                        : displayDescription;
                                 const selectedValue = selected[group.key];
                                 const isSelected =
                                     group.type === 'multi_select'
@@ -4269,9 +4297,9 @@ function DynamicOptionGroups({
                                                             : 'in',
                                                     )}
                                                 </p>
-                                            ) : value.description ? (
+                                            ) : sizeDescription ? (
                                                 <p className="text-xs text-neutral-500">
-                                                    {displayDescription}
+                                                    {sizeDescription}
                                                 </p>
                                             ) : null)}
                                     </>
